@@ -2,31 +2,12 @@ module TraditionalPreservationDairy
 {
     entity Yoghurt_Incubator
     {
+        /* No window: the pot's milk and state live in its movableData, and everything is done from its right-click menu. */
         component UiConfig
         {
             xuiSkin = default,
             entityStyle = ES_YoghurtIncubator,
-            uiEnabled = true,
-        }
-        component Resources
-        {
-            group craft_inputs
-            {
-                Item@Input@4,
-            }
-            group craft_outputs
-            {
-                Item@Output@4,
-            }
-        }
-        /* CraftLogic, not DryingCraftLogic: drying scales with temperature and stalls in rain, which would break the timer. */
-        component CraftLogic
-        {
-            Recipes = YoghurtIncubator,
-            StartMode = Manual,
-            inputGroup = craft_inputs,
-            outputGroup = craft_outputs,
-            actionAnim = Untie_Mid,
+            uiEnabled = false,
         }
         component SpriteConfig
         {

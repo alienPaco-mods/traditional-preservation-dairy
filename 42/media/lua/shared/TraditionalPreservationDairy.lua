@@ -9,11 +9,12 @@
 TraditionalPreservationDairy = TraditionalPreservationDairy or {}
 local M = TraditionalPreservationDairy
 local Weather = require "TraditionalPreservationDairy/Core/Weather"
+local Tiles = require "TraditionalPreservationDairy/Tiles"
 
 -- Save keys: never rename these once the mod is out (DEVGUIDE, "Rules that keep saves and the game happy").
 M.MOD_DATA_KEY = "TraditionalPreservationDairy"
 -- Each station keeps its state as one table under one key, so nothing else on the object can clash with it.
--- Inside the incubator's: ml, tempC, starter, incubating, wrapHour, done, last, readyHour.
+-- Inside the incubator's: ml, tempC, starter, incubating, wrapHour, done, last, readyHour, fluid, place, at.
 -- Inside the crock's: stage, done, marks.
 M.INCUBATOR_KEY = "tpdIncubator"
 M.CROCK_KEY = "tpdCrock"
@@ -54,6 +55,50 @@ local CULTURE_CURVE = { { 5, 0.03 }, { 10, 0.1 }, { 15, 0.3 }, { 20, 0.6 }, { 25
 -- Yield
 M.JAR_ML = 1000               -- a vanilla Clay Jar takes one litre of yoghurt
 M.CUPS_PER_LITRE = 3
+
+-- Items and fluids. Only a cow's or a sheep's milk sets; yoghurt is yoghurt, so the two may share a pot.
+M.MILKS = { CowMilk = true, SheepMilk = true }
+M.STARTERS = { ["Base.Yoghurt"] = "Yoghurt", ["TraditionalPreservationDairy.ActiveYoghurtStarter"] = "Starter" }
+M.EMPTY_CUP = "TraditionalPreservationDairy.EmptyYoghurtContainer"
+M.JARS = { ["Base.ClayJar"] = true, ["Base.ClayJarGlazed"] = true }
+M.YOGHURT_JAR = "TraditionalPreservationDairy.ClayJarOfYoghurt"
+M.COLLECT_XP = 2              -- Cooking, per jar
+
+-- Stations: FACE_COUNT tiles from each base, one per facing. Stage sprites are layered on top once the art
+-- builder makes them (Tiles.OVERLAYS); until then the station shows its base tile only.
+M.INCUBATOR_SPRITE = 0
+M.FACE_COUNT = Tiles.FACE_COUNT
+M.INCUBATOR_OVERLAYS = Tiles.OVERLAYS and Tiles.OVERLAYS.incubator or {}
+
+function M.spriteIndex(name)
+    if not name or string.sub(name, 1, #Tiles.PREFIX) ~= Tiles.PREFIX then return nil end
+    return tonumber(string.sub(name, #Tiles.PREFIX + 1))
+end
+
+function M.spriteName(index)
+    return Tiles.PREFIX .. index
+end
+
+-- The fluid in a container if it is all one kind of milk, else nil.
+function M.milkIn(container)
+    if not container or container:isEmpty() then return nil end
+    local fluid = container:getPrimaryFluid()
+    local name = fluid and fluid:getFluidTypeString()
+    if not M.MILKS[name] or container:getPrimaryFluidAmount() < container:getAmount() - 0.001 then return nil end
+    return name
+end
+
+-- Only empty containers take milk or yoghurt out, so nothing is ever topped up into a mixture.
+function M.isEmptyContainer(item)
+    local container = item:getFluidContainer()
+    return container ~= nil and container:isEmpty() and container:getCapacity() > 0
+end
+
+function M.isIncubator(object)
+    local sprite = object and object:getSprite()
+    local index = sprite and M.spriteIndex(sprite:getName())
+    return index ~= nil and index >= M.INCUBATOR_SPRITE and index < M.INCUBATOR_SPRITE + M.FACE_COUNT
+end
 
 -- Off, Forgiving, Normal, Harsh: how much of a temperature's slowdown applies.
 M.SENSITIVITY_SCALES = { 0, 0.5, 1, 1.5 }
@@ -99,6 +144,11 @@ end
 
 function M.heatCelsius(itemHeat)
     return math.min(M.ROOM_C + ((itemHeat or 1) - 1) / M.HEAT_PER_DEGREE, M.MILK_MAX_C)
+end
+
+-- The other way, for milk poured back out: it keeps its heat in the pot it goes into.
+function M.itemHeat(celsius)
+    return 1 + (celsius - M.ROOM_C) * M.HEAT_PER_DEGREE
 end
 
 function M.isHot(itemHeat)
@@ -204,12 +254,16 @@ function M.addStarter(batch, kind)
     return true
 end
 
--- Takes the milk back out (to reheat it). The starter, if any, stays for the next pour.
-function M.pourOut(batch)
+-- Takes up to maxMl of the milk back out (to reheat it), all of it if left out. Returns the ml and its
+-- temperature. The starter, if any, stays for the next pour.
+function M.pourOut(batch, maxMl)
     local stage = M.stage(batch)
     if stage ~= "Cooling" and stage ~= "TooCold" then return 0 end
-    local ml, tempC = batch.ml, batch.tempC
-    batch.ml, batch.tempC, batch.last = 0, nil, nil
+    local ml, tempC = math.min(batch.ml, maxMl or batch.ml), batch.tempC
+    batch.ml = batch.ml - ml
+    if batch.ml <= 0 then
+        for _, key in ipairs({ "ml", "tempC", "last", "fluid" }) do batch[key] = nil end
+    end
     return ml, tempC
 end
 
@@ -261,7 +315,7 @@ function M.collectJar(batch, now)
     local age = M.ageDays(batch, now)
     batch.ml = batch.ml - ml
     if batch.ml <= 0 then
-        for _, key in ipairs({ "ml", "tempC", "starter", "incubating", "wrapHour", "done", "last", "readyHour" }) do batch[key] = nil end
+        for _, key in ipairs({ "ml", "tempC", "starter", "incubating", "wrapHour", "done", "last", "readyHour", "fluid" }) do batch[key] = nil end
     end
     return ml, age
 end

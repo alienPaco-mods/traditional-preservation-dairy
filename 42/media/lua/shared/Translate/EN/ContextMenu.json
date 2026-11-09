@@ -1,0 +1,10 @@
+{
+  "ContextMenu_TraditionalPreservationDairy_PourMilk": "Pour Hot Milk",
+  "ContextMenu_TraditionalPreservationDairy_MilkItem": "%1 (%2 L, %3 C)",
+  "ContextMenu_TraditionalPreservationDairy_AddStarter": "Add Starter",
+  "ContextMenu_TraditionalPreservationDairy_PourOut": "Pour Out Milk",
+  "ContextMenu_TraditionalPreservationDairy_Holds": "%1 (holds %2 L)",
+  "ContextMenu_TraditionalPreservationDairy_Collect": "Collect into Clay Jar",
+  "ContextMenu_TraditionalPreservationDairy_OneJar": "One Jar",
+  "ContextMenu_TraditionalPreservationDairy_All": "All (%1)"
+}

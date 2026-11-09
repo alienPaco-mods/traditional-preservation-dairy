@@ -12,5 +12,11 @@
 - Internal: the Starter Culture Crock's two weather-driven stages, with a feed of fresh milk between them.
 - Internal: two weeks of hourly weather in global ModData, so an unloaded pot catches up hour by hour.
 - Internal: sandbox options for the setting time, the culture time and temperature sensitivity.
-- Internal: 42 tests, and a golden report of cooling and setting times by month and place.
-- Not done yet: the world and UI code, items, art and guide (the skeleton's Craft-button recipe is still in place).
+- Internal: 44 tests, and a golden report of cooling and setting times by month and place.
+- The Yoghurt Incubator has no window: its right-click menu shows what the pot is doing (hover for where it stands
+  and the time to the next change), and offers Pour Hot Milk, Add Starter, Pour Out Milk and Collect into Clay Jar.
+- Internal: the world code tracks each pot, records the hourly weather, catches the milk up and picks the stage
+  sprite. The pot's state lives in movableData, so it can be picked up full. The skeleton's slots, placeholder items
+  and Craft-button recipe are gone.
+- Internal: debug console `TPD.help()`: weather, place, pots, skip, fast timer, hot milk, starter kit.
+- Not done yet: the crock's menu, items (Collect waits for the Clay Jar of Yoghurt), art and guide.
