@@ -1,4 +1,65 @@
 module TraditionalPreservationDairy
 {
-    /* TEMPLATE: items come in step 2 (Clay Jar of Yoghurt, Active Yoghurt Starter, Empty Yoghurt Container, Yoghurt Pot). */
+    imports
+    {
+        Base,
+    }
+
+    craftRecipe MakeYoghurtPot
+    {
+        timedAction = Craft_PotteryWheel,
+        time = 120,
+        Tags = PotteryWheel,
+        SkillRequired = Pottery:2,
+        xpAward = Pottery:20,
+        category = Pottery,
+        inputs
+        {
+            item 4 [Base.Clay],
+            item 1 [*] mode:keep flags[ItemIsFluid;HandcraftOnly],
+            -fluid 0.25 categories[Water] mode:mixture,
+        }
+        outputs
+        {
+            item 1 TraditionalPreservationDairy.YoghurtPotUnfired,
+        }
+    }
+
+    craftRecipe FireYoghurtPot
+    {
+        time = 20,
+        timedAction = Making_With_Kiln,
+        Tags = KilnSmall;KilnLarge,
+        category = Pottery,
+        inputs
+        {
+            item 1 [TraditionalPreservationDairy.YoghurtPotUnfired],
+            item 1 tags[base:startfire],
+            item 1 tags[base:log;base:charcoal],
+        }
+        outputs
+        {
+            item 1 TraditionalPreservationDairy.YoghurtPot,
+        }
+    }
+
+    /* Four cups to the litre. OnCreate gives the jar back, carries the age over, and for a last jar under a
+       litre takes back the cups it can't fill and returns their empty containers. */
+    craftRecipe PortionYoghurt
+    {
+        timedAction = Making,
+        time = 100,
+        Tags = InHandCraft;Cooking,
+        category = Cooking,
+        OnCreate = TraditionalPreservationDairy.onPortioned,
+        inputs
+        {
+            item 1 [TraditionalPreservationDairy.JarOfYoghurt] mode:destroy,
+            item 4 [TraditionalPreservationDairy.EmptyYoghurtContainer] mode:destroy,
+        }
+        outputs
+        {
+            item 4 Base.Yoghurt,
+        }
+    }
 }

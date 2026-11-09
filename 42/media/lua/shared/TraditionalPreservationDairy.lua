@@ -43,8 +43,13 @@ M.HEARTH_RADIUS = 2
 -- slow below 35, stalled below about 18; past 50 the heat starts to kill them.
 local SET_CURVE = { { 18, 0 }, { 22, 0.05 }, { 27, 0.15 }, { 32, 0.35 }, { 37, 0.7 }, { 40, 1 }, { 45, 1 }, { 50, 0.5 }, { 55, 0 } }
 
--- Crock
+-- Crock: loaded with wheat and warm milk, fed fresh milk of any warmth once cultivated.
 M.CROCK_CAPACITY_ML = 1000
+M.WHEAT = "Base.WheatSeed"
+M.CROCK_WHEAT = 20
+M.CROCK_LOAD_ML = 500
+M.CROCK_FEED_ML = 500
+M.CROCK_WARM_C = 35           -- milk for loading must be at least this warm (hot milk is fine)
 M.CULTIVATE_HOURS = 24        -- wheat and warm milk, at the best temperature
 M.DEVELOP_HOURS = 12          -- after the fresh-milk feed, at the best temperature
 M.CROCK_STARTERS = 2
@@ -53,22 +58,26 @@ local CROCK_KIND = "culture"
 local CULTURE_CURVE = { { 5, 0.03 }, { 10, 0.1 }, { 15, 0.3 }, { 20, 0.6 }, { 25, 1 }, { 35, 1 }, { 40, 0.6 }, { 45, 0.1 } }
 
 -- Yield
-M.JAR_ML = 1000               -- a vanilla Clay Jar takes one litre of yoghurt
-M.CUPS_PER_LITRE = 3
+M.JAR_ML = 1000               -- each jar takes one litre of yoghurt
+M.CUPS_PER_LITRE = 4          -- 8 oz cups
 
 -- Items and fluids. Only a cow's or a sheep's milk sets; yoghurt is yoghurt, so the two may share a pot.
 M.MILKS = { CowMilk = true, SheepMilk = true }
-M.STARTERS = { ["Base.Yoghurt"] = "Yoghurt", ["TraditionalPreservationDairy.ActiveYoghurtStarter"] = "Starter" }
+M.STARTER = "TraditionalPreservationDairy.ActiveYoghurtStarter"
+M.STARTERS = { ["Base.Yoghurt"] = "Yoghurt", [M.STARTER] = "Starter" }
 M.EMPTY_CUP = "TraditionalPreservationDairy.EmptyYoghurtContainer"
-M.JARS = { ["Base.ClayJar"] = true, ["Base.ClayJarGlazed"] = true }
-M.YOGHURT_JAR = "TraditionalPreservationDairy.ClayJarOfYoghurt"
+-- Clay Jars need Pottery 5 and are rare loot; the glass canning jar is common and holds exactly a litre.
+M.JARS = { ["Base.ClayJar"] = true, ["Base.ClayJarGlazed"] = true, ["Base.EmptyJar"] = true }
+M.YOGHURT_JAR = "TraditionalPreservationDairy.JarOfYoghurt"
 M.COLLECT_XP = 2              -- Cooking, per jar
 
 -- Stations: FACE_COUNT tiles from each base, one per facing. Stage sprites are layered on top once the art
 -- builder makes them (Tiles.OVERLAYS); until then the station shows its base tile only.
-M.INCUBATOR_SPRITE = 0
+M.INCUBATOR_SPRITE = Tiles.INCUBATOR
+M.CROCK_SPRITE = Tiles.CROCK
 M.FACE_COUNT = Tiles.FACE_COUNT
 M.INCUBATOR_OVERLAYS = Tiles.OVERLAYS and Tiles.OVERLAYS.incubator or {}
+M.CROCK_OVERLAYS = Tiles.OVERLAYS and Tiles.OVERLAYS.crock or {}
 
 function M.spriteIndex(name)
     if not name or string.sub(name, 1, #Tiles.PREFIX) ~= Tiles.PREFIX then return nil end
@@ -94,10 +103,18 @@ function M.isEmptyContainer(item)
     return container ~= nil and container:isEmpty() and container:getCapacity() > 0
 end
 
-function M.isIncubator(object)
+local function isStation(object, base)
     local sprite = object and object:getSprite()
     local index = sprite and M.spriteIndex(sprite:getName())
-    return index ~= nil and index >= M.INCUBATOR_SPRITE and index < M.INCUBATOR_SPRITE + M.FACE_COUNT
+    return index ~= nil and index >= base and index < base + M.FACE_COUNT
+end
+
+function M.isIncubator(object)
+    return isStation(object, M.INCUBATOR_SPRITE)
+end
+
+function M.isCrock(object)
+    return isStation(object, M.CROCK_SPRITE)
 end
 
 -- Off, Forgiving, Normal, Harsh: how much of a temperature's slowdown applies.
@@ -352,6 +369,29 @@ function M.startCrock(crock, ledger)
     crock.stage = "Cultivating"
     crock.done = 0
     markCrock(crock, ledger)
+end
+
+-- Empty, Cultivating, Waiting, Developing or Ready.
+function M.crockStage(crock)
+    return crock.stage or "Empty"
+end
+
+function M.isWarm(itemHeat)
+    return M.heatCelsius(itemHeat) >= M.CROCK_WARM_C
+end
+
+-- Wheat and warm milk go into an empty crock only.
+function M.loadCrock(crock, ledger)
+    if M.crockStage(crock) ~= "Empty" then return false end
+    M.startCrock(crock, ledger)
+    return true
+end
+
+-- Empties a ready crock. Returns how many starters it gives, 0 if it isn't ready.
+function M.collectStarters(crock)
+    if M.crockStage(crock) ~= "Ready" then return 0 end
+    for _, key in ipairs({ "stage", "done", "marks" }) do crock[key] = nil end
+    return M.CROCK_STARTERS
 end
 
 -- The station's state table, made on first use.

@@ -1,0 +1,76 @@
+/* Icons and models are vanilla stand-ins until the art builder paints the mod's own (step 3). */
+module TraditionalPreservationDairy
+{
+    imports
+    {
+        Base,
+    }
+
+    /* Thrown like a vanilla clay pot, but lower and wider, with a lid. Pottery 2. */
+    item YoghurtPotUnfired
+    {
+        DisplayCategory = Material,
+        ItemType = base:normal,
+        Weight = 1.5,
+        Icon = ClayJar_Unfired,
+        StaticModel = ClayJarUnfired,
+        WorldStaticModel = ClayJarUnfired,
+        Tooltip = Tooltip_TraditionalPreservationDairy_YoghurtPotUnfired,
+    }
+
+    item YoghurtPot
+    {
+        DisplayCategory = Material,
+        ItemType = base:normal,
+        Weight = 1.5,
+        Icon = ClayJar_Fired,
+        StaticModel = ClayJar,
+        WorldStaticModel = ClayJar,
+        Tooltip = Tooltip_TraditionalPreservationDairy_YoghurtPot,
+    }
+
+    /* A litre of set yoghurt in a Clay Jar or a glass jar. The jar's type and the litres are in its ModData
+       (tpdJar, tpdMl); its age is the yoghurt's, carried over from the incubator. Portioned, not eaten from. */
+    item JarOfYoghurt
+    {
+        DisplayCategory = Food,
+        ItemType = base:food,
+        CantEat = true,
+        FoodType = NoExplicit,
+        DaysFresh = 10,
+        DaysTotallyRotten = 15,
+        Weight = 1.3,
+        Icon = ClayJar_Fired,
+        StaticModel = ClayJar,
+        WorldStaticModel = ClayJar,
+        Tooltip = Tooltip_TraditionalPreservationDairy_JarOfYoghurt,
+    }
+
+    /* The crock's grain-grown culture: one sets one batch. */
+    item ActiveYoghurtStarter
+    {
+        DisplayCategory = Food,
+        ItemType = base:food,
+        CantEat = true,
+        FoodType = NoExplicit,
+        DaysFresh = 5,
+        DaysTotallyRotten = 10,
+        Weight = 0.2,
+        Icon = Yoghurt,
+        StaticModel = Yogurt,
+        WorldStaticModel = Yogurt,
+        Tooltip = Tooltip_TraditionalPreservationDairy_ActiveYoghurtStarter,
+    }
+
+    /* Every vanilla Yoghurt leaves one when eaten or stirred into oatmeal (ReplaceOnUse, set in Lua). */
+    item EmptyYoghurtContainer
+    {
+        DisplayCategory = Junk,
+        ItemType = base:normal,
+        Weight = 0.02,
+        Icon = Yoghurt,
+        StaticModel = Yogurt,
+        WorldStaticModel = Yogurt,
+        Tooltip = Tooltip_TraditionalPreservationDairy_EmptyYoghurtContainer,
+    }
+}

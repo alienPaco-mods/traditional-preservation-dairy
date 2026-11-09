@@ -1,6 +1,7 @@
--- Traditional Preservation (Dairy) B42: keeps track of every Yoghurt Incubator, records the weather and its hourly
--- history, brings each pot's milk up to the hour and layers the sprite for its stage. The pot's state sits in
--- movableData, so it goes with the pot when it is picked up full and carried to the fire.
+-- Traditional Preservation (Dairy) B42: keeps track of every Yoghurt Incubator and Starter Culture Crock, records
+-- the weather and its hourly history, brings each pot's milk and each crock's culture up to the hour and layers the
+-- sprite for its stage. A station's state sits in movableData, so it goes with it when it is picked up full and
+-- carried to the fire.
 if isClient() then return end
 
 TraditionalPreservationDairyWorld = TraditionalPreservationDairyWorld or {}
@@ -12,6 +13,8 @@ local Tiles = require "TraditionalPreservationDairy/Tiles"
 
 -- A pot too cold for a starter looks like a cooling one: the lid is still on.
 local STAGE_SPRITES = { Cooling = "Cooling", TooCold = "Cooling", Incubating = "Incubating", Ready = "Ready" }
+-- A crock waiting for its feed still shows the cloth.
+local CROCK_SPRITES = { Cultivating = "Cultivating", Waiting = "Cultivating", Developing = "Developing", Ready = "Ready" }
 
 local function squareKey(object)
     local square = object:getSquare()
@@ -38,19 +41,41 @@ function World.updateIncubator(station, now)
     return state
 end
 
+function World.crockState(station)
+    return M.stateOf(Station.movableData(station), M.CROCK_KEY)
+end
+
+-- Brings the crock up to now on the ledger, at the place it was seen in last, as for the pot.
+function World.updateCrock(station)
+    local state = World.crockState(station)
+    local place, here = M.placeOf(station), squareKey(station)
+    local before = M.crockStage(state)
+    M.updateCrock(state, M.getLedger(), state.at == here and state.place or place)
+    state.place, state.at = place, here
+    local after = M.crockStage(state)
+    if after ~= before then print(string.format("[TPD] crock %s -> %s, %s", before, after, place)) end
+    return state
+end
+
 local function refresh(station, entry)
-    local state = World.updateIncubator(station, getGameTime():getWorldAgeHours())
-    local overlay = M.INCUBATOR_OVERLAYS[STAGE_SPRITES[M.stage(state)]]
+    local overlay
+    if entry.crock then
+        overlay = M.CROCK_OVERLAYS[CROCK_SPRITES[M.crockStage(World.updateCrock(station))]]
+    else
+        local state = World.updateIncubator(station, getGameTime():getWorldAgeHours())
+        overlay = M.INCUBATOR_OVERLAYS[STAGE_SPRITES[M.stage(state)]]
+    end
     local names = {}
     if overlay then table.insert(names, M.spriteName(overlay + entry.faceIndex)) end
     Station.showSprites(station, entry, tostring(overlay), names)
 end
 
--- Only this mod's stations: which way it faces.
+-- Only this mod's stations: which kind, and which way it faces.
 local function newEntry(station)
-    if not M.isIncubator(station) then return nil end
+    local crock = M.isCrock(station)
+    if not crock and not M.isIncubator(station) then return nil end
     local index = M.spriteIndex(station:getSprite():getName())
-    return { faceIndex = index % M.FACE_COUNT }
+    return { faceIndex = index % M.FACE_COUNT, crock = crock }
 end
 
 local tracker = Station.tracker({ sprites = Tiles.STATIONS, entry = newEntry, refresh = refresh })
@@ -63,11 +88,11 @@ function World.refresh(station)
     if entry then refresh(station, entry) end
 end
 
--- Every tracked station that is loaded, for the dev console.
-function World.stations()
+-- Every tracked station of the kind (an incubator, or a crock if crock is true) that is loaded, for the dev console.
+function World.stations(crock)
     local list = {}
-    for object in pairs(tracker.tracked) do
-        if Station.isLoaded(object) then table.insert(list, object) end
+    for object, entry in pairs(tracker.tracked) do
+        if Station.isLoaded(object) and (entry.crock == true) == (crock == true) then table.insert(list, object) end
     end
     return list
 end

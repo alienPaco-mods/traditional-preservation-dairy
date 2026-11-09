@@ -14,7 +14,10 @@ function TPD.help()
     say("TPD.skip(hours)      move every loaded incubator on by this many hours")
     say("TPD.fast(hours)      setting takes this many hours at the best temperature. TPD.fast() goes back to the sandbox")
     say("TPD.milk(litres, c)  a cooking pot of cow's milk at c degrees (default 5 L at 85 C)")
-    say("TPD.kit()            a yoghurt for a starter and two empty Clay Jars")
+    say("TPD.kit()            a yoghurt for a starter, a Clay Jar, a glass jar and four empty yoghurt containers")
+    say("TPD.crocks()         every loaded crock: stage, progress, place")
+    say("TPD.culture(hours)   move every loaded crock's current stage on by this many hours at the best temperature")
+    say("TPD.crockkit()       20 wheat grains, and a pot of 1 L of milk at 40 C")
 end
 
 function TPD.weather()
@@ -87,8 +90,47 @@ function TPD.kit()
     local inventory = getPlayer():getInventory()
     inventory:AddItem("Base.Yoghurt")
     inventory:AddItem("Base.ClayJar")
-    inventory:AddItem("Base.ClayJar")
-    say("Gave a yoghurt and two Clay Jars.")
+    inventory:AddItem("Base.EmptyJar")
+    for _ = 1, 4 do inventory:AddItem(M.EMPTY_CUP) end
+    say("Gave a yoghurt, a Clay Jar, a glass jar and four empty yoghurt containers.")
+end
+
+local function crocks()
+    local World = TraditionalPreservationDairyWorld
+    return World and World.stations(true) or {}
+end
+
+function TPD.crocks()
+    local list = crocks()
+    if #list == 0 then return say("No crock loaded and tracked. Right-click one to start tracking it.") end
+    for _, station in ipairs(list) do
+        local state = TraditionalPreservationDairyWorld.updateCrock(station)
+        local line = string.format("%d,%d,%d %s, %s", station:getX(), station:getY(), station:getZ(), M.crockStage(state), tostring(state.place))
+        if state.done then
+            local status = M.crockStatus(state, M.getLedger(), state.place)
+            line = line .. string.format(": %.1f/%.0f h at %.0f%% speed, %s h left", state.done, M.crockHours(state), status.rate * 100,
+                status.hoursLeft and string.format("%.1f", status.hoursLeft) or "never")
+        end
+        say(line)
+    end
+end
+
+function TPD.culture(hours)
+    hours = hours or M.CULTIVATE_HOURS
+    for _, station in ipairs(crocks()) do
+        local state = TraditionalPreservationDairyWorld.crockState(station)
+        if state.done then state.done = state.done + hours end
+        TraditionalPreservationDairyWorld.refresh(station)
+    end
+    say(string.format("Moved %d crock(s) on by %.1f hours.", #crocks(), hours))
+    TPD.crocks()
+end
+
+function TPD.crockkit()
+    local inventory = getPlayer():getInventory()
+    for _ = 1, M.CROCK_WHEAT do inventory:AddItem(M.WHEAT) end
+    TPD.milk(1, 40)
+    say(string.format("Gave %d wheat grains.", M.CROCK_WHEAT))
 end
 
 say("Debug commands loaded. Type TPD.help() in the Lua console.")

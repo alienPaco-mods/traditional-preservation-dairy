@@ -83,7 +83,7 @@ local first, age = M.collectJar(pot, now)
 check("one Clay Jar takes a litre, with the pot's age", first == 1000 and near(age, 1))
 for _ = 1, 4 do M.collectJar(pot, now) end
 check("five jars empty a full pot, and it starts over", M.stage(pot) == "Empty" and pot.starter == nil)
-check("a litre portions into three cups", M.cupsFor(1000) == 3 and M.cupsFor(300) == 1)
+check("a litre portions into four cups", M.cupsFor(1000) == 4 and M.cupsFor(250) == 1 and M.cupsFor(600) == 2)
 
 -- Catching up while unloaded
 local ledger, history = M.getLedger(), M.getHistory()
@@ -110,7 +110,9 @@ check("by the fire it sets even in winter", M.stage(winter) == "Ready")
 
 -- Crock
 local crock = {}
-M.startCrock(crock, ledger)
+check("a new crock is empty", M.crockStage(crock) == "Empty" and M.collectStarters(crock) == 0)
+check("it loads once", M.loadCrock(crock, ledger) and crock.stage == "Cultivating" and not M.loadCrock(crock, ledger))
+check("loading milk must be warm, hot is fine", M.isWarm(M.itemHeat(40)) and M.isWarm(M.MIN_POUR_HEAT) and not M.isWarm(1.0))
 for hour = 31, 31 + 24 do
     H.setHours(hour)
     M.record(ledger, history, hour, 30)
@@ -127,6 +129,8 @@ for hour = 61, 61 + 12 do
 end
 M.updateCrock(crock, ledger, "Open")
 check("and develops into starter", crock.stage == "Ready")
+check("collecting gives the starters and empties it", M.collectStarters(crock) == M.CROCK_STARTERS
+    and M.crockStage(crock) == "Empty" and crock.marks == nil)
 local hearthCrock = {}
 M.startCrock(hearthCrock, ledger)
 for hour = 74, 74 + 24 do

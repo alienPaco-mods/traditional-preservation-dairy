@@ -19,4 +19,15 @@
   sprite. The pot's state lives in movableData, so it can be picked up full. The skeleton's slots, placeholder items
   and Craft-button recipe are gone.
 - Internal: debug console `TPD.help()`: weather, place, pots, skip, fast timer, hot milk, starter kit.
-- Not done yet: the crock's menu, items (Collect waits for the Clay Jar of Yoghurt), art and guide.
+- Items: Yoghurt Pot (thrown at Pottery 2, fired in a kiln), Jar of Yoghurt, Active Yoghurt Starter, Empty Yoghurt
+  Container. The incubator is built from a Yoghurt Pot, 2 Ripped Sheets and Twine (Pottery 2, Tailoring 1).
+- Set yoghurt is collected into an empty Clay Jar, Glazed Clay Jar or glass canning jar, a litre each, and portioned
+  into four vanilla Yoghurts with one Empty Yoghurt Container per cup. The same jar comes back, and the cups keep the
+  yoghurt's age. A last jar under a litre gives fewer cups and hands back the spare containers.
+- Every vanilla Yoghurt leaves an Empty Yoghurt Container when eaten or stirred into oatmeal.
+- The Starter Culture Crock: built from a Clay Jar or a Clay Pot, a Ripped Sheet and Twine (Pottery 4, Cooking 4).
+  Its right-click menu loads 20 wheat grains and half a litre of warm milk (35 C or more), feeds half a litre of
+  fresh milk once cultivated, and collects 2 Active Yoghurt Starters. Its state lives in movableData.
+- Internal: placeholder crock tiles (2 and 3) until the art; `TPD.crocks()`, `TPD.culture(hours)`, `TPD.crockkit()`;
+  48 tests.
+- Not done yet: art (station stages and item icons), guide, README, Workshop text.

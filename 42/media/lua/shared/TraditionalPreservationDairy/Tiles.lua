@@ -9,5 +9,7 @@ return {
         },
     },
     FACE_COUNT = 2,
-    STATIONS = { "traditionalpreservationdairy_01_0", "traditionalpreservationdairy_01_1" },
+    STATIONS = { "traditionalpreservationdairy_01_0", "traditionalpreservationdairy_01_1", "traditionalpreservationdairy_01_2", "traditionalpreservationdairy_01_3" },
+    INCUBATOR = 0,
+    CROCK = 2,
 }

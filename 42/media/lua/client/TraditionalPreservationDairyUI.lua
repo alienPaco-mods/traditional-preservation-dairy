@@ -1,12 +1,16 @@
--- Traditional Preservation (Dairy) B42: the Yoghurt Incubator has no window. Everything is done from its
--- right-click menu: pour hot milk in, add a starter, pour the milk back out to reheat it, and collect the set
--- yoghurt into a Clay Jar. The status line at the top says what the pot is doing, and its hover says more.
+-- Traditional Preservation (Dairy) B42: the Yoghurt Incubator and the Starter Culture Crock have no window.
+-- Everything is done from their right-click menus. The pot: pour hot milk in, add a starter, pour the milk back
+-- out to reheat it, and collect the set yoghurt into jars. The crock: load wheat and warm milk, feed it fresh milk,
+-- collect the starters. The status line at the top says what the station is doing, and its hover says more.
 require "TimedActions/ISYoghurtIncubator"
+require "TimedActions/ISStarterCrock"
 local UI = require "TraditionalPreservationDairy/Core/UI"
 
 local M = TraditionalPreservationDairy
 local say = UI.say
 local STATION_ICON = "media/textures/Item_YoghurtIncubator.png"
+local CROCK_ICON = "media/textures/Item_StarterCultureCrock.png"
+local WHEAT_ICON = "Item_WheatGrains"
 local MILK_ICON = "Item_Milk"
 local YOGHURT_ICON = "Item_Yoghurt"
 local JAR_ICON = "Item_ClayJar_Fired"
@@ -176,7 +180,7 @@ end
 local function addCollectMenu(menu, playerObj, station, state)
     local option = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_Collect"))
     option.iconTexture = getTexture(JAR_ICON)
-    local jars = findItems(playerObj, function(item) return M.JARS[item:getFullType()] and M.isEmptyContainer(item) end)
+    local jars = findItems(playerObj, function(item) return M.JARS[item:getFullType()] == true and M.isEmptyContainer(item) end)
     if #jars == 0 then return disableWith(option, getText("IGUI_TraditionalPreservationDairy_NoJar")) end
     local most = math.min(#jars, math.ceil(state.ml / M.JAR_ML))
     local picked = {}
@@ -209,12 +213,109 @@ local function addIncubatorMenu(context, playerObj, station)
     if stage == "Cooling" or stage == "TooCold" then addPourOutMenu(menu, playerObj, station, state) end
 end
 
+-- Crock
+
+local function onCrockAction(playerObj, station, mode, item, wheat)
+    if not ISEntityUI.WalkToEntity(playerObj, station) then return end
+    for _, seed in ipairs(wheat or {}) do ISInventoryPaneContextMenu.transferIfNeeded(playerObj, seed) end
+    if item then ISInventoryPaneContextMenu.transferIfNeeded(playerObj, item) end
+    ISTimedActionQueue.add(ISStarterCrock:new(playerObj, station, mode, item, wheat))
+end
+
+-- Containers holding at least ml of plain milk, warm enough if warm is set.
+local function milkFor(playerObj, ml, warm)
+    return findItems(playerObj, function(item)
+        local container = item:getFluidContainer()
+        return M.milkIn(container) ~= nil and container:getAmount() * 1000 >= ml - 0.5 and (not warm or M.isWarm(item:getItemHeat()))
+    end)
+end
+
+-- Load or Feed, with one entry per container of milk. wheat is the seeds a load takes.
+local function addCrockMilkMenu(menu, option, playerObj, station, mode, milks, wheat)
+    local sub = menu:getNew(menu)
+    menu:addSubMenu(option, sub)
+    for _, item in ipairs(milks) do
+        local entry = sub:addOption(say("ContextMenu_TraditionalPreservationDairy_MilkItem", item:getDisplayName(),
+            litresText(item:getFluidContainer():getAmount() * 1000), degrees(M.heatCelsius(item:getItemHeat()))),
+            playerObj, onCrockAction, station, mode, item, wheat)
+        entry.iconTexture = item:getTex()
+    end
+end
+
+local function addLoadMenu(menu, playerObj, station)
+    local option = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_LoadCrock"))
+    option.iconTexture = getTexture(WHEAT_ICON)
+    local wheat = findItems(playerObj, function(item) return item:getFullType() == M.WHEAT end)
+    if #wheat < M.CROCK_WHEAT then
+        return disableWith(option, say("IGUI_TraditionalPreservationDairy_NeedWheat", tostring(M.CROCK_WHEAT), tostring(#wheat)))
+    end
+    local milks = milkFor(playerObj, M.CROCK_LOAD_ML, true)
+    if #milks == 0 then
+        local cold = #milkFor(playerObj, M.CROCK_LOAD_ML, false) > 0
+        return disableWith(option, getText(cold and "IGUI_TraditionalPreservationDairy_CrockMilkCold" or "IGUI_TraditionalPreservationDairy_CrockNoMilk"))
+    end
+    local picked = {}
+    for index = 1, M.CROCK_WHEAT do picked[index] = wheat[index] end
+    tooltipFor(option, getText("IGUI_TraditionalPreservationDairy_LoadHelp"))
+    addCrockMilkMenu(menu, option, playerObj, station, "load", milks, picked)
+end
+
+local function addFeedMenu(menu, playerObj, station)
+    local option = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_FeedCrock"))
+    option.iconTexture = getTexture(MILK_ICON)
+    local milks = milkFor(playerObj, M.CROCK_FEED_ML, false)
+    if #milks == 0 then return disableWith(option, getText("IGUI_TraditionalPreservationDairy_CrockNoMilk")) end
+    addCrockMilkMenu(menu, option, playerObj, station, "feed", milks)
+end
+
+local function crockDetail(station, state)
+    local ledger = M.getLedger()
+    local place = state.place or M.placeOf(station)
+    local lines = { say(PLACE_TEXT[place], degrees(M.placeTemperature(ledger, place))) }
+    local stage = M.crockStage(state)
+    if stage == "Cultivating" or stage == "Developing" then
+        local status = M.crockStatus(state, ledger, place)
+        table.insert(lines, say("IGUI_TraditionalPreservationDairy_CrockProgress", UI.percent(status.progress), UI.percent(status.rate)))
+        table.insert(lines, status.hoursLeft and say("IGUI_TraditionalPreservationDairy_Next" .. (stage == "Cultivating" and "Waiting" or "Ready"),
+            hoursText(status.hoursLeft)) or getText("IGUI_TraditionalPreservationDairy_CrockStalled"))
+    else
+        table.insert(lines, getText("IGUI_TraditionalPreservationDairy_CrockHelp" .. stage))
+    end
+    return table.concat(lines, " <LINE> ")
+end
+
+local function addCrockMenu(context, playerObj, station)
+    local World = TraditionalPreservationDairyWorld
+    local state = World and World.updateCrock(station) or M.stateOf(station:getModData().movableData or {}, M.CROCK_KEY)
+    local option = context:addOption(getText("IGUI_CraftingWindow_StarterCultureCrock"))
+    option.iconTexture = getTexture(CROCK_ICON)
+    local menu = context:getNew(context)
+    context:addSubMenu(option, menu)
+
+    local stage = M.crockStage(state)
+    local status = menu:addOption(getText("IGUI_TraditionalPreservationDairy_Crock" .. stage))
+    status.isDisabled = true
+    tooltipFor(status, crockDetail(station, state))
+
+    if stage == "Empty" then
+        addLoadMenu(menu, playerObj, station)
+    elseif stage == "Waiting" then
+        addFeedMenu(menu, playerObj, station)
+    elseif stage == "Ready" then
+        local collect = menu:addOption(say("ContextMenu_TraditionalPreservationDairy_CollectStarters", tostring(M.CROCK_STARTERS)),
+            playerObj, onCrockAction, station, "collect")
+        collect.iconTexture = getTexture(YOGHURT_ICON)
+    end
+end
+
 local function onFillContextMenu(playerNum, context, worldobjects)
     local playerObj = getSpecificPlayer(playerNum)
     for _, object in ipairs(worldobjects) do
-        if M.isIncubator(object) then
-            -- A pot built or placed this session isn't tracked until its area reloads, so its menu starts it.
+        local incubator, crock = M.isIncubator(object), M.isCrock(object)
+        if incubator or crock then
+            -- A station built or placed this session isn't tracked until its area reloads, so its menu starts it.
             if TraditionalPreservationDairyWorld then TraditionalPreservationDairyWorld.track(object) end
+            if crock then return addCrockMenu(context, playerObj, object) end
             return addIncubatorMenu(context, playerObj, object)
         end
     end

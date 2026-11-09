@@ -27,21 +27,20 @@ module TraditionalPreservationDairy
                 }
             }
         }
-        /* TEMPLATE: skill and materials */
+        /* The fired Yoghurt Pot, with cloth to wrap it in and twine to tie the wrap. */
         component CraftRecipe
         {
-            timedAction = BuildWoodenStructureSmall,
+            timedAction = BuildLowNoTool,
             time = 100,
-            SkillRequired = Woodwork:2,
-            xpAward = Woodwork:5,
-            category = Furniture,
-            Tags = Carpentry;Furniture,
+            SkillRequired = Pottery:2;Tailoring:1,
+            xpAward = Tailoring:5,
+            category = Pottery,
             Tooltip = Tooltip_craft_YoghurtIncubatorDesc,
             inputs
             {
-                item 1 tags[base:hammer] mode:keep flags[Prop1;MayDegradeVeryLight],
-                item 4 [Base.Plank],
-                item 8 [Base.Nails],
+                item 1 [TraditionalPreservationDairy.YoghurtPot],
+                item 2 [Base.RippedSheets],
+                item 1 [Base.Twine],
             }
         }
     }

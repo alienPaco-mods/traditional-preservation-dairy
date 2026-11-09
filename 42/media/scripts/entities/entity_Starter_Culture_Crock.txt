@@ -1,0 +1,47 @@
+module TraditionalPreservationDairy
+{
+    entity Starter_Culture_Crock
+    {
+        /* No window, like the incubator: the crock's stage lives in its movableData; load, feed and collect from its right-click menu. */
+        component UiConfig
+        {
+            xuiSkin = default,
+            entityStyle = ES_StarterCultureCrock,
+            uiEnabled = false,
+        }
+        component SpriteConfig
+        {
+            isThumpable = false,
+            face S
+            {
+                layer
+                {
+                    row = traditionalpreservationdairy_01_2,
+                }
+            }
+            face E
+            {
+                layer
+                {
+                    row = traditionalpreservationdairy_01_3,
+                }
+            }
+        }
+        /* A Clay Jar or a vanilla Clay Pot (no skill to throw), with a cloth cover tied on. */
+        component CraftRecipe
+        {
+            timedAction = BuildLowNoTool,
+            time = 80,
+            SkillRequired = Pottery:4;Cooking:4,
+            xpAward = Cooking:10,
+            category = Pottery,
+            Tooltip = Tooltip_craft_StarterCultureCrockDesc,
+            inputs
+            {
+                item 1 [Base.ClayJar;Base.ClayJarGlazed;Base.ClayPot],
+                item 1 [Base.RippedSheets],
+                item 1 [Base.Twine],
+            }
+        }
+    }
+}
