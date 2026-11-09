@@ -6,7 +6,7 @@ Each station is a pair of tiles, south facing then east facing. Both are round p
 stool so they can be carried to a fire and set down by it; the facing shows only in where the incubator's lid lies
 when it is off. The base tile is the bare open pot. Every stage, the empty one too, is an overlay that
 TraditionalPreservationDairyWorld.lua layers over it, so a stage paints only what it adds: the incubator's lid lying
-on the floor (empty and ready), on the pot (cooling), or under the cloth wrap, and its set yoghurt; the crock's linen
+on the floor (empty and ready), on the pot (cooling), slid half off (too cold for a starter), or under the cloth wrap, and its set yoghurt; the crock's linen
 cap, its wheat and milk, and its culture.
 The overlay numbers are in OVERLAYS, keyed by the stage names the World's sprite tables use.
 
@@ -40,7 +40,7 @@ SQUASH = 0.5
 FACES = ["S", "E"]
 INCUBATOR, CROCK = 0, 2
 OVERLAYS = {
-    "incubator": {"Cooling": 4, "Incubating": 6, "Ready": 8, "Empty": 16},
+    "incubator": {"Cooling": 4, "Incubating": 6, "Ready": 8, "Empty": 16, "TooCold": 18},
     "crock": {"Cultivating": 10, "Developing": 12, "Ready": 14},
 }
 
@@ -76,6 +76,8 @@ LID_RIM = 1.6                  # height of the lid's lit edge band
 # Where the lid lies on the floor when it is off, in tiles from the floor's middle, by facing: front left facing S,
 # front right facing E.
 FLOOR_LID = {"S": (0.0, 0.42), "E": (0.42, 0.0)}
+# Too cold for a starter: the lid slid half off the mouth, to the floor lid's side, and tipped down over the rim.
+SLID, SLID_DROP, SLID_TILT = 12, 3.5, 15  # sideways and down in pixels, tilt in degrees
 # The cloth hangs over the lid and the shoulders to below the belly, tied at the neck.
 CLOTH_BODY = [(14, 26.5), (20, 27), (26, 26.5), (33, 23.5), (39, 18), (41, 17), (44, 19.5), (47, 20), (51, 16),
               (54, 9), (55, 0)]
@@ -260,6 +262,19 @@ def lid_layer():
     return layer
 
 
+def slid_lid_layer(face):
+    """The lid pushed half off: shifted to the floor lid's side so the milk shows behind it, and tipped down
+    where it overhangs the rim. A warning that the milk has cooled past the point a starter takes."""
+    side = -1 if FACES[face] == "S" else 1
+    layer = new_layer()
+    top = POT[-1][0]
+    cx, cy = FOOT_X + side * SLID, FOOT_Y - top + 1 + SLID_DROP
+    paint_lid(layer, (cx, cy), CLAY, LID_EDGE)
+    # Tip it about the far edge, which still rests on the rim; PIL turns positive angles anticlockwise.
+    pivot = ((cx - side * LID[0][1]) * SS, cy * SS)
+    return layer.rotate(-side * SLID_TILT, resample=Image.BICUBIC, center=pivot)
+
+
 def floor_lid(layer, face):
     """The lid lying dome up on the floor beside the pot, in front of it."""
     x, y = pzart.project(*FLOOR_LID[FACES[face]])
@@ -299,6 +314,12 @@ def cloth_layer():
 def incubator_overlay(stage, face):
     if stage == "Cooling":
         layer = lid_layer()
+    elif stage == "TooCold":
+        # The milk shows in the gap the lid leaves.
+        layer = new_layer()
+        top, r = POT[-1]
+        paint_surface(layer, pot_base(), top - 3, r - 3.2, MILK, random.Random(face))
+        layer.alpha_composite(slid_lid_layer(face))
     elif stage == "Incubating":
         layer = cloth_layer()
     else:
@@ -459,7 +480,7 @@ def lua_tiles():
 def contact_sheet(tiles, path):
     """Every stage over its station, for checking the art by eye; kept out of the mod."""
     rows = [(INCUBATOR, OVERLAYS["incubator"]), (CROCK, OVERLAYS["crock"])]
-    sheet = Image.new("RGBA", (TILE_W * 5, TILE_H * 2), (96, 110, 88, 255))
+    sheet = Image.new("RGBA", (TILE_W * 6, TILE_H * 2), (96, 110, 88, 255))
     for y, (base, stages) in enumerate(rows):
         for x, index in enumerate([None] + list(stages.values())):
             cell = tiles[base].copy()

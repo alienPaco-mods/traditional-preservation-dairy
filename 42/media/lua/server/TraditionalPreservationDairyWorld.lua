@@ -11,8 +11,8 @@ local Station = require "TraditionalPreservationDairy/Core/Station"
 local Weather = require "TraditionalPreservationDairy/Core/Weather"
 local Tiles = require "TraditionalPreservationDairy/Tiles"
 
--- A pot too cold for a starter looks like a cooling one: the lid is still on. An empty pot has its lid on the floor.
-local STAGE_SPRITES = { Empty = "Empty", Cooling = "Cooling", TooCold = "Cooling", Incubating = "Incubating",
+-- Each stage has its own look: an empty pot has its lid on the floor, one too cold for a starter has it slid half off.
+local STAGE_SPRITES = { Empty = "Empty", Cooling = "Cooling", TooCold = "TooCold", Incubating = "Incubating",
     Ready = "Ready" }
 -- A crock waiting for its feed still shows the cloth.
 local CROCK_SPRITES = { Cultivating = "Cultivating", Waiting = "Cultivating", Developing = "Developing", Ready = "Ready" }

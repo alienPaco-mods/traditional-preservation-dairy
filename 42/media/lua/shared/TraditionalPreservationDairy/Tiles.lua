@@ -18,6 +18,7 @@ return {
             Incubating = 6,
             Ready = 8,
             Empty = 16,
+            TooCold = 18,
         },
         crock = {
             Cultivating = 10,
