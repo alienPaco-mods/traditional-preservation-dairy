@@ -12,4 +12,17 @@ return {
     STATIONS = { "traditionalpreservationdairy_01_0", "traditionalpreservationdairy_01_1", "traditionalpreservationdairy_01_2", "traditionalpreservationdairy_01_3" },
     INCUBATOR = 0,
     CROCK = 2,
+    OVERLAYS = {
+        incubator = {
+            Cooling = 4,
+            Incubating = 6,
+            Ready = 8,
+            Empty = 16,
+        },
+        crock = {
+            Cultivating = 10,
+            Developing = 12,
+            Ready = 14,
+        },
+    },
 }

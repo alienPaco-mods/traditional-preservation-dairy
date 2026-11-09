@@ -1,4 +1,4 @@
-/* Icons and models are vanilla stand-ins until the art builder paints the mod's own (step 3). */
+/* Icons are painted by tools/build_tileset.py; the models are still vanilla stand-ins. */
 module TraditionalPreservationDairy
 {
     imports
@@ -12,7 +12,7 @@ module TraditionalPreservationDairy
         DisplayCategory = Material,
         ItemType = base:normal,
         Weight = 1.5,
-        Icon = ClayJar_Unfired,
+        Icon = YoghurtPotUnfired,
         StaticModel = ClayJarUnfired,
         WorldStaticModel = ClayJarUnfired,
         Tooltip = Tooltip_TraditionalPreservationDairy_YoghurtPotUnfired,
@@ -23,7 +23,7 @@ module TraditionalPreservationDairy
         DisplayCategory = Material,
         ItemType = base:normal,
         Weight = 1.5,
-        Icon = ClayJar_Fired,
+        Icon = YoghurtPot,
         StaticModel = ClayJar,
         WorldStaticModel = ClayJar,
         Tooltip = Tooltip_TraditionalPreservationDairy_YoghurtPot,
@@ -40,7 +40,7 @@ module TraditionalPreservationDairy
         DaysFresh = 10,
         DaysTotallyRotten = 15,
         Weight = 1.3,
-        Icon = ClayJar_Fired,
+        Icon = JarOfYoghurt,
         StaticModel = ClayJar,
         WorldStaticModel = ClayJar,
         Tooltip = Tooltip_TraditionalPreservationDairy_JarOfYoghurt,
@@ -56,7 +56,7 @@ module TraditionalPreservationDairy
         DaysFresh = 5,
         DaysTotallyRotten = 10,
         Weight = 0.2,
-        Icon = Yoghurt,
+        Icon = ActiveYoghurtStarter,
         StaticModel = Yogurt,
         WorldStaticModel = Yogurt,
         Tooltip = Tooltip_TraditionalPreservationDairy_ActiveYoghurtStarter,
@@ -68,7 +68,7 @@ module TraditionalPreservationDairy
         DisplayCategory = Junk,
         ItemType = base:normal,
         Weight = 0.02,
-        Icon = Yoghurt,
+        Icon = EmptyYoghurtContainer,
         StaticModel = Yogurt,
         WorldStaticModel = Yogurt,
         Tooltip = Tooltip_TraditionalPreservationDairy_EmptyYoghurtContainer,

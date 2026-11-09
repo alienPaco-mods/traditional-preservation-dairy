@@ -30,4 +30,10 @@
   fresh milk once cultivated, and collects 2 Active Yoghurt Starters. Its state lives in movableData.
 - Internal: placeholder crock tiles (2 and 3) until the art; `TPD.crocks()`, `TPD.culture(hours)`, `TPD.crockkit()`;
   48 tests.
-- Not done yet: art (station stages and item icons), guide, README, Workshop text.
+- Art: the Yoghurt Incubator and the Starter Culture Crock are painted clay pots that stand straight on the floor, so
+  they can be set down by a fire. The incubator shows its lid on the floor (empty, ready), on the pot (cooling) or
+  under a striped cloth tied at the neck (incubating), and the set yoghurt when ready. The crock, with a slip band of
+  zig-zags, shows a linen cap (cultivating, waiting), milk and wheat (developing), and the culture (ready).
+- Art: icons for the Yoghurt Pot (unfired and fired), Jar of Yoghurt, Active Yoghurt Starter and Empty Yoghurt
+  Container, the two build icons and the mod icon. The 3D models are still vanilla stand-ins.
+- Not done yet: guide, README, Workshop text.
