@@ -1,0 +1,12 @@
+module Base
+{
+    xuiSkin default
+    {
+        entity ES_YoghurtIncubator
+        {
+            LuaWindowClass = ISEntityWindow,
+            DisplayName = YoghurtIncubator,
+            Icon = Item_YoghurtIncubator,
+        }
+    }
+}

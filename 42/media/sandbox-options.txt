@@ -1,0 +1,28 @@
+VERSION = 1,
+
+option TraditionalPreservationDairy.IncubationHours {
+    type = double,
+    min = 1.0,
+    max = 48.0,
+    default = 6.0,
+    page = TraditionalPreservationDairy,
+    translation = TraditionalPreservationDairy_IncubationHours,
+}
+
+option TraditionalPreservationDairy.CultureHours {
+    type = double,
+    min = 1.0,
+    max = 240.0,
+    default = 24.0,
+    page = TraditionalPreservationDairy,
+    translation = TraditionalPreservationDairy_CultureHours,
+}
+
+option TraditionalPreservationDairy.TemperatureSensitivity {
+    type = enum,
+    numValues = 4,
+    default = 3,
+    page = TraditionalPreservationDairy,
+    translation = TraditionalPreservationDairy_TemperatureSensitivity,
+    valueTranslation = TraditionalPreservationDairy_TemperatureSensitivity,
+}

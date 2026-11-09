@@ -1,0 +1,9 @@
+name=Traditional Preservation (Dairy)
+id=TraditionalPreservationDairy
+author=alienPaco
+modversion=0.0.1
+versionMin=42.20
+description=Traditional Preservation (Dairy). B42 prototype.
+icon=icon.png
+pack=traditionalpreservationdairy
+tiledef=traditionalpreservationdairy 5172

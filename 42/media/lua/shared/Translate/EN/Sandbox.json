@@ -1,0 +1,13 @@
+{
+  "Sandbox_TraditionalPreservationDairy": "Traditional Preservation (Dairy)",
+  "Sandbox_TraditionalPreservationDairy_IncubationHours": "Yoghurt setting time (hours)",
+  "Sandbox_TraditionalPreservationDairy_IncubationHours_tooltip": "How many in-game hours wrapped milk takes to set at its best temperature (40 to 45 C). Cooler milk sets more slowly.",
+  "Sandbox_TraditionalPreservationDairy_CultureHours": "Starter culture time (hours)",
+  "Sandbox_TraditionalPreservationDairy_CultureHours_tooltip": "How many in-game hours the Starter Culture Crock's first stage takes at the best temperature. The second stage, after the fresh milk, takes half as long.",
+  "Sandbox_TraditionalPreservationDairy_TemperatureSensitivity": "Temperature sensitivity",
+  "Sandbox_TraditionalPreservationDairy_TemperatureSensitivity_tooltip": "How much the temperature slows setting and the starter culture. Off makes them run at full speed in any weather (the milk still has to cool before the wrap goes on).",
+  "Sandbox_TraditionalPreservationDairy_TemperatureSensitivity_option1": "Off",
+  "Sandbox_TraditionalPreservationDairy_TemperatureSensitivity_option2": "Forgiving",
+  "Sandbox_TraditionalPreservationDairy_TemperatureSensitivity_option3": "Normal",
+  "Sandbox_TraditionalPreservationDairy_TemperatureSensitivity_option4": "Harsh"
+}

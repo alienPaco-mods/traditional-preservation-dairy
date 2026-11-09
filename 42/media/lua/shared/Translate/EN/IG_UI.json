@@ -1,0 +1,13 @@
+{
+  "IGUI_CraftingWindow_YoghurtIncubator": "Yoghurt Incubator",
+  "IGUI_TraditionalPreservationDairy_Progress": "Progress",
+  "IGUI_TraditionalPreservationDairy_InUse": "This batch is already working",
+  "IGUI_TraditionalPreservationDairy_Full": "That slot is full",
+  "IGUI_TraditionalPreservationDairy_TimeLeft": "Time Remaining",
+  "IGUI_TraditionalPreservationDairy_Time": "%1d %2h, if the temperature holds",
+  "IGUI_TraditionalPreservationDairy_Temperature": "Temperature",
+  "IGUI_TraditionalPreservationDairy_Open": "%1 C outdoors",
+  "IGUI_TraditionalPreservationDairy_Roof": "%1 C under a roof",
+  "IGUI_TraditionalPreservationDairy_Basement": "%1 C in a basement",
+  "IGUI_TraditionalPreservationDairy_Rate": "Working Rate"
+}
