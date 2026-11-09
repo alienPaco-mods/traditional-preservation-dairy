@@ -10,6 +10,11 @@ against the pot (empty and ready), on the pot (cooling), slid half off (too cold
 cap, its wheat and milk, and its culture.
 The overlay numbers are in OVERLAYS, keyed by the stage names the World's sprite tables use.
 
+The Hearth is different: a low stone oven with a copper set into its top, which the game turns into a vanilla
+fireplace when it is built. Vanilla draws the fireplace's flames and fuel as attached sprites, so the hearth gets no
+overlays: the World swaps its own sprite among whole-hearth tiles, the copper empty, full or steaming (HEARTH_LOOKS),
+and every one of them carries the fireplace's tile properties.
+
 Usage: python3 tools/build_tileset.py [path/to/ProjectZomboid/projectzomboid] [contact-sheet.png]
 Needs Pillow and the game (for the vanilla glass jar icon). Deterministic: a rerun with no change gives
 byte-identical files.
@@ -20,7 +25,7 @@ import random
 import sys
 from pathlib import Path
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFilter
 
 sys.path.insert(0, str(Path(os.environ.get("TPCORE", Path(__file__).resolve().parents[2] / "_tpcore")) / "tools"))
 import pzart  # noqa: E402
@@ -39,6 +44,8 @@ SQUASH = 0.5
 # Facings, S and E, as the entity scripts' faces. Each station and overlay takes len(FACES) tiles from its number.
 FACES = ["S", "E"]
 INCUBATOR, CROCK = 0, 2
+HEARTH_LOOKS = {"Empty": 20, "Full": 22, "Hot": 24}
+HEARTH = HEARTH_LOOKS["Empty"]
 OVERLAYS = {
     "incubator": {"Cooling": 4, "Incubating": 6, "Ready": 8, "Empty": 16, "TooCold": 18},
     "crock": {"Cultivating": 10, "Developing": 12, "Ready": 14},
@@ -60,7 +67,12 @@ YOGHURT = (240, 236, 222)
 MILK = (226, 220, 200)
 WHEAT = (196, 160, 92)
 CULTURE = (236, 226, 196)
+STONE = (132, 122, 110)
+COPPER = (168, 96, 56)
+FIREBOX = (26, 18, 14, 255)
+STEAM = (240, 240, 240)
 SHADOW = (0, 0, 0, 80)
+SHADOW_BLUR = 3              # px of feathering round the floor shadow
 OUTLINE = (44, 30, 22, 255)
 WEATHER = 0.22
 OVERLAY_WEATHER = 0.12
@@ -90,6 +102,11 @@ CROCK_BODY = [(0, 10), (4, 14), (12, 17), (19, 16), (25, 12.5), (28, 10.5), (31,
 CROCK_BAND = (9, 17)
 CAP = [(26, 14.5), (29, 14.5), (31.5, 13.5), (33.5, 10), (34.5, 0)]
 CAP_TIE = 29
+# The hearth: a stone block most of a tile across, the copper standing proud of its top, the firebox mouth on the
+# side it faces.
+OVEN_H = 30                    # pixels high
+OVEN_HALF = 0.42               # half the footprint, in tiles
+COPPER_R, COPPER_UP = 21, 9    # the copper's radius across and how far it stands above the stone
 
 STRIPS = 72                    # slices round a body
 LEVELS_PER_PX = 1.5            # bands up a body
@@ -102,9 +119,17 @@ TILE_PROPS = {}
 for base, group, custom in ((INCUBATOR, "Yoghurt", "Incubator"), (CROCK, "Starter Culture", "Crock")):
     for offset, facing in enumerate(FACES):
         # The engine only links the facings of tiles with a GroupName, and that link lets a moved station rotate.
+        # Not solidtrans: the pot and the crock are small enough to walk past, and a solidtrans tile fades when the
+        # player stands behind it, and the click picker skips faded objects.
         TILE_PROPS[base + offset] = [("BlocksPlacement", ""), ("CustomName", custom), ("Facing", facing),
-                                     ("GroupName", group), ("IsMoveAble", ""), ("PickUpWeight", "100"),
-                                     ("solidtrans", "")]
+                                     ("GroupName", group), ("IsMoveAble", ""), ("PickUpWeight", "100")]
+for look, base in HEARTH_LOOKS.items():
+    for offset, facing in enumerate(FACES):
+        # IsoType and the woodstove container make the game load it as a fireplace with a firebox to cook in.
+        TILE_PROPS[base + offset] = [("BlocksPlacement", ""), ("ContainerCapacity", "15"), ("ContainerPosition", "Low"),
+                                     ("CustomName", "Hearth"), ("Facing", facing), ("GroupName", "Dairy"),
+                                     ("IsMoveAble", ""), ("IsoType", "IsoFireplace"), ("PickUpWeight", "100"),
+                                     ("container", "woodstove"), ("solidtrans", "")]
 
 
 # --- Drawing ----------------------------------------------------------------------------------------------------
@@ -200,9 +225,11 @@ def paint_surface(layer, base, z, r, colour, rng, specks=None):
 
 
 def paint_shadow(layer, radius):
-    """The soft shadow a pot casts on the floor (or the hearth) it stands on."""
-    draw = ImageDraw.Draw(layer)
-    draw.ellipse(box(FOOT_X + 1.5, FOOT_Y + 1, radius + 4, (radius + 4) * SQUASH), fill=SHADOW)
+    """The soft shadow a pot casts on the floor (or the hearth) it stands on. Blurred to nothing at its edge: vanilla
+    thins the grass round a player standing on the tile, and a hard-edged ellipse showed there as a ring."""
+    shadow = Image.new("RGBA", layer.size, (0, 0, 0, 0))
+    ImageDraw.Draw(shadow).ellipse(box(FOOT_X + 1.5, FOOT_Y + 1, radius + 2, (radius + 2) * SQUASH), fill=SHADOW)
+    layer.alpha_composite(shadow.filter(ImageFilter.GaussianBlur(SHADOW_BLUR)))
 
 
 def finish(layer, seed, depth):
@@ -380,6 +407,57 @@ def crock_overlay(stage, face):
     return finish(layer, 50 + face, OVERLAY_WEATHER)
 
 
+# --- The hearth ------------------------------------------------------------------------------------------------
+
+def tile_px(x, y, z=0):
+    sx, sy = pzart.project(x, y, z)
+    return (sx * SS, sy * SS)
+
+
+def paint_oven(draw, facing):
+    h, half = OVEN_H, OVEN_HALF
+    draw.polygon([tile_px(-half, half), tile_px(half, half), tile_px(half, half, h), tile_px(-half, half, h)],
+                 fill=shade(STONE, 0.95))
+    draw.polygon([tile_px(half, -half), tile_px(half, half), tile_px(half, half, h), tile_px(half, -half, h)],
+                 fill=shade(STONE, 0.7))
+    draw.polygon([tile_px(-half, -half, h), tile_px(half, -half, h), tile_px(half, half, h), tile_px(-half, half, h)],
+                 fill=shade(STONE, 1.15))
+    # The firebox mouth: front left facing S, front right facing E.
+    if facing == "S":
+        mouth = [tile_px(-0.2, half, 2), tile_px(0.2, half, 2), tile_px(0.2, half, 16), tile_px(-0.2, half, 16)]
+    else:
+        mouth = [tile_px(half, -0.2, 2), tile_px(half, 0.2, 2), tile_px(half, 0.2, 16), tile_px(half, -0.2, 16)]
+    draw.polygon(mouth, fill=FIREBOX)
+
+
+def paint_copper(draw, look):
+    bx, by = pzart.project(0, 0, OVEN_H)
+    rx, ry = COPPER_R, COPPER_R * SQUASH
+    draw.ellipse(box(bx, by, rx, ry), fill=shade(COPPER, 0.6))
+    draw.rectangle([(bx - rx) * SS, (by - COPPER_UP) * SS, (bx + rx) * SS, by * SS], fill=shade(COPPER, 0.85))
+    draw.rectangle([(bx - rx) * SS, (by - COPPER_UP) * SS, (bx - rx / 3) * SS, by * SS], fill=shade(COPPER, 1.05))
+    cx, cy = pzart.project(0, 0, OVEN_H + COPPER_UP)
+    draw.ellipse(box(cx, cy, rx, ry), fill=shade(COPPER, 1.2))
+    draw.ellipse(box(cx, cy, rx - 2, ry - 1), fill=FIREBOX)
+    if look == "Empty":
+        return
+    draw.ellipse(box(cx, cy + 1.5, rx - 3, ry - 2), fill=MILK + (255,))
+    if look == "Hot":
+        for dx, height in ((-8, 22), (2, 30), (10, 18)):
+            for i in range(10):
+                t = i / 9
+                x = cx + dx + 3 * ((i % 4) - 1.5) * t
+                draw.ellipse(box(x, cy - 2 - height * t, 2.5 + 2 * t, 2 + 1.5 * t), fill=STEAM + (int(110 * (1 - t)),))
+
+
+def paint_hearth(look, face):
+    layer = new_layer()
+    draw = ImageDraw.Draw(layer)
+    paint_oven(draw, FACES[face])
+    paint_copper(draw, look)
+    return finish(layer, 60 + face, WEATHER)
+
+
 # --- Item icons -------------------------------------------------------------------------------------------------
 
 def outlined(art):
@@ -553,6 +631,9 @@ def lua_tiles():
         "STATIONS": [prefix + str(base + offset) for base in (INCUBATOR, CROCK) for offset in range(len(FACES))],
         "INCUBATOR": INCUBATOR,
         "CROCK": CROCK,
+        "HEARTH": HEARTH,
+        "HEARTH_LOOKS": HEARTH_LOOKS,
+        "HEARTHS": [prefix + str(base + offset) for base in HEARTH_LOOKS.values() for offset in range(len(FACES))],
         "OVERLAYS": OVERLAYS,
     }
 
@@ -560,13 +641,15 @@ def lua_tiles():
 def contact_sheet(tiles, path):
     """Every stage over its station, for checking the art by eye; kept out of the mod."""
     rows = [(INCUBATOR, OVERLAYS["incubator"]), (CROCK, OVERLAYS["crock"])]
-    sheet = Image.new("RGBA", (TILE_W * 6, TILE_H * 2), (96, 110, 88, 255))
+    sheet = Image.new("RGBA", (TILE_W * 6, TILE_H * 3), (96, 110, 88, 255))
     for y, (base, stages) in enumerate(rows):
         for x, index in enumerate([None] + list(stages.values())):
             cell = tiles[base].copy()
             if index is not None:
                 cell.alpha_composite(tiles[index])
             sheet.alpha_composite(cell, (x * TILE_W, y * TILE_H))
+    for x, index in enumerate(index + face for index in HEARTH_LOOKS.values() for face in range(len(FACES))):
+        sheet.alpha_composite(tiles[index], (x * TILE_W, 2 * TILE_H))
     sheet.save(path)
 
 
@@ -584,6 +667,8 @@ def main():
             tiles[index + face] = incubator_overlay(stage, face)
         for stage, index in OVERLAYS["crock"].items():
             tiles[index + face] = crock_overlay(stage, face)
+        for look, index in HEARTH_LOOKS.items():
+            tiles[index + face] = paint_hearth(look, face)
     pzart.write_pack(media / "texturepacks" / f"{NAME}.pack", tiles, NAME, TILESET, PAGE_SIZE)
     pzart.write_tiles(media / f"{NAME}.tiles", [(TILESET, COLUMNS, ROWS)], TILE_PROPS)
     write_geometry(media.parent.parent / "common" / "media" / "tileGeometry.txt")
@@ -591,6 +676,7 @@ def main():
     empty.alpha_composite(tiles[OVERLAYS["incubator"]["Empty"]])
     pzart.write_build_icon(empty, media / "textures" / "Item_YoghurtIncubator.png")
     pzart.write_build_icon(tiles[CROCK], media / "textures" / "Item_StarterCultureCrock.png")
+    pzart.write_build_icon(tiles[HEARTH], media / "textures" / "Item_DairyHearth.png")
     # The mod list shows the pot wrapped in its cloth, the incubator's most telling stage.
     wrapped = tiles[INCUBATOR].copy()
     wrapped.alpha_composite(tiles[OVERLAYS["incubator"]["Incubating"]])

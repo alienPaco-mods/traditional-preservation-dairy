@@ -1,7 +1,8 @@
--- Traditional Preservation (Dairy) B42: keeps track of every Yoghurt Incubator and Starter Culture Crock, records
--- the weather and its hourly history, brings each pot's milk and each crock's culture up to the hour and layers the
--- sprite for its stage. A station's state sits in movableData, so it goes with it when it is picked up full and
--- carried to the fire.
+-- Traditional Preservation (Dairy) B42: keeps track of every Yoghurt Incubator, Starter Culture Crock and Hearth,
+-- records the weather and its hourly history, brings each pot's milk and each crock's culture up to the hour and
+-- layers the sprite for its stage. A station's state sits in movableData, so it goes with it when it is picked up
+-- full and carried to the fire. The Hearth is a vanilla fireplace: its copper heats while vanilla's fire burns, and
+-- its look is its own sprite swapped among the hearth tiles (vanilla's flames are attached sprites: never clear them).
 if isClient() then return end
 
 TraditionalPreservationDairyWorld = TraditionalPreservationDairyWorld or {}
@@ -27,14 +28,16 @@ function World.incubatorState(station)
     return M.stateOf(Station.movableData(station), M.INCUBATOR_KEY)
 end
 
--- Brings the pot up to now. The time since the last look counts at the place it was seen in then: a fire
--- is taken to burn on while the area is away. A pot that has been moved counts its time where it stands now.
+-- Brings the pot up to now. The time since the last look counts at the place it was seen in then: by a fire,
+-- while the fuel it had then lasts. A pot that has been moved counts its time where it stands now.
 function World.updateIncubator(station, now)
     local state = World.incubatorState(station)
-    local place, here = M.placeOf(station), squareKey(station)
+    local place, fire = M.placeOf(station)
+    local here = squareKey(station)
     local before = M.stage(state)
     M.catchUp(state, now, state.at == here and state.place or place, M.getHistory(), M.getLedger())
     state.place, state.at = place, here
+    M.noteFire(state, station, fire, now)
     local after = M.stage(state)
     if after ~= before then
         print(string.format("[TPD] incubator %s -> %s: %.1f L at %.1f C, %s", before, after, (state.ml or 0) / 1000, state.tempC or 0, place))
@@ -49,23 +52,61 @@ end
 -- Brings the crock up to now on the ledger, at the place it was seen in last, as for the pot.
 function World.updateCrock(station)
     local state = World.crockState(station)
-    local place, here = M.placeOf(station), squareKey(station)
+    local place, fire = M.placeOf(station)
+    local here = squareKey(station)
     local before = M.crockStage(state)
     M.updateCrock(state, M.getLedger(), state.at == here and state.place or place)
     state.place, state.at = place, here
+    M.noteFire(state, station, fire, getGameTime():getWorldAgeHours())
     local after = M.crockStage(state)
     if after ~= before then print(string.format("[TPD] crock %s -> %s, %s", before, after, place)) end
     return state
 end
 
+-- The copper's state, in the fireplace's own modData: a hearth can't be picked up while it holds anything.
+function World.hearthState(fire)
+    return M.stateOf(fire:getModData(), M.HEARTH_KEY)
+end
+
+-- Brings the copper up to now: heated while the fire burnt (as far as its fuel went), cooled to the room since.
+-- Then notes how long the fire will burn on, and shows the copper empty, full or steaming.
+function World.updateHearth(fire, now)
+    local copper = World.hearthState(fire)
+    local before = M.copperLook(copper)
+    M.advanceCopper(copper, now, M.placeTemperature(M.getLedger(), Weather.placeOf(fire)))
+    copper.fireUntil = fire:isLit() and now + fire:getFuelAmount() / 60 or nil
+    local look = M.copperLook(copper)
+    local face = M.hearthFace(fire:getSprite():getName())
+    local name = face and M.hearthSprite(look, face)
+    if name and fire:getSprite():getName() ~= name then fire:setSprite(getSprite(name)) end
+    if look ~= before then
+        print(string.format("[TPD] hearth copper %s -> %s: %.1f L %s at %.1f C", before, look, (copper.ml or 0) / 1000,
+            tostring(copper.fluid), copper.tempC or 0))
+    end
+    return copper
+end
+
+-- A built station is a thumpable that blocks its whole square, whatever its tile says. The pot and the crock are
+-- small enough to walk past (user, 2026-11-09), so that is switched off on each one the World looks at.
+local function walkThrough(station)
+    if instanceof(station, "IsoThumpable") and (station:isBlockAllTheSquare() or not station:isCanPassThrough()) then
+        station:setBlockAllTheSquare(false)
+        station:setCanPassThrough(true)
+    end
+end
+
 local function refresh(station, entry)
     local overlay
-    if entry.crock then
+    if entry.hearth then
+        World.updateHearth(station, getGameTime():getWorldAgeHours())
+        return
+    elseif entry.crock then
         overlay = M.CROCK_OVERLAYS[CROCK_SPRITES[M.crockStage(World.updateCrock(station))]]
     else
         local state = World.updateIncubator(station, getGameTime():getWorldAgeHours())
         overlay = M.INCUBATOR_OVERLAYS[STAGE_SPRITES[M.stage(state)]]
     end
+    walkThrough(station)
     local names = {}
     if overlay then table.insert(names, M.spriteName(overlay + entry.faceIndex)) end
     Station.showSprites(station, entry, tostring(overlay), names)
@@ -73,13 +114,17 @@ end
 
 -- Only this mod's stations: which kind, and which way it faces.
 local function newEntry(station)
+    if M.isHearth(station) then return { hearth = true } end
     local crock = M.isCrock(station)
     if not crock and not M.isIncubator(station) then return nil end
     local index = M.spriteIndex(station:getSprite():getName())
     return { faceIndex = index % M.FACE_COUNT, crock = crock }
 end
 
-local tracker = Station.tracker({ sprites = Tiles.STATIONS, entry = newEntry, refresh = refresh })
+local sprites = {}
+for _, name in ipairs(Tiles.STATIONS) do table.insert(sprites, name) end
+for _, name in ipairs(M.HEARTH_SPRITES) do table.insert(sprites, name) end
+local tracker = Station.tracker({ sprites = sprites, entry = newEntry, refresh = refresh })
 
 World.track = tracker.track
 
@@ -89,16 +134,18 @@ function World.refresh(station)
     if entry then refresh(station, entry) end
 end
 
--- Every tracked station of the kind (an incubator, or a crock if crock is true) that is loaded, for the dev console.
+-- Every tracked station of the kind that is loaded, for the dev console: incubators, crocks if crock is true,
+-- hearths if it is "hearth".
 function World.stations(crock)
     local list = {}
     for object, entry in pairs(tracker.tracked) do
-        if Station.isLoaded(object) and (entry.crock == true) == (crock == true) then table.insert(list, object) end
+        local kind = entry.hearth and "hearth" or entry.crock == true
+        if Station.isLoaded(object) and kind == (crock or false) then table.insert(list, object) end
     end
     return list
 end
 
--- A pot just built or put down isn't known to the map loader, and its bare base must never show: the squares
+-- A pot or hearth just built or put down isn't known to the map loader, and its bare base must never show: the squares
 -- round each player are looked over twice a second, so a new station gets its stage sprite at once.
 local NEAR = 3
 local SCAN_TICKS = 30
@@ -122,7 +169,9 @@ local function scanNear(player)
             local objects = square and square:getObjects()
             for i = 0, objects and objects:size() - 1 or -1 do
                 local object = objects:get(i)
-                if not tracker.entry(object) and (M.isIncubator(object) or M.isCrock(object)) then World.refresh(object) end
+                if not tracker.entry(object) and (M.isIncubator(object) or M.isCrock(object) or M.isHearth(object)) then
+                    World.refresh(object)
+                end
             end
         end
     end

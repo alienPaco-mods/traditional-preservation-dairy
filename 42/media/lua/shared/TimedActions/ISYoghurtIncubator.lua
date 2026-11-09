@@ -1,5 +1,5 @@
--- Traditional Preservation (Dairy): the hand jobs at a Yoghurt Incubator. "milk" pours hot milk in from a pot,
--- "starter" stirs in a yoghurt or an Active Yoghurt Starter, "pourOut" takes the milk back out into an empty
+-- Traditional Preservation (Dairy): the hand jobs at a Yoghurt Incubator. "hearth" pours milk steaming from a
+-- Hearth's copper (within 2 tiles) in, "starter" stirs in a yoghurt or an Active Yoghurt Starter, "pourOut" takes the milk back out into an empty
 -- container to reheat it, and "collect" fills an empty Clay Jar with a litre of set yoghurt.
 require "TimedActions/ISBaseTimedAction"
 require "TraditionalPreservationDairy"
@@ -21,10 +21,16 @@ local function state(self)
     return M.stateOf(self.station:getModData().movableData or {}, M.INCUBATOR_KEY)
 end
 
+local function copperOf(hearth)
+    local World = TraditionalPreservationDairyWorld
+    if World then return World.updateHearth(hearth, getGameTime():getWorldAgeHours()) end
+    return M.stateOf(hearth:getModData(), M.HEARTH_KEY)
+end
+
 local function canDo(self)
     local batch = M.stateOf(self.station:getModData().movableData or {}, M.INCUBATOR_KEY)
-    if self.mode == "milk" then
-        return M.milkIn(self.item:getFluidContainer()) ~= nil and M.itemScalded(self.item) and M.milkRoom(batch, 1) > 0
+    if self.mode == "hearth" then
+        return M.copperHot(M.stateOf(self.hearth:getModData(), M.HEARTH_KEY)) and M.milkRoom(batch, 1) > 0
     elseif self.mode == "starter" then
         return M.STARTERS[self.item:getFullType()] ~= nil and not self.item:isRotten() and M.canAddStarter(batch)
     elseif self.mode == "pourOut" then
@@ -34,7 +40,12 @@ local function canDo(self)
 end
 
 function ISYoghurtIncubator:isValid()
-    if not self.station:getSquare() or not self.character:getInventory():containsRecursive(self.item) then return false end
+    if not self.station:getSquare() then return false end
+    if self.mode == "hearth" then
+        if not self.hearth:getSquare() then return false end
+    elseif not self.character:getInventory():containsRecursive(self.item) then
+        return false
+    end
     return canDo(self)
 end
 
@@ -63,15 +74,10 @@ end
 function ISYoghurtIncubator:complete()
     local batch = state(self)
     local now = getGameTime():getWorldAgeHours()
-    local container = self.item:getFluidContainer()
-    if self.mode == "milk" then
-        local fluid = M.milkIn(container)
-        local ml = math.floor(container:getAmount() * 1000 + 0.5)
-        local taken = M.addMilk(batch, ml, M.itemMilkC(self.item, now), now)
-        if taken > 0 then
-            container:removeFluid(taken / 1000)
-            batch.fluid = batch.fluid or fluid
-        end
+    local container = self.item and self.item:getFluidContainer()
+    if self.mode == "hearth" then
+        M.copperToPot(copperOf(self.hearth), batch, now)
+        if TraditionalPreservationDairyWorld then TraditionalPreservationDairyWorld.refresh(self.hearth) end
     elseif self.mode == "starter" then
         local fullType = self.item:getFullType()
         if M.addStarter(batch, M.STARTERS[fullType]) then
@@ -83,7 +89,7 @@ function ISYoghurtIncubator:complete()
         local ml, tempC = M.pourOut(batch, math.floor(container:getCapacity() * 1000))
         if ml > 0 then
             container:addFluid(fluid, ml / 1000)
-            M.setMilkC(self.item, tempC, now, true)
+            self.item:setItemHeat(M.itemHeat(tempC))
         end
     else
         -- Nothing is taken from the pot unless the jar can be made.
@@ -113,17 +119,23 @@ function ISYoghurtIncubator:perform()
 end
 
 function ISYoghurtIncubator:getDuration()
-    local container = self.item:getFluidContainer()
+    local container = self.item and self.item:getFluidContainer()
     local litres = 0
-    if self.mode == "milk" and container then litres = container:getAmount() end
+    if self.mode == "hearth" then
+        local copper = M.stateOf(self.hearth:getModData(), M.HEARTH_KEY)
+        local batch = M.stateOf(self.station:getModData().movableData or {}, M.INCUBATOR_KEY)
+        litres = math.min(copper.ml or 0, M.milkRoom(batch, copper.ml or 0)) / 1000
+    end
     if self.mode == "pourOut" and container then litres = container:getCapacity() end
     if self.mode == "collect" then litres = M.JAR_ML / 1000 end
     return BASE_DURATION + math.floor(math.min(litres, 5) * DURATION_PER_LITRE)
 end
 
-function ISYoghurtIncubator:new(character, station, item, mode)
+-- item is nil for "hearth", which takes the hearth instead.
+function ISYoghurtIncubator:new(character, station, item, mode, hearth)
     local o = ISBaseTimedAction.new(self, character)
     o.station = station
+    o.hearth = hearth
     o.item = item
     o.mode = mode
     o.maxTime = o:getDuration()

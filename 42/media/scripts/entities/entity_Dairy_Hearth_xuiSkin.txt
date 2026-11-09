@@ -1,0 +1,12 @@
+module Base
+{
+    xuiSkin default
+    {
+        entity ES_DairyHearth
+        {
+            LuaWindowClass = ISEntityWindow,
+            DisplayName = DairyHearth,
+            Icon = Item_DairyHearth,
+        }
+    }
+}

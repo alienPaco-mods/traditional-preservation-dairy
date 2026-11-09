@@ -53,4 +53,23 @@
   with the last cup.
 - Guide: the scald note (Troubleshooting, "Mind the pot").
 - Internal: 65 tests.
-- Not done yet: Starter Culture Crock window, guide, README, Workshop text.
+- The Hearth: a low stone oven with a 10 L copper set into its top, built from a trowel, 12 Clay Bricks, 4 Clay and a
+  Copper Sheet (Pottery 2, placeholder). It is a vanilla fireplace: fuel, lighting, the firebox, room heat and a
+  glow at night. The copper holds one fluid at a time (cow's and sheep's milk don't mix), heats towards 95 C while
+  the fire burns and cools when it's out. Its menu sits inside vanilla's Hearth menu: Pour into the Copper, Fill
+  from the Copper and Hearth Info (fire, fuel, copper, heat, when the milk will steam). Clicking it opens the
+  loot pane and Hearth Info. It can't be picked up while lit or while the copper holds anything.
+- Scalding is gone. The incubator takes milk only with "Pour from the Hearth", from a copper at 85 C or more, and
+  the milk goes in at the copper's heat. The crock loads warm milk (35 C or more) from the copper.
+- A lit Hearth counts as "By a fire" only while its fuel lasts, also for incubators and crocks caught up after
+  being away.
+- The Yoghurt Incubator and the Starter Culture Crock must be built, or put down, within 2 tiles of a Hearth.
+- The incubator and the crock no longer block their tile: walk past or through them, and click them from any side.
+  Their floor shadow is soft-edged.
+- "Pot Info" is now "Incubator Info", and the menus and notes say "incubator" for the station.
+- Art: placeholder Hearth tiles (empty, full, steaming; facing S and E) and build icon.
+- Guide: the scald note is replaced by a "Pour from the Hearth is greyed out" row.
+- Internal: debug `TPD.hearth()`, `TPD.copper(l, c, fluid)`, `TPD.fuel(min)`, `TPD.hot()`, `TPD.tiles()`;
+  `TPD.milk(l, c)` with c optional; the crock kit is wheat only. 78 checks.
+- Not done yet: Starter Culture Crock window, final Hearth art (with a glow in the oven mouth), guide, README,
+  Workshop text.

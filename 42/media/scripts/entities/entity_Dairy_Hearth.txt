@@ -1,0 +1,50 @@
+module TraditionalPreservationDairy
+{
+    entity Dairy_Hearth
+    {
+        /* A low stone oven with a copper set into its top. OnCreate swaps the built tile for a vanilla fireplace
+           (fuel, lighting, the firebox to cook in); the copper's fluid lives in the fireplace's modData. */
+        component UiConfig
+        {
+            xuiSkin = default,
+            entityStyle = ES_DairyHearth,
+            uiEnabled = false,
+        }
+        component SpriteConfig
+        {
+            isThumpable = false,
+            OnCreate = TraditionalPreservationDairy.OnCreateHearth,
+            face S
+            {
+                layer
+                {
+                    row = traditionalpreservationdairy_01_20,
+                }
+            }
+            face E
+            {
+                layer
+                {
+                    row = traditionalpreservationdairy_01_21,
+                }
+            }
+        }
+        /* Fired bricks laid in clay, and a copper sheet beaten into the vessel. */
+        component CraftRecipe
+        {
+            timedAction = Make_With_Brick_Low,
+            time = 200,
+            SkillRequired = Pottery:2,
+            xpAward = Pottery:10,
+            category = Pottery,
+            Tooltip = Tooltip_craft_DairyHearthDesc,
+            inputs
+            {
+                item 1 tags[base:masonstrowel] mode:keep flags[Prop1;MayDegradeLight],
+                item 12 [Base.ClayBrick],
+                item 4 [Base.Clay] flags[DontRecordInput],
+                item 1 [Base.CopperSheet],
+            }
+        }
+    }
+}

@@ -1,5 +1,4 @@
 {
-  "ContextMenu_TraditionalPreservationDairy_PourMilk": "Pour Scalded Milk",
   "ContextMenu_TraditionalPreservationDairy_MilkItem": "%1 (%2 L, %3 C)",
   "ContextMenu_TraditionalPreservationDairy_AddStarter": "Add Starter",
   "ContextMenu_TraditionalPreservationDairy_PourOut": "Pour Out Milk",
@@ -10,7 +9,13 @@
   "ContextMenu_TraditionalPreservationDairy_LoadCrock": "Load Wheat and Warm Milk",
   "ContextMenu_TraditionalPreservationDairy_FeedCrock": "Feed Fresh Milk",
   "ContextMenu_TraditionalPreservationDairy_CollectStarters": "Collect %1 Starters",
-  "ContextMenu_TraditionalPreservationDairy_PotInfo": "Pot Info",
+  "ContextMenu_TraditionalPreservationDairy_PotInfo": "Incubator Info",
   "ContextMenu_TraditionalPreservationDairy_FillCup": "Fill a Yoghurt Cup",
-  "ContextMenu_TraditionalPreservationDairy_FillAllCups": "Fill All Cups (%1)"
+  "ContextMenu_TraditionalPreservationDairy_FillAllCups": "Fill All Cups (%1)",
+  "ContextMenu_TraditionalPreservationDairy_PourFromHearth": "Pour from the Hearth",
+  "ContextMenu_TraditionalPreservationDairy_LoadFromHearth": "Load Wheat and Milk from the Hearth",
+  "ContextMenu_TraditionalPreservationDairy_HearthInfo": "Hearth Info",
+  "ContextMenu_TraditionalPreservationDairy_PourIntoCopper": "Pour into the Copper",
+  "ContextMenu_TraditionalPreservationDairy_FillFromCopper": "Fill from the Copper",
+  "ContextMenu_TraditionalPreservationDairy_FluidItem": "%1 (%2 L)"
 }

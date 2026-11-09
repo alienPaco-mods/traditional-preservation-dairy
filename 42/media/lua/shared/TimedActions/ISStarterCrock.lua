@@ -1,5 +1,5 @@
 -- Traditional Preservation (Dairy): the hand jobs at a Starter Culture Crock. "load" puts in wheat and half a litre
--- of warm milk, "feed" adds half a litre of fresh milk once the grain has cultivated, and "collect" takes out the
+-- of warm milk from a Hearth's copper (within 2 tiles), "feed" adds half a litre of fresh milk once the grain has cultivated, and "collect" takes out the
 -- Active Yoghurt Starters.
 require "TimedActions/ISBaseTimedAction"
 require "TraditionalPreservationDairy"
@@ -19,10 +19,21 @@ local function state(self)
     return M.stateOf(self.station:getModData().movableData or {}, M.CROCK_KEY)
 end
 
-local function hasMilk(item, ml, warm)
+local function hasMilk(item, ml)
     local container = item and item:getFluidContainer()
-    if not M.milkIn(container) or container:getAmount() * 1000 < ml - 0.5 then return false end
-    return not warm or M.isWarm(M.itemMilkC(item, getGameTime():getWorldAgeHours()))
+    return M.milkIn(container) ~= nil and container:getAmount() * 1000 >= ml - 0.5
+end
+
+-- Half a litre of milk at 35 C or more in the copper.
+local function copperReady(copper)
+    return M.copperWarm(copper) and copper.ml >= M.CROCK_LOAD_ML - 0.5
+end
+ISStarterCrock.copperReady = copperReady
+
+local function copperOf(hearth)
+    local World = TraditionalPreservationDairyWorld
+    if World then return World.updateHearth(hearth, getGameTime():getWorldAgeHours()) end
+    return M.stateOf(hearth:getModData(), M.HEARTH_KEY)
 end
 
 local function inInventory(self, item)
@@ -36,9 +47,10 @@ function ISStarterCrock:isValid()
         for _, seed in ipairs(self.wheat) do
             if not inInventory(self, seed) then return false end
         end
-        return stage == "Empty" and inInventory(self, self.item) and hasMilk(self.item, M.CROCK_LOAD_ML, true)
+        return stage == "Empty" and self.hearth:getSquare() ~= nil
+            and copperReady(M.stateOf(self.hearth:getModData(), M.HEARTH_KEY))
     elseif self.mode == "feed" then
-        return stage == "Waiting" and inInventory(self, self.item) and hasMilk(self.item, M.CROCK_FEED_ML, false)
+        return stage == "Waiting" and inInventory(self, self.item) and hasMilk(self.item, M.CROCK_FEED_ML)
     end
     return stage == "Ready"
 end
@@ -56,12 +68,14 @@ function ISStarterCrock:complete()
     local crock = state(self)
     local ledger = M.getLedger()
     if self.mode == "load" then
-        if M.loadCrock(crock, ledger) then
+        local copper = copperOf(self.hearth)
+        if copperReady(copper) and M.loadCrock(crock, ledger) then
             for _, seed in ipairs(self.wheat) do
                 local container = seed:getContainer()
                 if container then container:DoRemoveItem(seed) end
             end
-            self.item:getFluidContainer():removeFluid(M.CROCK_LOAD_ML / 1000)
+            M.takeFromCopper(copper, M.CROCK_LOAD_ML)
+            if TraditionalPreservationDairyWorld then TraditionalPreservationDairyWorld.refresh(self.hearth) end
         end
     elseif self.mode == "feed" then
         if M.feedCrock(crock, ledger) then self.item:getFluidContainer():removeFluid(M.CROCK_FEED_ML / 1000) end
@@ -83,10 +97,11 @@ function ISStarterCrock:getDuration()
     return DURATIONS[self.mode]
 end
 
--- item is the milk's container (nil to collect); wheat is the list of seeds for "load".
-function ISStarterCrock:new(character, station, mode, item, wheat)
+-- item is the milk's container for "feed"; wheat is the list of seeds and hearth the copper's for "load".
+function ISStarterCrock:new(character, station, mode, item, wheat, hearth)
     local o = ISBaseTimedAction.new(self, character)
     o.station = station
+    o.hearth = hearth
     o.mode = mode
     o.item = item
     o.wheat = wheat or {}

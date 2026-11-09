@@ -10,25 +10,8 @@ local M = TraditionalPreservationDairy
 
 -- Heat
 check("room heat is room temperature", M.heatCelsius(1.0) == M.ROOM_C)
-check("milk never goes past scalding", M.heatCelsius(3.0) == M.MILK_MAX_C)
+check("an item never reads hotter than the copper gets", M.heatCelsius(3.0) == M.MILK_MAX_C)
 check("heat goes back to the item it came from", near(M.heatCelsius(M.itemHeat(60)), 60))
-check("no stamp: what vanilla shows", M.milkC(30, nil, 5000, 10) == 30)
-local stamp = M.restamp(95, nil, 5000, 10)
-check("hot milk gets a stamp", stamp ~= nil and stamp.c == 95)
-check("a stamp holds the heat vanilla drops at once", M.milkC(20, stamp, 5000, 10 + 1 / 60) > 90)
-check("off the stove it cools, a few degrees in minutes", M.milkC(20, stamp, 5000, 10 + 0.1) < 93)
-check("and to lukewarm within a few hours", M.milkC(20, stamp, 5000, 13) < 40)
-check("milk seen at 85 C is scalded", M.isScalded(stamp, 5000) and M.isScalded(M.restamp(85, nil, 5000, 10), 5000))
-check("warm milk never scalded is not", not M.isScalded(M.restamp(70, nil, 5000, 10), 5000) and not M.isScalded(nil, 5000))
-check("scalded stays scalded however cold", M.isScalded(stamp, 5000))
-check("and through a lukewarm reheat", M.isScalded(M.restamp(60, stamp, 5000, 15), 5000))
-check("fresh milk added unscalds it", not M.isScalded(stamp, 5500) and not M.isScalded(M.restamp(60, stamp, 5500, 10), 5500))
-check("until the whole lot is scalded again", M.isScalded(M.restamp(90, stamp, 5500, 10), 5500))
-check("pouring some out keeps the stamp", M.milkC(20, stamp, 2000, 10) == 95)
-check("fresh milk added voids it", M.milkC(20, stamp, 5500, 10) == 20)
-check("seen no hotter than the stamp: no new stamp", M.restamp(60, stamp, 5000, 10.1) == nil)
-check("seen hotter: restamped", M.restamp(95, stamp, 5000, 10.5) ~= nil)
-check("cold milk gets no stamp", M.restamp(20, nil, 5000, 10) == nil)
 check("a wrapped pot holds heat far longer", M.tau(5000, true) > 4 * M.tau(5000, false))
 check("less milk cools faster", M.tau(3000, false) < M.tau(5000, false))
 check("down to a floor, for balance", M.tau(500, false) == M.tau(M.TAU_FLOOR_ML, false))
@@ -128,11 +111,87 @@ local winter = { ml = 5000, tempC = 85, starter = "Yoghurt" }
 M.advanceBatch(winter, 14, M.HEARTH_C, 0)
 check("by the fire it sets even in winter", M.stage(winter) == "Ready")
 
+-- The fire burns out while the pot is away
+local burnt = { ml = 5000, tempC = 85, last = 11, fireUntil = 15, under = "Open" }
+M.catchUp(burnt, 30, "Hearth", history, ledger)
+local byHand = { ml = 5000, tempC = 85 }
+M.advanceBatch(byHand, 4, M.HEARTH_C, 11)
+M.advanceBatch(byHand, 5, 30, 15)
+M.advanceBatch(byHand, 10, 0, 20)
+check("by the fire only while the fuel lasts, then the place under it", near(burnt.tempC, byHand.tempC, 1e-6))
+local onAndOn = { ml = 5000, tempC = 85, last = 11 }
+M.catchUp(onAndOn, 30, "Hearth", history, ledger)
+check("a fire with no burn-out noted burns on", onAndOn.tempC > M.HEARTH_C - 0.5)
+
+-- Hearth copper
+local copper = {}
+check("an empty copper takes any fluid", M.pourIntoCopper(copper, "Water", 4000, 20, 0) == 4000 and copper.fluid == "Water")
+check("but not a second one", select(2, M.pourIntoCopper(copper, "CowMilk", 1000, 20, 0)) == "Mixed")
+check("water is never poured into a pot", M.copperToPot(copper, {}, 0) == 0 and select(2, M.copperToPot(copper, {}, 0)) == "NoMilk")
+check("emptied, it forgets the fluid", M.takeFromCopper(copper) == 4000 and copper.fluid == nil and copper.tempC == nil)
+check("cow's and sheep's milk don't mix", M.pourIntoCopper(copper, "CowMilk", 10000, 20, 0) == 10000
+    and select(2, M.pourIntoCopper(copper, "SheepMilk", 100, 20, 0)) == "Mixed")
+check("10 L fills it", select(2, M.pourIntoCopper(copper, "CowMilk", 100, 20, 0)) == "Full")
+copper.fireUntil = 100
+local hot
+for minute = 6, 240, 6 do
+    M.advanceCopper(copper, minute / 60, 20)
+    if not hot and M.copperHot(copper) then hot = minute / 60 end
+end
+check("10 L over the fire is hot in about an hour and a half", hot and hot > 1.3 and hot < 1.7)
+check("and never boils", copper.tempC <= M.MILK_MAX_C)
+local split = { ml = 10000, fluid = "CowMilk", tempC = 20, last = 0, fireUntil = 100 }
+M.advanceCopper(split, 1, 20)
+M.advanceCopper(split, 2, 20)
+local once = { ml = 10000, fluid = "CowMilk", tempC = 20, last = 0, fireUntil = 100 }
+M.advanceCopper(once, 2, 20)
+check("ticks or one catch-up give the same heat", near(split.tempC, once.tempC, 1e-6))
+local small = { ml = 1000, fluid = "CowMilk", tempC = 20, last = 0, fireUntil = 100 }
+M.advanceCopper(small, 1, 20)
+check("a litre heats faster", M.copperHot(small))
+check("cold milk poured in lowers the heat", M.takeFromCopper(copper, 5000) == 5000
+    and M.pourIntoCopper(copper, "CowMilk", 5000, 5, 4) == 5000 and copper.tempC < M.HOT_C and not M.copperHot(copper))
+local outFire = { ml = 10000, fluid = "CowMilk", tempC = 90, last = 0, fireUntil = 1 }
+M.advanceCopper(outFire, 3, 20)
+local byFireThenOut = M.cool(M.cool(90, M.MILK_MAX_C, 1, M.copperTau(10000, true)), 20, 2, M.copperTau(10000, false))
+check("out of fuel it cools to the room from then on", near(outFire.tempC, byFireThenOut, 1e-6))
+check("slower than it heated: the stone holds it", M.copperTau(10000, false) > 2 * M.copperTau(10000, true))
+local unlit = { ml = 10000, fluid = "CowMilk", tempC = 90, last = 0 }
+M.advanceCopper(unlit, 2, 20)
+check("a copper with no fire cools", unlit.tempC < 60 and unlit.tempC > 20)
+
+check("the copper shows empty, full or steaming", M.copperLook({}) == "Empty"
+    and M.copperLook({ ml = 100, tempC = 40 }) == "Full" and M.copperLook({ ml = 100, fluid = "Water", tempC = 90 }) == "Hot")
+local warming = { ml = 10000, fluid = "CowMilk", tempC = 20, last = 0, fireUntil = 100 }
+local eta = M.hoursToHot(warming)
+M.advanceCopper(warming, eta + 0.01, 20)
+check("the time to hot is right", eta > 1.3 and eta < 1.7 and M.copperHot(warming) and M.hoursToHot(warming) == 0)
+check("and means nothing for water", M.hoursToHot({ ml = 100, fluid = "Water", tempC = 20 }) == nil)
+
+-- Hearth tiles
+local hearthFaces = {}
+for _, name in ipairs(M.HEARTH_SPRITES) do hearthFaces[#hearthFaces + 1] = M.hearthFace(name) end
+check("every hearth tile is known with its facing", #M.HEARTH_SPRITES == 6 and M.hearthFace(M.hearthSprite("Hot", 1)) == 1
+    and M.hearthFace(M.hearthSprite("Empty", 0)) == 0 and M.hearthFace(M.spriteName(M.INCUBATOR_SPRITE)) == nil)
+
+-- From the copper into the pot
+local hotCopper = { ml = 10000, fluid = "SheepMilk", tempC = 90, last = 0 }
+local fromHearth = {}
+check("hot milk fills the pot up", M.copperToPot(hotCopper, fromHearth, 0) == 5000 and fromHearth.ml == 5000
+    and fromHearth.tempC == 90 and fromHearth.fluid == "SheepMilk" and hotCopper.ml == 5000)
+check("a full pot takes no more", select(2, M.copperToPot(hotCopper, fromHearth, 0)) == "Full")
+local topUp = { ml = 3000, tempC = 50, fluid = "CowMilk", last = 0 }
+check("it tops up a cooling pot, mixing the heat", M.copperToPot(hotCopper, topUp, 0) == 2000 and near(topUp.tempC, 66)
+    and topUp.fluid == "CowMilk")
+hotCopper.tempC = 80
+check("below 85 C it won't pour", select(2, M.copperToPot(hotCopper, {}, 0)) == "NotHot")
+check("but is warm enough for the crock", M.copperWarm(hotCopper) and not M.copperWarm({ fluid = "CowMilk", tempC = 30 }))
+
 -- Crock
 local crock = {}
 check("a new crock is empty", M.crockStage(crock) == "Empty" and M.collectStarters(crock) == 0)
 check("it loads once", M.loadCrock(crock, ledger) and crock.stage == "Cultivating" and not M.loadCrock(crock, ledger))
-check("loading milk must be warm, hot is fine", M.isWarm(40) and M.isWarm(M.SCALD_C) and not M.isWarm(M.ROOM_C))
+check("loading milk must be warm, hot is fine", M.isWarm(40) and M.isWarm(M.HOT_C) and not M.isWarm(M.ROOM_C))
 for hour = 31, 31 + 24 do
     H.setHours(hour)
     M.record(ledger, history, hour, 30)
@@ -160,6 +219,16 @@ end
 M.updateCrock(hearthCrock, ledger, "Hearth")
 check("by a fire the crock goes by the clock, not the frost", hearthCrock.stage == "Waiting"
     and M.crockStatus(hearthCrock, ledger, "Hearth").temperature == M.HEARTH_C)
+local outCrock = {}
+M.startCrock(outCrock, ledger)
+outCrock.fireUntil, outCrock.under = 74 + 24 + 12, "Open"
+for hour = 99, 99 + 24 do
+    H.setHours(hour)
+    M.record(ledger, history, hour, -10)
+end
+M.updateCrock(outCrock, ledger, "Hearth")
+check("by a fire that burns out, a crock counts only the fire's hours in a frost",
+    near(outCrock.done, 12 * M.cultureRate(M.HEARTH_C) + 13 * M.cultureRate(-10), 0.2))
 check("grain cultures like warm, not hot", M.cultureRate(30) == 1 and M.cultureRate(5) < 0.1)
 
 -- Save keys

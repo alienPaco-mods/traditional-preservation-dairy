@@ -13,10 +13,15 @@ function TPD.help()
     say("TPD.pots()           every loaded incubator: stage, litres, milk temperature, what's next")
     say("TPD.skip(hours)      move every loaded incubator on by this many hours")
     say("TPD.fast(hours)      setting takes this many hours at the best temperature. TPD.fast() goes back to the sandbox")
-    say("TPD.milk(litres, c)  a cooking pot of cow's milk at c degrees (default 5 L at 95 C)")
+    say("TPD.milk(litres, c)  a cooking pot of cow's milk (default 5 L), at c degrees if given")
     say("TPD.kit(kind)        the things a test of kind needs; TPD.kit() for yoghurt, TPD.kit(\"?\") lists the kinds")
     say("TPD.crocks()         every loaded crock: stage, progress, place")
     say("TPD.culture(hours)   move every loaded crock's current stage on by this many hours at the best temperature")
+    say("TPD.hearth()         the nearest Hearth within 2 tiles: fire, fuel, copper, when the milk steams")
+    say("TPD.copper(l, c, f)  fill its copper: l litres (0 empties it) of fluid f at c degrees (default 10 L CowMilk at 20 C)")
+    say("TPD.fuel(minutes)    set its fuel (default 600, ten hours); vanilla's menu still lights it")
+    say("TPD.hot()            bring its copper to the steam (90 C) now")
+    say("TPD.tiles()          every station within 3 tiles: object class, sprite and square solid flags")
 end
 
 function TPD.weather()
@@ -81,8 +86,8 @@ function TPD.milk(litres, celsius)
     local container = pot:getFluidContainer()
     container:Empty()
     container:addFluid("CowMilk", math.min(litres or 5, container:getCapacity()))
-    M.setMilkC(pot, celsius or 95, getGameTime():getWorldAgeHours())
-    say(string.format("Gave a pot of %.1f L of milk at %.0f C. Off the fire it cools like real milk.", container:getAmount(), celsius or 95))
+    if celsius then pot:setItemHeat(M.itemHeat(celsius)) end
+    say(string.format("Gave a pot of %.1f L of milk%s.", container:getAmount(), celsius and string.format(" at %.0f C", celsius) or ""))
 end
 
 -- One kit per kind of test, so each new dairy (kefir, emmental-style, brined cheese) adds an entry here.
@@ -97,10 +102,9 @@ local KITS = {
         end,
     },
     crock = {
-        about = string.format("%d wheat grains, and a pot of 1 L of milk at 40 C", M.CROCK_WHEAT),
+        about = string.format("%d wheat grains; warm the copper with TPD.copper(1, 40) by a Hearth", M.CROCK_WHEAT),
         give = function(inventory)
             for _ = 1, M.CROCK_WHEAT do inventory:AddItem(M.WHEAT) end
-            TPD.milk(1, 40)
         end,
     },
 }
@@ -147,6 +151,85 @@ function TPD.culture(hours)
     end
     say(string.format("Moved %d crock(s) on by %.1f hours.", #crocks(), hours))
     TPD.crocks()
+end
+
+-- What makes a station's tile block: the object's class, its sprite's flags and the square's, within 3 tiles.
+function TPD.tiles()
+    local here = getPlayer():getSquare()
+    for dx = -3, 3 do
+        for dy = -3, 3 do
+            local square = getCell():getGridSquare(here:getX() + dx, here:getY() + dy, here:getZ())
+            local objects = square and square:getObjects()
+            for i = 0, (objects and objects:size() or 0) - 1 do
+                local object = objects:get(i)
+                if M.isIncubator(object) or M.isCrock(object) or M.isHearth(object) then
+                    local props, squareProps = object:getSprite():getProperties(), square:getProperties()
+                    local attached = object:getAttachedAnimSprite()
+                    local blocks = instanceof(object, "IsoThumpable") and string.format(" blockAll %s passThrough %s",
+                        tostring(object:isBlockAllTheSquare()), tostring(object:isCanPassThrough())) or ""
+                    say(string.format("%d,%d %s%s %s: sprite solid %s solidtrans %s; square solid %s solidtrans %s; attached %d",
+                        square:getX(), square:getY(), object:getClass():getSimpleName(), blocks, object:getSprite():getName(),
+                        tostring(props:has(IsoFlagType.solid)), tostring(props:has(IsoFlagType.solidtrans)),
+                        tostring(squareProps:has(IsoFlagType.solid)), tostring(squareProps:has(IsoFlagType.solidtrans)),
+                        attached and attached:size() or 0))
+                end
+            end
+        end
+    end
+end
+
+-- Hearth
+
+local function nearestHearth()
+    local hearth = M.hearthsNear(getPlayer():getSquare())[1]
+    if not hearth then say("No Hearth within 2 tiles.") end
+    if hearth and TraditionalPreservationDairyWorld then TraditionalPreservationDairyWorld.track(hearth) end
+    return hearth
+end
+
+local function hearthCopper(hearth)
+    local World = TraditionalPreservationDairyWorld
+    if World then return World.updateHearth(hearth, getGameTime():getWorldAgeHours()) end
+    return M.stateOf(hearth:getModData(), M.HEARTH_KEY)
+end
+
+function TPD.hearth()
+    local hearth = nearestHearth()
+    if not hearth then return end
+    local copper = hearthCopper(hearth)
+    local hotIn = M.hoursToHot(copper)
+    say(string.format("%d,%d,%d %s, fuel %d min, sprite %s; copper %.1f L %s at %.1f C (%s), steaming %s, fire until %s",
+        hearth:getX(), hearth:getY(), hearth:getZ(), hearth:isLit() and "lit" or "out", hearth:getFuelAmount(),
+        hearth:getSprite():getName(), (copper.ml or 0) / 1000, tostring(copper.fluid), copper.tempC or 0, M.copperLook(copper),
+        hotIn and string.format("in %.1f h", hotIn) or "never", copper.fireUntil and string.format("%.2f", copper.fireUntil) or "-"))
+end
+
+function TPD.copper(litres, celsius, fluid)
+    local hearth = nearestHearth()
+    if not hearth then return end
+    local copper = hearthCopper(hearth)
+    M.takeFromCopper(copper)
+    litres = litres or 10
+    if litres > 0 then M.pourIntoCopper(copper, fluid or "CowMilk", math.floor(litres * 1000), celsius or 20, getGameTime():getWorldAgeHours()) end
+    TraditionalPreservationDairyWorld.refresh(hearth)
+    TPD.hearth()
+end
+
+function TPD.fuel(minutes)
+    local hearth = nearestHearth()
+    if not hearth then return end
+    hearth:setFuelAmount(minutes or 600)
+    TPD.hearth()
+end
+
+function TPD.hot()
+    local hearth = nearestHearth()
+    if not hearth then return end
+    local copper = hearthCopper(hearth)
+    if (copper.ml or 0) <= 0 then return say("The copper is empty: TPD.copper() first.") end
+    copper.tempC = 90
+    TraditionalPreservationDairyWorld.refresh(hearth)
+    TPD.hearth()
 end
 
 say("Debug commands loaded. Type TPD.help() in the Lua console.")
