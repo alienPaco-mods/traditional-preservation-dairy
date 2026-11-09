@@ -3,7 +3,7 @@
   "Tooltip_craft_StarterCultureCrockDesc": "A clay jar or pot under a cloth, for growing a yoghurt starter from wheat and milk when no yoghurt is left to start from.",
   "Tooltip_TraditionalPreservationDairy_YoghurtPotUnfired": "Fire it in a kiln.",
   "Tooltip_TraditionalPreservationDairy_YoghurtPot": "A wide lidded pot that holds 5 litres. Wrap it in cloth to build a Yoghurt Incubator.",
-  "Tooltip_TraditionalPreservationDairy_JarOfYoghurt": "A litre of home-set yoghurt. Portion it into four cups, one Empty Yoghurt Container each; the jar comes back.",
+  "Tooltip_TraditionalPreservationDairy_JarOfYoghurt": "A litre of home-set yoghurt: four cups. Right-click to spoon it into Empty Yoghurt Containers, one at a time or all at once; the jar comes back with the last cup.",
   "Tooltip_TraditionalPreservationDairy_ActiveYoghurtStarter": "A live culture grown on wheat. Add it to a Yoghurt Incubator to set one batch.",
   "Tooltip_TraditionalPreservationDairy_EmptyYoghurtContainer": "Wash it and fill it again with home-set yoghurt."
 }

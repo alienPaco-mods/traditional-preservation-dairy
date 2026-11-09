@@ -29,8 +29,9 @@ module TraditionalPreservationDairy
         Tooltip = Tooltip_TraditionalPreservationDairy_YoghurtPot,
     }
 
-    /* A litre of set yoghurt in a Clay Jar or a glass jar. The jar's type and the litres are in its ModData
-       (tpdJar, tpdMl); its age is the yoghurt's, carried over from the incubator. Portioned, not eaten from. */
+    /* A litre of set yoghurt in a Clay Jar or a glass jar. The jar's type, the litres and the cups left are in its
+       ModData (tpdJar, tpdMl, tpdCups); its age is the yoghurt's, carried over from the incubator. Spooned into
+       cups from its right-click menu, not eaten from. */
     item JarOfYoghurt
     {
         DisplayCategory = Food,

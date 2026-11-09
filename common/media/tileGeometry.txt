@@ -1,0 +1,630 @@
+tileGeometry
+{
+    VERSION = 2,
+
+    tileset
+    {
+        name = traditionalpreservationdairy_01,
+
+        /* traditionalpreservationdairy_01_0 */
+        tile
+        {
+            xy = 0x0,
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -5000x0x-5000,
+                max = 5000x100x5000,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -2518x0x-1642,
+                max = 2518x5676x1642,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -1642x0x-2518,
+                max = 1642x5676x2518,
+            }
+
+        }
+
+        /* traditionalpreservationdairy_01_1 */
+        tile
+        {
+            xy = 1x0,
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -5000x0x-5000,
+                max = 5000x100x5000,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -2518x0x-1642,
+                max = 2518x5676x1642,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -1642x0x-2518,
+                max = 1642x5676x2518,
+            }
+
+        }
+
+        /* traditionalpreservationdairy_01_2 */
+        tile
+        {
+            xy = 2x0,
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -5000x0x-5000,
+                max = 5000x100x5000,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -1784x0x-1163,
+                max = 1784x3999x1163,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -1163x0x-1784,
+                max = 1163x3999x1784,
+            }
+
+        }
+
+        /* traditionalpreservationdairy_01_3 */
+        tile
+        {
+            xy = 3x0,
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -5000x0x-5000,
+                max = 5000x100x5000,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -1784x0x-1163,
+                max = 1784x3999x1163,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -1163x0x-1784,
+                max = 1163x3999x1784,
+            }
+
+        }
+
+        /* traditionalpreservationdairy_01_4 */
+        tile
+        {
+            xy = 4x0,
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -5000x0x-5000,
+                max = 5000x100x5000,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -2518x0x-1642,
+                max = 2518x5676x1642,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -1642x0x-2518,
+                max = 1642x5676x2518,
+            }
+
+        }
+
+        /* traditionalpreservationdairy_01_5 */
+        tile
+        {
+            xy = 5x0,
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -5000x0x-5000,
+                max = 5000x100x5000,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -2518x0x-1642,
+                max = 2518x5676x1642,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -1642x0x-2518,
+                max = 1642x5676x2518,
+            }
+
+        }
+
+        /* traditionalpreservationdairy_01_6 */
+        tile
+        {
+            xy = 6x0,
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -5000x0x-5000,
+                max = 5000x100x5000,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -2518x0x-1642,
+                max = 2518x5676x1642,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -1642x0x-2518,
+                max = 1642x5676x2518,
+            }
+
+        }
+
+        /* traditionalpreservationdairy_01_7 */
+        tile
+        {
+            xy = 7x0,
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -5000x0x-5000,
+                max = 5000x100x5000,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -2518x0x-1642,
+                max = 2518x5676x1642,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -1642x0x-2518,
+                max = 1642x5676x2518,
+            }
+
+        }
+
+        /* traditionalpreservationdairy_01_8 */
+        tile
+        {
+            xy = 0x1,
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -5000x0x-5000,
+                max = 5000x100x5000,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -2518x0x-1642,
+                max = 2518x5676x1642,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -1642x0x-2518,
+                max = 1642x5676x2518,
+            }
+
+        }
+
+        /* traditionalpreservationdairy_01_9 */
+        tile
+        {
+            xy = 1x1,
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -5000x0x-5000,
+                max = 5000x100x5000,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -2518x0x-1642,
+                max = 2518x5676x1642,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -1642x0x-2518,
+                max = 1642x5676x2518,
+            }
+
+        }
+
+        /* traditionalpreservationdairy_01_10 */
+        tile
+        {
+            xy = 2x1,
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -5000x0x-5000,
+                max = 5000x100x5000,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -1784x0x-1163,
+                max = 1784x3999x1163,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -1163x0x-1784,
+                max = 1163x3999x1784,
+            }
+
+        }
+
+        /* traditionalpreservationdairy_01_11 */
+        tile
+        {
+            xy = 3x1,
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -5000x0x-5000,
+                max = 5000x100x5000,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -1784x0x-1163,
+                max = 1784x3999x1163,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -1163x0x-1784,
+                max = 1163x3999x1784,
+            }
+
+        }
+
+        /* traditionalpreservationdairy_01_12 */
+        tile
+        {
+            xy = 4x1,
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -5000x0x-5000,
+                max = 5000x100x5000,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -1784x0x-1163,
+                max = 1784x3999x1163,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -1163x0x-1784,
+                max = 1163x3999x1784,
+            }
+
+        }
+
+        /* traditionalpreservationdairy_01_13 */
+        tile
+        {
+            xy = 5x1,
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -5000x0x-5000,
+                max = 5000x100x5000,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -1784x0x-1163,
+                max = 1784x3999x1163,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -1163x0x-1784,
+                max = 1163x3999x1784,
+            }
+
+        }
+
+        /* traditionalpreservationdairy_01_14 */
+        tile
+        {
+            xy = 6x1,
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -5000x0x-5000,
+                max = 5000x100x5000,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -1784x0x-1163,
+                max = 1784x3999x1163,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -1163x0x-1784,
+                max = 1163x3999x1784,
+            }
+
+        }
+
+        /* traditionalpreservationdairy_01_15 */
+        tile
+        {
+            xy = 7x1,
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -5000x0x-5000,
+                max = 5000x100x5000,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -1784x0x-1163,
+                max = 1784x3999x1163,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -1163x0x-1784,
+                max = 1163x3999x1784,
+            }
+
+        }
+
+        /* traditionalpreservationdairy_01_16 */
+        tile
+        {
+            xy = 0x2,
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -5000x0x-5000,
+                max = 5000x100x5000,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -2518x0x-1642,
+                max = 2518x5676x1642,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -1642x0x-2518,
+                max = 1642x5676x2518,
+            }
+
+        }
+
+        /* traditionalpreservationdairy_01_17 */
+        tile
+        {
+            xy = 1x2,
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -5000x0x-5000,
+                max = 5000x100x5000,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -2518x0x-1642,
+                max = 2518x5676x1642,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -1642x0x-2518,
+                max = 1642x5676x2518,
+            }
+
+        }
+
+        /* traditionalpreservationdairy_01_18 */
+        tile
+        {
+            xy = 2x2,
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -5000x0x-5000,
+                max = 5000x100x5000,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -2518x0x-1642,
+                max = 2518x5676x1642,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -1642x0x-2518,
+                max = 1642x5676x2518,
+            }
+
+        }
+
+        /* traditionalpreservationdairy_01_19 */
+        tile
+        {
+            xy = 3x2,
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -5000x0x-5000,
+                max = 5000x100x5000,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -2518x0x-1642,
+                max = 2518x5676x1642,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -1642x0x-2518,
+                max = 1642x5676x2518,
+            }
+
+        }
+
+    }
+}

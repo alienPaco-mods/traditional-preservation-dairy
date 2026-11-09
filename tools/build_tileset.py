@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Builds the Traditional Preservation (Dairy) art: the tileset (42/media/*.tiles and texturepacks/*.pack), the item
-icons, the build and mod icons, and the generated Tiles.lua.
+"""Builds the Traditional Preservation (Dairy) art: the tileset (42/media/*.tiles and texturepacks/*.pack), its depth
+shapes (common/media/tileGeometry.txt), the item icons, the build and mod icons, and the generated Tiles.lua.
 
 Each station is a pair of tiles, south facing then east facing. Both are round pots, standing on the floor with no
 stool so they can be carried to a fire and set down by it; the facing shows only in where the incubator's lid lies
 when it is off. The base tile is the bare open pot. Every stage, the empty one too, is an overlay that
 TraditionalPreservationDairyWorld.lua layers over it, so a stage paints only what it adds: the incubator's lid lying
-on the floor (empty and ready), on the pot (cooling), slid half off (too cold for a starter), or under the cloth wrap, and its set yoghurt; the crock's linen
+against the pot (empty and ready), on the pot (cooling), slid half off (too cold for a starter), or under the cloth wrap, and its set yoghurt; the crock's linen
 cap, its wheat and milk, and its culture.
 The overlay numbers are in OVERLAYS, keyed by the stage names the World's sprite tables use.
 
@@ -73,9 +73,10 @@ POT = [(0, 13), (6, 19), (16, 24), (24, 24), (32, 21), (38, 16.5), (41, 15), (44
 POT_LUGS = 30                  # height of the two lug handles
 LID = [(0, 18), (2, 17.5), (5, 13), (7, 7), (7.5, 3), (11, 3), (11.5, 0)]
 LID_RIM = 1.6                  # height of the lid's lit edge band
-# Where the lid lies on the floor when it is off, in tiles from the floor's middle, by facing: front left facing S,
-# front right facing E.
-FLOOR_LID = {"S": (0.0, 0.42), "E": (0.42, 0.0)}
+# When it is off, the lid stands on its rim leaning against the pot's belly, dome out: front left facing S, front
+# right facing E. A lid lying flat beside the pot reached into the next square, whose floor the game draws over it.
+LEAN_AT = (-17, -13)           # the lid's middle from the pot's foot, in pixels, facing S (mirrored facing E)
+LEAN_TURN = 68                 # degrees from lying dome up to standing; 90 would be upright
 # Too cold for a starter: the lid slid half off the mouth, to the floor lid's side, and tipped down over the rim.
 SLID, SLID_DROP, SLID_TILT = 12, 3.5, 15  # sideways and down in pixels, tilt in degrees
 # The cloth hangs over the lid and the shoulders to below the belly, tied at the neck.
@@ -275,13 +276,19 @@ def slid_lid_layer(face):
     return layer.rotate(-side * SLID_TILT, resample=Image.BICUBIC, center=pivot)
 
 
-def floor_lid(layer, face):
-    """The lid lying dome up on the floor beside the pot, in front of it."""
-    x, y = pzart.project(*FLOOR_LID[FACES[face]])
-    draw = ImageDraw.Draw(layer)
+def leaning_lid(layer, face):
+    """The lid off the pot, stood on its rim against the belly, dome out, with a little shadow at its foot."""
+    side = -1 if FACES[face] == "S" else 1
+    x, y = FOOT_X + side * -LEAN_AT[0], FOOT_Y + LEAN_AT[1]
     r = LID[0][1]
-    draw.ellipse(box(x + 1.5, y + 1, r + 2.5, (r + 2.5) * SQUASH), fill=SHADOW)
-    paint_lid(layer, (x, y), CLAY, LID_EDGE)
+    lid = new_layer()
+    paint_lid(lid, (x, y), CLAY, LID_EDGE, under=SHADOW)
+    # PIL turns positive angles anticlockwise: the dome, which points up, swings out to the lid's own side.
+    lid = lid.rotate(-side * LEAN_TURN, resample=Image.BICUBIC, center=(x * SS, y * SS))
+    draw = ImageDraw.Draw(layer)
+    foot = r * math.sin(math.radians(LEAN_TURN))
+    draw.ellipse(box(x + side * 2, y + foot - 1, 8, 3), fill=SHADOW)
+    layer.alpha_composite(lid)
 
 
 def cloth_layer():
@@ -327,7 +334,7 @@ def incubator_overlay(stage, face):
         if stage == "Ready":
             top, r = POT[-1]
             paint_surface(layer, pot_base(), top - 3, r - 3.2, YOGHURT, random.Random(face))
-        floor_lid(layer, face)
+        leaning_lid(layer, face)
     return finish(layer, 20 + face, OVERLAY_WEATHER)
 
 
@@ -432,23 +439,53 @@ def jar_icon(jar, mask, contents, cap):
     return icon
 
 
+def clay_jar_icon(jar):
+    """A vanilla clay jar with set yoghurt filling its mouth: the dark inside of the mouth turned white."""
+    icon = jar.copy()
+    pixels = icon.load()
+    for y in range(3, 12):
+        for x in range(19, 29):
+            r, g, b, a = pixels[x, y]
+            if a > 128 and 120 <= r + g + b < 260:
+                pixels[x, y] = shade(YOGHURT, 1.0 - 0.025 * (y - 3) - 0.01 * (x - 19))[:3] + (255,)
+    return icon
+
+
 def cup_icon():
-    """An empty yoghurt cup, open, with the foil gone: a white tub with a purple band, as on vanilla's cups."""
+    """An empty yoghurt cup, open, with the foil gone: a square white tub, narrower at the foot, with a purple band,
+    as vanilla's cups are square."""
     layer = new_layer()
-    base = (FOOT_X, FOOT_Y)
-    cup = [(0, 9), (14, 11), (15, 12)]
-    paint_body(layer, base, cup, lambda angle, z: (126, 70, 132) if 5 <= z <= 10 else (234, 232, 228))
-    paint_mouth(layer, base, cup, 1.0, 8)
     draw = ImageDraw.Draw(layer)
-    top, r = cup[-1]
-    draw.ellipse(box(FOOT_X, FOOT_Y - top + 2, r - 1.5, (r - 1.5) * SQUASH), fill=(200, 198, 194, 255))
-    draw.ellipse(box(FOOT_X + 1, FOOT_Y - top + 3, r - 3, (r - 3) * SQUASH * 0.8), fill=(226, 224, 218, 255))
+    cx, foot, height = FOOT_X, FOOT_Y, 26
+
+    def corners(half, y):
+        """A square seen from above at 2:1, as left, front, right, back."""
+        return [(cx - half, y), (cx, y + half * SQUASH), (cx + half, y), (cx, y - half * SQUASH)]
+
+    def side(bottom, top, i, j, low=0.0, high=1.0):
+        """The quad between the bottom and top squares on edge i-j, from low to high up the side."""
+        def at(k, t):
+            return (bottom[k][0] + (top[k][0] - bottom[k][0]) * t, bottom[k][1] + (top[k][1] - bottom[k][1]) * t)
+        return [at(i, low), at(j, low), at(j, high), at(i, high)]
+
+    bottom, top = corners(10, foot), corners(13, foot - height)
+    white, band = (234, 232, 228), (126, 70, 132)
+    for (i, j), light in (((0, 1), 1.0), ((1, 2), 0.8)):
+        poly(draw, side(bottom, top, i, j), shade(white, light))
+        poly(draw, side(bottom, top, i, j, 0.3, 0.62), shade(band, light))
+    # The open top: the rim, then the inside walls, lit on the far side and in shadow on the near.
+    poly(draw, top, shade(white, 1.05))
+    inner = corners(11.5, foot - height + 1)
+    poly(draw, inner, shade(white, 0.72))
+    floor = corners(9, foot - height + 9)
+    poly(draw, [inner[0], inner[3], inner[2], floor[2], floor[3], floor[0]], shade(white, 0.9))
     return outlined(shrink(layer))
 
 
 def write_icons(folder, game):
     folder.mkdir(parents=True, exist_ok=True)
-    jars = pzart.extract_sprites(game / "media/texturepacks/UI2.pack", {"Item_GlassJar", "Item_GlassJar_Mask"})
+    jars = pzart.extract_sprites(game / "media/texturepacks/UI2.pack", {"Item_GlassJar", "Item_GlassJar_Mask",
+                                 "Item_ClayJar_Fired", "Item_ClayJar_Glazed_Fired"})
     jar, mask = jars["Item_GlassJar"], jars["Item_GlassJar_Mask"]
     icons = {
         "YoghurtPotUnfired": pot_icon(RAW_CLAY, lidded=True),
@@ -458,8 +495,51 @@ def write_icons(folder, game):
         "EmptyYoghurtContainer": cup_icon(),
     }
     assert list(icons) == ITEM_ICONS
+    # The same Jar of Yoghurt item, as it looks in a clay jar: World sets it by the jar it was collected in.
+    icons["JarOfYoghurt_Clay"] = clay_jar_icon(jars["Item_ClayJar_Fired"])
+    icons["JarOfYoghurt_Glazed"] = clay_jar_icon(jars["Item_ClayJar_Glazed_Fired"])
     for name, icon in icons.items():
         icon.save(folder / f"Item_{name}.png")
+
+
+# --- Depth --------------------------------------------------------------------------------------------------------
+# B42 draws each tile against a depth shape from tileGeometry.txt. A tile with none gets a flat default that hid
+# whatever we paint on the floor in front of the pot: its shadow and the lid. Each station gets a thin slab over its
+# whole floor and a cross of two boxes round its pot. Units are vanilla's: 10000 across a tile; up, about 129 a
+# pixel (measured on vanilla's fridge, appliances_refrigeration_01_0, against its sprite).
+GEOMETRY_UNIT = 10000
+HEIGHT_PER_PX = 129
+SLAB = 100
+
+
+def geometry_boxes(profile):
+    radius = max(r for _, r in profile) / (pzart.DIAMOND_HALF_W * math.sqrt(2)) * GEOMETRY_UNIT
+    wide, narrow = round(radius * 0.92), round(radius * 0.6)
+    height = round(profile[-1][0] * HEIGHT_PER_PX)
+    half = GEOMETRY_UNIT // 2
+    return [((-half, 0, -half), (half, SLAB, half)),
+            ((-wide, 0, -narrow), (wide, height, narrow)),
+            ((-narrow, 0, -wide), (narrow, height, wide))]
+
+
+def write_geometry(path):
+    """tileGeometry.txt for the stations and every overlay: the game reads it from common/media only."""
+    shapes = {INCUBATOR: geometry_boxes(POT), CROCK: geometry_boxes(CROCK_BODY)}
+    owners = {**{index: INCUBATOR for index in OVERLAYS["incubator"].values()},
+              **{index: CROCK for index in OVERLAYS["crock"].values()}, INCUBATOR: INCUBATOR, CROCK: CROCK}
+    lines = ["tileGeometry", "{", "    VERSION = 2,", "", "    tileset", "    {", f"        name = {TILESET},", ""]
+    for first in sorted(owners):
+        for index in range(first, first + len(FACES)):
+            lines += [f"        /* {TILESET}_{index} */", "        tile", "        {",
+                      f"            xy = {index % COLUMNS}x{index // COLUMNS},", ""]
+            for low, high in shapes[owners[first]]:
+                lines += ["            box", "            {", "                translate = 0x0x0,",
+                          "                rotate = 0x0x0,", "                min = {}x{}x{},".format(*low),
+                          "                max = {}x{}x{},".format(*high), "            }", ""]
+            lines += ["        }", ""]
+    lines += ["    }", "}", ""]
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("\n".join(lines), encoding="utf8")
 
 
 # --- Output -----------------------------------------------------------------------------------------------------
@@ -506,6 +586,7 @@ def main():
             tiles[index + face] = crock_overlay(stage, face)
     pzart.write_pack(media / "texturepacks" / f"{NAME}.pack", tiles, NAME, TILESET, PAGE_SIZE)
     pzart.write_tiles(media / f"{NAME}.tiles", [(TILESET, COLUMNS, ROWS)], TILE_PROPS)
+    write_geometry(media.parent.parent / "common" / "media" / "tileGeometry.txt")
     empty = tiles[INCUBATOR].copy()
     empty.alpha_composite(tiles[OVERLAYS["incubator"]["Empty"]])
     pzart.write_build_icon(empty, media / "textures" / "Item_YoghurtIncubator.png")

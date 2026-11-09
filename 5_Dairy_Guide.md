@@ -48,6 +48,10 @@ TEMPLATE
 
 > **Margin note:** TEMPLATE: a real-world note.
 
+> **Mind the pot.** Milk is only marked **scalded** while you're within reach of it, so stand by the stove until it
+> steams. Once scalded it stays scalded however cold it gets, and goes into the incubator at whatever heat it
+> has left. If it's below 40 C by then, the starter won't take until you reheat it.
+
 ---
 
 ## 5. Secrets & Hidden Features
@@ -67,6 +71,8 @@ TEMPLATE
 | Problem | Fix |
 |---|---|
 | The station or recipes don't appear | Check `~/Zomboid/console.txt`. |
+| "Scald your milk first", though you heated it | Milk only counts as scalded if you're within reach of it while it's at 85 C or hotter. Heat it, walk off, and come back cold, and nobody saw it steam. Stay by the stove until it's hot, or heat it again. |
+| Added a splash of fresh milk and now it won't pour | Fresh milk unscalds the whole pot. Bring it back to the steam. |
 
 ---
 

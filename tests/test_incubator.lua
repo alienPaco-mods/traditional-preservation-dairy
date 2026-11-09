@@ -10,10 +10,25 @@ local M = TraditionalPreservationDairy
 
 -- Heat
 check("room heat is room temperature", M.heatCelsius(1.0) == M.ROOM_C)
-check("stove-hot milk is about 85 C or more", M.heatCelsius(M.MIN_POUR_HEAT) >= 85)
 check("milk never goes past scalding", M.heatCelsius(3.0) == M.MILK_MAX_C)
 check("heat goes back to the item it came from", near(M.heatCelsius(M.itemHeat(60)), 60))
-check("only stove-hot milk counts", M.isHot(1.5) and not M.isHot(1.2))
+check("no stamp: what vanilla shows", M.milkC(30, nil, 5000, 10) == 30)
+local stamp = M.restamp(95, nil, 5000, 10)
+check("hot milk gets a stamp", stamp ~= nil and stamp.c == 95)
+check("a stamp holds the heat vanilla drops at once", M.milkC(20, stamp, 5000, 10 + 1 / 60) > 90)
+check("off the stove it cools, a few degrees in minutes", M.milkC(20, stamp, 5000, 10 + 0.1) < 93)
+check("and to lukewarm within a few hours", M.milkC(20, stamp, 5000, 13) < 40)
+check("milk seen at 85 C is scalded", M.isScalded(stamp, 5000) and M.isScalded(M.restamp(85, nil, 5000, 10), 5000))
+check("warm milk never scalded is not", not M.isScalded(M.restamp(70, nil, 5000, 10), 5000) and not M.isScalded(nil, 5000))
+check("scalded stays scalded however cold", M.isScalded(stamp, 5000))
+check("and through a lukewarm reheat", M.isScalded(M.restamp(60, stamp, 5000, 15), 5000))
+check("fresh milk added unscalds it", not M.isScalded(stamp, 5500) and not M.isScalded(M.restamp(60, stamp, 5500, 10), 5500))
+check("until the whole lot is scalded again", M.isScalded(M.restamp(90, stamp, 5500, 10), 5500))
+check("pouring some out keeps the stamp", M.milkC(20, stamp, 2000, 10) == 95)
+check("fresh milk added voids it", M.milkC(20, stamp, 5500, 10) == 20)
+check("seen no hotter than the stamp: no new stamp", M.restamp(60, stamp, 5000, 10.1) == nil)
+check("seen hotter: restamped", M.restamp(95, stamp, 5000, 10.5) ~= nil)
+check("cold milk gets no stamp", M.restamp(20, nil, 5000, 10) == nil)
 check("a wrapped pot holds heat far longer", M.tau(5000, true) > 4 * M.tau(5000, false))
 check("less milk cools faster", M.tau(3000, false) < M.tau(5000, false))
 check("down to a floor, for balance", M.tau(500, false) == M.tau(M.TAU_FLOOR_ML, false))
@@ -83,7 +98,12 @@ local first, age = M.collectJar(pot, now)
 check("one Clay Jar takes a litre, with the pot's age", first == 1000 and near(age, 1))
 for _ = 1, 4 do M.collectJar(pot, now) end
 check("five jars empty a full pot, and it starts over", M.stage(pot) == "Empty" and pot.starter == nil)
-check("a litre portions into four cups", M.cupsFor(1000) == 4 and M.cupsFor(250) == 1 and M.cupsFor(600) == 2)
+check("a litre fills four cups", M.cupsFor(1000) == 4 and M.cupsFor(250) == 1 and M.cupsFor(600) == 2)
+local jarData = { tpdMl = 1000 }
+check("a jar from before the count goes by its litres", M.cupsLeft(jarData) == 4 and M.cupsLeft({ tpdMl = 500 }) == 2)
+check("each cup comes out one at a time", M.takeCup(jarData) == 3 and M.cupsLeft(jarData) == 3)
+for _ = 1, 3 do M.takeCup(jarData) end
+check("the last cup empties the jar, and no further", M.cupsLeft(jarData) == 0 and M.takeCup(jarData) == 0)
 
 -- Catching up while unloaded
 local ledger, history = M.getLedger(), M.getHistory()
@@ -112,7 +132,7 @@ check("by the fire it sets even in winter", M.stage(winter) == "Ready")
 local crock = {}
 check("a new crock is empty", M.crockStage(crock) == "Empty" and M.collectStarters(crock) == 0)
 check("it loads once", M.loadCrock(crock, ledger) and crock.stage == "Cultivating" and not M.loadCrock(crock, ledger))
-check("loading milk must be warm, hot is fine", M.isWarm(M.itemHeat(40)) and M.isWarm(M.MIN_POUR_HEAT) and not M.isWarm(1.0))
+check("loading milk must be warm, hot is fine", M.isWarm(40) and M.isWarm(M.SCALD_C) and not M.isWarm(M.ROOM_C))
 for hour = 31, 31 + 24 do
     H.setHours(hour)
     M.record(ledger, history, hour, 30)

@@ -3,6 +3,7 @@
 -- container to reheat it, and "collect" fills an empty Clay Jar with a litre of set yoghurt.
 require "TimedActions/ISBaseTimedAction"
 require "TraditionalPreservationDairy"
+require "TraditionalPreservationDairyYoghurt"
 
 ISYoghurtIncubator = ISBaseTimedAction:derive("ISYoghurtIncubator")
 
@@ -23,7 +24,7 @@ end
 local function canDo(self)
     local batch = M.stateOf(self.station:getModData().movableData or {}, M.INCUBATOR_KEY)
     if self.mode == "milk" then
-        return M.milkIn(self.item:getFluidContainer()) ~= nil and M.isHot(self.item:getItemHeat()) and M.milkRoom(batch, 1) > 0
+        return M.milkIn(self.item:getFluidContainer()) ~= nil and M.itemScalded(self.item) and M.milkRoom(batch, 1) > 0
     elseif self.mode == "starter" then
         return M.STARTERS[self.item:getFullType()] ~= nil and not self.item:isRotten() and M.canAddStarter(batch)
     elseif self.mode == "pourOut" then
@@ -66,7 +67,7 @@ function ISYoghurtIncubator:complete()
     if self.mode == "milk" then
         local fluid = M.milkIn(container)
         local ml = math.floor(container:getAmount() * 1000 + 0.5)
-        local taken = M.addMilk(batch, ml, M.heatCelsius(self.item:getItemHeat()), now)
+        local taken = M.addMilk(batch, ml, M.itemMilkC(self.item, now), now)
         if taken > 0 then
             container:removeFluid(taken / 1000)
             batch.fluid = batch.fluid or fluid
@@ -82,7 +83,7 @@ function ISYoghurtIncubator:complete()
         local ml, tempC = M.pourOut(batch, math.floor(container:getCapacity() * 1000))
         if ml > 0 then
             container:addFluid(fluid, ml / 1000)
-            self.item:setItemHeat(M.itemHeat(tempC))
+            M.setMilkC(self.item, tempC, now, true)
         end
     else
         -- Nothing is taken from the pot unless the jar can be made.
@@ -94,7 +95,10 @@ function ISYoghurtIncubator:complete()
             removeItem(self.item)
             jar:setAge(age)
             jar:getModData().tpdJar = jarType
+            if M.JAR_ICONS[jarType] then jar:setTexture(getTexture(M.JAR_ICONS[jarType])) end
             jar:getModData().tpdMl = ml
+            jar:getModData().tpdCups = M.cupsFor(ml)
+            M.labelJar(jar)
             self.character:getXp():AddXP(Perks.Cooking, M.COLLECT_XP)
         else
             print("[TPD] no item script for " .. M.YOGHURT_JAR .. " yet")

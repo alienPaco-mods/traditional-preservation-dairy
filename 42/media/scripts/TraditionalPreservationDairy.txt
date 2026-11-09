@@ -42,24 +42,4 @@ module TraditionalPreservationDairy
             item 1 TraditionalPreservationDairy.YoghurtPot,
         }
     }
-
-    /* Four cups to the litre. OnCreate gives the jar back, carries the age over, and for a last jar under a
-       litre takes back the cups it can't fill and returns their empty containers. */
-    craftRecipe PortionYoghurt
-    {
-        timedAction = Making,
-        time = 100,
-        Tags = InHandCraft;Cooking,
-        category = Cooking,
-        OnCreate = TraditionalPreservationDairy.onPortioned,
-        inputs
-        {
-            item 1 [TraditionalPreservationDairy.JarOfYoghurt] mode:destroy,
-            item 4 [TraditionalPreservationDairy.EmptyYoghurtContainer] mode:destroy,
-        }
-        outputs
-        {
-            item 4 Base.Yoghurt,
-        }
-    }
 }

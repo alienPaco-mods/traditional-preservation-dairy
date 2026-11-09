@@ -22,7 +22,7 @@ end
 local function hasMilk(item, ml, warm)
     local container = item and item:getFluidContainer()
     if not M.milkIn(container) or container:getAmount() * 1000 < ml - 0.5 then return false end
-    return not warm or M.isWarm(item:getItemHeat())
+    return not warm or M.isWarm(M.itemMilkC(item, getGameTime():getWorldAgeHours()))
 end
 
 local function inInventory(self, item)

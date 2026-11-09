@@ -24,7 +24,9 @@ M.CAPACITY_ML = 5000
 M.ROOM_C = 20
 M.MILK_MAX_C = 95             -- scalded milk; it never boils in the pot
 M.HEAT_PER_DEGREE = 1 / 133   -- itemHeat 1.0 is room temperature; 1.6 (water turns clean) is about 100 C
-M.MIN_POUR_HEAT = 1.5         -- about 86 C: milk only counts as hot from a stove or fire
+M.SCALD_C = 85                -- milk must have been this hot (on a stove or fire) to go in; it may cool after
+M.CARRIED_TAU = 1.0           -- hours, for 5 L in an open cooking pot carried from the fire
+M.HEAT_KEY = "tpdHeat"        -- item modData: the milk's heat when last seen hot, { c, hour, ml, scalded }
 M.SET_C = 45                  -- the wrap goes on when the milk is down to this with a starter in
 M.STARTER_MIN_C = 40          -- below this a starter won't take: the milk must be reheated
 M.LIDDED_TAU = 2.0            -- hours, for 5 L in the lidded clay pot
@@ -60,6 +62,7 @@ local CULTURE_CURVE = { { 5, 0.03 }, { 10, 0.1 }, { 15, 0.3 }, { 20, 0.6 }, { 25
 -- Yield
 M.JAR_ML = 1000               -- each jar takes one litre of yoghurt
 M.CUPS_PER_LITRE = 4          -- 8 oz cups
+M.CUP_KG = 0.25               -- a cup's share of a full jar's weight
 
 -- Items and fluids. Only a cow's or a sheep's milk sets; yoghurt is yoghurt, so the two may share a pot.
 M.MILKS = { CowMilk = true, SheepMilk = true }
@@ -69,6 +72,8 @@ M.EMPTY_CUP = "TraditionalPreservationDairy.EmptyYoghurtContainer"
 -- Clay Jars need Pottery 5 and are rare loot; the glass canning jar is common and holds exactly a litre.
 M.JARS = { ["Base.ClayJar"] = true, ["Base.ClayJarGlazed"] = true, ["Base.EmptyJar"] = true }
 M.YOGHURT_JAR = "TraditionalPreservationDairy.JarOfYoghurt"
+-- One item whatever the jar; a clay one changes only its icon (the engine saves an item's own texture).
+M.JAR_ICONS = { ["Base.ClayJar"] = "Item_JarOfYoghurt_Clay", ["Base.ClayJarGlazed"] = "Item_JarOfYoghurt_Glazed" }
 M.COLLECT_XP = 2              -- Cooking, per jar
 
 -- Stations: FACE_COUNT tiles from each base, one per facing. Stage sprites are layered on top once the art
@@ -168,8 +173,58 @@ function M.itemHeat(celsius)
     return 1 + (celsius - M.ROOM_C) * M.HEAT_PER_DEGREE
 end
 
-function M.isHot(itemHeat)
-    return (itemHeat or 0) >= M.MIN_POUR_HEAT
+-- Vanilla cools a hot pot in the player's inventory to room heat within seconds, so the milk's heat is stamped
+-- whenever it is seen hot (on the stove, or just taken off) and cooled from there by our own curve.
+-- Milk added to the container since the stamp makes the stamp void: fresh milk is cold and unscalded.
+local function holds(stamp, ml)
+    return stamp ~= nil and ml <= stamp.ml + 1
+end
+
+function M.stampedC(stamp, ml, now)
+    if not holds(stamp, ml) then return nil end
+    local tau = M.CARRIED_TAU * (math.max(ml, M.TAU_FLOOR_ML) / M.CAPACITY_ML) ^ (1 / 3)
+    return M.ROOM_C + (stamp.c - M.ROOM_C) * math.exp(-math.max(0, now - stamp.hour) / tau)
+end
+
+-- The milk's temperature: what vanilla shows, or the stamp cooled since, whichever is hotter.
+function M.milkC(seenC, stamp, ml, now)
+    return math.min(math.max(seenC, M.stampedC(stamp, ml, now) or seenC), M.MILK_MAX_C)
+end
+
+-- A new stamp when the milk is seen hotter than the old one says, else nil.
+function M.restamp(seenC, stamp, ml, now)
+    if seenC <= (M.stampedC(stamp, ml, now) or M.ROOM_C) + 0.5 then return nil end
+    return { c = seenC, hour = now, ml = ml, scalded = seenC >= M.SCALD_C or M.isScalded(stamp, ml) }
+end
+
+-- Scalded once, the milk stays scalded however far it cools, until fresh milk is added to it.
+function M.isScalded(stamp, ml)
+    return holds(stamp, ml) and stamp.scalded == true
+end
+
+-- The same for a fluid-container item.
+local function itemMl(item)
+    return item:getFluidContainer():getAmount() * 1000
+end
+
+function M.itemMilkC(item, now)
+    return M.milkC(M.heatCelsius(item:getItemHeat()), item:getModData()[M.HEAT_KEY], itemMl(item), now)
+end
+
+function M.itemScalded(item)
+    return M.isScalded(item:getModData()[M.HEAT_KEY], itemMl(item))
+end
+
+function M.noteHeat(item, now)
+    local modData = item:getModData()
+    local stamp = M.restamp(M.heatCelsius(item:getItemHeat()), modData[M.HEAT_KEY], itemMl(item), now)
+    if stamp then modData[M.HEAT_KEY] = stamp end
+end
+
+-- Milk poured into a container keeps the heat it had.
+function M.setMilkC(item, celsius, now, scalded)
+    item:setItemHeat(M.itemHeat(celsius))
+    item:getModData()[M.HEAT_KEY] = { c = celsius, hour = now, ml = itemMl(item), scalded = scalded or celsius >= M.SCALD_C }
 end
 
 -- More milk holds its heat longer: the time constant grows with the pot's size, so with the cube root of litres.
@@ -341,6 +396,18 @@ function M.cupsFor(ml)
     return math.max(math.floor(ml / 1000 * M.CUPS_PER_LITRE + 0.5), 1)
 end
 
+-- Cups still in a Jar of Yoghurt, from its modData: a jar from before the count was kept goes by its litres.
+function M.cupsLeft(jarData)
+    return jarData.tpdCups or M.cupsFor(jarData.tpdMl or M.JAR_ML)
+end
+
+-- Spoons one cup out of the jar. Returns the cups left; at 0 the jar is empty and goes back to its own type.
+function M.takeCup(jarData)
+    local left = math.max(M.cupsLeft(jarData) - 1, 0)
+    jarData.tpdCups = left
+    return left
+end
+
 -- Hours until the next change (wrap on, or set) if the place's temperature holds; nil if it never comes.
 function M.forecast(batch, placeC)
     local copy = {}
@@ -376,8 +443,8 @@ function M.crockStage(crock)
     return crock.stage or "Empty"
 end
 
-function M.isWarm(itemHeat)
-    return M.heatCelsius(itemHeat) >= M.CROCK_WARM_C
+function M.isWarm(celsius)
+    return celsius >= M.CROCK_WARM_C
 end
 
 -- Wheat and warm milk go into an empty crock only.

@@ -98,6 +98,44 @@ function World.stations(crock)
     return list
 end
 
+-- A pot just built or put down isn't known to the map loader, and its bare base must never show: the squares
+-- round each player are looked over twice a second, so a new station gets its stage sprite at once.
+local NEAR = 3
+local SCAN_TICKS = 30
+local scanTicks = 0
+
+local function players()
+    if isServer() then return getOnlinePlayers() end
+    local list = ArrayList.new()
+    for i = 0, getNumActivePlayers() - 1 do
+        local player = getSpecificPlayer(i)
+        if player then list:add(player) end
+    end
+    return list
+end
+
+local function scanNear(player)
+    local cell, px, py, z = getCell(), math.floor(player:getX()), math.floor(player:getY()), math.floor(player:getZ())
+    for x = px - NEAR, px + NEAR do
+        for y = py - NEAR, py + NEAR do
+            local square = cell:getGridSquare(x, y, z)
+            local objects = square and square:getObjects()
+            for i = 0, objects and objects:size() - 1 or -1 do
+                local object = objects:get(i)
+                if not tracker.entry(object) and (M.isIncubator(object) or M.isCrock(object)) then World.refresh(object) end
+            end
+        end
+    end
+end
+
+Events.OnTick.Add(function()
+    scanTicks = scanTicks + 1
+    if scanTicks < SCAN_TICKS then return end
+    scanTicks = 0
+    local list = players()
+    for i = 0, list:size() - 1 do scanNear(list:get(i)) end
+end)
+
 Weather.record(function(now, climate)
     M.record(M.getLedger(), M.getHistory(), now, climate:getTemperature())
 end)
