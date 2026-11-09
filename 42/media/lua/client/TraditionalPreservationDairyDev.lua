@@ -14,10 +14,9 @@ function TPD.help()
     say("TPD.skip(hours)      move every loaded incubator on by this many hours")
     say("TPD.fast(hours)      setting takes this many hours at the best temperature. TPD.fast() goes back to the sandbox")
     say("TPD.milk(litres, c)  a cooking pot of cow's milk at c degrees (default 5 L at 85 C)")
-    say("TPD.kit()            a yoghurt for a starter, a Clay Jar, a glass jar and four empty yoghurt containers")
+    say("TPD.kit(kind)        the things a test of kind needs; TPD.kit() for yoghurt, TPD.kit(\"?\") lists the kinds")
     say("TPD.crocks()         every loaded crock: stage, progress, place")
     say("TPD.culture(hours)   move every loaded crock's current stage on by this many hours at the best temperature")
-    say("TPD.crockkit()       20 wheat grains, and a pot of 1 L of milk at 40 C")
 end
 
 function TPD.weather()
@@ -86,13 +85,37 @@ function TPD.milk(litres, celsius)
     say(string.format("Gave a pot of %.1f L of milk at %.0f C (item heat %.2f).", container:getAmount(), celsius or 85, pot:getItemHeat()))
 end
 
-function TPD.kit()
-    local inventory = getPlayer():getInventory()
-    inventory:AddItem("Base.Yoghurt")
-    inventory:AddItem("Base.ClayJar")
-    inventory:AddItem("Base.EmptyJar")
-    for _ = 1, 4 do inventory:AddItem(M.EMPTY_CUP) end
-    say("Gave a yoghurt, a Clay Jar, a glass jar and four empty yoghurt containers.")
+-- One kit per kind of test, so each new dairy (kefir, emmental-style, brined cheese) adds an entry here.
+local KITS = {
+    yoghurt = {
+        about = "a yoghurt for a starter, a Clay Jar, a glass jar and four empty yoghurt containers",
+        give = function(inventory)
+            inventory:AddItem("Base.Yoghurt")
+            inventory:AddItem("Base.ClayJar")
+            inventory:AddItem("Base.EmptyJar")
+            for _ = 1, 4 do inventory:AddItem(M.EMPTY_CUP) end
+        end,
+    },
+    crock = {
+        about = string.format("%d wheat grains, and a pot of 1 L of milk at 40 C", M.CROCK_WHEAT),
+        give = function(inventory)
+            for _ = 1, M.CROCK_WHEAT do inventory:AddItem(M.WHEAT) end
+            TPD.milk(1, 40)
+        end,
+    },
+}
+
+function TPD.kit(kind)
+    local kit = KITS[kind or "yoghurt"]
+    if not kit then
+        local names = {}
+        for name in pairs(KITS) do table.insert(names, name) end
+        table.sort(names)
+        for _, name in ipairs(names) do say(string.format("TPD.kit(\"%s\"): %s", name, KITS[name].about)) end
+        return
+    end
+    kit.give(getPlayer():getInventory())
+    say("Gave " .. kit.about .. ".")
 end
 
 local function crocks()
@@ -124,13 +147,6 @@ function TPD.culture(hours)
     end
     say(string.format("Moved %d crock(s) on by %.1f hours.", #crocks(), hours))
     TPD.crocks()
-end
-
-function TPD.crockkit()
-    local inventory = getPlayer():getInventory()
-    for _ = 1, M.CROCK_WHEAT do inventory:AddItem(M.WHEAT) end
-    TPD.milk(1, 40)
-    say(string.format("Gave %d wheat grains.", M.CROCK_WHEAT))
 end
 
 say("Debug commands loaded. Type TPD.help() in the Lua console.")

@@ -36,4 +36,6 @@
   zig-zags, shows a linen cap (cultivating, waiting), milk and wheat (developing), and the culture (ready).
 - Art: icons for the Yoghurt Pot (unfired and fired), Jar of Yoghurt, Active Yoghurt Starter and Empty Yoghurt
   Container, the two build icons and the mod icon. The 3D models are still vanilla stand-ins.
+- Internal: `TPD.kit(kind)` gives the things a test needs (`yoghurt`, the default, or `crock`, which replaces
+  `TPD.crockkit()`); `TPD.kit("?")` lists them. Each new dairy adds a kit.
 - Not done yet: guide, README, Workshop text.
