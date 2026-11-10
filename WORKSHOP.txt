@@ -1,21 +1,78 @@
 [h1]Traditional Preservation (Dairy)[/h1]
 
-TEMPLATE: one paragraph on the real technique and what the mod adds.
+Set your own yoghurt the old way. Bring milk to the steam in a Hearth's copper, let it cool in a lidded clay pot, add a spoonful of the last batch and wrap it in cloth overnight. It ends in the real vanilla Yoghurt, and every cup eaten comes back to be filled again. Lost your last yoghurt? Grow a new starter from wheat and warm milk.
 
 [b]Build 42 only (42.20 or newer). This is an early release, so back up your save before enabling it. Singleplayer only: multiplayer is not supported.[/b]
 
+Traditional Preservation (Dairy) requires [b]TP Core[/b] (Traditional Preservation Core): subscribe to it too. The Hearth comes with TP Core.
+
 [h2]Features[/h2]
 [list]
-[*]A buildable Yoghurt Incubator with its own art
-[*]Temperature matters: where the station stands sets how fast it works
+[*]A Yoghurt Incubator thrown on the pottery wheel and wrapped in cloth, with its own art for every stage
+[*]Milk steamed in the copper of TP Core's Hearth, poured straight in or carried hot in a Wrapped Yoghurt Pot
+[*]Real temperatures: the milk cools, the wrap goes on at 45 C, and it sets in about 6 hours when kept warm
+[*]Cow's and sheep's milk, alone or mixed, as a mixed herd's always was
+[*]Collect into clay or glass jars, a litre each, and spoon them into cups of vanilla Yoghurt that keep the batch's age
+[*]Every Yoghurt eaten leaves its Empty Yoghurt Container
+[*]A Starter Culture Crock grows a new starter from wheat and milk, and stands on a counter, a table or the floor
+[*]Set it by the fire in winter: a lit Hearth keeps a pot at 28 C in any month
 [*]Keeps working while you are away
 [/list]
 
-[h2]How it works[/h2]
+[h2]The loop[/h2]
 [olist]
-[*][b]Build a Yoghurt Incubator[/b] (Build menu, Furniture).
-[*]TEMPLATE
+[*][b]Pour into the Copper[/b] (the Hearth's right-click menu): up to 10 L of milk from any container.
+[*][b]Light the fire[/b]: a full copper steams (85 C) in about 1.5 hours. Hearth Info shows when.
+[*][b]Pour from the Hearth[/b] into a Yoghurt Incubator within 2 tiles, up to 5 L.
+[*][b]Add Starter[/b]: one vanilla Yoghurt or one Active Yoghurt Starter.
+[*][b]Wait[/b]: the milk cools to 45 C in about 2 hours, the incubator wraps itself, and the milk sets in about 6 hours at 40 to 45 C.
+[*][b]Collect[/b] into empty jars, 1 L each, or straight into Empty Yoghurt Containers.
+[*][b]Fill a Yoghurt Cup[/b] from a Jar of Yoghurt: four cups a jar, each a vanilla Yoghurt.
 [/olist]
 
-[h2]Part of Traditional Preservation[/h2]
+[h2]The stations[/h2]
+[list]
+[*][b]Yoghurt Incubator[/b], Pottery 2 and Tailoring 1: a Yoghurt Pot, 2 Ripped Sheets and Twine. Throw the pot on the wheel (4 Clay) and fire it in a kiln.
+[*][b]Starter Culture Crock[/b], Pottery 4 and Cooking 4: a Clay Jar or Clay Pot, a Ripped Sheet and Twine.
+[*][b]Hearth[/b] (TP Core), Pottery 2: 12 Clay Bricks, 4 Clay, a Copper Sheet and a trowel. A working fireplace with a copper in its top.
+[/list]
+
+[h2]No yoghurt left?[/h2]
+Load the crock with 20 wheat grains and half a litre of milk at 35 to 45 C. In about a day it cultivates; feed it half a litre of fresh milk, and 12 hours later collect two Active Yoghurt Starters. Each sets one batch. Keep it warm: by the fire it takes a day in any month, outdoors in winter weeks.
+
+[h2]Temperature[/h2]
+[list]
+[*][b]By a fire[/b]: a lit Hearth within 2 tiles holds 28 C. Yoghurt sets in about 6 hours all year. Banked embers hold 24 C.
+[*][b]Under a roof[/b]: the last 10 days' outdoor average plus 10 C. Fine from spring to autumn, too cold in January and February.
+[*][b]In a basement[/b]: 15 C all year, about 9 hours to set.
+[*][b]Outdoors[/b]: only on warm summer nights.
+[/list]
+If the milk falls under 40 C before a starter is in, it is too cold: pour it out and reheat it in the copper. Once the starter is in, milk too cold to set is refused.
+
+[h2]Good to know[/h2]
+[list]
+[*]Only milk steamed in the copper goes into an incubator. A Wrapped Yoghurt Pot carries 5 L and keeps it hot.
+[*]A Jar of Yoghurt stays fresh 10 days; the cups keep its age.
+[*]No vanilla recipe or loot table is changed. Vanilla Yoghurt only gains its empty container.
+[*]The tiledef number 5172 must be unique among your active mods.
+[/list]
+
+[h2]Sandbox options[/h2]
+Set the yoghurt setting time, the starter culture time and the temperature sensitivity (Off to Harsh).
+
+[h2]A little history[/h2]
+Herders from the Balkans to the steppe made yoghurt for thousands of years without a thermometer. Milk was heated until it steamed, cooled until a finger could stand it for a count of ten, given a spoonful of yesterday's yoghurt and wrapped in a blanket or set by the embers overnight. A household that lost its starter grew a new one from a few wheat kernels in warm milk.
+
+[h2]Works well with[/h2]
+[b]Traditional Preservation (Salt)[/b], [b](Fish)[/b], [b](Yeast)[/b] and [b](Vinegar)[/b] complete the preserving pantry. This mod needs no other mods besides TP Core.
+
+[h2]Known limitations[/h2]
+[list]
+[*]Multiplayer is not supported. This mod is singleplayer only for now.
+[*]Empty Yoghurt Containers can't be made yet: they come from eating Yoghurt.
+[*]The Hearth's art is a placeholder.
+[/list]
+
+Bug reports are welcome in the comments. Please include any repeating errors from your console.txt.
+
 By alienPaco.

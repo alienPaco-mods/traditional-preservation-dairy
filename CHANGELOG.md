@@ -1,6 +1,9 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- The README, Workshop page and mod description now describe the mod as built: the Hearth's copper, the incubator,
+  jars and cups, the starter crock, places and timings. DEVHELP lists the real console commands (it named `TPD.age`
+  and `TPD.batches`, which don't exist), and so does the guide's Tester's Toolkit.
 - Cow's and sheep's milk mix, as a mixed herd's always did: in the Hearth's copper, in a carried container and in
   the incubator. A blend keeps its shares from the copper to the pot and back out. The "milks don't mix" refusal
   is gone.

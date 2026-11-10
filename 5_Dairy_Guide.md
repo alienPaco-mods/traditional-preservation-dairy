@@ -86,8 +86,15 @@ Copied from `DEVHELP.md`; change both together.
 
 | Command | What it does |
 |---|---|
-| `TPD.weather()` | Temperature and speed by place. |
+| `TPD.weather()` | Temperature by place, and how fast milk sets at each. |
 | `TPD.here()` | Which kind of place you're standing in. |
-| `TPD.age(hours)` | Hours of perfect weather for every station. |
-| `TPD.fast(hours)` | Test timer. `TPD.fast()` goes back to the sandbox time. |
-| `TPD.batches(n)` | Spawns raw batches. |
+| `TPD.pots()` | Every loaded incubator: stage, litres, milk temperature, what's next. |
+| `TPD.skip(hours)` | Moves every loaded incubator on by this many hours. |
+| `TPD.fast(hours)` | Test timer for setting. `TPD.fast()` goes back to the sandbox time. |
+| `TPD.milk(litres, c)` | A cooking pot of cow's milk (default 5 L), at c degrees if given. |
+| `TPD.kit(kind)` | What a test needs: yoghurt (default), `"crock"` or `"wrap"`; `"?"` lists them. |
+| `TPD.crocks()` | Every loaded crock: stage, progress, place. |
+| `TPD.culture(hours)` | Moves every loaded crock's current stage on by this many hours. |
+| `TPD.tiles()` | Every station within 3 tiles: object class, sprite, solid flags. |
+
+The Hearth's commands are TP Core's: `TPC.help()`.
