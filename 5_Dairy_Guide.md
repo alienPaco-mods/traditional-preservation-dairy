@@ -242,6 +242,8 @@ The milk's temperature follows where the station stands. There are five kinds of
 | **By a fire** (lit Hearth within 2 tiles) | 28 C |
 | By banked embers (banked Hearth within 2 tiles) | 24 C |
 
+> ✏ *Margin note:* "under a roof" means any roof overhead, walls or not. A porch roof or a floor laid on the level above is enough; four walls with no roof are still outdoors.
+
 Hours for 5 L poured at 85 C at 18:00 with the starter in, **cooling + setting**. "Never" means it hadn't set after 72 hours.
 
 | Month | Outdoors | Under a roof | Basement | By a fire | By banked embers |
