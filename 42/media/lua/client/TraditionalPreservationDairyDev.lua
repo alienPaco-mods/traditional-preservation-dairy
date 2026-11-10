@@ -108,6 +108,15 @@ local KITS = {
             for _ = 1, M.CROCK_WHEAT do inventory:AddItem(M.WHEAT) end
         end,
     },
+    hearth = {
+        about = "a mason's trowel, 12 clay bricks, 4 clay and a copper sheet, to build a Hearth (Pottery 2)",
+        give = function(inventory)
+            inventory:AddItem("Base.MasonsTrowel_Wood")
+            for _ = 1, 12 do inventory:AddItem("Base.ClayBrick") end
+            for _ = 1, 4 do inventory:AddItem("Base.Clay") end
+            inventory:AddItem("Base.CopperSheet")
+        end,
+    },
     wrap = {
         about = "a Yoghurt Pot, a Sheet and Twine, to make a Wrapped Yoghurt Pot",
         give = function(inventory)

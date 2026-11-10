@@ -89,5 +89,8 @@
   only milk's parts: "Pour from the Hearth", "Load from the Hearth", the steamed-milk record (now set by the core's
   `filled` hook) and the Wrapped Pot's own heat (the `heatOf` hook). Old `tpdHearth` coppers are not carried over:
   rebuild hearths in test saves.
+- The Hearth's entity, art, menu and Hearth Info are TP Core's now (S2b): Dairy's tiles 20-25, `Item_DairyHearth`,
+  the entity scripts and the moved strings are gone. Incubator Info and Crock Info derive from Core's `InfoWindow`.
+  Hearth Info shows Dairy's milk notes through `HearthUI.addNotes`. The "Steaming" row replaces "Ready to pour".
 - Not done yet: Starter Culture Crock window, final Hearth art (with a glow in the oven mouth), guide, README,
   Workshop text.

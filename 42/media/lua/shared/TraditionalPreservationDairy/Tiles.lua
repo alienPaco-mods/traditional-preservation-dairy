@@ -12,13 +12,6 @@ return {
     STATIONS = { "traditionalpreservationdairy_01_0", "traditionalpreservationdairy_01_1", "traditionalpreservationdairy_01_2", "traditionalpreservationdairy_01_3" },
     INCUBATOR = 0,
     CROCK = 2,
-    HEARTH = 20,
-    HEARTH_LOOKS = {
-        Empty = 20,
-        Full = 22,
-        Hot = 24,
-    },
-    HEARTHS = { "traditionalpreservationdairy_01_20", "traditionalpreservationdairy_01_21", "traditionalpreservationdairy_01_22", "traditionalpreservationdairy_01_23", "traditionalpreservationdairy_01_24", "traditionalpreservationdairy_01_25" },
     OVERLAYS = {
         incubator = {
             Cooling = 4,
