@@ -43,7 +43,8 @@ local function named(menu, key)
 end
 
 local function tile(x, y, class, sprite, modData)
-    local square = { getX = function() return x end, getY = function() return y end, getZ = function() return 0 end }
+    local square = { getX = function() return x end, getY = function() return y end, getZ = function() return 0 end,
+        isOutside = function() return false end }
     local object = {
         class = class,
         getSprite = function() return { getName = function() return sprite end } end,
