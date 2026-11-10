@@ -1,6 +1,11 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- Balance (series pass, F4): a jar takes yoghurt to its real size, 1 L in a glass jar, 2.5 L in a Clay Jar or
+  Glazed Clay Jar (every jar took 1 L), and a Jar of Yoghurt is eaten from: **Eat a Portion** eats 250 ml, a
+  vanilla Yoghurt's food, and the game's Eat / Eat Half / Eat Quarter work on it too. Its name counts portions, not
+  cups; cups are still filled from it a portion at a time, and the last spoonful or bite gives the empty jar back.
+  Collect lists each kind of jar you carry. Jars from an older save get their cups' worth of food when first used.
 - Balance (series pass, F1): the Yoghurt Pot takes 6 clay (was 4). Yoghurt Incubator needs Tailoring 1 only (the
   pot carries the Pottery gate), the Starter Culture Crock Cooking 4 only. Docs: the Hearth is Masonry 2 (TP Core).
 - Fixed: the starter crock could be built or put down on an electric stove or a chest freezer. It now stands only

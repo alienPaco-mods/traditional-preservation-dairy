@@ -78,16 +78,22 @@ M.SENSITIVITY = 1
 
 -- Collecting
 local now = pot.readyHour + 24
-local first, age = M.collectJar(pot, now)
-check("one Clay Jar takes a litre, with the pot's age", first == 1000 and near(age, 1))
-for _ = 1, 4 do M.collectJar(pot, now) end
-check("five jars empty a full pot, and it starts over", M.stage(pot) == "Empty" and pot.starter == nil)
+local first, age = M.collectJar(pot, now, "Base.EmptyJar")
+check("a glass jar takes a litre, with the pot's age", first == 1000 and near(age, 1))
+check("a clay jar takes 2.5 L", M.collectJar(pot, now, "Base.ClayJar") == 2500)
+check("the last jar takes what's left, and the pot starts over", M.collectJar(pot, now, "Base.ClayJarGlazed") == 1500
+    and M.stage(pot) == "Empty" and pot.starter == nil)
+check("a pot fills the jars it can, in order", M.jarsFor(5000, { "Base.ClayJar", "Base.ClayJar", "Base.EmptyJar" }) == 2
+    and M.jarsFor(5000, { "Base.EmptyJar", "Base.EmptyJar", "Base.ClayJar", "Base.EmptyJar", "Base.EmptyJar" }) == 4
+    and M.jarsFor(600, { "Base.EmptyJar", "Base.EmptyJar" }) == 1 and M.jarsFor(0, { "Base.EmptyJar" }) == 0)
 check("a litre fills four cups", M.cupsFor(1000) == 4 and M.cupsFor(250) == 1 and M.cupsFor(600) == 2)
-local jarData = { tpdMl = 1000 }
-check("a jar from before the count goes by its litres", M.cupsLeft(jarData) == 4 and M.cupsLeft({ tpdMl = 500 }) == 2)
-check("each cup comes out one at a time", M.takeCup(jarData) == 3 and M.cupsLeft(jarData) == 3)
-for _ = 1, 3 do M.takeCup(jarData) end
-check("the last cup empties the jar, and no further", M.cupsLeft(jarData) == 0 and M.takeCup(jarData) == 0)
+check("an old jar goes by its cups, older still by its litres", M.cupsLeft({ tpdCups = 3, tpdMl = 1000 }) == 3
+    and M.cupsLeft({ tpdMl = 1000 }) == 4 and M.cupsLeft({ tpdMl = 500 }) == 2 and M.cupsLeft({}) == 4)
+check("a portion is vanilla Yoghurt's hunger", near(M.portionsIn(-0.4), 4) and near(M.portionsIn(-0.25), 2.5))
+check("a portion is a share of the full jar", near(M.portionShare(4, 4), 0.25) and near(M.portionShare(10, 10), 0.1)
+    and near(M.portionShare(0.5, 10), 0.05) and M.portionShare(1, 0) == 1)
+check("portions as text", M.portionsText(4) == "4" and M.portionsText(1.0000000149) == "1" and M.portionsText(2.5) == "2.5"
+    and M.portionsText(7.46) == "7.5")
 local cupPot = { ml = 600, readyHour = 10, starter = "Yoghurt", incubating = true, fluid = "CowMilk" }
 check("a pot of 0.6 L fills three cups", M.cupsInPot(cupPot) == 3)
 local cupMl, cupAge = M.collectCup(cupPot, 34)

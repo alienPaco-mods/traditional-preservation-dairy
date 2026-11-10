@@ -69,10 +69,12 @@ local CROCK_KIND = "culture"
 local CULTURE_CURVE = { { 5, 0.03 }, { 10, 0.1 }, { 15, 0.3 }, { 20, 0.6 }, { 25, 1 }, { 35, 1 }, { 40, 0.6 }, { 45, 0.1 } }
 
 -- Yield
-M.JAR_ML = 1000               -- each jar takes one litre of yoghurt
+-- A jar takes yoghurt to its vanilla capacity and is eaten from in portions of a cup, 250 ml.
 M.CUPS_PER_LITRE = 4          -- 8 oz cups
-M.CUP_ML = M.JAR_ML / M.CUPS_PER_LITRE   -- an Empty Yoghurt Container takes a quarter of a jar
-M.CUP_KG = 0.25               -- a cup's share of a full jar's weight
+M.CUP_ML = 1000 / M.CUPS_PER_LITRE   -- an Empty Yoghurt Container, and one portion from a jar
+M.CUP_KG = 0.25               -- a portion's weight
+-- One portion's food: vanilla Yoghurt's (hunger as the engine keeps it, -10 in the script). C23 may change it.
+M.PORTION = { hunger = -0.1, calories = 30, carbohydrates = 1, lipids = 1, proteins = 5 }
 
 -- Items and fluids. Only animal milk sets: a cow's, a sheep's, or the game's generic AnimalMilk (debug spawns and
 -- some loot, which vanilla's own milking and cheese accept as milk). Yoghurt is yoghurt, so they may share a
@@ -82,12 +84,14 @@ Hearth.blend("CowMilk", "SheepMilk", "AnimalMilk")
 M.STARTER = "TraditionalPreservationDairy.ActiveYoghurtStarter"
 M.STARTERS = { ["Base.Yoghurt"] = "Yoghurt", [M.STARTER] = "Starter" }
 M.EMPTY_CUP = "TraditionalPreservationDairy.EmptyYoghurtContainer"
--- Clay Jars need Pottery 5 and are rare loot; the glass canning jar is common and holds exactly a litre.
-M.JARS = { ["Base.ClayJar"] = true, ["Base.ClayJarGlazed"] = true, ["Base.EmptyJar"] = true }
+-- The jars yoghurt is collected into, with the ml each holds (vanilla capacities). Clay Jars need Pottery 5 and
+-- are rare loot; the glass canning jar is common.
+M.JAR_ML = { ["Base.EmptyJar"] = 1000, ["Base.ClayJar"] = 2500, ["Base.ClayJarGlazed"] = 2500 }
+M.OLD_JAR_ML = 1000           -- every jar took a litre before F4
 M.YOGHURT_JAR = "TraditionalPreservationDairy.JarOfYoghurt"
 -- One item whatever the jar; a clay one changes only its icon (the engine saves an item's own texture).
 M.JAR_ICONS = { ["Base.ClayJar"] = "Item_JarOfYoghurt_Clay", ["Base.ClayJarGlazed"] = "Item_JarOfYoghurt_Glazed" }
-M.COLLECT_XP = 2              -- Cooking, per jar (a litre); a cup earns its share
+M.COLLECT_XP = 2              -- Cooking, per litre collected, into a jar or cups alike
 
 -- Stations: FACE_COUNT tiles from each base, one per facing. Stage sprites are layered on top once the art
 -- builder makes them (Tiles.OVERLAYS); until then the station shows its base tile only.
@@ -363,9 +367,20 @@ local function collect(batch, now, want)
     return ml, age
 end
 
--- Fills one Clay Jar.
-function M.collectJar(batch, now)
-    return collect(batch, now, M.JAR_ML)
+-- Fills one jar of the given type to its size.
+function M.collectJar(batch, now, jarType)
+    return collect(batch, now, M.JAR_ML[jarType] or M.OLD_JAR_ML)
+end
+
+-- How many of the given jars (types, in order) the ml fill: the last may be part-full.
+function M.jarsFor(ml, jarTypes)
+    local count = 0
+    for _, jarType in ipairs(jarTypes) do
+        if ml <= 0 then break end
+        ml = ml - (M.JAR_ML[jarType] or M.OLD_JAR_ML)
+        count = count + 1
+    end
+    return count
 end
 
 -- Fills one Empty Yoghurt Container straight from the pot, a quarter of a jar; the last one takes what is left.
@@ -383,16 +398,31 @@ function M.cupsFor(ml)
     return math.max(math.floor(ml / 1000 * M.CUPS_PER_LITRE + 0.5), 1)
 end
 
--- Cups still in a Jar of Yoghurt, from its modData: a jar from before the count was kept goes by its litres.
+-- Cups in a Jar of Yoghurt from before F4 (eaten by the cup only), from its modData; older still, by its litres.
 function M.cupsLeft(jarData)
-    return jarData.tpdCups or M.cupsFor(jarData.tpdMl or M.JAR_ML)
+    return jarData.tpdCups or M.cupsFor(jarData.tpdMl or M.OLD_JAR_ML)
 end
 
--- Spoons one cup out of the jar. Returns the cups left; at 0 the jar is empty and goes back to its own type.
-function M.takeCup(jarData)
-    local left = math.max(M.cupsLeft(jarData) - 1, 0)
-    jarData.tpdCups = left
-    return left
+-- Portions left in a Jar of Yoghurt, from the hunger it still holds. Vanilla's Eat Half / Quarter may leave a part.
+function M.portionsIn(hunger)
+    return hunger / M.PORTION.hunger
+end
+
+-- A jar counts as empty below a tenth of a portion (the engine's own cut-off is one hunger point).
+M.EMPTY_PORTIONS = 0.1
+
+-- One portion as a share of a full jar, for vanilla's eat action (its percentage is of the full item); the last
+-- part-portion is all that's left.
+function M.portionShare(left, full)
+    if full <= 0 then return 1 end
+    return math.min(left, 1) / full
+end
+
+-- A jar's portions as text: whole numbers plain, a part-portion to one place.
+function M.portionsText(left)
+    local rounded = math.floor(left * 10 + 0.5) / 10
+    if rounded == math.floor(rounded) then return tostring(math.floor(rounded)) end
+    return string.format("%.1f", rounded)
 end
 
 -- Hours until the next change (wrap on, or set) if the place's temperature holds; nil if it never comes.

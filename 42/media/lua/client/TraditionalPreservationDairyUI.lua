@@ -48,6 +48,10 @@ end
 local litresText, degrees, hoursText = UI.litres, UI.degrees, UI.hoursText
 local tooltipFor, disableWith, findItems = UI.tooltip, UI.disable, UI.findItems
 
+-- Glass and clay jars a pot of ml fills.
+local function glassJars(ml) return math.ceil(ml / M.JAR_ML["Base.EmptyJar"]) end
+local function clayJars(ml) return math.ceil(ml / M.JAR_ML["Base.ClayJar"]) end
+
 local function onAction(playerObj, station, items, mode)
     if not ISEntityUI.WalkToEntity(playerObj, station) then return end
     for _, item in ipairs(items) do
@@ -75,7 +79,7 @@ local function detailText(station, state)
     elseif stage == "TooCold" then
         table.insert(lines, getText("IGUI_TraditionalPreservationDairy_TooCold"))
     elseif stage == "Ready" then
-        table.insert(lines, say("IGUI_TraditionalPreservationDairy_Jars", tostring(math.ceil(state.ml / M.JAR_ML)), tostring(M.cupsInPot(state))))
+        table.insert(lines, say("IGUI_TraditionalPreservationDairy_Jars", tostring(glassJars(state.ml)), tostring(clayJars(state.ml)), tostring(M.cupsInPot(state))))
     else
         if stage == "Cooling" then
             table.insert(lines, getText(state.starter and "IGUI_TraditionalPreservationDairy_StarterIn" or "IGUI_TraditionalPreservationDairy_NoStarter"))
@@ -207,14 +211,23 @@ end
 local function addCollectMenu(menu, playerObj, station, state)
     local option = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_Collect"))
     option.iconTexture = getTexture(JAR_ICON)
-    local jars = findItems(playerObj, function(item) return M.JARS[item:getFullType()] == true and M.isEmptyContainer(item) end)
+    local jars = findItems(playerObj, function(item) return M.JAR_ML[item:getFullType()] ~= nil and M.isEmptyContainer(item) end)
     if #jars == 0 then return disableWith(option, getText("IGUI_TraditionalPreservationDairy_NoJar")) end
-    local most = math.min(#jars, math.ceil(state.ml / M.JAR_ML))
-    local picked = {}
+    local types, picked = {}, {}
+    for index, jar in ipairs(jars) do types[index] = jar:getFullType() end
+    local most = M.jarsFor(state.ml, types)
     for index = 1, most do picked[index] = jars[index] end
     local sub = menu:getNew(menu)
     menu:addSubMenu(option, sub)
-    sub:addOption(getText("ContextMenu_TraditionalPreservationDairy_OneJar"), playerObj, onAction, station, { jars[1] }, "collect")
+    -- One entry per kind of jar carried, so the player picks glass or clay.
+    local seen = {}
+    for _, jar in ipairs(jars) do
+        local jarType = jar:getFullType()
+        if not seen[jarType] then
+            seen[jarType] = true
+            sub:addOption(say("ContextMenu_TraditionalPreservationDairy_OneJar", jar:getDisplayName(), litresText(M.JAR_ML[jarType])), playerObj, onAction, station, { jar }, "collect")
+        end
+    end
     if most > 1 then
         sub:addOption(say("ContextMenu_TraditionalPreservationDairy_All", tostring(most)), playerObj, onAction, station, picked, "collect")
     end
@@ -466,7 +479,7 @@ function PotWindow:render()
     end
     if stage == "Ready" then
         y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoAgeLabel", ageText(state))
-        y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoJars", tostring(math.ceil(ml / M.JAR_ML)))
+        y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoJars", say("IGUI_TraditionalPreservationDairy_InfoJarsCount", tostring(glassJars(ml)), tostring(clayJars(ml))))
     end
 
     local notes = {}
@@ -586,7 +599,12 @@ end
 
 Events.OnFillWorldObjectContextMenu.Add(onFillContextMenu)
 
--- Jar of Yoghurt: one cup, or every cup the jar and the empty containers allow.
+-- One portion through vanilla's eat action (mask, utensils and all); its share is of the full jar.
+local function onEatPortion(playerObj, jar)
+    ISInventoryPaneContextMenu.eatItem(jar, M.portionShare(M.jarPortions(jar), M.jarFull(jar)), playerObj:getPlayerNum())
+end
+
+-- Jar of Yoghurt: eat a portion, or spoon one cup, or every cup the jar and the empty containers allow.
 local function onFillCups(playerObj, jar, cups)
     ISInventoryPaneContextMenu.transferIfNeeded(playerObj, jar)
     for _, cup in ipairs(cups) do
@@ -603,7 +621,10 @@ local function onFillInventoryMenu(playerNum, context, items)
     end
     if not jar then return end
     local playerObj = getSpecificPlayer(playerNum)
-    local left = M.cupsLeft(jar:getModData())
+    local left = math.ceil(M.jarPortions(jar) - M.EMPTY_PORTIONS)
+    M.labelJar(jar)
+    local eat = context:addOption(getText("ContextMenu_TraditionalPreservationDairy_EatPortion"), playerObj, onEatPortion, jar)
+    eat.iconTexture = getTexture(YOGHURT_ICON)
     local empties = findItems(playerObj, function(item) return item:getFullType() == M.EMPTY_CUP end)
     local one = context:addOption(getText("ContextMenu_TraditionalPreservationDairy_FillCup"), playerObj, onFillCups, jar, { empties[1] })
     one.iconTexture = getTexture(YOGHURT_ICON)

@@ -1,7 +1,7 @@
 -- Traditional Preservation (Dairy): the hand jobs at a Yoghurt Incubator. "hearth" pours milk steaming from a
 -- Hearth's copper (within 2 tiles) in, "carried" pours steamed milk in from a container, "starter" stirs in a yoghurt or an Active Yoghurt Starter, "pourOut" takes the milk back out into an empty
--- container (still steamed) to reheat it, "collect" fills an empty Clay Jar with a litre of set yoghurt, and "cup"
--- fills an Empty Yoghurt Container with a quarter litre.
+-- container (still steamed) to reheat it, "collect" fills an empty jar (glass 1 L, clay 2.5 L) with set yoghurt,
+-- and "cup" fills an Empty Yoghurt Container with a quarter litre.
 require "TimedActions/ISBaseTimedAction"
 require "TraditionalPreservationDairy"
 require "TraditionalPreservationDairyYoghurt"
@@ -38,7 +38,7 @@ local function canDo(self)
     elseif self.mode == "cup" then
         return self.item:getFullType() == M.EMPTY_CUP and M.stage(batch) == "Ready"
     end
-    return M.JARS[self.item:getFullType()] == true and M.isEmptyContainer(self.item) and M.stage(batch) == "Ready"
+    return M.JAR_ML[self.item:getFullType()] ~= nil and M.isEmptyContainer(self.item) and M.stage(batch) == "Ready"
 end
 
 function TPYoghurtIncubator:isValid()
@@ -114,23 +114,18 @@ function COMPLETE.cup(self, batch, now)
     if ml > 0 then
         removeItem(self.item)
         give(self, "Base.Yoghurt"):setAge(age)
-        self.character:getXp():AddXP(Perks.Cooking, M.COLLECT_XP * ml / M.JAR_ML)
+        self.character:getXp():AddXP(Perks.Cooking, M.COLLECT_XP * ml / 1000)
     end
 end
 
 function COMPLETE.collect(self, batch, now)
     local jarType = self.item:getFullType()
-    local ml, age = M.collectJar(batch, now)
+    local ml, age = M.collectJar(batch, now, jarType)
     if ml > 0 then
         local jar = give(self, M.YOGHURT_JAR)
         removeItem(self.item)
-        jar:setAge(age)
-        jar:getModData().tpdJar = jarType
-        if M.JAR_ICONS[jarType] then jar:setTexture(getTexture(M.JAR_ICONS[jarType])) end
-        jar:getModData().tpdMl = ml
-        jar:getModData().tpdCups = M.cupsFor(ml)
-        M.labelJar(jar)
-        self.character:getXp():AddXP(Perks.Cooking, M.COLLECT_XP)
+        M.fillJar(jar, jarType, ml, age)
+        self.character:getXp():AddXP(Perks.Cooking, M.COLLECT_XP * ml / 1000)
     end
 end
 
@@ -154,7 +149,7 @@ function TPYoghurtIncubator:getDuration()
     end
     if self.mode == "pourOut" and container then litres = container:getCapacity() end
     if self.mode == "carried" and container then litres = container:getAmount() end
-    if self.mode == "collect" then litres = M.JAR_ML / 1000 end
+    if self.mode == "collect" then litres = (M.JAR_ML[self.item:getFullType()] or M.OLD_JAR_ML) / 1000 end
     if self.mode == "cup" then litres = M.CUP_ML / 1000 end
     return Action.pourDuration(self.character, litres, 5)
 end

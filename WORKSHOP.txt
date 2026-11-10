@@ -12,7 +12,7 @@ Traditional Preservation (Dairy) requires [b]TP Core[/b] (Traditional Preservati
 [*]Milk steamed in the copper of TP Core's Hearth, poured straight in or carried hot in a Wrapped Yoghurt Pot
 [*]Real temperatures: the milk cools, the wrap goes on at 45 C, and it sets in about 6 hours when kept warm
 [*]Cow's and sheep's milk, alone or mixed, as a mixed herd's always was
-[*]Collect into clay or glass jars, a litre each, and spoon them into cups of vanilla Yoghurt that keep the batch's age
+[*]Collect into glass jars (1 L) or clay jars (2.5 L) and eat from the jar, 250 ml at a time, or spoon it into cups of vanilla Yoghurt that keep the batch's age
 [*]Every Yoghurt eaten leaves its Empty Yoghurt Container
 [*]A Starter Culture Crock grows a new starter from wheat and milk, and stands on a counter, a table or the floor
 [*]Set it by the fire in winter: a lit Hearth keeps a pot at 28 C in any month
@@ -26,8 +26,9 @@ Traditional Preservation (Dairy) requires [b]TP Core[/b] (Traditional Preservati
 [*][b]Pour from the Hearth[/b] into a Yoghurt Incubator within 2 tiles, up to 5 L.
 [*][b]Add Starter[/b]: one vanilla Yoghurt or one Active Yoghurt Starter.
 [*][b]Wait[/b]: the milk cools to 45 C in about 2 hours, the incubator wraps itself, and the milk sets in about 6 hours at 40 to 45 C.
-[*][b]Collect[/b] into empty jars, 1 L each, or straight into Empty Yoghurt Containers.
-[*][b]Fill a Yoghurt Cup[/b] from a Jar of Yoghurt: four cups a jar, each a vanilla Yoghurt.
+[*][b]Collect[/b] into empty jars, glass 1 L or clay 2.5 L, or straight into Empty Yoghurt Containers.
+[*][b]Eat a Portion[/b] from a Jar of Yoghurt: 250 ml, a vanilla Yoghurt's food; 4 in a glass jar, 10 in a clay one.
+[*][b]Fill a Yoghurt Cup[/b] from a Jar of Yoghurt: a portion into a cup, a vanilla Yoghurt.
 [/olist]
 
 [h2]The stations[/h2]

@@ -49,14 +49,14 @@ module TraditionalPreservationDairy
         }
     }
 
-    /* A litre of set yoghurt in a Clay Jar or a glass jar. The jar's type, the litres and the cups left are in its
-       ModData (tpdJar, tpdMl, tpdCups); its age is the yoghurt's, carried over from the incubator. Spooned into
-       cups from its right-click menu, not eaten from. */
+    /* Set yoghurt in a glass jar (1 L) or a Clay Jar (2.5 L). Its food values are its portions, a vanilla Yoghurt
+       each per 250 ml, set in Lua when it is filled (none here, so a jar from before F4 is told by tpdFood in its
+       ModData). The jar's type and litres are in ModData (tpdJar, tpdMl); its age is the yoghurt's, carried over
+       from the incubator. Eaten from, or spooned into cups from its right-click menu. */
     item JarOfYoghurt
     {
         DisplayCategory = Food,
         ItemType = base:food,
-        CantEat = true,
         FoodType = NoExplicit,
         DaysFresh = 10,
         DaysTotallyRotten = 15,

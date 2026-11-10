@@ -1,5 +1,6 @@
--- Traditional Preservation (Dairy): spoons one cup of yoghurt from a Jar of Yoghurt into an Empty Yoghurt
--- Container. The cup is as old as the jar, so freshness never resets; the last cup gives the empty jar back.
+-- Traditional Preservation (Dairy): spoons one portion of yoghurt from a Jar of Yoghurt into an Empty Yoghurt
+-- Container. The cup is as old as the jar, so freshness never resets; a part-portion left over makes a cup with
+-- that much food, and the last spoonful gives the empty jar back.
 require "TimedActions/ISBaseTimedAction"
 require "TraditionalPreservationDairy"
 require "TraditionalPreservationDairyYoghurt"
@@ -13,7 +14,7 @@ local DURATION = 30
 function TPFillYoghurtCup:isValid()
     local inventory = self.character:getInventory()
     return inventory:containsRecursive(self.jar) and inventory:containsRecursive(self.cup)
-        and M.cupsLeft(self.jar:getModData()) > 0
+        and M.jarPortions(self.jar) >= M.EMPTY_PORTIONS
 end
 
 function TPFillYoghurtCup:start()
@@ -27,16 +28,14 @@ end
 
 function TPFillYoghurtCup:complete()
     local inventory = self.character:getInventory()
-    local data = self.jar:getModData()
-    local left = M.takeCup(data)
+    local left = M.jarPortions(self.jar)
+    local take = math.min(left, 1)
     removeItem(self.cup)
-    inventory:AddItem("Base.Yoghurt"):setAge(self.jar:getAge())
-    if left > 0 then
-        M.labelJar(self.jar)
-    else
-        removeItem(self.jar)
-        inventory:AddItem(data.tpdJar or "Base.ClayJar")
-    end
+    local yoghurt = inventory:AddItem("Base.Yoghurt")
+    yoghurt:setAge(self.jar:getAge())
+    if take < 1 then yoghurt:multiplyFoodValues(take) end
+    self.jar:multiplyFoodValues((left - take) / left)
+    M.afterJarUse(self.jar, self.jar:getContainer())
     return true
 end
 

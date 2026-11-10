@@ -20,7 +20,7 @@ Copy this folder to `~/Zomboid/mods/TraditionalPreservationDairy`, as a real cop
 2. **Build a Hearth** (TP Core) and keep wood for it. A full copper takes about 1.5 hours to steam.
 3. **Throw a Yoghurt Pot** on the wheel and fire it, then build it into a Yoghurt Incubator within 2 tiles of the Hearth.
 4. **Keep one yoghurt back.** Each batch takes one vanilla Yoghurt or one Active Yoghurt Starter. With none left, build a Starter Culture Crock.
-5. **Save your Empty Yoghurt Containers and jars.** Each cup of yoghurt needs a container, and a jar holds a litre.
+5. **Save your Empty Yoghurt Containers and jars.** Each cup of yoghurt needs a container; a glass jar holds a litre, a clay jar 2.5 L, and you eat from the jar itself.
 6. **Set it by the fire in winter.** A lit Hearth within 2 tiles keeps the pot at 28 C: it sets in about 6 hours in any month.
 
 ## The loop at a glance
@@ -33,8 +33,9 @@ Copy this folder to `~/Zomboid/mods/TraditionalPreservationDairy`, as a real cop
 | 4 | Add Starter | Incubator's menu | 1 Yoghurt or Active Yoghurt Starter | | a moment |
 | 5 | Cool | Incubator, lid on | | milk at 45 C, the wrap goes on | about 2 hours* |
 | 6 | Set | Incubator, wrapped | | 5 L of yoghurt | 6 hours at 40 to 45 C* |
-| 7 | Collect | Incubator's menu | empty jars, or Empty Yoghurt Containers | Jars of Yoghurt (1 L), or Yoghurts | a moment |
-| 8 | Fill a Yoghurt Cup | Jar's menu | Jar of Yoghurt, Empty Yoghurt Container | 1 vanilla Yoghurt | a moment |
+| 7 | Collect | Incubator's menu | empty jars, or Empty Yoghurt Containers | Jars of Yoghurt (glass 1 L, clay 2.5 L), or Yoghurts | a moment |
+| 8 | Eat a Portion | Jar's menu | Jar of Yoghurt | 250 ml eaten, a vanilla Yoghurt's food | as eating |
+| 9 | Fill a Yoghurt Cup | Jar's menu | Jar of Yoghurt, Empty Yoghurt Container | 1 vanilla Yoghurt | a moment |
 
 \* In a 20 C room, or by a fire. Colder places take longer; see Temperature and places.
 
@@ -43,7 +44,7 @@ Copy this folder to `~/Zomboid/mods/TraditionalPreservationDairy`, as a real cop
 | Milk | 5 L, cow's, sheep's or both |
 | Starter | 1 Yoghurt or 1 Active Yoghurt Starter |
 | Wood | about 1.5 hours of fire to steam 10 L, enough for two pots |
-| Yoghurt | 5 L: 5 Jars of Yoghurt, or 20 cups |
+| Yoghurt | 5 L: 5 glass jars, 2 clay jars, or 20 cups (250 ml portions) |
 | Cooking XP | 2 per litre collected |
 
 ## Stations
@@ -90,10 +91,10 @@ If the milk falls under 40 C with no starter in, it is **Too cold** (the lid sli
 ### 4. Collecting
 
 When the status line reads **Ready**:
-- **Collect into Clay Jar**: 1 L into each empty Clay Jar, Glazed Clay Jar or glass jar. A **Jar of Yoghurt** holds 4 cups, keeps the yoghurt's age, stays fresh 10 days and is rotten at 15.
+- **Collect into a Jar**: each empty jar is filled to its size, 1 L in a glass jar, 2.5 L in a Clay Jar or Glazed Clay Jar; the last one takes what is left. A **Jar of Yoghurt** holds a 250 ml portion per quarter litre (4 in glass, 10 in clay), keeps the yoghurt's age, stays fresh 10 days and is rotten at 15.
 - **Fill Empty Yoghurt Containers**: 250 ml each, straight into a vanilla Yoghurt the same age as the batch.
 
-From a jar's right-click menu, **Fill a Yoghurt Cup** or **Fill All Cups** spoons it out into Empty Yoghurt Containers. The jar gets lighter, its name shows the cups left, and the last cup gives the empty jar back.
+Eat from the jar: **Eat a Portion** in its right-click menu eats 250 ml, a vanilla Yoghurt's food. The game's own Eat, Eat Half and Eat Quarter work too (they eat that share of a full jar). Or **Fill a Yoghurt Cup** / **Fill All Cups** spoons portions into Empty Yoghurt Containers. The jar gets lighter, its name shows the portions left (a part-portion after Eat Quarter makes a cup with that much food), and the last spoonful gives the empty jar back.
 
 Every vanilla Yoghurt eaten, or stirred into oatmeal, leaves an **Empty Yoghurt Container**, so the cups go round.
 
@@ -207,7 +208,7 @@ Volumes, temperatures, cooling times, the setting and culture curves, the crock'
 
 - The pot's milk, temperature, starter, stage and set hours live in the station's ModData (`tpdIncubator`), the crock's in `tpdCrock`, and hot milk carried in a container in `tpdCarry` (litres, heat, hour, steamed). Never rename them once the mod is out.
 - Weather is TP Core's shared ledger; a pot catches up hour by hour over the two weeks of kept weather, and the hours before that as one spell.
-- A Jar of Yoghurt keeps its jar type, litres and cups left in its ModData (`tpdJar`, `tpdMl`, `tpdCups`), and a custom weight the engine saves.
+- A Jar of Yoghurt keeps its jar type and litres in its ModData (`tpdJar`, `tpdMl`); its portions are its own food values (hunger, calories and so on, which the engine saves), and `tpdFood` marks a jar that has them. A jar from before that (only `tpdCups`) gets its cups' worth the first time it is touched. Its weight is a custom weight the engine saves. Vanilla's eat action is wrapped (`complete`, `serverStop`) to relabel the jar and give the empty jar back.
 - Every vanilla Yoghurt gets `ReplaceOnUse` = Empty Yoghurt Container at load, so eating or oatmeal leaves the cup.
 - The shared core (Weather, Station, UI, Hearth) is the required TP Core mod (`~/MODS/TraditionalPreservationCore`), loaded as `require "TraditionalPreservationCore/Weather"`. Edit it there. Dairy names cow's and sheep's milk as a blend with `Hearth.blend`.
 
@@ -218,7 +219,7 @@ In debug mode, `TPD.help()` in the Lua console lists commands for testing this m
 ## Known prototype caveats
 
 - **Empty Yoghurt Containers can't be made yet**: they come only from eating looted or home-made Yoghurt.
-- A cup of yoghurt is a vanilla Yoghurt, so 1 L of milk (about 615 kcal) becomes four cups of 30 kcal. Under review in the series' balance pass.
+- A cup or a jar portion of yoghurt is a vanilla Yoghurt's food, so 1 L of milk (about 615 kcal) becomes four portions of 30 kcal. Under review in the series' balance pass (C23, later).
 - Milk never spoils in vanilla, so yoghurt doesn't yet win on shelf life.
 - The Hearth's art is a placeholder.
 - Several vanilla UI functions are wrapped (the station's right-click entry and the click on a station), so compare them with vanilla after a game update.
@@ -234,7 +235,8 @@ Still to check in the game:
 1. The crock on a kitchen counter and a table: built, put down, saved and reloaded, refused on a fridge or stove (test C).
 2. Cow's and sheep's milk mixing in the copper, a container and the pot; the Hearth's menu and Hearth Info naming both.
 3. Milk that would leave a started pot under 40 C refused, in red.
-4. A part-empty Jar of Yoghurt keeps its weight after a reload.
-5. A pot left for weeks catches up and reads right on return.
-6. The incubator's and crock's menus with a controller.
-7. `console.txt` shows no repeating Lua errors after an hour of play, with the other Traditional Preservation mods on.
+4. A part-empty Jar of Yoghurt keeps its weight and portions after a reload.
+5. Jars at their real size: a glass jar 4 portions, a clay jar 10; Eat a Portion, vanilla Eat Quarter, a cup from a part-portion, and the empty jar back.
+6. A pot left for weeks catches up and reads right on return.
+7. The incubator's and crock's menus with a controller.
+8. `console.txt` shows no repeating Lua errors after an hour of play, with the other Traditional Preservation mods on.
