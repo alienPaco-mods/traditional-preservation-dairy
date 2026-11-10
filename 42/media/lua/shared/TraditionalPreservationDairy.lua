@@ -74,10 +74,11 @@ M.CUPS_PER_LITRE = 4          -- 8 oz cups
 M.CUP_ML = M.JAR_ML / M.CUPS_PER_LITRE   -- an Empty Yoghurt Container takes a quarter of a jar
 M.CUP_KG = 0.25               -- a cup's share of a full jar's weight
 
--- Items and fluids. Only a cow's or a sheep's milk sets; yoghurt is yoghurt, so the two may share a copper, a
--- container and a pot, as a mixed herd's milk always did.
-M.MILKS = { CowMilk = true, SheepMilk = true }
-Hearth.blend("CowMilk", "SheepMilk")
+-- Items and fluids. Only animal milk sets: a cow's, a sheep's, or the game's generic AnimalMilk (debug spawns and
+-- some loot, which vanilla's own milking and cheese accept as milk). Yoghurt is yoghurt, so they may share a
+-- copper, a container and a pot, as a mixed herd's milk always did.
+M.MILKS = { CowMilk = true, SheepMilk = true, AnimalMilk = true }
+Hearth.blend("CowMilk", "SheepMilk", "AnimalMilk")
 M.STARTER = "TraditionalPreservationDairy.ActiveYoghurtStarter"
 M.STARTERS = { ["Base.Yoghurt"] = "Yoghurt", [M.STARTER] = "Starter" }
 M.EMPTY_CUP = "TraditionalPreservationDairy.EmptyYoghurtContainer"

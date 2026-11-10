@@ -200,6 +200,10 @@ check("cow's milk goes in with sheep's", M.copperToPot({ ml = 2000, fluid = "Cow
 local herdCopper = {}
 Hearth.pourInto(herdCopper, "CowMilk", 3000, 90, 0)
 check("and the two share a copper", Hearth.pourInto(herdCopper, "SheepMilk", 1000, 90, 0) == 1000 and M.copperHot(herdCopper))
+local animalPot = { ml = 1000, tempC = 80, fluid = "AnimalMilk" }
+check("the game's generic AnimalMilk is milk and blends with cow's",
+    M.copperHot({ ml = 100, fluid = "AnimalMilk", tempC = 90 })
+    and M.copperToPot({ ml = 1000, fluid = "CowMilk", tempC = 90 }, animalPot, 0) == 1000 and animalPot.parts.AnimalMilk == 1000)
 local herdPot = {}
 M.copperToPot(herdCopper, herdPot, 0)
 local _, _, herdOut = M.pourOut(herdPot, 2000)

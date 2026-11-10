@@ -555,6 +555,11 @@ InfoWindow.clickOpens(function(object) return M.stationKind(object) ~= nil end, 
     window.open(playerObj, object)
 end)
 
+-- The crock stands on a counter or a table, never on a stove, a fridge or a freezer.
+local crockFaces = {}
+for face = 0, M.FACE_COUNT - 1 do crockFaces[M.spriteName(M.CROCK_SPRITE + face)] = true end
+UI.offAppliances(crockFaces)
+
 -- Every pot and crock the click took in gets its own menu. With more than one, each is named with its status
 -- ("Yoghurt Incubator (Cooling: 2.0 L at 60 C)"), so the player picks the right one.
 local function onFillContextMenu(playerNum, context, worldobjects, test)

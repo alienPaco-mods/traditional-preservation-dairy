@@ -1,6 +1,10 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- Fixed: the starter crock could be built or put down on an electric stove or a chest freezer. It now stands only
+  on a counter, a table or the floor.
+- The game's generic animal milk counts as milk, as vanilla's own milking and cheese treat it: it sets, and blends
+  with cow's and sheep's. Before, a copper holding it refused any other milk.
 - The README, Workshop page and mod description now describe the mod as built: the Hearth's copper, the incubator,
   jars and cups, the starter crock, places and timings. DEVHELP lists the real console commands (it named `TPD.age`
   and `TPD.batches`, which don't exist), and so does the guide's Tester's Toolkit.
