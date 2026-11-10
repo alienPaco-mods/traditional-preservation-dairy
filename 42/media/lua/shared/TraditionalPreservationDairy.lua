@@ -50,6 +50,12 @@ M.COPPER_LIT_TAU = 0.75       -- hours, for 10 L over a lit fire: 20 to 85 C in 
 M.COPPER_OUT_TAU = 2.0        -- hours, for 10 L once the fire is out: the stone holds its heat
 M.COPPER_FLOOR_ML = 1000      -- a splash heats as fast as a litre
 
+-- Carried milk: a container filled from the copper keeps a record in its item modData, so the incubator knows
+-- the milk was steamed. Only the Wrapped Pot (a cooking pot in a rug) holds the heat; any other container
+-- follows vanilla's item heat, which drops to the room within seconds.
+M.CARRY_KEY = "tpdCarry"      -- { ml, c, hour, steamed }
+M.WRAPPED_POT_TAU = 4.0       -- hours, for 5 L: 85 to 70 C in about an hour at 20 C
+
 -- Share of full setting speed at the milk's own temperature. Thermophilic cultures: best at 40 to 45 C,
 -- slow below 35, stalled below about 18; past 50 the heat starts to kill them.
 local SET_CURVE = { { 18, 0 }, { 22, 0.05 }, { 27, 0.15 }, { 32, 0.35 }, { 37, 0.7 }, { 40, 1 }, { 45, 1 }, { 50, 0.5 }, { 55, 0 } }
@@ -60,7 +66,8 @@ M.WHEAT = "Base.WheatSeed"
 M.CROCK_WHEAT = 20
 M.CROCK_LOAD_ML = 500
 M.CROCK_FEED_ML = 500
-M.CROCK_WARM_C = 35           -- milk for loading must be at least this warm (hot milk is fine)
+M.CROCK_WARM_C = 35           -- milk for loading must be warm: at least this,
+M.CROCK_HOT_C = 45            -- and no hotter than this, or it kills the grain's culture
 M.CULTIVATE_HOURS = 24        -- wheat and warm milk, at the best temperature
 M.DEVELOP_HOURS = 12          -- after the fresh-milk feed, at the best temperature
 M.CROCK_STARTERS = 2
@@ -71,6 +78,7 @@ local CULTURE_CURVE = { { 5, 0.03 }, { 10, 0.1 }, { 15, 0.3 }, { 20, 0.6 }, { 25
 -- Yield
 M.JAR_ML = 1000               -- each jar takes one litre of yoghurt
 M.CUPS_PER_LITRE = 4          -- 8 oz cups
+M.CUP_ML = M.JAR_ML / M.CUPS_PER_LITRE   -- an Empty Yoghurt Container takes a quarter of a jar
 M.CUP_KG = 0.25               -- a cup's share of a full jar's weight
 
 -- Items and fluids. Only a cow's or a sheep's milk sets; yoghurt is yoghurt, so the two may share a pot.
@@ -83,7 +91,7 @@ M.JARS = { ["Base.ClayJar"] = true, ["Base.ClayJarGlazed"] = true, ["Base.EmptyJ
 M.YOGHURT_JAR = "TraditionalPreservationDairy.JarOfYoghurt"
 -- One item whatever the jar; a clay one changes only its icon (the engine saves an item's own texture).
 M.JAR_ICONS = { ["Base.ClayJar"] = "Item_JarOfYoghurt_Clay", ["Base.ClayJarGlazed"] = "Item_JarOfYoghurt_Glazed" }
-M.COLLECT_XP = 2              -- Cooking, per jar
+M.COLLECT_XP = 2              -- Cooking, per jar (a litre); a cup earns its share
 
 -- Stations: FACE_COUNT tiles from each base, one per facing. Stage sprites are layered on top once the art
 -- builder makes them (Tiles.OVERLAYS); until then the station shows its base tile only.
@@ -135,11 +143,6 @@ end
 local function isStation(object, base)
     local sprite = object and object:getSprite()
     return sprite ~= nil and isStationSprite(sprite:getName(), base)
-end
-
--- The pot and the crock stand within HEARTH_RADIUS tiles of a Hearth, built or put down.
-function M.needsHearth(spriteName)
-    return isStationSprite(spriteName, M.INCUBATOR_SPRITE) or isStationSprite(spriteName, M.CROCK_SPRITE)
 end
 
 function M.isIncubator(object)
@@ -322,10 +325,11 @@ function M.stage(batch)
     return "Cooling"
 end
 
--- How much of ml fits, or 0 with the reason it can't go in.
-function M.milkRoom(batch, ml)
+-- How much of ml fits, or 0 with the reason it can't go in. Given a fluid, cow's and sheep's milk don't mix.
+function M.milkRoom(batch, ml, fluid)
     local stage = M.stage(batch)
     if stage == "Incubating" or stage == "Ready" then return 0, stage end
+    if fluid and stage ~= "Empty" and batch.fluid and batch.fluid ~= fluid then return 0, "Mixed" end
     local room = M.CAPACITY_ML - (batch.ml or 0)
     if room <= 0 then return 0, "Full" end
     return math.min(ml, room)
@@ -419,16 +423,32 @@ function M.ageDays(batch, now)
     return batch.readyHour and math.max(now - batch.readyHour, 0) / 24 or 0
 end
 
--- Fills one Clay Jar. Returns the ml taken and the age in days; an emptied pot starts over.
-function M.collectJar(batch, now)
+-- Takes up to want ml of set yoghurt. Returns the ml taken and the age in days; an emptied pot starts over.
+local function collect(batch, now, want)
     if M.stage(batch) ~= "Ready" then return 0 end
-    local ml = math.min(M.JAR_ML, batch.ml)
+    local ml = math.min(want, batch.ml)
     local age = M.ageDays(batch, now)
     batch.ml = batch.ml - ml
     if batch.ml <= 0 then
         for _, key in ipairs({ "ml", "tempC", "starter", "incubating", "wrapHour", "done", "last", "readyHour", "fluid" }) do batch[key] = nil end
     end
     return ml, age
+end
+
+-- Fills one Clay Jar.
+function M.collectJar(batch, now)
+    return collect(batch, now, M.JAR_ML)
+end
+
+-- Fills one Empty Yoghurt Container straight from the pot, a quarter of a jar; the last one takes what is left.
+function M.collectCup(batch, now)
+    return collect(batch, now, M.CUP_ML)
+end
+
+-- Empty Yoghurt Containers a Ready pot still fills.
+function M.cupsInPot(batch)
+    if M.stage(batch) ~= "Ready" then return 0 end
+    return math.ceil(batch.ml / M.CUP_ML)
 end
 
 function M.cupsFor(ml)
@@ -538,13 +558,140 @@ end
 -- Fills the pot from the copper with hot milk, as much as fits. Returns the ml (0 with a reason when refused).
 function M.copperToPot(copper, batch, now)
     if not M.copperHot(copper) then return 0, M.MILKS[copper.fluid] and "NotHot" or "NoMilk" end
-    local room, reason = M.milkRoom(batch, copper.ml)
+    local room, reason = M.milkRoom(batch, copper.ml, copper.fluid)
     if room <= 0 then return 0, reason end
     local ml, fluid, tempC = M.takeFromCopper(copper, room)
     M.addMilk(batch, ml, tempC, now)
     batch.fluid = batch.fluid or fluid
     return ml
 end
+
+-- Carried milk
+
+function M.carryTau(ml)
+    return M.WRAPPED_POT_TAU * (math.max(ml, M.COPPER_FLOOR_ML) / M.CAPACITY_ML) ^ (1 / 3)
+end
+
+-- Records ml of milk at tempC going into a container that already holds hadMl at hadC. The milk stays steamed
+-- only if the new milk is and everything already in it was recorded as steamed. Returns the new record.
+function M.carryIn(carry, hadMl, hadC, ml, tempC, now, steamed)
+    local kept = hadMl <= 0 or M.isSteamed(carry, hadMl)
+    local record = {
+        ml = hadMl + ml,
+        c = hadMl > 0 and (hadC * hadMl + tempC * ml) / (hadMl + ml) or tempC,
+        hour = now,
+        steamed = (steamed and kept) or nil,
+    }
+    if carry and hadMl > 0 then record.place, record.fireUntil, record.under = carry.place, carry.fireUntil, carry.under end
+    return record
+end
+
+-- Takes ml out of the record; nil once it is empty.
+function M.carryOut(carry, ml)
+    if not carry then return nil end
+    carry.ml = carry.ml - ml
+    if carry.ml <= 0.5 then return nil end
+    return carry
+end
+
+-- True if the container's ml is all recorded, steamed milk. Taking milk out (vanilla's pour or drink too) is
+-- harmless; holding more than the record means milk was added some other way, which voids it.
+function M.isSteamed(carry, ml)
+    return carry ~= nil and carry.steamed == true and ml <= (carry.ml or 0) + 0.5
+end
+
+-- Shrinks the record to ml once milk has left by vanilla's menus, so milk added later can't hide in the gap.
+-- Call it whenever a container is looked at (menus, tooltips). Returns the record, nil once the container is empty.
+function M.noteCarry(carry, ml)
+    if not carry then return nil end
+    if ml <= 0.5 then return nil end
+    if ml < carry.ml then carry.ml = ml end
+    return carry
+end
+
+-- The heat of milk in a Wrapped Pot, brought up to now at placeC (the record is updated).
+function M.wrappedC(carry, now, placeC)
+    if now > carry.hour then
+        carry.c = M.cool(carry.c, placeC, now - carry.hour, M.carryTau(carry.ml))
+        carry.hour = now
+    end
+    return carry.c
+end
+
+-- Why ml of carried milk can't go into the pot, or nil if it can.
+function M.carriedRefusal(carry, ml)
+    if not M.isSteamed(carry, ml) then return "NotSteamed" end
+end
+
+-- The record on a carried item
+
+M.WRAPPED_POT = "TraditionalPreservationDairy.WrappedYoghurtPot"
+
+function M.isWrappedPot(item)
+    return item:getFullType() == M.WRAPPED_POT
+end
+
+function M.mlIn(container)
+    return math.floor(container:getAmount() * 1000 + 0.5)
+end
+
+-- An item's record, shrunk to the milk it holds now; nil (and dropped) once it holds no plain milk.
+function M.carryOf(item)
+    local modData = item:getModData()
+    local carry = modData[M.CARRY_KEY]
+    if not carry then return nil end
+    local container = item:getFluidContainer()
+    carry = container and M.milkIn(container) and M.noteCarry(carry, M.mlIn(container)) or nil
+    modData[M.CARRY_KEY] = carry
+    return carry
+end
+
+-- Brings a Wrapped Pot's milk up to now at the place it was last carried in (herePlace if it has none yet), hour
+-- by hour through the history as the incubator catches up: by a fire until the fuel ran out (fireUntil), then the
+-- place under the fire. Returns the heat.
+function M.advanceCarry(carry, now, ledger, herePlace, history)
+    local place = carry.place or herePlace
+    history = history or M.getHistory()
+    local t = carry.hour
+    while t < now do
+        local hour = math.floor(t)
+        local stop = math.min(hour + 1, now)
+        if place == M.HEARTH and carry.fireUntil and t < carry.fireUntil then stop = math.min(stop, carry.fireUntil) end
+        local here = placeAt(carry, place, t)
+        M.wrappedC(carry, stop, M.pastTemperature(history, hour, here) or M.placeTemperature(ledger, here))
+        t = stop
+    end
+    return carry.c
+end
+
+-- While a player carries a Wrapped Pot, the World brings it up to now every game minute and notes where it is.
+-- Set down, the pot keeps the last place it was carried in, so the time until it is next looked at counts there.
+function M.carryTick(carry, now, ledger, place, fireUntil, under)
+    M.advanceCarry(carry, now, ledger, place)
+    carry.place, carry.fireUntil, carry.under = place, fireUntil, under
+end
+
+-- The heat of an item's milk: a Wrapped Pot keeps its own, any other container follows vanilla's item heat. holder
+-- is whoever is looking at it, whose place counts if the pot was never carried.
+function M.carriedC(item, now, holder)
+    local carry = M.carryOf(item)
+    if carry and M.isWrappedPot(item) then return M.advanceCarry(carry, now, M.getLedger(), (M.placeOf(holder))) end
+    return M.heatCelsius(item:getItemHeat())
+end
+
+-- Writes the record after ml of milk at tempC went into an item that held hadMl at hadC (carry: its record from
+-- before), and sets vanilla's item heat to match.
+function M.recordCarry(item, carry, hadMl, hadC, ml, tempC, now, steamed)
+    local record = M.carryIn(carry, hadMl, hadC, ml, tempC, now, steamed)
+    item:getModData()[M.CARRY_KEY] = record
+    item:setItemHeat(M.itemHeat(record.c))
+end
+
+-- Writes the record after ml left the item.
+function M.recordTaken(item, carry, ml)
+    item:getModData()[M.CARRY_KEY] = M.carryOut(carry, ml)
+end
+
 
 -- Crock: Cultivating, then Waiting for fresh milk, then Developing, then Ready.
 
@@ -566,7 +713,13 @@ function M.crockStage(crock)
 end
 
 function M.isWarm(celsius)
-    return celsius >= M.CROCK_WARM_C
+    return celsius >= M.CROCK_WARM_C and celsius <= M.CROCK_HOT_C
+end
+
+-- Why milk at celsius can't load the crock, or nil if it can.
+function M.crockMilkRefusal(celsius)
+    if celsius < M.CROCK_WARM_C then return "TooCool" end
+    if celsius > M.CROCK_HOT_C then return "TooHot" end
 end
 
 -- Wheat and warm milk go into an empty crock only.

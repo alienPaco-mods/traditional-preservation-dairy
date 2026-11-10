@@ -1,5 +1,5 @@
 -- Checks the incubator's and the crock's rules outside the game. Run from the mod folder: luajit tests/test_incubator.lua
-local H = dofile((os.getenv("TPCORE") or "../_tpcore") .. "/tests/harness.lua")
+local H = dofile((os.getenv("TPCORE") or "../TraditionalPreservationCore") .. "/tests/harness.lua")
 local check, near = H.check, H.near
 H.useModPaths()
 H.installClock(10)
@@ -87,6 +87,14 @@ check("a jar from before the count goes by its litres", M.cupsLeft(jarData) == 4
 check("each cup comes out one at a time", M.takeCup(jarData) == 3 and M.cupsLeft(jarData) == 3)
 for _ = 1, 3 do M.takeCup(jarData) end
 check("the last cup empties the jar, and no further", M.cupsLeft(jarData) == 0 and M.takeCup(jarData) == 0)
+local cupPot = { ml = 600, readyHour = 10, starter = "Yoghurt", incubating = true, fluid = "CowMilk" }
+check("a pot of 0.6 L fills three cups", M.cupsInPot(cupPot) == 3)
+local cupMl, cupAge = M.collectCup(cupPot, 34)
+check("a cup takes 250 ml, as old as a jar from the same pot", cupMl == 250 and near(cupAge, 1))
+M.collectCup(cupPot, 34)
+local lastMl = M.collectCup(cupPot, 34)
+check("the last cup takes what's left and the pot starts over", lastMl == 100 and M.stage(cupPot) == "Empty"
+    and cupPot.starter == nil and M.cupsInPot(cupPot) == 0 and M.collectCup(cupPot, 34) == 0)
 
 -- Catching up while unloaded
 local ledger, history = M.getLedger(), M.getHistory()
@@ -180,18 +188,59 @@ local fromHearth = {}
 check("hot milk fills the pot up", M.copperToPot(hotCopper, fromHearth, 0) == 5000 and fromHearth.ml == 5000
     and fromHearth.tempC == 90 and fromHearth.fluid == "SheepMilk" and hotCopper.ml == 5000)
 check("a full pot takes no more", select(2, M.copperToPot(hotCopper, fromHearth, 0)) == "Full")
-local topUp = { ml = 3000, tempC = 50, fluid = "CowMilk", last = 0 }
+local topUp = { ml = 3000, tempC = 50, fluid = "SheepMilk", last = 0 }
 check("it tops up a cooling pot, mixing the heat", M.copperToPot(hotCopper, topUp, 0) == 2000 and near(topUp.tempC, 66)
-    and topUp.fluid == "CowMilk")
+    and topUp.fluid == "SheepMilk")
 hotCopper.tempC = 80
 check("below 85 C it won't pour", select(2, M.copperToPot(hotCopper, {}, 0)) == "NotHot")
-check("but is warm enough for the crock", M.copperWarm(hotCopper) and not M.copperWarm({ fluid = "CowMilk", tempC = 30 }))
+local sheepPot = { ml = 1000, tempC = 80, fluid = "SheepMilk" }
+check("cow's milk won't go into sheep's", select(2, M.copperToPot({ ml = 2000, fluid = "CowMilk", tempC = 90 }, sheepPot, 0)) == "Mixed"
+    and select(2, M.milkRoom(sheepPot, 100, "CowMilk")) == "Mixed" and M.milkRoom(sheepPot, 100, "SheepMilk") == 100)
+check("too hot for the crock", not M.copperWarm(hotCopper) and not M.copperWarm({ fluid = "CowMilk", tempC = 30 })
+    and M.copperWarm({ fluid = "CowMilk", tempC = 40 }))
+
+-- Carried milk
+local carry = M.carryIn(nil, 0, 20, 3000, 90, 0, true)
+check("milk drawn hot from the copper is steamed", M.isSteamed(carry, 3000) and M.carriedRefusal(carry, 3000) == nil)
+check("milk added some other way voids it", not M.isSteamed(carry, 4000) and M.carriedRefusal(carry, 4000) == "NotSteamed")
+check("milk taken out by vanilla is harmless", M.isSteamed(carry, 2000))
+local drunk = M.carryIn(nil, 0, 20, 3000, 90, 0, true)
+M.noteCarry(drunk, 2000)
+check("seen after, the record shrinks, so a top-up is caught", drunk.ml == 2000 and not M.isSteamed(drunk, 3000))
+check("an emptied container drops its record", M.noteCarry(drunk, 0) == nil)
+check("no record, no steaming", M.carriedRefusal(nil, 1000) == "NotSteamed")
+local mixed = M.carryIn(carry, 3000, 90, 1000, 20, 0, false)
+check("unsteamed milk poured in voids it, heat mixes", not mixed.steamed and near(mixed.c, 72.5) and mixed.ml == 4000)
+check("steamed into steamed stays steamed", M.isSteamed(M.carryIn(carry, 3000, 90, 2000, 88, 0, true), 5000))
+local wrapped = M.carryIn(nil, 0, 20, 5000, 85, 0, true)
+check("a wrapped pot loses about 15 C in an hour at 20 C", M.wrappedC(wrapped, 1, 20) > 68 and wrapped.c < 72 and wrapped.hour == 1)
+local ledger5 = M.getLedger()
+local shed = M.carryIn(nil, 0, 20, 5000, 85, 0, true)
+M.carryTick(shed, 0, ledger5, "Basement")
+local byFire = M.advanceCarry(shed, 8, ledger5, M.HEARTH)
+check("set down, the gap counts where it was last carried, not where it is looked at",
+    near(byFire, M.cool(85, 15, 8, M.carryTau(5000))))
+local warm = M.carryIn(nil, 0, 20, 5000, 85, 0, true)
+M.carryTick(warm, 0, ledger5, M.HEARTH, 2, "Basement")
+local fireOut = M.advanceCarry(warm, 6, ledger5, M.HEARTH)
+check("by a fire until its fuel ran out, then the place under it",
+    near(fireOut, M.cool(M.cool(85, M.HEARTH_C, 2, M.carryTau(5000)), 15, 4, M.carryTau(5000))))
+local night = M.carryIn(nil, 0, 20, 5000, 85, 11, true)
+M.carryTick(night, 11, ledger5, "Open")
+local stepped = M.cool(M.cool(85, 30, 9, M.carryTau(5000)), 0, 10, M.carryTau(5000))
+check("a long gap replays the weather hour by hour", near(M.advanceCarry(night, 30, ledger5, M.HEARTH), stepped, 1e-6))
+check("topping up keeps the place notes", M.carryIn(warm, 5000, 50, 0, 85, 6, true).place == M.HEARTH)
+check("a smaller amount cools faster", M.carryTau(1000) < M.carryTau(5000) and M.carryTau(200) == M.carryTau(1000))
+local part = M.carryIn(nil, 0, 20, 2000, 85, 0, true)
+check("pouring part out keeps the record", M.isSteamed(M.carryOut(part, 500), 1500))
+check("pouring it all out drops the record", M.carryOut(part, 1500) == nil)
 
 -- Crock
 local crock = {}
 check("a new crock is empty", M.crockStage(crock) == "Empty" and M.collectStarters(crock) == 0)
 check("it loads once", M.loadCrock(crock, ledger) and crock.stage == "Cultivating" and not M.loadCrock(crock, ledger))
-check("loading milk must be warm, hot is fine", M.isWarm(40) and M.isWarm(M.HOT_C) and not M.isWarm(M.ROOM_C))
+check("loading milk must be warm, not hot", M.isWarm(40) and not M.isWarm(M.HOT_C) and not M.isWarm(M.ROOM_C)
+    and M.crockMilkRefusal(30) == "TooCool" and M.crockMilkRefusal(50) == "TooHot" and M.crockMilkRefusal(45) == nil)
 for hour = 31, 31 + 24 do
     H.setHours(hour)
     M.record(ledger, history, hour, 30)

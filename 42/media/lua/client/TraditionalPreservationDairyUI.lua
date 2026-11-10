@@ -3,7 +3,7 @@
 -- menu lights and feeds the fire. The pot: pour milk steaming from a Hearth's copper in, add a starter, pour the milk
 -- back out, and collect the set yoghurt into jars. The crock: load wheat and warm milk from the copper, feed it fresh
 -- milk, collect the starters. The status line at the top says what the station is doing, and its hover says more.
--- The pot and the Hearth also have info windows, opened from their menus or by clicking them. A Jar of Yoghurt's own
+-- The pot and the Hearth also have info windows, opened from their menus (the pot's also by clicking it). A Jar of Yoghurt's own
 -- menu spoons it into cups.
 require "TimedActions/ISYoghurtIncubator"
 require "TimedActions/ISStarterCrock"
@@ -37,6 +37,7 @@ local REFUSALS = {
     Incubating = "IGUI_TraditionalPreservationDairy_Wrapped",
     Ready = "IGUI_TraditionalPreservationDairy_Wrapped",
     Full = "IGUI_TraditionalPreservationDairy_PotFull",
+    NotSteamed = "IGUI_TraditionalPreservationDairy_NotSteamed",
 }
 
 local function now()
@@ -109,7 +110,7 @@ local function detailText(station, state)
     elseif stage == "TooCold" then
         table.insert(lines, getText("IGUI_TraditionalPreservationDairy_TooCold"))
     elseif stage == "Ready" then
-        table.insert(lines, say("IGUI_TraditionalPreservationDairy_Jars", tostring(math.ceil(state.ml / M.JAR_ML))))
+        table.insert(lines, say("IGUI_TraditionalPreservationDairy_Jars", tostring(math.ceil(state.ml / M.JAR_ML)), tostring(M.cupsInPot(state))))
     else
         if stage == "Cooling" then
             table.insert(lines, getText(state.starter and "IGUI_TraditionalPreservationDairy_StarterIn" or "IGUI_TraditionalPreservationDairy_NoStarter"))
@@ -183,6 +184,37 @@ local function addHearthPourMenu(menu, playerObj, station, state)
     if not hearth then return disableWith(option, hearthRefusal(copper, "IGUI_TraditionalPreservationDairy_CopperNotHot")) end
 end
 
+-- Every container of plain milk, wherever it was carried from. Milk that wasn't drawn steaming from a copper, or
+-- the other animal's milk, shows in red with the reason. Only a Wrapped Yoghurt Pot keeps the milk hot on the way.
+local function addCarriedPourMenu(menu, playerObj, station, state)
+    local option = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_PourSteamed"))
+    option.iconTexture = getTexture(MILK_ICON)
+    local room, reason = M.milkRoom(state, 1)
+    if room <= 0 then return disableWith(option, getText(REFUSALS[reason])) end
+    local items = findItems(playerObj, function(item) return M.milkIn(item:getFluidContainer()) ~= nil end)
+    if #items == 0 then return disableWith(option, getText("IGUI_TraditionalPreservationDairy_NoMilkItem")) end
+    tooltipFor(option, getText("IGUI_TraditionalPreservationDairy_SteamedHelp"))
+    local sub = menu:getNew(menu)
+    menu:addSubMenu(option, sub)
+    for _, item in ipairs(items) do
+        local container = item:getFluidContainer()
+        local fluid, ml = M.milkIn(container), M.mlIn(container)
+        local heat = M.carriedC(item, now(), playerObj)
+        local entry = sub:addOption(say("ContextMenu_TraditionalPreservationDairy_MilkItem", item:getDisplayName(), litresText(ml),
+            degrees(heat)), playerObj, onAction, station, { item }, "carried")
+        entry.iconTexture = item:getTex()
+        local refusal = M.carriedRefusal(M.carryOf(item), ml)
+        local refusalText = refusal and getText(REFUSALS[refusal])
+        if not refusal and select(2, M.milkRoom(state, 1, fluid)) == "Mixed" then
+            refusalText = say("IGUI_TraditionalPreservationDairy_PotMixed", M.fluidName(state.fluid))
+        end
+        if refusalText then
+            entry.notAvailable = true
+            tooltipFor(entry, refusalText)
+        end
+    end
+end
+
 local function addStarterMenu(menu, playerObj, station, state)
     local option = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_AddStarter"))
     option.iconTexture = getTexture(YOGHURT_ICON)
@@ -230,6 +262,23 @@ local function addCollectMenu(menu, playerObj, station, state)
     end
 end
 
+-- Empty Yoghurt Containers filled straight from the pot, a quarter of a jar each, as old as the batch.
+local function addCupMenu(menu, playerObj, station, state)
+    local option = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_FillPotCups"))
+    option.iconTexture = getTexture(YOGHURT_ICON)
+    local empties = findItems(playerObj, function(item) return item:getFullType() == M.EMPTY_CUP end)
+    if #empties == 0 then return disableWith(option, getText("IGUI_TraditionalPreservationDairy_NoEmptyCup")) end
+    local most = math.min(#empties, M.cupsInPot(state))
+    local picked = {}
+    for index = 1, most do picked[index] = empties[index] end
+    local sub = menu:getNew(menu)
+    menu:addSubMenu(option, sub)
+    sub:addOption(getText("ContextMenu_TraditionalPreservationDairy_OneCup"), playerObj, onAction, station, { empties[1] }, "cup")
+    if most > 1 then
+        sub:addOption(say("ContextMenu_TraditionalPreservationDairy_All", tostring(most)), playerObj, onAction, station, picked, "cup")
+    end
+end
+
 local function addIncubatorMenu(context, playerObj, station)
     local World = TraditionalPreservationDairyWorld
     local state = World and World.updateIncubator(station, getGameTime():getWorldAgeHours())
@@ -246,8 +295,12 @@ local function addIncubatorMenu(context, playerObj, station)
     info.iconTexture = getTexture(STATION_ICON)
 
     local stage = M.stage(state)
-    if stage == "Ready" then return addCollectMenu(menu, playerObj, station, state) end
+    if stage == "Ready" then
+        addCollectMenu(menu, playerObj, station, state)
+        return addCupMenu(menu, playerObj, station, state)
+    end
     addHearthPourMenu(menu, playerObj, station, state)
+    addCarriedPourMenu(menu, playerObj, station, state)
     if stage ~= "Incubating" then addStarterMenu(menu, playerObj, station, state) end
     if stage == "Cooling" or stage == "TooCold" then addPourOutMenu(menu, playerObj, station, state) end
 end
@@ -444,14 +497,6 @@ end
 function ISMoveableSpriteProps:canPickUpMoveable(character, square, object)
     if mustStay(object) then return false end
     return vanillaCanPickUp(self, character, square, object)
-end
-
--- A picked-up pot or crock goes back down only within reach of a Hearth, as it was built.
-local vanillaCanPlace = ISMoveableSpriteProps.canPlaceMoveable
-
-function ISMoveableSpriteProps:canPlaceMoveable(character, square, item)
-    if M.needsHearth(self.spriteName) and #M.hearthsNear(square) == 0 then return false end
-    return vanillaCanPlace(self, character, square, item)
 end
 
 -- And the pick-up cursor says why, with vanilla's own line for a full container.
@@ -701,8 +746,8 @@ local function canClick(object, playerObj)
         and inReach(playerObj, object)
 end
 
--- Clicking a pot opens Pot Info, as clicking a door opens it. Clicking a Hearth lets vanilla focus its firebox in
--- the loot pane first, then opens Hearth Info. The click handler is in vanilla's server folder, which loads after
+-- Clicking a pot opens Incubator Info, as clicking a door opens it. A Hearth is left to vanilla (its firebox in the
+-- loot pane); Hearth Info is on its menu. The click handler is in vanilla's server folder, which loads after
 -- this one, so it is wrapped once the game has started.
 local function wrapClickHandler()
     if not ISObjectClickHandler or ISObjectClickHandler.tpdPotClick then return end
@@ -712,12 +757,6 @@ local function wrapClickHandler()
         if object and M.isIncubator(object) and canClick(object, playerObj) then
             if TraditionalPreservationDairyWorld then TraditionalPreservationDairyWorld.track(object) end
             PotWindow.open(playerObj, object)
-            return true
-        end
-        if object and M.isHearth(object) and canClick(object, playerObj) then
-            if TraditionalPreservationDairyWorld then TraditionalPreservationDairyWorld.track(object) end
-            vanillaClickObject(object, playerNum, playerObj)
-            HearthWindow.open(playerObj, object)
             return true
         end
         return vanillaClickObject(object, playerNum, playerObj)

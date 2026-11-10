@@ -1,6 +1,7 @@
 -- Traditional Preservation (Dairy): the hand jobs at a Yoghurt Incubator. "hearth" pours milk steaming from a
--- Hearth's copper (within 2 tiles) in, "starter" stirs in a yoghurt or an Active Yoghurt Starter, "pourOut" takes the milk back out into an empty
--- container to reheat it, and "collect" fills an empty Clay Jar with a litre of set yoghurt.
+-- Hearth's copper (within 2 tiles) in, "carried" pours steamed milk in from a container, "starter" stirs in a yoghurt or an Active Yoghurt Starter, "pourOut" takes the milk back out into an empty
+-- container (still steamed) to reheat it, "collect" fills an empty Clay Jar with a litre of set yoghurt, and "cup"
+-- fills an Empty Yoghurt Container with a quarter litre.
 require "TimedActions/ISBaseTimedAction"
 require "TraditionalPreservationDairy"
 require "TraditionalPreservationDairyYoghurt"
@@ -31,10 +32,17 @@ local function canDo(self)
     local batch = M.stateOf(self.station:getModData().movableData or {}, M.INCUBATOR_KEY)
     if self.mode == "hearth" then
         return M.copperHot(M.stateOf(self.hearth:getModData(), M.HEARTH_KEY)) and M.milkRoom(batch, 1) > 0
+    elseif self.mode == "carried" then
+        local container = self.item:getFluidContainer()
+        local fluid = M.milkIn(container)
+        return fluid ~= nil and M.carriedRefusal(M.carryOf(self.item), M.mlIn(container)) == nil
+            and M.milkRoom(batch, 1, fluid) > 0
     elseif self.mode == "starter" then
         return M.STARTERS[self.item:getFullType()] ~= nil and not self.item:isRotten() and M.canAddStarter(batch)
     elseif self.mode == "pourOut" then
         return M.isEmptyContainer(self.item) and (M.stage(batch) == "Cooling" or M.stage(batch) == "TooCold")
+    elseif self.mode == "cup" then
+        return self.item:getFullType() == M.EMPTY_CUP and M.stage(batch) == "Ready"
     end
     return M.JARS[self.item:getFullType()] == true and M.isEmptyContainer(self.item) and M.stage(batch) == "Ready"
 end
@@ -78,6 +86,16 @@ function ISYoghurtIncubator:complete()
     if self.mode == "hearth" then
         M.copperToPot(copperOf(self.hearth), batch, now)
         if TraditionalPreservationDairyWorld then TraditionalPreservationDairyWorld.refresh(self.hearth) end
+    elseif self.mode == "carried" then
+        local carry = M.carryOf(self.item)
+        local fluid = M.milkIn(container)
+        local tempC = M.carriedC(self.item, now, self.character)
+        local ml = M.milkRoom(batch, M.mlIn(container), fluid)
+        if ml > 0 and M.addMilk(batch, ml, tempC, now) > 0 then
+            batch.fluid = batch.fluid or fluid
+            container:removeFluid(ml / 1000)
+            M.recordTaken(self.item, carry, ml)
+        end
     elseif self.mode == "starter" then
         local fullType = self.item:getFullType()
         if M.addStarter(batch, M.STARTERS[fullType]) then
@@ -89,7 +107,15 @@ function ISYoghurtIncubator:complete()
         local ml, tempC = M.pourOut(batch, math.floor(container:getCapacity() * 1000))
         if ml > 0 then
             container:addFluid(fluid, ml / 1000)
-            self.item:setItemHeat(M.itemHeat(tempC))
+            -- Everything in the pot came in steamed, so it goes out steamed.
+            M.recordCarry(self.item, nil, 0, 0, ml, tempC, now, true)
+        end
+    elseif self.mode == "cup" then
+        local ml, age = M.collectCup(batch, now)
+        if ml > 0 then
+            removeItem(self.item)
+            give(self, "Base.Yoghurt"):setAge(age)
+            self.character:getXp():AddXP(Perks.Cooking, M.COLLECT_XP * ml / M.JAR_ML)
         end
     else
         -- Nothing is taken from the pot unless the jar can be made.
@@ -127,7 +153,9 @@ function ISYoghurtIncubator:getDuration()
         litres = math.min(copper.ml or 0, M.milkRoom(batch, copper.ml or 0)) / 1000
     end
     if self.mode == "pourOut" and container then litres = container:getCapacity() end
+    if self.mode == "carried" and container then litres = container:getAmount() end
     if self.mode == "collect" then litres = M.JAR_ML / 1000 end
+    if self.mode == "cup" then litres = M.CUP_ML / 1000 end
     return BASE_DURATION + math.floor(math.min(litres, 5) * DURATION_PER_LITRE)
 end
 

@@ -5,6 +5,8 @@
   "ContextMenu_TraditionalPreservationDairy_Holds": "%1 (holds %2 L)",
   "ContextMenu_TraditionalPreservationDairy_Collect": "Collect into Clay Jar",
   "ContextMenu_TraditionalPreservationDairy_OneJar": "One Jar",
+  "ContextMenu_TraditionalPreservationDairy_FillPotCups": "Fill Empty Yoghurt Containers",
+  "ContextMenu_TraditionalPreservationDairy_OneCup": "One Container",
   "ContextMenu_TraditionalPreservationDairy_All": "All (%1)",
   "ContextMenu_TraditionalPreservationDairy_LoadCrock": "Load Wheat and Warm Milk",
   "ContextMenu_TraditionalPreservationDairy_FeedCrock": "Feed Fresh Milk",
@@ -17,5 +19,6 @@
   "ContextMenu_TraditionalPreservationDairy_HearthInfo": "Hearth Info",
   "ContextMenu_TraditionalPreservationDairy_PourIntoCopper": "Pour into the Copper",
   "ContextMenu_TraditionalPreservationDairy_FillFromCopper": "Fill from the Copper",
-  "ContextMenu_TraditionalPreservationDairy_FluidItem": "%1 (%2 L)"
+  "ContextMenu_TraditionalPreservationDairy_FluidItem": "%1 (%2 L)",
+  "ContextMenu_TraditionalPreservationDairy_PourSteamed": "Pour Steamed Milk"
 }

@@ -12,7 +12,6 @@ module TraditionalPreservationDairy
         component SpriteConfig
         {
             isThumpable = false,
-            OnIsValid = TraditionalPreservationDairy.OnIsValidNearHearth,
             face S
             {
                 layer

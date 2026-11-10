@@ -185,6 +185,31 @@ Events.OnTick.Add(function()
     for i = 0, list:size() - 1 do scanNear(list:get(i)) end
 end)
 
+-- A Wrapped Yoghurt Pot a player carries cools where the player is; set down, it keeps that place (M.carryTick).
+local function tickWrappedPots(player, now, ledger)
+    local pots = player:getInventory():getAllTypeRecurse(M.WRAPPED_POT)
+    if pots:isEmpty() then return end
+    local place, fire = M.placeOf(player)
+    local notes = {}
+    M.noteFire(notes, player, fire, now)
+    -- Vanilla's item heat (the red row) follows the record; with no milk record it goes back to room.
+    for i = 0, pots:size() - 1 do
+        local pot = pots:get(i)
+        local carry = M.carryOf(pot)
+        if carry then
+            M.carryTick(carry, now, ledger, place, notes.fireUntil, notes.under)
+            pot:setItemHeat(M.itemHeat(carry.c))
+        elseif pot:getItemHeat() ~= 1 then
+            pot:setItemHeat(1)
+        end
+    end
+end
+
+Events.EveryOneMinute.Add(function()
+    local now, ledger, list = getGameTime():getWorldAgeHours(), M.getLedger(), players()
+    for i = 0, list:size() - 1 do tickWrappedPots(list:get(i), now, ledger) end
+end)
+
 Weather.record(function(now, climate)
     M.record(M.getLedger(), M.getHistory(), now, climate:getTemperature())
 end)

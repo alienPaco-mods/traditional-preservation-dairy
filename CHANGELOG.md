@@ -63,7 +63,11 @@
   the milk goes in at the copper's heat. The crock loads warm milk (35 C or more) from the copper.
 - A lit Hearth counts as "By a fire" only while its fuel lasts, also for incubators and crocks caught up after
   being away.
-- The Yoghurt Incubator and the Starter Culture Crock must be built, or put down, within 2 tiles of a Hearth.
+- The Yoghurt Incubator and the Starter Culture Crock can be built or put down anywhere (the earlier 2-tile rule
+  is gone). Steamed milk reaches a far incubator in a Wrapped Yoghurt Pot (Sheet + Twine over a Yoghurt Pot), which
+  holds its heat; any other container cools to room in seconds.
+- A Ready incubator also fills Empty Yoghurt Containers straight away ("Fill Empty Yoghurt Containers": one or
+  all), a quarter of a jar (250 ml) each, as old as the batch; the jar stays for carrying a litre.
 - The incubator and the crock no longer block their tile: walk past or through them, and click them from any side.
   Their floor shadow is soft-edged.
 - "Pot Info" is now "Incubator Info", and the menus and notes say "incubator" for the station.

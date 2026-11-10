@@ -21,8 +21,3 @@ function M.OnCreateHearth(params)
     return { replaceObject = true, object = fire }
 end
 
--- The Yoghurt Incubator and the Starter Culture Crock are built within HEARTH_RADIUS tiles of a Hearth: the build
--- cursor stays red anywhere else.
-function M.OnIsValidNearHearth(params)
-    return params.square ~= nil and #M.hearthsNear(params.square) > 0
-end

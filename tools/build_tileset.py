@@ -27,7 +27,7 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFilter
 
-sys.path.insert(0, str(Path(os.environ.get("TPCORE", Path(__file__).resolve().parents[2] / "_tpcore")) / "tools"))
+sys.path.insert(0, str(Path(os.environ.get("TPCORE", Path(__file__).resolve().parents[2] / "TraditionalPreservationCore")) / "tools"))
 import pzart  # noqa: E402
 from pzart import TILE_W, TILE_H, light_at, shrink  # noqa: E402
 from pzart import tint as shade  # noqa: E402
@@ -63,6 +63,7 @@ CLOTH = (222, 212, 192)
 STRIPE = (164, 50, 42)
 LINEN = (196, 182, 152)
 TWINE = (168, 142, 96)
+SHEET = (232, 230, 220)        # a plain bed sheet, whiter than the incubator's striped cloth
 YOGHURT = (240, 236, 222)
 MILK = (226, 220, 200)
 WHEAT = (196, 160, 92)
@@ -97,6 +98,7 @@ CLOTH_BODY = [(14, 26.5), (20, 27), (26, 26.5), (33, 23.5), (39, 18), (41, 17), 
 CLOTH_HEM, HEM_WAVE = 14, 2.5
 CLOTH_STRIPES = [(17, 19), (21, 22)]
 CLOTH_TIE = 40.5
+SHEET_HEM = 3                  # the Wrapped Yoghurt Pot's sheet hangs nearly to the floor
 # The crock: smaller, taller in proportion, with a slip band of zig-zags round the belly.
 CROCK_BODY = [(0, 10), (4, 14), (12, 17), (19, 16), (25, 12.5), (28, 10.5), (31, 11.5)]
 CROCK_BAND = (9, 17)
@@ -113,7 +115,8 @@ LEVELS_PER_PX = 1.5            # bands up a body
 
 # Item icons: name -> how it is painted.
 ICON_SIZE = 32
-ITEM_ICONS = ["YoghurtPotUnfired", "YoghurtPot", "JarOfYoghurt", "ActiveYoghurtStarter", "EmptyYoghurtContainer"]
+ITEM_ICONS = ["YoghurtPotUnfired", "YoghurtPot", "JarOfYoghurt", "ActiveYoghurtStarter", "EmptyYoghurtContainer",
+              "WrappedYoghurtPot"]
 
 TILE_PROPS = {}
 for base, group, custom in ((INCUBATOR, "Yoghurt", "Incubator"), (CROCK, "Starter Culture", "Crock")):
@@ -318,19 +321,19 @@ def leaning_lid(layer, face):
     layer.alpha_composite(lid)
 
 
-def cloth_layer():
+def cloth_layer(cloth=CLOTH, stripes=CLOTH_STRIPES, hem=CLOTH_HEM):
     """The cloth over the lidded pot: cream with red stripes near the hem, folds, tied with twine at the neck."""
     layer = new_layer()
     base = pot_base()
 
     def colour(angle, z):
         fold = 0.93 + 0.07 * math.sin(angle * 9) + 0.03 * math.sin(angle * 23)
-        for low, high in CLOTH_STRIPES:
+        for low, high in stripes:
             if low <= z - HEM_WAVE * math.sin(angle * 5) * 0.4 <= high:
                 return shade(STRIPE, fold)[:3]
-        return shade(CLOTH, fold)[:3]
+        return shade(cloth, fold)[:3]
 
-    paint_body(layer, base, CLOTH_BODY, colour, hem=lambda angle: CLOTH_HEM + HEM_WAVE * math.sin(angle * 5))
+    paint_body(layer, base, CLOTH_BODY, colour, hem=lambda angle: hem + HEM_WAVE * math.sin(angle * 5))
     draw = ImageDraw.Draw(layer)
     r = radius_at(CLOTH_BODY, CLOTH_TIE)
     for step in range(32):
@@ -493,6 +496,14 @@ def pot_icon(clay, lidded):
     return outlined(shrink(layer))
 
 
+def wrapped_pot_icon():
+    """The Yoghurt Pot in a plain sheet down to the floor, tied at the neck: it carries hot milk."""
+    layer = new_layer()
+    paint_pot(layer, pot_base(), POT, CLAY, lugs=POT_LUGS)
+    layer.alpha_composite(cloth_layer(SHEET, [], SHEET_HEM))
+    return outlined(shrink(layer))
+
+
 def jar_icon(jar, mask, contents, cap):
     """The vanilla glass jar filled with contents, lighter at the top; with a linen cap tied on if cap is set."""
     icon = jar.copy()
@@ -571,6 +582,7 @@ def write_icons(folder, game):
         "JarOfYoghurt": jar_icon(jar, mask, YOGHURT, cap=False),
         "ActiveYoghurtStarter": jar_icon(jar, mask, CULTURE, cap=True),
         "EmptyYoghurtContainer": cup_icon(),
+        "WrappedYoghurtPot": wrapped_pot_icon(),
     }
     assert list(icons) == ITEM_ICONS
     # The same Jar of Yoghurt item, as it looks in a clay jar: World sets it by the jar it was collected in.

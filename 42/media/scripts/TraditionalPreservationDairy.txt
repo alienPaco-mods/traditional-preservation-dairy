@@ -42,4 +42,41 @@ module TraditionalPreservationDairy
             item 1 TraditionalPreservationDairy.YoghurtPot,
         }
     }
+
+    craftRecipe WrapYoghurtPot
+    {
+        timedAction = Making,
+        time = 60,
+        Tags = InHandCraft;Cooking,
+        category = Cooking,
+        inputs
+        {
+            item 1 [TraditionalPreservationDairy.YoghurtPot],
+            item 1 [Base.Sheet],
+            item 1 [Base.Twine],
+        }
+        outputs
+        {
+            item 1 TraditionalPreservationDairy.WrappedYoghurtPot,
+        }
+    }
+
+    /* Only when empty, so no milk is lost. */
+    craftRecipe UnwrapYoghurtPot
+    {
+        timedAction = Making,
+        time = 30,
+        Tags = InHandCraft;Cooking,
+        category = Cooking,
+        inputs
+        {
+            item 1 [TraditionalPreservationDairy.WrappedYoghurtPot] mode:destroy flags[IsEmpty],
+        }
+        outputs
+        {
+            item 1 TraditionalPreservationDairy.YoghurtPot,
+            item 1 Base.Sheet,
+            item 1 Base.Twine,
+        }
+    }
 }

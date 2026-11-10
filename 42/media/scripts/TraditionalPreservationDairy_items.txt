@@ -29,6 +29,26 @@ module TraditionalPreservationDairy
         Tooltip = Tooltip_TraditionalPreservationDairy_YoghurtPot,
     }
 
+    /* The Yoghurt Pot wrapped in a sheet: it carries steamed milk from the Hearth and holds its heat (about 15 C lost
+       in an hour). Its milk's heat and steamed mark are in ModData tpdCarry, not in vanilla's item heat. */
+    item WrappedYoghurtPot
+    {
+        DisplayCategory = Cooking,
+        ItemType = base:normal,
+        Weight = 2.5,
+        Icon = WrappedYoghurtPot,
+        StaticModel = ClayJar,
+        WorldStaticModel = ClayJar,
+        Tooltip = Tooltip_TraditionalPreservationDairy_WrappedYoghurtPot,
+        component FluidContainer
+        {
+            ContainerName = WrappedYoghurtPot,
+            RainFactor = 0.0,
+            Capacity = 5.0,
+            TransferRate = 5.0,
+        }
+    }
+
     /* A litre of set yoghurt in a Clay Jar or a glass jar. The jar's type, the litres and the cups left are in its
        ModData (tpdJar, tpdMl, tpdCups); its age is the yoghurt's, carried over from the incubator. Spooned into
        cups from its right-click menu, not eaten from. */

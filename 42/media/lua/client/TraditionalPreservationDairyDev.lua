@@ -107,6 +107,14 @@ local KITS = {
             for _ = 1, M.CROCK_WHEAT do inventory:AddItem(M.WHEAT) end
         end,
     },
+    wrap = {
+        about = "a Yoghurt Pot, a Sheet and Twine, to make a Wrapped Yoghurt Pot",
+        give = function(inventory)
+            inventory:AddItem("TraditionalPreservationDairy.YoghurtPot")
+            inventory:AddItem("Base.Sheet")
+            inventory:AddItem("Base.Twine")
+        end,
+    },
 }
 
 function TPD.kit(kind)

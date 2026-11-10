@@ -1,7 +1,7 @@
 # Traditional Preservation (Dairy) — Build 42 prototype (v0.0.1)
 
-Made by `tp new` on 2026-11-09 from `~/MODS/_tpcore/template`. TEMPLATE: everything below describes the skeleton;
-rewrite it as the mod takes shape. Settle the questions in `~/MODS/_tpcore/SERIES.md` ("Designing a new mod") first.
+Made by `tp new` on 2026-11-09 from `~/MODS/TraditionalPreservationCore/template`. TEMPLATE: everything below describes the skeleton;
+rewrite it as the mod takes shape. Settle the questions in `~/MODS/TraditionalPreservationCore/SERIES.md` ("Designing a new mod") first.
 
 ## Install
 
@@ -31,7 +31,7 @@ In debug mode, `TPD.help()` in the Lua console lists commands for testing this m
 
 ## Engineering notes
 
-- `42/media/lua/<side>/TraditionalPreservationDairy/Core/` is the shared core, copied from `~/MODS/_tpcore` by `tp sync`. Edit it there.
+- `42/media/lua/<side>/TraditionalPreservationDairy/Core/` is the shared core, copied from `~/MODS/TraditionalPreservationCore` by `tp sync`. Edit it there.
 - `tiledef` 5172 was picked by `tp new` as the next free number.
 - Save keys: the ledger lives in global ModData under `TraditionalPreservationDairy` (totals `process<Place>`), and a run's recipe
   ModData holds `done`, `last`, `place`. Never rename them once the mod is out.

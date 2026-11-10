@@ -52,16 +52,28 @@ function ISDairyHearth:complete()
     local copper = copperOf(self.hearth)
     local now = getGameTime():getWorldAgeHours()
     local container = self.item:getFluidContainer()
+    local carry = M.carryOf(self.item)
     if self.mode == "pourIn" then
         local fluid = M.fluidIn(container)
-        local ml = math.floor(container:getAmount() * 1000 + 0.5)
-        local taken = fluid and M.pourIntoCopper(copper, fluid, ml, M.heatCelsius(self.item:getItemHeat()), now) or 0
-        if taken > 0 then container:removeFluid(taken / 1000) end
+        local heat = M.carriedC(self.item, now, self.character)
+        local taken = fluid and M.pourIntoCopper(copper, fluid, M.mlIn(container), heat, now) or 0
+        if taken > 0 then
+            container:removeFluid(taken / 1000)
+            M.recordTaken(self.item, carry, taken)
+        end
     elseif canFillFrom(container, copper) then
+        local hadMl = M.mlIn(container)
+        local hadC = hadMl > 0 and M.carriedC(self.item, now, self.character) or 0
+        local steamed = M.copperHot(copper)
         local ml, fluid, tempC = M.takeFromCopper(copper, roomIn(container))
         if ml > 0 then
             container:addFluid(fluid, ml / 1000)
-            self.item:setItemHeat(M.itemHeat(tempC))
+            -- Milk drawn steaming is marked so the incubator takes it; the Wrapped Pot also keeps its heat.
+            if M.MILKS[fluid] then
+                M.recordCarry(self.item, carry, hadMl, hadC, ml, tempC, now, steamed)
+            else
+                self.item:setItemHeat(M.itemHeat(tempC))
+            end
         end
     end
     if TraditionalPreservationDairyWorld then TraditionalPreservationDairyWorld.refresh(self.hearth) end
