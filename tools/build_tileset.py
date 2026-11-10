@@ -224,12 +224,7 @@ def finish(layer, seed, depth):
     return pzart.weather(shrink(layer), random.Random(seed), depth)
 
 
-def hard_edges(tile, cut=128):
-    """Clears every pixel under half opaque and makes the rest solid, as vanilla's hand-painted edges are. B42 writes
-    depth for a faint edge pixel too, so a soft edge on a raised crock left a ring where the wall or barricade behind
-    it was never drawn."""
-    tile.putalpha(tile.getchannel("A").point(lambda v: 255 if v >= cut else 0))
-    return tile
+hard_edges = pzart.hard_edges
 
 
 # --- The incubator ----------------------------------------------------------------------------------------------

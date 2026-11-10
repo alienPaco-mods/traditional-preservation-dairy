@@ -1,6 +1,8 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- The Hearth (TP Core) has its real art now; the README no longer calls it a placeholder. The tileset builder uses
+  TP Core's shared `pzart.hard_edges`.
 - Fixed: a Jar of Yoghurt collected into a Clay Jar or Glazed Clay Jar had no icon. It now shows its clay or glazed
   look everywhere, and keeps it through a save.
 - The incubator and its lid have hard edges, as the crock has; only the shadows on the floor stay soft (the soft edge

@@ -221,7 +221,6 @@ In debug mode, `TPD.help()` in the Lua console lists commands for testing this m
 - **Empty Yoghurt Containers can't be made yet**: they come only from eating looted or home-made Yoghurt.
 - A cup or a jar portion of yoghurt is a vanilla Yoghurt's food, so 1 L of milk (about 615 kcal) becomes four portions of 30 kcal. Under review in the series' balance pass (C23, later).
 - Milk never spoils in vanilla, so yoghurt doesn't yet win on shelf life.
-- The Hearth's art is a placeholder.
 - Several vanilla UI functions are wrapped (the station's right-click entry and the click on a station), so compare them with vanilla after a game update.
 - The tiledef number 5172 must be unique among your active mods.
 - Multiplayer is not supported. This mod is singleplayer only for now.
