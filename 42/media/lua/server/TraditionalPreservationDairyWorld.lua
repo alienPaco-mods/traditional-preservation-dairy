@@ -10,6 +10,7 @@ local World = TraditionalPreservationDairyWorld
 local Station = require "TraditionalPreservationCore/Station"
 local Weather = require "TraditionalPreservationCore/Weather"
 local Tiles = require "TraditionalPreservationDairy/Tiles"
+local log = require "TraditionalPreservationCore/Log"
 
 -- Each stage has its own look: an empty pot has its lid on the floor, one too cold for a starter has it slid half off.
 local STAGE_SPRITES = { Empty = "Empty", Cooling = "Cooling", TooCold = "TooCold", Incubating = "Incubating",
@@ -39,7 +40,7 @@ function World.updateIncubator(station, now)
     M.noteFire(state, station, fire, now)
     local after = M.stage(state)
     if after ~= before then
-        print(string.format("[TPD] incubator %s -> %s: %.1f L at %.1f C, %s", before, after, (state.ml or 0) / 1000, state.tempC or 0, place))
+        log("TPD", "incubator %s -> %s: %.1f L at %.1f C, %s", before, after, (state.ml or 0) / 1000, state.tempC or 0, place)
     end
     return state
 end
@@ -58,7 +59,7 @@ function World.updateCrock(station)
     state.place, state.at = place, here
     M.noteFire(state, station, fire, getGameTime():getWorldAgeHours())
     local after = M.crockStage(state)
-    if after ~= before then print(string.format("[TPD] crock %s -> %s, %s", before, after, place)) end
+    if after ~= before then log("TPD", "crock %s -> %s, %s", before, after, place) end
     return state
 end
 
@@ -87,15 +88,14 @@ end
 
 -- Only this mod's stations: which kind, and which way it faces.
 local function newEntry(station)
-    local crock = M.isCrock(station)
-    if not crock and not M.isIncubator(station) then return nil end
-    local index = M.spriteIndex(station:getSprite():getName())
-    return { faceIndex = index % M.FACE_COUNT, crock = crock }
+    local kind, face = M.stationKind(station)
+    if not kind then return nil end
+    return { faceIndex = face, crock = kind == "crock" }
 end
 
-local sprites = {}
-for _, name in ipairs(Tiles.STATIONS) do table.insert(sprites, name) end
-local tracker = Station.tracker({ sprites = sprites, entry = newEntry, refresh = refresh })
+-- A pot or crock just built or put down isn't known to the map loader, and its bare base must never show, so the
+-- tracker looks for new ones round each player (scan): a new station gets its stage sprite at once.
+local tracker = Station.tracker({ sprites = Tiles.STATIONS, entry = newEntry, refresh = refresh, scan = true })
 
 World.track = tracker.track
 
@@ -113,46 +113,6 @@ function World.stations(crock)
     end
     return list
 end
-
--- A pot or crock just built or put down isn't known to the map loader, and its bare base must never show: the squares
--- round each player are looked over twice a second, so a new station gets its stage sprite at once.
-local NEAR = 3
-local SCAN_TICKS = 30
-local scanTicks = 0
-
-local function players()
-    if isServer() then return getOnlinePlayers() end
-    local list = ArrayList.new()
-    for i = 0, getNumActivePlayers() - 1 do
-        local player = getSpecificPlayer(i)
-        if player then list:add(player) end
-    end
-    return list
-end
-
-local function scanNear(player)
-    local cell, px, py, z = getCell(), math.floor(player:getX()), math.floor(player:getY()), math.floor(player:getZ())
-    for x = px - NEAR, px + NEAR do
-        for y = py - NEAR, py + NEAR do
-            local square = cell:getGridSquare(x, y, z)
-            local objects = square and square:getObjects()
-            for i = 0, objects and objects:size() - 1 or -1 do
-                local object = objects:get(i)
-                if not tracker.entry(object) and (M.isIncubator(object) or M.isCrock(object)) then
-                    World.refresh(object)
-                end
-            end
-        end
-    end
-end
-
-Events.OnTick.Add(function()
-    scanTicks = scanTicks + 1
-    if scanTicks < SCAN_TICKS then return end
-    scanTicks = 0
-    local list = players()
-    for i = 0, list:size() - 1 do scanNear(list:get(i)) end
-end)
 
 -- A Wrapped Yoghurt Pot a player carries cools where the player is; set down, it keeps that place (M.carryTick).
 local function tickWrappedPots(player, now, ledger)
@@ -175,7 +135,7 @@ local function tickWrappedPots(player, now, ledger)
 end
 
 Events.EveryOneMinute.Add(function()
-    local now, ledger, list = getGameTime():getWorldAgeHours(), M.getLedger(), players()
+    local now, ledger, list = getGameTime():getWorldAgeHours(), M.getLedger(), Station.players()
     for i = 0, list:size() - 1 do tickWrappedPots(list:get(i), now, ledger) end
 end)
 

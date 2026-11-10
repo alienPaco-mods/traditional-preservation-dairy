@@ -4,9 +4,10 @@
 require "TimedActions/ISBaseTimedAction"
 require "TraditionalPreservationDairy"
 
-ISStarterCrock = ISBaseTimedAction:derive("ISStarterCrock")
+TPStarterCrock = ISBaseTimedAction:derive("TPStarterCrock")
 
 local M = TraditionalPreservationDairy
+local Action = require "TraditionalPreservationCore/Action"
 local Hearth = require "TraditionalPreservationCore/Hearth"
 local DURATIONS = { load = 120, feed = 60, collect = 60 }
 
@@ -29,7 +30,7 @@ end
 local function copperReady(copper)
     return M.MILKS[copper.fluid] == true and M.crockLoadRefusal(copper.ml or 0, copper.tempC or 0) == nil
 end
-ISStarterCrock.copperReady = copperReady
+TPStarterCrock.copperReady = copperReady
 
 local function inInventory(self, item)
     return self.character:getInventory():containsRecursive(item)
@@ -42,7 +43,7 @@ local function itemReady(self)
         and M.crockLoadRefusal(M.mlIn(container), M.carriedC(self.item, getGameTime():getWorldAgeHours(), self.character)) == nil
 end
 
-function ISStarterCrock:isValid()
+function TPStarterCrock:isValid()
     if not self.station:getSquare() then return false end
     local stage = M.crockStage(M.stateOf(self.station:getModData().movableData or {}, M.CROCK_KEY))
     if self.mode == "load" then
@@ -58,16 +59,16 @@ function ISStarterCrock:isValid()
     return stage == "Ready"
 end
 
-function ISStarterCrock:waitToStart()
+function TPStarterCrock:waitToStart()
     self.character:faceThisObject(self.station)
     return self.character:shouldBeTurning()
 end
 
-function ISStarterCrock:start()
+function TPStarterCrock:start()
     self:setActionAnim("Loot")
 end
 
-function ISStarterCrock:complete()
+function TPStarterCrock:complete()
     local crock = state(self)
     local ledger = M.getLedger()
     if self.mode == "load" then
@@ -99,17 +100,17 @@ function ISStarterCrock:complete()
     return true
 end
 
-function ISStarterCrock:perform()
+function TPStarterCrock:perform()
     ISBaseTimedAction.perform(self)
 end
 
-function ISStarterCrock:getDuration()
-    return DURATIONS[self.mode]
+function TPStarterCrock:getDuration()
+    return Action.duration(self.character, DURATIONS[self.mode])
 end
 
 -- item is the milk's container for "feed", and for "load" from a carried container; wheat is the list of seeds
 -- for "load", and hearth the copper's when it loads from the Hearth.
-function ISStarterCrock:new(character, station, mode, item, wheat, hearth)
+function TPStarterCrock:new(character, station, mode, item, wheat, hearth)
     local o = ISBaseTimedAction.new(self, character)
     o.station = station
     o.hearth = hearth

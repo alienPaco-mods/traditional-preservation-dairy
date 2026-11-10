@@ -20,8 +20,6 @@
   "IGUI_TraditionalPreservationDairy_NextTooCold": "Too cold for a starter in about %1",
   "IGUI_TraditionalPreservationDairy_NeverSets": "Too cold here: it won't set while the temperature holds.",
   "IGUI_TraditionalPreservationDairy_NoChange": "Nothing changes while the temperature holds.",
-  "IGUI_TraditionalPreservationDairy_Hours": "%1 hours",
-  "IGUI_TraditionalPreservationDairy_UnderHour": "under an hour",
   "IGUI_TraditionalPreservationDairy_Jars": "Fills %1 jars, a litre each, or %2 Empty Yoghurt Containers.",
   "IGUI_TraditionalPreservationDairy_HasStarter": "This batch already has its starter.",
   "IGUI_TraditionalPreservationDairy_TooCold": "Too cold: reheat the milk. Pour it out into a container and back into a Hearth's copper, or top it up with milk steaming from the Hearth.",

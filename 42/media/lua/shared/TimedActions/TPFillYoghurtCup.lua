@@ -4,18 +4,19 @@ require "TimedActions/ISBaseTimedAction"
 require "TraditionalPreservationDairy"
 require "TraditionalPreservationDairyYoghurt"
 
-ISFillYoghurtCup = ISBaseTimedAction:derive("ISFillYoghurtCup")
+TPFillYoghurtCup = ISBaseTimedAction:derive("TPFillYoghurtCup")
 
 local M = TraditionalPreservationDairy
+local Action = require "TraditionalPreservationCore/Action"
 local DURATION = 30
 
-function ISFillYoghurtCup:isValid()
+function TPFillYoghurtCup:isValid()
     local inventory = self.character:getInventory()
     return inventory:containsRecursive(self.jar) and inventory:containsRecursive(self.cup)
         and M.cupsLeft(self.jar:getModData()) > 0
 end
 
-function ISFillYoghurtCup:start()
+function TPFillYoghurtCup:start()
     self:setActionAnim("Loot")
 end
 
@@ -24,7 +25,7 @@ local function removeItem(item)
     if container then container:DoRemoveItem(item) end
 end
 
-function ISFillYoghurtCup:complete()
+function TPFillYoghurtCup:complete()
     local inventory = self.character:getInventory()
     local data = self.jar:getModData()
     local left = M.takeCup(data)
@@ -39,15 +40,15 @@ function ISFillYoghurtCup:complete()
     return true
 end
 
-function ISFillYoghurtCup:perform()
+function TPFillYoghurtCup:perform()
     ISBaseTimedAction.perform(self)
 end
 
-function ISFillYoghurtCup:getDuration()
-    return DURATION
+function TPFillYoghurtCup:getDuration()
+    return Action.duration(self.character, DURATION)
 end
 
-function ISFillYoghurtCup:new(character, jar, cup)
+function TPFillYoghurtCup:new(character, jar, cup)
     local o = ISBaseTimedAction.new(self, character)
     o.jar = jar
     o.cup = cup

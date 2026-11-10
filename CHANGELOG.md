@@ -104,3 +104,12 @@
   over the front edge.
 - The crock and its stage overlays have hard edges (only its shadow stays soft): the soft edge left a ring in game
   where a wall, window or barricade behind a crock on a counter wasn't drawn.
+- With more than one incubator or crock under a right-click, each gets its own menu, named with its status
+  ("Yoghurt Incubator (Cooling: 2.0 L at 60 C)"). The menus answer vanilla's controller probe (review R6).
+- Every timed action honours the debug cheat for instant actions.
+- Internal (core consolidation, review group C): the menu helpers, the click handler, the look for new stations
+  (`Station.tracker{ scan = true }`), the station lookup (`M.stationKind`), pouring times, the sensitivity scale and
+  the season mean are TP Core's; console lines go through the core's `Log` (debug mode only). Timed actions are
+  `TPYoghurtIncubator`, `TPStarterCrock`, `TPFillYoghurtCup` (were `IS...`). Removed `M.fireNear`, `M.copperWarm`,
+  `M.fluidIn`, `M.fluidName`, `M.spriteIndex`, the aliases `M.ROOM_C`, `M.MILK_MAX_C`, `M.HEARTH_C`, `M.COPPER_ML`,
+  the "no item script yet" guards, and the texts `_Hours` and `_UnderHour` (the core's are used).

@@ -10,6 +10,8 @@ TraditionalPreservationDairy = TraditionalPreservationDairy or {}
 local M = TraditionalPreservationDairy
 local Weather = require "TraditionalPreservationCore/Weather"
 local Hearth = require "TraditionalPreservationCore/Hearth"
+local Station = require "TraditionalPreservationCore/Station"
+local Container = require "TraditionalPreservationCore/Container"
 local Tiles = require "TraditionalPreservationDairy/Tiles"
 
 -- Save keys: never rename these once the mod is out (DEVGUIDE, "Rules that keep saves and the game happy").
@@ -23,8 +25,6 @@ M.CROCK_KEY = "tpdCrock"
 
 -- Incubator
 M.CAPACITY_ML = 5000
-M.ROOM_C = Hearth.ROOM_C
-M.MILK_MAX_C = Hearth.MAX_C   -- the copper over a fire; milk never quite boils in it
 M.SET_C = 45                  -- the wrap goes on when the milk is down to this with a starter in
 M.STARTER_MIN_C = 40          -- below this a starter won't take: the milk must be reheated
 M.LIDDED_TAU = 2.0            -- hours, for 5 L in the lidded clay pot
@@ -38,11 +38,9 @@ M.HISTORY_HOURS = 336         -- two weeks of hourly weather for catching up
 -- fuel left): while unloaded, the fire counts until then, and after it the place under the fire (under) does.
 -- By a banked Hearth (EMBERS) it is cooler, and the embers last three times as long.
 M.HEARTH = Hearth.PLACE
-M.HEARTH_C = Hearth.FIRE_C
 M.EMBERS = Hearth.EMBERS
 
 -- The Hearth's copper (TP Core) holds one fluid at a time and heats towards MILK_MAX_C while its fire burns.
-M.COPPER_ML = Hearth.COPPER_ML
 M.HOT_C = Hearth.HOT_C        -- milk this hot pours from the copper into a pot
 
 -- Carried milk: a container filled from the copper keeps a record in its item modData, so the incubator knows
@@ -96,32 +94,14 @@ M.FACE_COUNT = Tiles.FACE_COUNT
 M.INCUBATOR_OVERLAYS = Tiles.OVERLAYS and Tiles.OVERLAYS.incubator or {}
 M.CROCK_OVERLAYS = Tiles.OVERLAYS and Tiles.OVERLAYS.crock or {}
 
-function M.spriteIndex(name)
-    if not name or string.sub(name, 1, #Tiles.PREFIX) ~= Tiles.PREFIX then return nil end
-    return tonumber(string.sub(name, #Tiles.PREFIX + 1))
-end
-
 function M.spriteName(index)
     return Tiles.PREFIX .. index
 end
 
--- The fluid in a container if it is all one kind, else nil.
-function M.fluidIn(container)
-    if not container or container:isEmpty() then return nil end
-    local fluid = container:getPrimaryFluid()
-    if not fluid or container:getPrimaryFluidAmount() < container:getAmount() - 0.001 then return nil end
-    return fluid:getFluidTypeString()
-end
-
 -- The fluid in a container if it is all one kind of milk, else nil.
 function M.milkIn(container)
-    local name = M.fluidIn(container)
+    local name = Container.fluidIn(container)
     return M.MILKS[name] and name or nil
-end
-
-function M.fluidName(name)
-    local fluid = name and Fluid.Get(name)
-    return fluid and fluid:getTranslatedName() or tostring(name)
 end
 
 -- Only empty containers take milk or yoghurt out, so nothing is ever topped up into a mixture.
@@ -130,32 +110,22 @@ function M.isEmptyContainer(item)
     return container ~= nil and container:isEmpty() and container:getCapacity() > 0
 end
 
-local function isStationSprite(spriteName, base)
-    local index = spriteName and M.spriteIndex(spriteName)
-    return index ~= nil and index >= base and index < base + M.FACE_COUNT
-end
-
-local function isStation(object, base)
-    local sprite = object and object:getSprite()
-    return sprite ~= nil and isStationSprite(sprite:getName(), base)
-end
+-- Which station this is ("incubator" or "crock") and which way it faces, or nil for anything else.
+M.stationKind = Station.kinds(Tiles.PREFIX, M.FACE_COUNT, { incubator = M.INCUBATOR_SPRITE, crock = M.CROCK_SPRITE })
 
 function M.isIncubator(object)
-    return isStation(object, M.INCUBATOR_SPRITE)
+    return M.stationKind(object) == "incubator"
 end
 
 function M.isCrock(object)
-    return isStation(object, M.CROCK_SPRITE)
+    return M.stationKind(object) == "crock"
 end
 
--- Off, Forgiving, Normal, Harsh: how much of a temperature's slowdown applies.
-M.SENSITIVITY_SCALES = { 0, 0.5, 1, 1.5 }
 M.SENSITIVITY = 1
 
 M.PLACES = { "Open", "Sheltered", "Basement", M.HEARTH, M.EMBERS }
 
 M.placeTemperature = Hearth.placeTemperature
-M.fireNear = Hearth.fireNear
 M.placeOf = Hearth.placeOf
 M.noteFire = Hearth.noteFire
 M.hearthsNear = Hearth.hearthsNear
@@ -289,7 +259,7 @@ function M.advanceBatch(batch, hours, placeC, now)
         t = t + step
         if not batch.incubating and batch.starter and batch.tempC <= M.SET_C then
             batch.incubating = true
-            batch.wrapHour = now + t
+            batch.wrapHour = now + t   -- read by tools/season_report.lua
             batch.done = 0
         elseif wrapped then
             batch.done = batch.done + M.setRate(batch.tempC) * step
@@ -395,10 +365,6 @@ end
 
 function M.copperHot(copper)
     return M.MILKS[copper.fluid] == true and (copper.tempC or 0) >= M.HOT_C
-end
-
-function M.copperWarm(copper)
-    return M.MILKS[copper.fluid] == true and M.isWarm(copper.tempC or 0)
 end
 
 -- Fills the pot from the copper with hot milk, as much as fits. Returns the ml (0 with a reason when refused).
@@ -668,7 +634,7 @@ function M.applySandbox()
         M.CULTIVATE_HOURS = options.CultureHours
         M.DEVELOP_HOURS = options.CultureHours / 2
     end
-    if options.TemperatureSensitivity then M.SENSITIVITY = M.SENSITIVITY_SCALES[options.TemperatureSensitivity] or 1 end
+    if options.TemperatureSensitivity then M.SENSITIVITY = Weather.sensitivity(options.TemperatureSensitivity) end
 end
 
 Events.OnInitGlobalModData.Add(M.applySandbox)

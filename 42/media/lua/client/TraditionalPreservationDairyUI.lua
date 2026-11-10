@@ -4,11 +4,10 @@
 -- the starters. The status line at the top says what the station is doing, and its hover says more. Both also have
 -- info windows (TP Core's InfoWindow), opened from their menus or by clicking them. A Jar of Yoghurt's own menu spoons
 -- it into cups. The Hearth's own menu and Hearth Info are TP Core's (HearthUI); Dairy adds its milk notes there.
-require "TimedActions/ISYoghurtIncubator"
-require "TimedActions/ISStarterCrock"
-require "TimedActions/ISFillYoghurtCup"
+require "TimedActions/TPYoghurtIncubator"
+require "TimedActions/TPStarterCrock"
+require "TimedActions/TPFillYoghurtCup"
 local UI = require "TraditionalPreservationCore/UI"
-local Station = require "TraditionalPreservationCore/Station"
 local Hearth = require "TraditionalPreservationCore/Hearth"
 local InfoWindow = require "TraditionalPreservationCore/InfoWindow"
 local HearthUI = require "TraditionalPreservationCore/HearthUI"
@@ -45,51 +44,15 @@ local function now()
     return getGameTime():getWorldAgeHours()
 end
 
-local function litresText(ml)
-    return string.format("%.1f", ml / 1000)
-end
-
-local function degrees(celsius)
-    return string.format("%.0f", celsius)
-end
-
-local function tooltipFor(option, text)
-    local tooltip = ISWorldObjectContextMenu.addToolTip()
-    tooltip.description = text
-    option.toolTip = tooltip
-end
-
-local function disableWith(option, text)
-    option.isDisabled = true
-    tooltipFor(option, text)
-end
-
--- Every item on the player or in containers in reach that passes test.
-local function findItems(playerObj, test)
-    local found = {}
-    local containers = ISInventoryPaneContextMenu.getContainers(playerObj)
-    for i = 0, containers:size() - 1 do
-        local items = containers:get(i):getItems()
-        for j = 0, items:size() - 1 do
-            local item = items:get(j)
-            if not item:isFavorite() and test(item) then table.insert(found, item) end
-        end
-    end
-    return found
-end
+local litresText, degrees, hoursText = UI.litres, UI.degrees, UI.hoursText
+local tooltipFor, disableWith, findItems = UI.tooltip, UI.disable, UI.findItems
 
 local function onAction(playerObj, station, items, mode)
     if not ISEntityUI.WalkToEntity(playerObj, station) then return end
     for _, item in ipairs(items) do
         ISInventoryPaneContextMenu.transferIfNeeded(playerObj, item)
-        ISTimedActionQueue.add(ISYoghurtIncubator:new(playerObj, station, item, mode))
+        ISTimedActionQueue.add(TPYoghurtIncubator:new(playerObj, station, item, mode))
     end
-end
-
--- Whole hours, or "under an hour".
-local function hoursText(hours)
-    if hours <= 1 then return getText("IGUI_TraditionalPreservationDairy_UnderHour") end
-    return say("IGUI_TraditionalPreservationDairy_Hours", tostring(math.ceil(hours)))
 end
 
 local function statusText(state)
@@ -166,7 +129,7 @@ end
 
 local function onHearthPour(playerObj, station, hearth)
     if not ISEntityUI.WalkToEntity(playerObj, station) then return end
-    ISTimedActionQueue.add(ISYoghurtIncubator:new(playerObj, station, nil, "hearth", hearth))
+    ISTimedActionQueue.add(TPYoghurtIncubator:new(playerObj, station, nil, "hearth", hearth))
 end
 
 local function addHearthPourMenu(menu, playerObj, station, state)
@@ -203,7 +166,7 @@ local function addCarriedPourMenu(menu, playerObj, station, state)
         local refusal = M.carriedRefusal(M.carryOf(item), ml)
         local refusalText = refusal and getText(REFUSALS[refusal])
         if not refusal and select(2, M.milkRoom(state, 1, fluid)) == "Mixed" then
-            refusalText = say("IGUI_TraditionalPreservationDairy_PotMixed", M.fluidName(state.fluid))
+            refusalText = say("IGUI_TraditionalPreservationDairy_PotMixed", UI.fluidName(state.fluid))
         end
         if refusalText then
             entry.notAvailable = true
@@ -276,11 +239,18 @@ local function addCupMenu(menu, playerObj, station, state)
     end
 end
 
-local function addIncubatorMenu(context, playerObj, station)
+-- A station's menu entry: its name, with its status after it when the click took in several (summary), so each
+-- can be told from the others.
+local function stationLabel(name, status, summary)
+    if not summary then return getText(name) end
+    return getText(name) .. " (" .. status .. ")"
+end
+
+local function addIncubatorMenu(context, playerObj, station, summary)
     local World = TraditionalPreservationDairyWorld
     local state = World and World.updateIncubator(station, getGameTime():getWorldAgeHours())
         or M.stateOf(station:getModData().movableData or {}, M.INCUBATOR_KEY)
-    local option = context:addOption(getText("IGUI_CraftingWindow_YoghurtIncubator"))
+    local option = context:addOption(stationLabel("IGUI_CraftingWindow_YoghurtIncubator", statusText(state), summary))
     option.iconTexture = getTexture(STATION_ICON)
     local menu = context:getNew(context)
     context:addSubMenu(option, menu)
@@ -308,7 +278,7 @@ local function onCrockAction(playerObj, station, mode, item, wheat, hearth)
     if not ISEntityUI.WalkToEntity(playerObj, station) then return end
     for _, seed in ipairs(wheat or {}) do ISInventoryPaneContextMenu.transferIfNeeded(playerObj, seed) end
     if item then ISInventoryPaneContextMenu.transferIfNeeded(playerObj, item) end
-    ISTimedActionQueue.add(ISStarterCrock:new(playerObj, station, mode, item, wheat, hearth))
+    ISTimedActionQueue.add(TPStarterCrock:new(playerObj, station, mode, item, wheat, hearth))
 end
 
 -- Containers holding at least ml of plain milk.
@@ -341,7 +311,7 @@ local function addLoadMenu(menu, playerObj, station)
     if #wheat < M.CROCK_WHEAT then
         return disableWith(option, say("IGUI_TraditionalPreservationDairy_NeedWheat", tostring(M.CROCK_WHEAT), tostring(#wheat)))
     end
-    local hearth, copper = hearthFor(station, ISStarterCrock.copperReady)
+    local hearth, copper = hearthFor(station, TPStarterCrock.copperReady)
     local milks = findItems(playerObj, function(item) return M.milkIn(item:getFluidContainer()) ~= nil end)
     if not copper and #milks == 0 then return disableWith(option, getText("IGUI_TraditionalPreservationDairy_CrockNoWarmMilk")) end
     tooltipFor(option, getText("IGUI_TraditionalPreservationDairy_LoadHelp"))
@@ -404,15 +374,16 @@ local function crockDetail(station, state)
     return table.concat(lines, " <LINE> ")
 end
 
-local function addCrockMenu(context, playerObj, station)
+local function addCrockMenu(context, playerObj, station, summary)
     local World = TraditionalPreservationDairyWorld
     local state = World and World.updateCrock(station) or M.stateOf(station:getModData().movableData or {}, M.CROCK_KEY)
-    local option = context:addOption(getText("IGUI_CraftingWindow_StarterCultureCrock"))
+    local stage = M.crockStage(state)
+    local option = context:addOption(stationLabel("IGUI_CraftingWindow_StarterCultureCrock",
+        getText("IGUI_TraditionalPreservationDairy_Crock" .. stage), summary))
     option.iconTexture = getTexture(CROCK_ICON)
     local menu = context:getNew(context)
     context:addSubMenu(option, menu)
 
-    local stage = M.crockStage(state)
     local status = menu:addOption(getText("IGUI_TraditionalPreservationDairy_Crock" .. stage))
     status.isDisabled = true
     tooltipFor(status, crockDetail(station, state))
@@ -578,42 +549,34 @@ function CrockWindow:render()
     self:drawNotes(y, notes)
 end
 
--- Not while paused, aiming or out of reach: vanilla's own checks for a click.
-local function canClick(object, playerObj)
-    return playerObj and not playerObj:isAiming()
-        and not (UIManager.getSpeedControls() and UIManager.getSpeedControls():getCurrentGameSpeed() == 0)
-        and InfoWindow.inReach(playerObj, object)
-end
-
 -- Clicking a pot opens Incubator Info, and clicking a crock Crock Info, as clicking a door opens it (a Hearth's click
--- is TP Core's). The click handler is in vanilla's server folder, which loads after this one, so it is wrapped once
--- the game has started.
-local function wrapClickHandler()
-    if not ISObjectClickHandler or ISObjectClickHandler.tpdPotClick then return end
-    local vanillaClickObject = ISObjectClickHandler.doClickSpecificObject
-    ISObjectClickHandler.tpdPotClick = true
-    function ISObjectClickHandler.doClickSpecificObject(object, playerNum, playerObj)
-        local window = object and (M.isIncubator(object) and PotWindow or M.isCrock(object) and CrockWindow)
-        if window and canClick(object, playerObj) then
-            if TraditionalPreservationDairyWorld then TraditionalPreservationDairyWorld.track(object) end
-            window.open(playerObj, object)
-            return true
-        end
-        return vanillaClickObject(object, playerNum, playerObj)
-    end
-end
+-- is TP Core's).
+InfoWindow.clickOpens(function(object) return M.stationKind(object) ~= nil end, function(playerObj, object)
+    if TraditionalPreservationDairyWorld then TraditionalPreservationDairyWorld.track(object) end
+    local window = M.isCrock(object) and CrockWindow or PotWindow
+    window.open(playerObj, object)
+end)
 
-Events.OnGameStart.Add(wrapClickHandler)
-
-local function onFillContextMenu(playerNum, context, worldobjects)
-    local playerObj = getSpecificPlayer(playerNum)
+-- Every pot and crock the click took in gets its own menu. With more than one, each is named with its status
+-- ("Yoghurt Incubator (Cooling: 2.0 L at 60 C)"), so the player picks the right one.
+local function onFillContextMenu(playerNum, context, worldobjects, test)
+    local stations, seen = {}, {}
     for _, object in ipairs(worldobjects) do
-        local incubator, crock = M.isIncubator(object), M.isCrock(object)
-        if incubator or crock then
-            -- A station built or placed this session isn't tracked until its area reloads, so its menu starts it.
-            if TraditionalPreservationDairyWorld then TraditionalPreservationDairyWorld.track(object) end
-            if crock then return addCrockMenu(context, playerObj, object) end
-            return addIncubatorMenu(context, playerObj, object)
+        if M.stationKind(object) and not seen[object] then
+            -- Vanilla's probe for a controller's prompt: say there is a menu, do no work.
+            if test then return ISWorldObjectContextMenu.setTest() end
+            seen[object] = true
+            table.insert(stations, object)
+        end
+    end
+    local playerObj = getSpecificPlayer(playerNum)
+    for _, station in ipairs(stations) do
+        -- A station built or placed this session isn't tracked until its area reloads, so its menu starts it.
+        if TraditionalPreservationDairyWorld then TraditionalPreservationDairyWorld.track(station) end
+        if M.isCrock(station) then
+            addCrockMenu(context, playerObj, station, #stations > 1)
+        else
+            addIncubatorMenu(context, playerObj, station, #stations > 1)
         end
     end
 end
@@ -625,7 +588,7 @@ local function onFillCups(playerObj, jar, cups)
     ISInventoryPaneContextMenu.transferIfNeeded(playerObj, jar)
     for _, cup in ipairs(cups) do
         ISInventoryPaneContextMenu.transferIfNeeded(playerObj, cup)
-        ISTimedActionQueue.add(ISFillYoghurtCup:new(playerObj, jar, cup))
+        ISTimedActionQueue.add(TPFillYoghurtCup:new(playerObj, jar, cup))
     end
 end
 

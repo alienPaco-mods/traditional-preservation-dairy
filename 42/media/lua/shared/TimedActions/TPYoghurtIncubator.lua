@@ -6,12 +6,11 @@ require "TimedActions/ISBaseTimedAction"
 require "TraditionalPreservationDairy"
 require "TraditionalPreservationDairyYoghurt"
 
-ISYoghurtIncubator = ISBaseTimedAction:derive("ISYoghurtIncubator")
+TPYoghurtIncubator = ISBaseTimedAction:derive("TPYoghurtIncubator")
 
 local M = TraditionalPreservationDairy
 local Hearth = require "TraditionalPreservationCore/Hearth"
-local BASE_DURATION = 40
-local DURATION_PER_LITRE = 12
+local Action = require "TraditionalPreservationCore/Action"
 
 local function state(self)
     local World = TraditionalPreservationDairyWorld
@@ -42,7 +41,7 @@ local function canDo(self)
     return M.JARS[self.item:getFullType()] == true and M.isEmptyContainer(self.item) and M.stage(batch) == "Ready"
 end
 
-function ISYoghurtIncubator:isValid()
+function TPYoghurtIncubator:isValid()
     if not self.station:getSquare() then return false end
     if self.mode == "hearth" then
         if not self.hearth:getSquare() then return false end
@@ -52,12 +51,12 @@ function ISYoghurtIncubator:isValid()
     return canDo(self)
 end
 
-function ISYoghurtIncubator:waitToStart()
+function TPYoghurtIncubator:waitToStart()
     self.character:faceThisObject(self.station)
     return self.character:shouldBeTurning()
 end
 
-function ISYoghurtIncubator:start()
+function TPYoghurtIncubator:start()
     self:setActionAnim("Loot")
 end
 
@@ -67,14 +66,10 @@ local function removeItem(item)
 end
 
 local function give(self, fullType)
-    if not ScriptManager.instance:getItem(fullType) then
-        print("[TPD] no item script for " .. fullType .. " yet")
-        return nil
-    end
     return self.character:getInventory():AddItem(fullType)
 end
 
-function ISYoghurtIncubator:complete()
+function TPYoghurtIncubator:complete()
     local batch = state(self)
     local now = getGameTime():getWorldAgeHours()
     local container = self.item and self.item:getFluidContainer()
@@ -113,10 +108,8 @@ function ISYoghurtIncubator:complete()
             self.character:getXp():AddXP(Perks.Cooking, M.COLLECT_XP * ml / M.JAR_ML)
         end
     else
-        -- Nothing is taken from the pot unless the jar can be made.
         local jarType = self.item:getFullType()
-        local ml, age = 0, 0
-        if ScriptManager.instance:getItem(M.YOGHURT_JAR) then ml, age = M.collectJar(batch, now) end
+        local ml, age = M.collectJar(batch, now)
         if ml > 0 then
             local jar = give(self, M.YOGHURT_JAR)
             removeItem(self.item)
@@ -127,19 +120,17 @@ function ISYoghurtIncubator:complete()
             jar:getModData().tpdCups = M.cupsFor(ml)
             M.labelJar(jar)
             self.character:getXp():AddXP(Perks.Cooking, M.COLLECT_XP)
-        else
-            print("[TPD] no item script for " .. M.YOGHURT_JAR .. " yet")
         end
     end
     if TraditionalPreservationDairyWorld then TraditionalPreservationDairyWorld.refresh(self.station) end
     return true
 end
 
-function ISYoghurtIncubator:perform()
+function TPYoghurtIncubator:perform()
     ISBaseTimedAction.perform(self)
 end
 
-function ISYoghurtIncubator:getDuration()
+function TPYoghurtIncubator:getDuration()
     local container = self.item and self.item:getFluidContainer()
     local litres = 0
     if self.mode == "hearth" then
@@ -151,11 +142,11 @@ function ISYoghurtIncubator:getDuration()
     if self.mode == "carried" and container then litres = container:getAmount() end
     if self.mode == "collect" then litres = M.JAR_ML / 1000 end
     if self.mode == "cup" then litres = M.CUP_ML / 1000 end
-    return BASE_DURATION + math.floor(math.min(litres, 5) * DURATION_PER_LITRE)
+    return Action.pourDuration(self.character, litres, 5)
 end
 
 -- item is nil for "hearth", which takes the hearth instead.
-function ISYoghurtIncubator:new(character, station, item, mode, hearth)
+function TPYoghurtIncubator:new(character, station, item, mode, hearth)
     local o = ISBaseTimedAction.new(self, character)
     o.station = station
     o.hearth = hearth
