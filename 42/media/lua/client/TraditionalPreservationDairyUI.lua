@@ -22,7 +22,7 @@ local WHEAT_ICON = "Item_WheatGrains"
 local MILK_ICON = "Item_Milk"
 local YOGHURT_ICON = "Item_Yoghurt"
 local JAR_ICON = "Item_ClayJar_Fired"
-local PotWindow, HearthWindow -- the info windows, below the menus
+local PotWindow, HearthWindow, CrockWindow -- the info windows, below the menus
 
 local PLACE_TEXT = {
     Open = "IGUI_TraditionalPreservationDairy_Open",
@@ -399,7 +399,7 @@ local function crockDetail(station, state)
     if stage == "Cultivating" or stage == "Developing" then
         local status = M.crockStatus(state, ledger, place)
         table.insert(lines, say("IGUI_TraditionalPreservationDairy_CrockProgress", UI.percent(status.progress), UI.percent(status.rate)))
-        table.insert(lines, status.hoursLeft and say("IGUI_TraditionalPreservationDairy_Next" .. (stage == "Cultivating" and "Waiting" or "Ready"),
+        table.insert(lines, status.hoursLeft and say("IGUI_TraditionalPreservationDairy_Next" .. (stage == "Cultivating" and "Waiting" or "Starters"),
             hoursText(status.hoursLeft)) or getText("IGUI_TraditionalPreservationDairy_CrockStalled"))
     else
         table.insert(lines, getText("IGUI_TraditionalPreservationDairy_CrockHelp" .. stage))
@@ -419,6 +419,8 @@ local function addCrockMenu(context, playerObj, station)
     local status = menu:addOption(getText("IGUI_TraditionalPreservationDairy_Crock" .. stage))
     status.isDisabled = true
     tooltipFor(status, crockDetail(station, state))
+    local info = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_CrockInfo"), playerObj, CrockWindow.open, station)
+    info.iconTexture = getTexture(CROCK_ICON)
 
     if stage == "Empty" then
         addLoadMenu(menu, playerObj, station)
@@ -547,7 +549,8 @@ local WINDOW_PADDING = 10
 local LABEL_WIDTH = 120
 local BAR_HEIGHT = 12
 local REFRESH_TICKS = 30
-local BAR_COLOURS = { contents = { 0.6, 0.57, 0.46 }, set = { 0.55, 0.6, 0.25 }, fuel = { 0.75, 0.42, 0.18 }, copper = { 0.72, 0.45, 0.3 } }
+local BAR_COLOURS = { contents = { 0.6, 0.57, 0.46 }, set = { 0.55, 0.6, 0.25 }, fuel = { 0.75, 0.42, 0.18 }, copper = { 0.72, 0.45, 0.3 },
+    culture = { 0.7, 0.62, 0.35 } }
 local FUEL_SCALE_MIN = 12 * 60 -- a full Fuel bar: 12 hours of burning
 local STARTER_TEXT = { Yoghurt = "IGUI_TraditionalPreservationDairy_InfoStarterYoghurt", Starter = "IGUI_TraditionalPreservationDairy_InfoStarterCulture" }
 
@@ -773,6 +776,58 @@ function HearthWindow:render()
     self:drawNotes(y, notes)
 end
 
+-- Crock Info: the stage, the place and its heat, and how far the culture has got, laid out like Pot Info.
+CrockWindow = PotWindow:derive("TraditionalPreservationDairyCrockWindow")
+
+function CrockWindow:new(playerObj, crock)
+    local o = PotWindow.new(self, playerObj, crock)
+    o.title = getText("IGUI_CraftingWindow_StarterCultureCrock")
+    return o
+end
+
+function CrockWindow.open(playerObj, crock)
+    openInfo(CrockWindow, playerObj, crock)
+end
+
+function CrockWindow:refresh()
+    local World, station = TraditionalPreservationDairyWorld, self.station
+    local state = World and World.updateCrock(station) or M.stateOf(station:getModData().movableData or {}, M.CROCK_KEY)
+    local place = state.place or M.placeOf(station)
+    self.info = { state = state, stage = M.crockStage(state), status = M.crockStatus(state, M.getLedger(), place) }
+end
+
+function CrockWindow:render()
+    ISCollapsableWindow.render(self)
+    if self.isCollapsed or not self.info then return end
+    local info = self.info
+    local stage, status = info.stage, info.status
+    local working = stage == "Cultivating" or stage == "Developing"
+    local y = self:titleBarHeight() + WINDOW_PADDING
+
+    y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoStage", getText("IGUI_TraditionalPreservationDairy_Crock" .. stage))
+    y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoPlace", say(PLACE_TEXT[status.place], degrees(status.temperature)))
+    y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoCultureHeat", getText("IGUI_TraditionalPreservationDairy_InfoCultureHeatValue"))
+    if working then
+        y = self:bar(y, "IGUI_TraditionalPreservationDairy_InfoProgress", status.progress, BAR_COLOURS.culture, UI.percent(status.progress))
+        y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoCultureSpeed", UI.percent(status.rate))
+        local nextText = status.hoursLeft and say("IGUI_TraditionalPreservationDairy_Next" .. (stage == "Cultivating" and "Waiting" or "Starters"),
+            hoursText(status.hoursLeft)) or getText("IGUI_TraditionalPreservationDairy_InfoStopped")
+        y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoNext", nextText)
+    elseif stage == "Ready" then
+        y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoStarters", tostring(M.CROCK_STARTERS))
+    end
+
+    local notes = {}
+    if not working then
+        table.insert(notes, getText("IGUI_TraditionalPreservationDairy_CrockHelp" .. stage))
+    elseif not status.hoursLeft then
+        table.insert(notes, getText("IGUI_TraditionalPreservationDairy_CrockStalled"))
+    elseif status.place ~= "Basement" then
+        table.insert(notes, getText("IGUI_TraditionalPreservationDairy_InfoAssumes"))
+    end
+    self:drawNotes(y, notes)
+end
+
 -- Not while paused, aiming or out of reach: vanilla's own checks for a click.
 local function canClick(object, playerObj)
     return playerObj and not playerObj:isAiming()
@@ -780,7 +835,7 @@ local function canClick(object, playerObj)
         and inReach(playerObj, object)
 end
 
--- Clicking a pot opens Incubator Info, as clicking a door opens it. A Hearth is left to vanilla (its firebox in the
+-- Clicking a pot opens Incubator Info, and clicking a crock Crock Info, as clicking a door opens it. A Hearth is left to vanilla (its firebox in the
 -- loot pane); Hearth Info is on its menu. The click handler is in vanilla's server folder, which loads after
 -- this one, so it is wrapped once the game has started.
 local function wrapClickHandler()
@@ -788,9 +843,10 @@ local function wrapClickHandler()
     local vanillaClickObject = ISObjectClickHandler.doClickSpecificObject
     ISObjectClickHandler.tpdPotClick = true
     function ISObjectClickHandler.doClickSpecificObject(object, playerNum, playerObj)
-        if object and M.isIncubator(object) and canClick(object, playerObj) then
+        local window = object and (M.isIncubator(object) and PotWindow or M.isCrock(object) and CrockWindow)
+        if window and canClick(object, playerObj) then
             if TraditionalPreservationDairyWorld then TraditionalPreservationDairyWorld.track(object) end
-            PotWindow.open(playerObj, object)
+            window.open(playerObj, object)
             return true
         end
         return vanillaClickObject(object, playerNum, playerObj)

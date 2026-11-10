@@ -71,6 +71,11 @@
 - The crock loads milk at 35 to 45 C only (hotter kills the grain's culture), from a Hearth within 2 tiles or from
   any carried milk container ("Load Wheat and Warm Milk" lists them with litres and heat). A refused entry says
   why: too little, too cool or too hot.
+- Crock Info, on the crock's menu or by clicking the crock: stage, place and its heat, the culture's best heat, progress, speed, and the
+  time to the next stage (or the starters to collect). The crock's hover no longer says "Set in about" while it
+  develops: it says "Starters ready in about".
+- Help texts for the incubator, crock and Hearth now say milk can be carried in any container, and that only a
+  Wrapped Yoghurt Pot keeps it hot on the way.
 - The incubator and the crock no longer block their tile: walk past or through them, and click them from any side.
   Their floor shadow is soft-edged.
 - "Pot Info" is now "Incubator Info", and the menus and notes say "incubator" for the station.
