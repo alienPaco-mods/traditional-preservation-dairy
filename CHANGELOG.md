@@ -1,6 +1,8 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- Player guide `5_Dairy_Guide.md` written (was the template stub): the loop, the copper, incubator, jars and cups,
+  the crock, stations, the season almanac, the Dairymaid's Notebook, tips, troubleshooting, sandbox, testers' toolkit.
 - Menu icons: Pour from Hearth and the crock's Hearth row show TP Core's copper (were the Hearth and a milk carton);
   Pour Steamed Milk, Pour Out and Feed show the first container they list, drawn with its milk (an empty bucket
   when none); every container row shows its milk's colour; Add Starter and Collect Starters show the starter; Collect
