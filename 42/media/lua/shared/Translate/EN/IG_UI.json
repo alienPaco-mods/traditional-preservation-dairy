@@ -81,7 +81,7 @@
   "IGUI_TraditionalPreservationDairy_CrockTooHot": "Too hot for the grain at %1: it needs 35 to 45 C. Let it cool first.",
   "IGUI_TraditionalPreservationDairy_CrockTooLittle": "Less than half a litre of milk.",
   "IGUI_TraditionalPreservationDairy_CrockNoWarmMilk": "You need half a litre of milk at 35 to 45 C, from a Hearth within 2 tiles or a container you carry.",
-  "IGUI_TraditionalPreservationDairy_NoHearth": "No Hearth within 2 tiles. Build one (Pottery) and bring the milk to the steam in its copper.",
+  "IGUI_TraditionalPreservationDairy_NoHearth": "No Hearth within 2 tiles. Build one (Masonry) and bring the milk to the steam in its copper.",
   "IGUI_TraditionalPreservationDairy_CopperNoMilk": "The copper holds no milk.",
   "IGUI_TraditionalPreservationDairy_CopperNotHot": "The milk in the copper is at %1 C: it must steam (85 C). Keep the fire lit.",
   "IGUI_TraditionalPreservationDairy_HearthHelpEmpty": "For yoghurt: milk steaming at 85 C pours into a Yoghurt Incubator within 2 tiles, or carry it in a Wrapped Yoghurt Pot, which keeps it hot. Milk at 35 to 45 C loads a Starter Culture Crock.",

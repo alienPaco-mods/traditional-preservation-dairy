@@ -50,11 +50,11 @@ Copy this folder to `~/Zomboid/mods/TraditionalPreservationDairy`, as a real cop
 
 | Station | Where | Skill | Materials |
 |---|---|---|---|
-| **Hearth** (TP Core) | Build menu | Pottery 2 | 12 Clay Bricks, 4 Clay, 1 Copper Sheet, a trowel (kept) |
-| **Yoghurt Incubator** | Build menu, floor | Pottery 2, Tailoring 1 | 1 Yoghurt Pot, 2 Ripped Sheets, 1 Twine |
-| **Starter Culture Crock** | Build menu, floor, counter or table | Pottery 4, Cooking 4 | 1 Clay Jar, Glazed Clay Jar or Clay Pot, 1 Ripped Sheet, 1 Twine |
+| **Hearth** (TP Core) | Build menu | Masonry 2 | 12 Clay Bricks, 4 Clay, 1 Copper Sheet, a trowel (kept) |
+| **Yoghurt Incubator** | Build menu, floor | Tailoring 1 | 1 Yoghurt Pot, 2 Ripped Sheets, 1 Twine |
+| **Starter Culture Crock** | Build menu, floor, counter or table | Cooking 4 | 1 Clay Jar, Glazed Clay Jar or Clay Pot, 1 Ripped Sheet, 1 Twine |
 
-The **Yoghurt Pot** is thrown on the pottery wheel (Pottery 2, 4 Clay, a little water) and fired in a kiln. Wrapped in a Sheet and tied with Twine (crafting menu, Cooking) it becomes a **Wrapped Yoghurt Pot**, which carries 5 L of hot milk and loses only about 15 C an hour. Unwrap it when empty to get the pot, sheet and twine back.
+The **Yoghurt Pot** is thrown on the pottery wheel (Pottery 2, 6 Clay, a little water) and fired in a kiln. Wrapped in a Sheet and tied with Twine (crafting menu, Cooking) it becomes a **Wrapped Yoghurt Pot**, which carries 5 L of hot milk and loses only about 15 C an hour. Unwrap it when empty to get the pot, sheet and twine back.
 
 You can walk through the incubator and the crock. Both work anywhere, but pouring straight from the copper needs the Hearth within 2 tiles.
 

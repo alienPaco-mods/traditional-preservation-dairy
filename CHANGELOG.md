@@ -1,6 +1,8 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- Balance (series pass, F1): the Yoghurt Pot takes 6 clay (was 4). Yoghurt Incubator needs Tailoring 1 only (the
+  pot carries the Pottery gate), the Starter Culture Crock Cooking 4 only. Docs: the Hearth is Masonry 2 (TP Core).
 - Fixed: the starter crock could be built or put down on an electric stove or a chest freezer. It now stands only
   on a counter, a table or the floor.
 - The game's generic animal milk counts as milk, as vanilla's own milking and cheese treat it: it sets, and blends

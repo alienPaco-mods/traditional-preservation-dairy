@@ -15,7 +15,7 @@ module TraditionalPreservationDairy
         category = Pottery,
         inputs
         {
-            item 4 [Base.Clay],
+            item 6 [Base.Clay],
             item 1 [*] mode:keep flags[ItemIsFluid;HandcraftOnly],
             -fluid 0.25 categories[Water] mode:mixture,
         }

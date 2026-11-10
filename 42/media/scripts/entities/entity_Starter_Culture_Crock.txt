@@ -32,7 +32,7 @@ module TraditionalPreservationDairy
         {
             timedAction = BuildLowNoTool,
             time = 80,
-            SkillRequired = Pottery:4;Cooking:4,
+            SkillRequired = Cooking:4,
             xpAward = Cooking:10,
             category = Pottery,
             Tooltip = Tooltip_craft_StarterCultureCrockDesc,

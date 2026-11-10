@@ -27,12 +27,13 @@ module TraditionalPreservationDairy
                 }
             }
         }
-        /* The fired Yoghurt Pot, with cloth to wrap it in and twine to tie the wrap. */
+        /* The fired Yoghurt Pot (the pot carried its Pottery gate), with cloth to wrap it in and twine to tie
+           the wrap. */
         component CraftRecipe
         {
             timedAction = BuildLowNoTool,
             time = 100,
-            SkillRequired = Pottery:2;Tailoring:1,
+            SkillRequired = Tailoring:1,
             xpAward = Tailoring:5,
             category = Pottery,
             Tooltip = Tooltip_craft_YoghurtIncubatorDesc,
