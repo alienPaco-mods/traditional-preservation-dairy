@@ -1,6 +1,15 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- Balance (series pass, C23): yoghurt keeps its milk's food. A 250 ml portion, from a jar or in a cup, has a quarter
+  litre of the milk's food as vanilla states it: cow's milk 153.75 kcal and -12.5 hunger (was vanilla Yoghurt's 30
+  and -10), sheep's milk 205.75 kcal; a mixed pot goes by its shares, so 5 L of milk is worth the same eaten as
+  drunk. Each Jar of Yoghurt keeps its portion's food (modData `tpdPortion`); jars and cups made before keep vanilla
+  Yoghurt's. The pot's last cup holds only the food of what it took (it was a full cup's). Vanilla Yoghurt itself
+  now has a cow's milk portion's food (script `HungerChange`, `Calories`, `Carbohydrates`, `Lipids`, `Proteins`, set
+  where its `ReplaceOnUse` is), so shop and homemade cow's yoghurt match; Yoghurt already in a save keeps its values.
+- Fixed: Pour Out from the incubator called `next`, which the game's Lua doesn't have (a Lua error, and the milk poured
+  out was lost). Found with C23, which made the same mistake at load, Collect and Fill Cups.
 - Player guide `5_Dairy_Guide.md` written (was the template stub): the loop, the copper, incubator, jars and cups,
   the crock, stations, the season almanac, the Dairymaid's Notebook, tips, troubleshooting, sandbox, testers' toolkit.
 - Menu icons: Pour from Hearth and the crock's Hearth row show TP Core's copper (were the Hearth and a milk carton);

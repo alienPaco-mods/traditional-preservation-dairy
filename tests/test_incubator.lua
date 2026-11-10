@@ -103,6 +103,23 @@ local lastMl = M.collectCup(cupPot, 34)
 check("the last cup takes what's left and the pot starts over", lastMl == 100 and M.stage(cupPot) == "Empty"
     and cupPot.starter == nil and M.cupsInPot(cupPot) == 0 and M.collectCup(cupPot, 34) == 0)
 
+-- C23: yoghurt keeps its milk's food, a quarter litre a portion
+local cow = M.portionFood({ fluid = "CowMilk", ml = 5000 })
+check("a cow's milk portion is a quarter litre of the milk", near(cow.calories, 153.75) and near(cow.hunger, -0.125)
+    and near(cow.carbohydrates, 11.5) and near(cow.lipids, 5.5) and near(cow.proteins, 8.25))
+check("a sheep's milk portion is richer", near(M.portionFood({ fluid = "SheepMilk", ml = 1000 }).calories, 205.75))
+local mixed = M.portionFood({ fluid = "SheepMilk", ml = 4000, parts = { CowMilk = 1000, SheepMilk = 3000 } })
+check("a mixed pot goes by its shares", near(mixed.calories, (615 + 3 * 823) / 16) and near(mixed.hunger, -0.125))
+check("a pot from before the milk's kind was kept is cow's", near(M.portionFood({ ml = 1000 }).calories, 153.75))
+local milkPot = { ml = 5000, readyHour = 10, starter = "Yoghurt", incubating = true, fluid = "CowMilk" }
+local total = 0
+while M.stage(milkPot) == "Ready" do
+    local ml, _, food = M.collectCup(milkPot, 34)
+    total = total + food.calories * ml / M.CUP_ML
+end
+check("5 L of cow's milk is 3,075 kcal of yoghurt, as it was of milk", near(total, 3075))
+check("old jars and cups go by vanilla Yoghurt", near(M.portionsIn(-0.4), 4) and near(M.portionsIn(-0.5, cow), 4))
+
 -- Catching up while unloaded
 local ledger, history = M.getLedger(), M.getHistory()
 for hour = 11, 30 do

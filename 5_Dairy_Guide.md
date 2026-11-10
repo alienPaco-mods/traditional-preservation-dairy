@@ -161,11 +161,23 @@ When the incubator reads **Ready**:
 
 A **Jar of Yoghurt** keeps the batch's age, stays fresh 10 days and is rotten at 15. Eat from the jar:
 
-- **Eat a Portion** eats 250 ml, a vanilla Yoghurt's food.
+- **Eat a Portion** eats 250 ml, with the food of the 250 ml of milk it was made from.
 - The game's own **Eat**, **Eat Half** and **Eat Quarter** work too; they eat that share of a full jar.
 - **Fill a Yoghurt Cup** / **Fill All Cups** spoons portions into Empty Yoghurt Containers.
 
 The jar gets lighter as you go, its name shows the portions left, and the last spoonful gives the empty jar back.
+
+**Yoghurt is the milk, set.** Nothing is lost in the pot, so a portion has a quarter of a litre of its milk's food,
+and a cup filled from the pot or the jar has the same. A mixed pot goes by its shares.
+
+| 250 ml portion of | Hunger | Calories | Carbs | Fat | Protein |
+|---|---|---|---|---|---|
+| Cow's milk yoghurt | -12.5 | 154 | 11.5 g | 5.5 g | 8.25 g |
+| Sheep's milk yoghurt | -12.5 | 206 | 5.75 g | 4.25 g | 5.75 g |
+
+**Shop yoghurt is cow's milk yoghurt too**, so a vanilla Yoghurt found from now on has the cow's figures (vanilla's
+were 30 calories and -10 hunger). Yoghurt already in your world, and jars and cups made before this change, keep
+the old figures until eaten. A Yoghurt stirred into oatmeal now brings its fuller food with it.
 
 **The cups go round.** Every vanilla Yoghurt eaten, or stirred into oatmeal, leaves an **Empty Yoghurt Container**.
 

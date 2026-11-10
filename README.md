@@ -34,7 +34,7 @@ Copy this folder to `~/Zomboid/mods/TraditionalPreservationDairy`, as a real cop
 | 5 | Cool | Incubator, lid on | | milk at 45 C, the wrap goes on | about 2 hours* |
 | 6 | Set | Incubator, wrapped | | 5 L of yoghurt | 6 hours at 40 to 45 C* |
 | 7 | Collect | Incubator's menu | empty jars, or Empty Yoghurt Containers | Jars of Yoghurt (glass 1 L, clay 2.5 L), or Yoghurts | a moment |
-| 8 | Eat a Portion | Jar's menu | Jar of Yoghurt | 250 ml eaten, a vanilla Yoghurt's food | as eating |
+| 8 | Eat a Portion | Jar's menu | Jar of Yoghurt | 250 ml eaten, a quarter litre of its milk's food | as eating |
 | 9 | Fill a Yoghurt Cup | Jar's menu | Jar of Yoghurt, Empty Yoghurt Container | 1 vanilla Yoghurt | a moment |
 
 \* In a 20 C room, or by a fire. Colder places take longer; see Temperature and places.
@@ -208,7 +208,7 @@ Volumes, temperatures, cooling times, the setting and culture curves, the crock'
 
 - The pot's milk, temperature, starter, stage and set hours live in the station's ModData (`tpdIncubator`), the crock's in `tpdCrock`, and hot milk carried in a container in `tpdCarry` (litres, heat, hour, steamed). Never rename them once the mod is out.
 - Weather is TP Core's shared ledger; a pot catches up hour by hour over the two weeks of kept weather, and the hours before that as one spell.
-- A Jar of Yoghurt keeps its jar type and litres in its ModData (`tpdJar`, `tpdMl`); its portions are its own food values (hunger, calories and so on, which the engine saves), and `tpdFood` marks a jar that has them. A jar from before that (only `tpdCups`) gets its cups' worth the first time it is touched. Its weight is a custom weight the engine saves. Vanilla's eat action is wrapped (`complete`, `serverStop`) to relabel the jar and give the empty jar back.
+- A Jar of Yoghurt keeps its jar type and litres in its ModData (`tpdJar`, `tpdMl`); its portions are its own food values (hunger, calories and so on, which the engine saves), and `tpdFood` marks a jar that has them. `tpdPortion` holds one portion's food, a quarter litre of the batch's milk by its shares (C23); a jar without it is in old vanilla Yoghurt's portions (30 kcal). Vanilla Yoghurt's script food is set to a cow's milk portion at load, beside its `ReplaceOnUse`. A jar from before that (only `tpdCups`) gets its cups' worth the first time it is touched. Its weight is a custom weight the engine saves. Vanilla's eat action is wrapped (`complete`, `serverStop`) to relabel the jar and give the empty jar back.
 - Every vanilla Yoghurt gets `ReplaceOnUse` = Empty Yoghurt Container at load, so eating or oatmeal leaves the cup.
 - The shared core (Weather, Station, UI, Hearth) is the required TP Core mod (`~/MODS/TraditionalPreservationCore`), loaded as `require "TraditionalPreservationCore/Weather"`. Edit it there. Dairy names cow's and sheep's milk as a blend with `Hearth.blend`.
 

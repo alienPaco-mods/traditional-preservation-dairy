@@ -102,7 +102,7 @@ function COMPLETE.pourOut(self, batch, now)
     local ml, tempC, parts = M.pourOut(batch, math.floor(container:getCapacity() * 1000))
     if ml > 0 then
         -- A pot from before the milk's kind was kept gives cow's milk.
-        if not next(parts) then parts = { CowMilk = ml } end
+        if not M.hasAny(parts) then parts = { CowMilk = ml } end
         for name, part in pairs(parts) do container:addFluid(name, part / 1000) end
         -- Everything in the pot came in steamed, so it goes out steamed.
         M.recordCarry(self.item, nil, 0, 0, ml, tempC, now, true)
@@ -110,21 +110,24 @@ function COMPLETE.pourOut(self, batch, now)
 end
 
 function COMPLETE.cup(self, batch, now)
-    local ml, age = M.collectCup(batch, now)
+    local ml, age, portion = M.collectCup(batch, now)
     if ml > 0 then
         removeItem(self.item)
-        give(self, "Base.Yoghurt"):setAge(age)
+        -- The milk's food; the pot's last cup may be short, and holds only what it took.
+        local yoghurt = give(self, "Base.Yoghurt")
+        yoghurt:setAge(age)
+        M.setPortions(yoghurt, ml / M.CUP_ML, 1, portion)
         self.character:getXp():AddXP(Perks.Cooking, M.COLLECT_XP * ml / 1000)
     end
 end
 
 function COMPLETE.collect(self, batch, now)
     local jarType = self.item:getFullType()
-    local ml, age = M.collectJar(batch, now, jarType)
+    local ml, age, portion = M.collectJar(batch, now, jarType)
     if ml > 0 then
         local jar = give(self, M.YOGHURT_JAR)
         removeItem(self.item)
-        M.fillJar(jar, jarType, ml, age)
+        M.fillJar(jar, jarType, ml, age, portion)
         self.character:getXp():AddXP(Perks.Cooking, M.COLLECT_XP * ml / 1000)
     end
 end

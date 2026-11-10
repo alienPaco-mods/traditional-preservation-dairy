@@ -1,6 +1,6 @@
 -- Traditional Preservation (Dairy): spoons one portion of yoghurt from a Jar of Yoghurt into an Empty Yoghurt
--- Container. The cup is as old as the jar, so freshness never resets; a part-portion left over makes a cup with
--- that much food, and the last spoonful gives the empty jar back.
+-- Container. The cup is as old as the jar, so freshness never resets, and has the jar's food a portion; a
+-- part-portion left over makes a cup with that much food, and the last spoonful gives the empty jar back.
 require "TimedActions/ISBaseTimedAction"
 require "TraditionalPreservationDairy"
 require "TraditionalPreservationDairyYoghurt"
@@ -33,7 +33,7 @@ function TPFillYoghurtCup:complete()
     removeItem(self.cup)
     local yoghurt = inventory:AddItem("Base.Yoghurt")
     yoghurt:setAge(self.jar:getAge())
-    if take < 1 then yoghurt:multiplyFoodValues(take) end
+    M.setPortions(yoghurt, take, 1, M.jarPortion(self.jar))
     self.jar:multiplyFoodValues((left - take) / left)
     M.afterJarUse(self.jar, self.jar:getContainer())
     return true

@@ -27,8 +27,8 @@ Traditional Preservation (Dairy) requires [b]TP Core[/b] (Traditional Preservati
 [*][b]Add Starter[/b]: one vanilla Yoghurt or one Active Yoghurt Starter.
 [*][b]Wait[/b]: the milk cools to 45 C in about 2 hours, the incubator wraps itself, and the milk sets in about 6 hours at 40 to 45 C.
 [*][b]Collect[/b] into empty jars, glass 1 L or clay 2.5 L, or straight into Empty Yoghurt Containers.
-[*][b]Eat a Portion[/b] from a Jar of Yoghurt: 250 ml, a vanilla Yoghurt's food; 4 in a glass jar, 10 in a clay one.
-[*][b]Fill a Yoghurt Cup[/b] from a Jar of Yoghurt: a portion into a cup, a vanilla Yoghurt.
+[*][b]Eat a Portion[/b] from a Jar of Yoghurt: 250 ml, with a quarter litre of its milk's food (154 kcal from cow's milk, 206 from sheep's); 4 in a glass jar, 10 in a clay one.
+[*][b]Fill a Yoghurt Cup[/b] from a Jar of Yoghurt: a portion into a cup, a vanilla Yoghurt with the jar's food.
 [/olist]
 
 [h2]The stations[/h2]
@@ -54,7 +54,7 @@ If the milk falls under 40 C before a starter is in, it is too cold: pour it out
 [list]
 [*]Only milk steamed in the copper goes into an incubator. A Wrapped Yoghurt Pot carries 5 L and keeps it hot.
 [*]A Jar of Yoghurt stays fresh 10 days; the cups keep its age.
-[*]No vanilla recipe or loot table is changed. Vanilla Yoghurt only gains its empty container.
+[*]No vanilla recipe or loot table is changed. Vanilla Yoghurt gains its empty container and a real cup's food (a quarter litre of cow's milk: 154 kcal, was 30); Yoghurt already in a save keeps its old values. A food mod that also changes Yoghurt may conflict: the last one loaded wins.
 [*]The tiledef number 5172 must be unique among your active mods.
 [/list]
 

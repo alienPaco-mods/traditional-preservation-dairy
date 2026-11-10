@@ -146,6 +146,30 @@ check("the last part-portion makes a half-food cup and gives the jar back", not 
     and bag:count("Base.ClayJar") == 2 and bag:count(M.YOGHURT_JAR) == 0)
 check("no cup is filled from an empty jar", TPFillYoghurtCup.isValid({ character = player, jar = part, cup = last }) == false)
 
+-- C23: a jar of cow's milk yoghurt, and a cup spooned from it
+local COW = M.portionFood({ fluid = "CowMilk", ml = 1000 })
+local milky = bag:AddItem(M.YOGHURT_JAR)
+M.fillJar(milky, "Base.EmptyJar", 1000, 0, COW)
+check("a jar keeps its milk's food", near(M.jarPortions(milky), 4) and near(M.jarFull(milky), 4)
+    and near(milky.calories, 615) and near(milky.hung, -0.5) and milky.data.tpdPortion == COW)
+eat(milky, M.portionShare(M.jarPortions(milky), M.jarFull(milky)))
+check("a portion eaten is a quarter of the milk", near(M.jarPortions(milky), 3) and near(milky.calories, 461.25))
+local milkCup = bag:AddItem(M.EMPTY_CUP)
+TPFillYoghurtCup:new(player, milky, milkCup):complete()
+local cowCup
+for _, held in ipairs(bag.items) do if held:getFullType() == "Base.Yoghurt" then cowCup = held end end
+check("a cup from it has the milk's food, not vanilla's", cowCup and near(cowCup.calories, 153.75) and near(cowCup.hung, -0.125)
+    and near(cowCup.base, -0.125) and near(M.jarPortions(milky), 2))
+cowCup.fullType = "Done"
+
+-- C23: shop Yoghurt gets a cow's milk portion's food, in script units
+local params, realManager = {}, ScriptManager
+ScriptManager = { instance = { getItem = function() return { DoParam = function(_, line) table.insert(params, line) end } end } }
+M.applyYoghurtReplacement()
+ScriptManager = realManager
+check("vanilla Yoghurt: its empty cup and a cow's milk portion", table.concat(params, "; ") == "ReplaceOnUse = " .. M.EMPTY_CUP
+    .. "; HungerChange = -12.5; Calories = 153.75; Carbohydrates = 11.5; Lipids = 5.5; Proteins = 8.25")
+
 -- A jar from a save before F4: no food values, its cups in modData
 local old = bag:AddItem(M.YOGHURT_JAR)
 old.data.tpdJar, old.data.tpdMl, old.data.tpdCups = "Base.ClayJar", 1000, 3

@@ -73,8 +73,16 @@ local CULTURE_CURVE = { { 5, 0.03 }, { 10, 0.1 }, { 15, 0.3 }, { 20, 0.6 }, { 25
 M.CUPS_PER_LITRE = 4          -- 8 oz cups
 M.CUP_ML = 1000 / M.CUPS_PER_LITRE   -- an Empty Yoghurt Container, and one portion from a jar
 M.CUP_KG = 0.25               -- a portion's weight
--- One portion's food: vanilla Yoghurt's (hunger as the engine keeps it, -10 in the script). C23 may change it.
+-- One portion's food: vanilla Yoghurt's (hunger as the engine keeps it, -10 in the script). Jars and cups from
+-- before C23 keep it; new yoghurt keeps its milk's food instead (MILK_FOOD).
 M.PORTION = { hunger = -0.1, calories = 30, carbohydrates = 1, lipids = 1, proteins = 5 }
+-- A litre of each milk's food, as vanilla's fluid scripts state it (hunger as the engine keeps it, -50 there).
+-- Yoghurt is the milk set, so a portion is a quarter of this: eating it is worth drinking the milk.
+M.MILK_FOOD = {
+    CowMilk = { hunger = -0.5, calories = 615, carbohydrates = 46, lipids = 22, proteins = 33 },
+    SheepMilk = { hunger = -0.5, calories = 823, carbohydrates = 23, lipids = 17, proteins = 23 },
+    AnimalMilk = { hunger = -0.5, calories = 615, carbohydrates = 46, lipids = 22, proteins = 33 },
+}
 
 -- Items and fluids. Only animal milk sets: a cow's, a sheep's, or the game's generic AnimalMilk (debug spawns and
 -- some loot, which vanilla's own milking and cheese accept as milk). Yoghurt is yoghurt, so they may share a
@@ -356,18 +364,39 @@ function M.ageDays(batch, now)
     return batch.readyHour and math.max(now - batch.readyHour, 0) / 24 or 0
 end
 
--- Takes up to want ml of set yoghurt. Returns the ml taken and the age in days; an emptied pot starts over.
+-- One portion's food from the pot's milk, by its shares of each kind. A pot from before the milk's kind was kept
+-- is cow's milk, as Pour Out treats it.
+-- True if a table has anything in it (the game's Lua has no next()).
+function M.hasAny(t)
+    for _ in pairs(t) do return true end
+    return false
+end
+
+function M.portionFood(batch)
+    local parts = Hearth.partsOf(batch, 1)
+    if not M.hasAny(parts) then parts = { CowMilk = 1 } end
+    local food = {}
+    for key in pairs(M.PORTION) do food[key] = 0 end
+    for name, share in pairs(parts) do
+        local litre = M.MILK_FOOD[name] or M.MILK_FOOD.CowMilk
+        for key, value in pairs(litre) do food[key] = food[key] + value * share * M.CUP_ML / 1000 end
+    end
+    return food
+end
+
+-- Takes up to want ml of set yoghurt. Returns the ml taken, the age in days and a portion's food; an emptied pot
+-- starts over.
 local function collect(batch, now, want)
     if M.stage(batch) ~= "Ready" then return 0 end
     local ml = math.min(want, batch.ml)
-    local age = M.ageDays(batch, now)
+    local age, food = M.ageDays(batch, now), M.portionFood(batch)
     batch.ml = batch.ml - ml
     if batch.ml <= 0 then
         for _, key in ipairs({ "ml", "tempC", "starter", "incubating", "wrapHour", "done", "last", "readyHour", "fluid", "parts" }) do
             batch[key] = nil
         end
     end
-    return ml, age
+    return ml, age, food
 end
 
 -- Fills one jar of the given type to its size.
@@ -406,9 +435,10 @@ function M.cupsLeft(jarData)
     return jarData.tpdCups or M.cupsFor(jarData.tpdMl or M.OLD_JAR_ML)
 end
 
--- Portions left in a Jar of Yoghurt, from the hunger it still holds. Vanilla's Eat Half / Quarter may leave a part.
-function M.portionsIn(hunger)
-    return hunger / M.PORTION.hunger
+-- Portions left in a Jar of Yoghurt, from the hunger it still holds and one portion's (vanilla Yoghurt's if not
+-- given). Vanilla's Eat Half / Quarter may leave a part.
+function M.portionsIn(hunger, portion)
+    return hunger / (portion or M.PORTION).hunger
 end
 
 -- A jar counts as empty below a tenth of a portion (the engine's own cut-off is one hunger point).
