@@ -87,7 +87,7 @@
   "IGUI_TraditionalPreservationDairy_HearthHelpEmpty": "For yoghurt: milk steaming at 85 C pours into a Yoghurt Incubator within 2 tiles, or carry it in a Wrapped Yoghurt Pot, which keeps it hot. Milk at 35 to 45 C loads a Starter Culture Crock.",
   "IGUI_TraditionalPreservationDairy_HearthHelpWater": "Only milk pours into an incubator or a crock. Fill your own containers from it.",
   "IGUI_TraditionalPreservationDairy_NotSteamed": "Not steamed: only milk drawn from a Hearth's copper at 85 C or more goes in.",
-  "IGUI_TraditionalPreservationDairy_PotMixed": "The incubator holds %1: milks don't mix.",
+  "IGUI_TraditionalPreservationDairy_ColdForStarter": "Too cold at %1 C: the starter is in, and this would leave the pot too cold to set. Reheat the milk in a Hearth's copper first.",
   "IGUI_TraditionalPreservationDairy_NoMilkItem": "You have no container of milk.",
   "IGUI_TraditionalPreservationDairy_InfoCultureHeat": "Culture heat",
   "IGUI_TraditionalPreservationDairy_InfoCultureHeatValue": "best at 25 to 35 C",

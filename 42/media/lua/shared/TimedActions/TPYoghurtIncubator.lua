@@ -28,9 +28,9 @@ local function canDo(self)
         return M.copperHot(Hearth.stateOf(self.hearth:getModData())) and M.milkRoom(batch, 1) > 0
     elseif self.mode == "carried" then
         local container = self.item:getFluidContainer()
-        local fluid = M.milkIn(container)
-        return fluid ~= nil and M.carriedRefusal(M.carryOf(self.item), M.mlIn(container)) == nil
-            and M.milkRoom(batch, 1, fluid) > 0
+        local ml = M.mlIn(container)
+        return M.milkIn(container) ~= nil and M.carriedRefusal(M.carryOf(self.item), ml) == nil and M.milkRoom(batch, 1) > 0
+            and M.coldRefusal(batch, ml, M.carriedC(self.item, getGameTime():getWorldAgeHours(), self.character)) == nil
     elseif self.mode == "starter" then
         return M.STARTERS[self.item:getFullType()] ~= nil and not self.item:isRotten() and M.canAddStarter(batch)
     elseif self.mode == "pourOut" then
@@ -69,59 +69,73 @@ local function give(self, fullType)
     return self.character:getInventory():AddItem(fullType)
 end
 
-function TPYoghurtIncubator:complete()
-    local batch = state(self)
-    local now = getGameTime():getWorldAgeHours()
-    local container = self.item and self.item:getFluidContainer()
-    if self.mode == "hearth" then
-        M.copperToPot(Hearth.copperOf(self.hearth), batch, now)
-        if Hearth.World then Hearth.World.refresh(self.hearth) end
-    elseif self.mode == "carried" then
-        local carry = M.carryOf(self.item)
-        local fluid = M.milkIn(container)
-        local tempC = M.carriedC(self.item, now, self.character)
-        local ml = M.milkRoom(batch, M.mlIn(container), fluid)
-        if ml > 0 and M.addMilk(batch, ml, tempC, now) > 0 then
-            batch.fluid = batch.fluid or fluid
-            container:removeFluid(ml / 1000)
-            M.recordTaken(self.item, carry, ml)
-        end
-    elseif self.mode == "starter" then
-        local fullType = self.item:getFullType()
-        if M.addStarter(batch, M.STARTERS[fullType]) then
-            removeItem(self.item)
-            if fullType == "Base.Yoghurt" then give(self, M.EMPTY_CUP) end
-        end
-    elseif self.mode == "pourOut" then
-        local fluid = batch.fluid or "CowMilk"
-        local ml, tempC = M.pourOut(batch, math.floor(container:getCapacity() * 1000))
-        if ml > 0 then
-            container:addFluid(fluid, ml / 1000)
-            -- Everything in the pot came in steamed, so it goes out steamed.
-            M.recordCarry(self.item, nil, 0, 0, ml, tempC, now, true)
-        end
-    elseif self.mode == "cup" then
-        local ml, age = M.collectCup(batch, now)
-        if ml > 0 then
-            removeItem(self.item)
-            give(self, "Base.Yoghurt"):setAge(age)
-            self.character:getXp():AddXP(Perks.Cooking, M.COLLECT_XP * ml / M.JAR_ML)
-        end
-    else
-        local jarType = self.item:getFullType()
-        local ml, age = M.collectJar(batch, now)
-        if ml > 0 then
-            local jar = give(self, M.YOGHURT_JAR)
-            removeItem(self.item)
-            jar:setAge(age)
-            jar:getModData().tpdJar = jarType
-            if M.JAR_ICONS[jarType] then jar:setTexture(getTexture(M.JAR_ICONS[jarType])) end
-            jar:getModData().tpdMl = ml
-            jar:getModData().tpdCups = M.cupsFor(ml)
-            M.labelJar(jar)
-            self.character:getXp():AddXP(Perks.Cooking, M.COLLECT_XP)
-        end
+-- What each mode does once the action is through: fn(self, batch, now).
+local COMPLETE = {}
+
+function COMPLETE.hearth(self, batch, now)
+    M.copperToPot(Hearth.copperOf(self.hearth), batch, now)
+    if Hearth.World then Hearth.World.refresh(self.hearth) end
+end
+
+function COMPLETE.carried(self, batch, now)
+    local container = self.item:getFluidContainer()
+    local carry = M.carryOf(self.item)
+    local _, parts = M.milkIn(container)
+    local tempC = M.carriedC(self.item, now, self.character)
+    local ml = parts and M.addMilk(batch, M.mlIn(container), tempC, now, parts) or 0
+    if ml > 0 then
+        container:removeFluid(ml / 1000)
+        M.recordTaken(self.item, carry, ml)
     end
+end
+
+function COMPLETE.starter(self, batch)
+    local fullType = self.item:getFullType()
+    if M.addStarter(batch, M.STARTERS[fullType]) then
+        removeItem(self.item)
+        if fullType == "Base.Yoghurt" then give(self, M.EMPTY_CUP) end
+    end
+end
+
+function COMPLETE.pourOut(self, batch, now)
+    local container = self.item:getFluidContainer()
+    local ml, tempC, parts = M.pourOut(batch, math.floor(container:getCapacity() * 1000))
+    if ml > 0 then
+        -- A pot from before the milk's kind was kept gives cow's milk.
+        if not next(parts) then parts = { CowMilk = ml } end
+        for name, part in pairs(parts) do container:addFluid(name, part / 1000) end
+        -- Everything in the pot came in steamed, so it goes out steamed.
+        M.recordCarry(self.item, nil, 0, 0, ml, tempC, now, true)
+    end
+end
+
+function COMPLETE.cup(self, batch, now)
+    local ml, age = M.collectCup(batch, now)
+    if ml > 0 then
+        removeItem(self.item)
+        give(self, "Base.Yoghurt"):setAge(age)
+        self.character:getXp():AddXP(Perks.Cooking, M.COLLECT_XP * ml / M.JAR_ML)
+    end
+end
+
+function COMPLETE.collect(self, batch, now)
+    local jarType = self.item:getFullType()
+    local ml, age = M.collectJar(batch, now)
+    if ml > 0 then
+        local jar = give(self, M.YOGHURT_JAR)
+        removeItem(self.item)
+        jar:setAge(age)
+        jar:getModData().tpdJar = jarType
+        if M.JAR_ICONS[jarType] then jar:setTexture(getTexture(M.JAR_ICONS[jarType])) end
+        jar:getModData().tpdMl = ml
+        jar:getModData().tpdCups = M.cupsFor(ml)
+        M.labelJar(jar)
+        self.character:getXp():AddXP(Perks.Cooking, M.COLLECT_XP)
+    end
+end
+
+function TPYoghurtIncubator:complete()
+    COMPLETE[self.mode](self, state(self), getGameTime():getWorldAgeHours())
     if TraditionalPreservationDairyWorld then TraditionalPreservationDairyWorld.refresh(self.station) end
     return true
 end

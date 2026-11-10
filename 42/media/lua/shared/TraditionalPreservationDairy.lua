@@ -11,13 +11,12 @@ local M = TraditionalPreservationDairy
 local Weather = require "TraditionalPreservationCore/Weather"
 local Hearth = require "TraditionalPreservationCore/Hearth"
 local Station = require "TraditionalPreservationCore/Station"
-local Container = require "TraditionalPreservationCore/Container"
 local Tiles = require "TraditionalPreservationDairy/Tiles"
 
 -- Save keys: never rename these once the mod is out (DEVGUIDE, "Rules that keep saves and the game happy").
 M.MOD_DATA_KEY = "TraditionalPreservationDairy"
 -- Each station keeps its state as one table under one key, so nothing else on the object can clash with it.
--- Inside the incubator's: ml, tempC, starter, incubating, wrapHour, done, last, readyHour, fluid, place, at,
+-- Inside the incubator's: ml, tempC, starter, incubating, wrapHour, done, last, readyHour, fluid, parts, place, at,
 -- fireUntil, under. Inside the crock's: stage, done, marks, fireUntil, under. The Hearth and its copper are TP
 -- Core's (TraditionalPreservationCore/Hearth).
 M.INCUBATOR_KEY = "tpdIncubator"
@@ -33,6 +32,7 @@ M.WRAPPED_TAU = 16.0          -- hours, for 5 L once wrapped in cloth: about 10 
 M.INCUBATE_HOURS = 6          -- hours to set at the best temperature
 M.STEP_HOURS = 1 / 6          -- the weather's own resolution
 M.HISTORY_HOURS = 336         -- two weeks of hourly weather for catching up
+local SETTLED_C = 0.05        -- milk this near its place's temperature has stopped changing
 -- By a lit fire, TP Core's opt-in place: a fireplace, an antique stove or a campfire, never an electric or gas
 -- stove. The wrapped pot sat by the hearth in winter. Seen by a lit fire, a station notes fireUntil (now plus the
 -- fuel left): while unloaded, the fire counts until then, and after it the place under the fire (under) does.
@@ -40,11 +40,11 @@ M.HISTORY_HOURS = 336         -- two weeks of hourly weather for catching up
 M.HEARTH = Hearth.PLACE
 M.EMBERS = Hearth.EMBERS
 
--- The Hearth's copper (TP Core) holds one fluid at a time and heats towards MILK_MAX_C while its fire burns.
+-- The Hearth's copper (TP Core) holds one fluid at a time, or a blend of milks, and heats while its fire burns.
 M.HOT_C = Hearth.HOT_C        -- milk this hot pours from the copper into a pot
 
 -- Carried milk: a container filled from the copper keeps a record in its item modData, so the incubator knows
--- the milk was steamed. Only the Wrapped Pot (a cooking pot in a rug) holds the heat; any other container
+-- the milk was steamed. Only the Wrapped Yoghurt Pot (a clay pot in its cloth) holds the heat; any other container
 -- follows vanilla's item heat, which drops to the room within seconds.
 M.CARRY_KEY = "tpdCarry"      -- { ml, c, hour, steamed }
 M.WRAPPED_POT_TAU = 4.0       -- hours, for 5 L: 85 to 70 C in about an hour at 20 C
@@ -74,8 +74,10 @@ M.CUPS_PER_LITRE = 4          -- 8 oz cups
 M.CUP_ML = M.JAR_ML / M.CUPS_PER_LITRE   -- an Empty Yoghurt Container takes a quarter of a jar
 M.CUP_KG = 0.25               -- a cup's share of a full jar's weight
 
--- Items and fluids. Only a cow's or a sheep's milk sets; yoghurt is yoghurt, so the two may share a pot.
+-- Items and fluids. Only a cow's or a sheep's milk sets; yoghurt is yoghurt, so the two may share a copper, a
+-- container and a pot, as a mixed herd's milk always did.
 M.MILKS = { CowMilk = true, SheepMilk = true }
+Hearth.blend("CowMilk", "SheepMilk")
 M.STARTER = "TraditionalPreservationDairy.ActiveYoghurtStarter"
 M.STARTERS = { ["Base.Yoghurt"] = "Yoghurt", [M.STARTER] = "Starter" }
 M.EMPTY_CUP = "TraditionalPreservationDairy.EmptyYoghurtContainer"
@@ -98,10 +100,11 @@ function M.spriteName(index)
     return Tiles.PREFIX .. index
 end
 
--- The fluid in a container if it is all one kind of milk, else nil.
+-- The main fluid in a container if it is all milk (one kind, or a blend), and its ml by fluid; else nil.
 function M.milkIn(container)
-    local name = Container.fluidIn(container)
-    return M.MILKS[name] and name or nil
+    local parts, name = Hearth.partsIn(container)
+    if not M.MILKS[name] then return nil end
+    return name, parts
 end
 
 -- Only empty containers take milk or yoghurt out, so nothing is ever topped up into a mixture.
@@ -197,22 +200,36 @@ function M.stage(batch)
     return "Cooling"
 end
 
--- How much of ml fits, or 0 with the reason it can't go in. Given a fluid, cow's and sheep's milk don't mix.
-function M.milkRoom(batch, ml, fluid)
+-- How much of ml fits, or 0 with the reason it can't go in.
+function M.milkRoom(batch, ml)
     local stage = M.stage(batch)
     if stage == "Incubating" or stage == "Ready" then return 0, stage end
-    if fluid and stage ~= "Empty" and batch.fluid and batch.fluid ~= fluid then return 0, "Mixed" end
     local room = M.CAPACITY_ML - (batch.ml or 0)
     if room <= 0 then return 0, "Full" end
     return math.min(ml, room)
 end
 
--- Pours hot milk in; the temperatures mix by volume. Returns the ml taken (0 with a reason when refused).
-function M.addMilk(batch, ml, milkC, now)
+-- Why ml of milk at milkC can't join the pot, or nil. With the starter in, milk that would bring the pot below
+-- the heat a starter takes at is refused: the wrap would go on over milk too cold to set, with no way to pour it
+-- back out.
+function M.coldRefusal(batch, ml, milkC)
+    if not batch.starter then return nil end
+    local taken, had = M.milkRoom(batch, ml), batch.ml or 0
+    if taken <= 0 then return nil end
+    local mixedC = had > 0 and (batch.tempC * had + milkC * taken) / (had + taken) or milkC
+    if mixedC < M.STARTER_MIN_C then return "ColdForStarter" end
+end
+
+-- Pours hot milk in; the temperatures mix by volume. fluid is the milk's name, or its ml by fluid for a blend.
+-- Returns the ml taken (0 with a reason when refused).
+function M.addMilk(batch, ml, milkC, now, fluid)
     local taken, reason = M.milkRoom(batch, ml)
     if taken <= 0 then return 0, reason end
+    reason = M.coldRefusal(batch, ml, milkC)
+    if reason then return 0, reason end
     local had = batch.ml or 0
     batch.tempC = had > 0 and (batch.tempC * had + milkC * taken) / (had + taken) or milkC
+    if fluid then Hearth.addParts(batch, fluid, taken) end
     batch.ml = had + taken
     batch.last = batch.last or now
     return taken
@@ -234,17 +251,18 @@ function M.addStarter(batch, kind)
     return true
 end
 
--- Takes up to maxMl of the milk back out (to reheat it), all of it if left out. Returns the ml and its
--- temperature. The starter, if any, stays for the next pour.
+-- Takes up to maxMl of the milk back out (to reheat it), all of it if left out. Returns the ml, its
+-- temperature and the ml by fluid. The starter, if any, stays for the next pour.
 function M.pourOut(batch, maxMl)
     local stage = M.stage(batch)
     if stage ~= "Cooling" and stage ~= "TooCold" then return 0 end
     local ml, tempC = math.min(batch.ml, maxMl or batch.ml), batch.tempC
+    local parts = Hearth.partsOf(batch, ml)
     batch.ml = batch.ml - ml
     if batch.ml <= 0 then
-        for _, key in ipairs({ "ml", "tempC", "last", "fluid" }) do batch[key] = nil end
+        for _, key in ipairs({ "ml", "tempC", "last", "fluid", "parts" }) do batch[key] = nil end
     end
-    return ml, tempC
+    return ml, tempC, parts
 end
 
 -- Runs the pot for hours at one place temperature, from hour now. Each step cools exactly; the wrap goes on
@@ -274,11 +292,46 @@ local function placeAt(state, place, hour)
     return place
 end
 
+-- Runs the pot for a long spell at one place temperature. Ten-minute steps only while a started pot is still
+-- settling to the place; after that nothing changes but at a steady rate, so the rest is one exact step.
+function M.advanceSpell(batch, hours, placeC, now)
+    if (batch.ml or 0) <= 0 then return end
+    local t = 0
+    while t < hours - 1e-9 and batch.starter and not batch.readyHour and math.abs(batch.tempC - placeC) >= SETTLED_C do
+        local step = math.min(M.STEP_HOURS, hours - t)
+        M.advanceBatch(batch, step, placeC, now + t)
+        t = t + step
+    end
+    local left = hours - t
+    if left <= 1e-9 then return end
+    if batch.starter and not batch.incubating and batch.tempC <= M.SET_C then
+        batch.incubating, batch.wrapHour, batch.done = true, now + t, 0
+    end
+    local wrapped = batch.incubating and not batch.readyHour
+    if wrapped then
+        local rate, need = M.setRate(batch.tempC), M.INCUBATE_HOURS - batch.done
+        if rate * left >= need then
+            batch.done, batch.readyHour = M.INCUBATE_HOURS, now + t + need / rate
+        else
+            batch.done = batch.done + rate * left
+        end
+    end
+    batch.tempC = M.cool(batch.tempC, placeC, left, M.tau(batch.ml, wrapped))
+end
+
 -- Brings the pot up to now: hour by hour through the history, at the place's current temperature where the
--- history has no reading (a gap longer than it keeps, or the hour now).
+-- history has no reading (a gap longer than it keeps, or the hour now). The hours before the history all read
+-- alike, so they run as one spell (two when a fire burnt out in them), however long the pot was away.
 function M.catchUp(batch, now, place, history, ledger)
     if (batch.ml or 0) <= 0 then batch.last = now return end
     local t = batch.last or now
+    local kept = math.floor(now) - M.HISTORY_HOURS + 1
+    while t < kept do
+        local stop = kept
+        if Hearth.isFirePlace(place) and batch.fireUntil and t < batch.fireUntil then stop = math.min(stop, batch.fireUntil) end
+        M.advanceSpell(batch, stop - t, M.placeTemperature(ledger, placeAt(batch, place, t)), t)
+        t = stop
+    end
     while t < now do
         local hour = math.floor(t)
         local stop = math.min(hour + 1, now)
@@ -302,7 +355,9 @@ local function collect(batch, now, want)
     local age = M.ageDays(batch, now)
     batch.ml = batch.ml - ml
     if batch.ml <= 0 then
-        for _, key in ipairs({ "ml", "tempC", "starter", "incubating", "wrapHour", "done", "last", "readyHour", "fluid" }) do batch[key] = nil end
+        for _, key in ipairs({ "ml", "tempC", "starter", "incubating", "wrapHour", "done", "last", "readyHour", "fluid", "parts" }) do
+            batch[key] = nil
+        end
     end
     return ml, age
 end
@@ -370,11 +425,10 @@ end
 -- Fills the pot from the copper with hot milk, as much as fits. Returns the ml (0 with a reason when refused).
 function M.copperToPot(copper, batch, now)
     if not M.copperHot(copper) then return 0, M.MILKS[copper.fluid] and "NotHot" or "NoMilk" end
-    local room, reason = M.milkRoom(batch, copper.ml, copper.fluid)
+    local room, reason = M.milkRoom(batch, copper.ml)
     if room <= 0 then return 0, reason end
-    local ml, fluid, tempC = Hearth.take(copper, room)
-    M.addMilk(batch, ml, tempC, now)
-    batch.fluid = batch.fluid or fluid
+    local ml, _, tempC, parts = Hearth.take(copper, room)
+    M.addMilk(batch, ml, tempC, now, parts)
     return ml
 end
 

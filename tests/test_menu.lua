@@ -125,6 +125,26 @@ check("choosing it walks over and queues the pour from that Hearth", ui.walks ==
     and ui.queued[1].Type == "TPYoghurtIncubator" and ui.queued[1].mode == "hearth" and ui.queued[1].hearth == steaming
     and ui.queued[1].station == pot)
 
+-- The other animal's milk
+hearth({ ml = 4000, fluid = "CowMilk", tempC = 90 })
+pour = open(incubator(5, { ml = 1000, fluid = "SheepMilk", tempC = 80 }))[1].options[3]
+check("cow's milk is offered to a pot of sheep's: milks mix", pour.isDisabled == nil and pour.onSelect ~= nil)
+
+-- Carried milk and a starter already in the pot
+local function steamedMilk(name, celsius)
+    local modData = { [M.CARRY_KEY] = { ml = 2000, c = celsius, hour = 100, steamed = true } }
+    return H.vessel(name, "CowMilk", 2, 5, { getFullType = function() return "Base.Bucket" end,
+        getModData = function() return modData end, getItemHeat = function() return Hearth.itemHeat(celsius) end })
+end
+ui.carried = { steamedMilk("Hot Bucket", 80), steamedMilk("Cold Bucket", 25) }
+carried = named(open(incubator(5, { starter = "Yoghurt" }))[1], "ContextMenu_TraditionalPreservationDairy_PourSteamed")
+local potEntries = carried.subOption.options
+check("with the starter in, hot carried milk is offered and cold milk is red with its heat", potEntries[1].notAvailable == nil
+    and potEntries[2].notAvailable == true and potEntries[2].toolTip.description:find("25", 1, true) ~= nil)
+carried = named(open(incubator(5))[1], "ContextMenu_TraditionalPreservationDairy_PourSteamed")
+check("with no starter cold milk still goes in", carried.subOption.options[2].notAvailable == nil)
+ui.carried = {}
+
 -- A full pot, and one that has set
 pour = named(open(incubator(5, { ml = M.CAPACITY_ML, fluid = "CowMilk", tempC = 80 }))[1], POUR)
 check("a full pot takes no more", pour.isDisabled == true

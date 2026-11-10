@@ -38,6 +38,7 @@ local REFUSALS = {
     Ready = "IGUI_TraditionalPreservationDairy_Wrapped",
     Full = "IGUI_TraditionalPreservationDairy_PotFull",
     NotSteamed = "IGUI_TraditionalPreservationDairy_NotSteamed",
+    ColdForStarter = "IGUI_TraditionalPreservationDairy_ColdForStarter",
 }
 
 local function now()
@@ -145,7 +146,8 @@ local function addHearthPourMenu(menu, playerObj, station, state)
 end
 
 -- Every container of plain milk, wherever it was carried from. Milk that wasn't drawn steaming from a copper, or
--- the other animal's milk, shows in red with the reason. Only a Wrapped Yoghurt Pot keeps the milk hot on the way.
+-- is too cold for the starter already in the pot, shows in red with the reason. Only a Wrapped Yoghurt Pot keeps
+-- the milk hot on the way.
 local function addCarriedPourMenu(menu, playerObj, station, state)
     local option = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_PourSteamed"))
     option.iconTexture = getTexture(MILK_ICON)
@@ -158,19 +160,15 @@ local function addCarriedPourMenu(menu, playerObj, station, state)
     menu:addSubMenu(option, sub)
     for _, item in ipairs(items) do
         local container = item:getFluidContainer()
-        local fluid, ml = M.milkIn(container), M.mlIn(container)
+        local ml = M.mlIn(container)
         local heat = M.carriedC(item, now(), playerObj)
         local entry = sub:addOption(say("ContextMenu_TraditionalPreservationDairy_MilkItem", item:getDisplayName(), litresText(ml),
             degrees(heat)), playerObj, onAction, station, { item }, "carried")
         entry.iconTexture = item:getTex()
-        local refusal = M.carriedRefusal(M.carryOf(item), ml)
-        local refusalText = refusal and getText(REFUSALS[refusal])
-        if not refusal and select(2, M.milkRoom(state, 1, fluid)) == "Mixed" then
-            refusalText = say("IGUI_TraditionalPreservationDairy_PotMixed", UI.fluidName(state.fluid))
-        end
-        if refusalText then
+        local refusal = M.carriedRefusal(M.carryOf(item), ml) or M.coldRefusal(state, ml, heat)
+        if refusal then
             entry.notAvailable = true
-            tooltipFor(entry, refusalText)
+            tooltipFor(entry, say(REFUSALS[refusal], degrees(heat)))
         end
     end
 end

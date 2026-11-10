@@ -36,6 +36,13 @@ local function inInventory(self, item)
     return self.character:getInventory():containsRecursive(item)
 end
 
+local function hasWheat(self)
+    for _, seed in ipairs(self.wheat) do
+        if not inInventory(self, seed) then return false end
+    end
+    return true
+end
+
 -- Half a litre of plain milk at 35 to 45 C in a carried container.
 local function itemReady(self)
     local container = self.item:getFluidContainer()
@@ -47,9 +54,8 @@ function TPStarterCrock:isValid()
     if not self.station:getSquare() then return false end
     local stage = M.crockStage(M.stateOf(self.station:getModData().movableData or {}, M.CROCK_KEY))
     if self.mode == "load" then
-        for _, seed in ipairs(self.wheat) do
-            if not inInventory(self, seed) then return false end
-        end
+        -- The wheat is looked for once, before the action starts, and again as it ends: not on every tick.
+        if not self.started and not hasWheat(self) then return false end
         if stage ~= "Empty" then return false end
         if self.item then return inInventory(self, self.item) and itemReady(self) end
         return self.hearth:getSquare() ~= nil and copperReady(Hearth.stateOf(self.hearth:getModData()))
@@ -65,6 +71,7 @@ function TPStarterCrock:waitToStart()
 end
 
 function TPStarterCrock:start()
+    self.started = true
     self:setActionAnim("Loot")
 end
 
@@ -74,7 +81,7 @@ function TPStarterCrock:complete()
     if self.mode == "load" then
         local copper = not self.item and Hearth.copperOf(self.hearth)
         local ready = self.item and itemReady(self) or copper and copperReady(copper)
-        if ready and M.loadCrock(crock, ledger) then
+        if ready and hasWheat(self) and M.loadCrock(crock, ledger) then
             for _, seed in ipairs(self.wheat) do
                 local container = seed:getContainer()
                 if container then container:DoRemoveItem(seed) end

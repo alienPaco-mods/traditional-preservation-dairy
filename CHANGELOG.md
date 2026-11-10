@@ -1,6 +1,16 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- Cow's and sheep's milk mix, as a mixed herd's always did: in the Hearth's copper, in a carried container and in
+  the incubator. A blend keeps its shares from the copper to the pot and back out. The "milks don't mix" refusal
+  is gone.
+- With the starter already in, milk that would leave the pot under 40 C is refused in red ("Too cold ..."). Before,
+  the wrap went on over milk too cold to set, with no way to pour it out.
+- Fixed: a part-empty Jar of Yoghurt weighed a full jar again after a reload.
+- A pot left for a long time catches up at a fixed cost: the hours before the two weeks of kept weather run as one
+  spell, not ten minutes at a time.
+- Internal: the season report's tables have their "By banked embers" header; the crock's load looks for its wheat
+  once, not on every tick; the incubator's action is a table of modes; two stale comments.
 - Internal: new `tests/test_console.lua` loads the debug console (TPD) and calls its commands, and new
   `tests/test_menu.lua` builds the incubator's and the crock's right-click menus on stand-ins (status line, pouring
   from a Hearth and its refusals, a set pot, several stations under one click, the controller's probe).

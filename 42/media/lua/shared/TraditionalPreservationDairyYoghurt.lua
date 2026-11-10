@@ -21,4 +21,6 @@ function M.labelJar(jar)
     jar:setCustomName(true)
     local empty = ScriptManager.instance:getItem(jar:getModData().tpdJar or "Base.ClayJar")
     jar:setActualWeight((empty and empty:getActualWeight() or 0) + left * M.CUP_KG)
+    -- The engine saves only a custom weight; without this a reloaded jar weighs a full one again.
+    jar:setCustomWeight(true)
 end

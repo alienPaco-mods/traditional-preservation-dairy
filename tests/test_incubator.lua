@@ -113,6 +113,36 @@ M.advanceBatch(stepped, 10, 0, 20)
 check("an unloaded pot replays the hours it missed", near(away.tempC, stepped.tempC, 1e-6) and away.last == 30)
 check("a basement is 15 C whatever the history", M.pastTemperature(history, 25, "Basement") == 15)
 
+-- A year away: the hours before the history run as one spell
+local realCool, steps = M.cool, 0
+M.cool = function(...) steps = steps + 1 return realCool(...) end
+local YEAR = 8760
+local yearAway = { ml = 5000, tempC = 85, starter = "Yoghurt", last = 11 }
+M.catchUp(yearAway, 11 + YEAR, "Hearth", history, ledger)
+local yearCost = steps
+local yearByHand = { ml = 5000, tempC = 85, starter = "Yoghurt" }
+M.advanceBatch(yearByHand, YEAR, Hearth.FIRE_C, 11)
+check("a year away costs no more than the history's hours", yearCost < M.HISTORY_HOURS / M.STEP_HOURS + 500)
+check("and comes out as the long way does", M.stage(yearAway) == "Ready" and near(yearAway.readyHour, yearByHand.readyHour, 0.2)
+    and near(yearAway.tempC, yearByHand.tempC, 0.01) and yearAway.last == 11 + YEAR)
+local coldYear = { ml = 5000, tempC = 85, last = 11 }
+M.catchUp(coldYear, 11 + YEAR, "Basement", history, ledger)
+check("milk with no starter just cools", M.stage(coldYear) == "TooCold" and near(coldYear.tempC, 15, 0.01))
+local stalled = { ml = 5000, tempC = 85, starter = "Yoghurt", last = 11 }
+M.catchUp(stalled, 11 + YEAR, "Open", history, ledger)
+local stalledByHand = { ml = 5000, tempC = 85, starter = "Yoghurt" }
+M.advanceBatch(stalledByHand, YEAR, M.placeTemperature(ledger, "Open"), 11)
+check("a started pot too cold to set wraps and waits", M.stage(stalled) == "Incubating" and M.stage(stalledByHand) == "Incubating"
+    and near(stalled.done, stalledByHand.done, 0.01) and near(stalled.wrapHour, stalledByHand.wrapHour, 1e-6))
+local burntYear = { ml = 5000, tempC = 85, starter = "Yoghurt", last = 11, fireUntil = 13, under = "Open" }
+M.catchUp(burntYear, 11 + YEAR, "Hearth", history, ledger)
+local burntByHand = { ml = 5000, tempC = 85, starter = "Yoghurt" }
+M.advanceBatch(burntByHand, 2, Hearth.FIRE_C, 11)
+M.advanceBatch(burntByHand, YEAR - 2, M.placeTemperature(ledger, "Open"), 13)
+check("a fire that burnt out early in it counts only till then", M.stage(burntYear) == M.stage(burntByHand)
+    and near(burntYear.done, burntByHand.done, 0.01) and near(burntYear.tempC, burntByHand.tempC, 0.01))
+M.cool = realCool
+
 -- By a fire
 check("a fire keeps its warmth whatever the weather", M.placeTemperature(ledger, "Hearth") == Hearth.FIRE_C
     and M.pastTemperature(history, 3, "Hearth") == Hearth.FIRE_C)
@@ -165,8 +195,28 @@ check("it tops up a cooling pot, mixing the heat", M.copperToPot(hotCopper, topU
 hotCopper.tempC = 80
 check("below 85 C it won't pour", select(2, M.copperToPot(hotCopper, {}, 0)) == "NotHot")
 local sheepPot = { ml = 1000, tempC = 80, fluid = "SheepMilk" }
-check("cow's milk won't go into sheep's", select(2, M.copperToPot({ ml = 2000, fluid = "CowMilk", tempC = 90 }, sheepPot, 0)) == "Mixed"
-    and select(2, M.milkRoom(sheepPot, 100, "CowMilk")) == "Mixed" and M.milkRoom(sheepPot, 100, "SheepMilk") == 100)
+check("cow's milk goes in with sheep's", M.copperToPot({ ml = 2000, fluid = "CowMilk", tempC = 90 }, sheepPot, 0) == 2000
+    and sheepPot.fluid == "CowMilk" and sheepPot.parts.SheepMilk == 1000)
+local herdCopper = {}
+Hearth.pourInto(herdCopper, "CowMilk", 3000, 90, 0)
+check("and the two share a copper", Hearth.pourInto(herdCopper, "SheepMilk", 1000, 90, 0) == 1000 and M.copperHot(herdCopper))
+local herdPot = {}
+M.copperToPot(herdCopper, herdPot, 0)
+local _, _, herdOut = M.pourOut(herdPot, 2000)
+check("a blend keeps its shares into the pot and back out", near(herdOut.CowMilk, 1500) and near(herdOut.SheepMilk, 500)
+    and herdPot.ml == 2000)
+M.pourOut(herdPot)
+check("an emptied pot forgets its milk", herdPot.fluid == nil and herdPot.parts == nil)
+
+-- Cold milk and a starter already in the pot
+local started = { starter = "Yoghurt" }
+check("cold milk is refused once the starter is in", select(2, M.addMilk(started, 2000, 20, 0)) == "ColdForStarter"
+    and M.stage(started) == "Empty")
+check("hot milk isn't", M.addMilk(started, 2000, 85, 0) == 2000)
+local warm = { ml = 2000, tempC = 50, starter = "Yoghurt" }
+check("a top-up that leaves the pot warm enough goes in", M.coldRefusal(warm, 1000, 20) == nil
+    and M.coldRefusal(warm, 3000, 20) == "ColdForStarter")
+check("with no starter cold milk still goes in, to be reheated", M.addMilk({}, 2000, 20, 0) == 2000)
 
 -- Carried milk
 local carry = M.carryIn(nil, 0, 20, 3000, 90, 0, true)

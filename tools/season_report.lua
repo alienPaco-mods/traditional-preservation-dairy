@@ -127,8 +127,8 @@ print(string.format("Yoghurt Incubator: 5 L poured at %d C at %02d:00 on the fir
 print(string.format("Hours to cool to %d C (wrap on), then hours to set (%g h at the best temperature), and the", M.SET_C, M.INCUBATE_HOURS))
 print(string.format("milk's temperature when it set. '-' means it hadn't set after %d hours.", GIVE_UP_HOURS))
 print("")
-print("| Month | Outdoors: cool / set / C | Under a roof | Basement | By a fire |")
-print("|---|---|---|---|---|")
+print("| Month | Outdoors: cool / set / C | Under a roof | Basement | By a fire | By banked embers |")
+print("|---|---|---|---|---|---|")
 for month = 1, 12 do
     local cells = {}
     for _, place in ipairs(PLACES) do
@@ -142,8 +142,8 @@ end
 
 print("")
 print("Same, 1 L: total hours from pouring to set")
-print("| Month | Outdoors | Under a roof | Basement | By a fire |")
-print("|---|---|---|---|---|")
+print("| Month | Outdoors | Under a roof | Basement | By a fire | By banked embers |")
+print("|---|---|---|---|---|---|")
 for month = 1, 12 do
     local cells = {}
     for _, place in ipairs(PLACES) do table.insert(cells, hoursText(get(month, place, "small", "ready"))) end
@@ -152,8 +152,8 @@ end
 
 print("")
 print(string.format("No starter: hours after pouring 5 L until the milk is below %d C and must be reheated", M.STARTER_MIN_C))
-print("| Month | Outdoors | Under a roof | Basement | By a fire |")
-print("|---|---|---|---|---|")
+print("| Month | Outdoors | Under a roof | Basement | By a fire | By banked embers |")
+print("|---|---|---|---|---|---|")
 for month = 1, 12 do
     local cells = {}
     for _, place in ipairs(PLACES) do table.insert(cells, hoursText(get(month, place, "bare", "cold"))) end
@@ -162,8 +162,8 @@ end
 
 print("")
 print(string.format("Starter Culture Crock: hours to cultivate (%g at best), then total hours to starter, fed at once", M.CULTIVATE_HOURS))
-print("| Month | Outdoors | Under a roof | Basement | By a fire |")
-print("|---|---|---|---|---|")
+print("| Month | Outdoors | Under a roof | Basement | By a fire | By banked embers |")
+print("|---|---|---|---|---|---|")
 for month = 1, 12 do
     local cells = {}
     for _, place in ipairs(PLACES) do
