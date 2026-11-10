@@ -1,6 +1,9 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- Internal: new `tests/test_console.lua` loads the debug console (TPD) and calls its commands, and new
+  `tests/test_menu.lua` builds the incubator's and the crock's right-click menus on stand-ins (status line, pouring
+  from a Hearth and its refusals, a set pot, several stations under one click, the controller's probe).
 - Internal: made by `tp new` from the series template, with the shared core.
 - Requires the TP Core mod (`TraditionalPreservationCore`) instead of carrying its own copy of the shared core.
 - Internal: the yoghurt rules. Scalded milk cools in the lidded clay pot by Newton's law towards the temperature
