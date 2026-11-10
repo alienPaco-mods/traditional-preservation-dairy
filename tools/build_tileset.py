@@ -92,6 +92,10 @@ SHEET_HEM = 3                  # the Wrapped Yoghurt Pot's sheet hangs nearly to
 # The crock: smaller, taller in proportion, with a slip band of zig-zags round the belly.
 CROCK_BODY = [(0, 10), (4, 14), (12, 17), (19, 16), (25, 12.5), (28, 10.5), (31, 11.5)]
 CROCK_BAND = (9, 17)
+# On a counter the crock stands back from the front edge, towards the far corner of the tile (screen up), and casts a
+# tighter shadow than the pot does on the floor; a centred crock's shadow hung over the counter's edge.
+CROCK_BACK = 6                 # pixels up from the tile's middle
+CROCK_SHADOW = 14              # shadow radius before its 2 px margin and blur (the widest belly is 17)
 CAP = [(26, 14.5), (29, 14.5), (31.5, 13.5), (33.5, 10), (34.5, 0)]
 CAP_TIE = 29
 STRIPS = 72                    # slices round a body
@@ -110,6 +114,11 @@ for base, group, custom in ((INCUBATOR, "Yoghurt", "Incubator"), (CROCK, "Starte
         # player stands behind it, and the click picker skips faded objects.
         TILE_PROPS[base + offset] = [("BlocksPlacement", ""), ("CustomName", custom), ("Facing", facing),
                                      ("GroupName", group), ("IsMoveAble", ""), ("PickUpWeight", "100")]
+        # The crock is small enough for a counter, as a microwave is. IsTableTop: put down on a table or counter (or,
+        # with BlocksPlacement, the floor). IsStackable: the build cursor builds it there too, raised to the top, and
+        # on a solid square checks that it is a table.
+        if base == CROCK:
+            TILE_PROPS[base + offset][5:5] = [("IsStackable", ""), ("IsTableTop", "")]
 
 # --- Drawing ----------------------------------------------------------------------------------------------------
 
@@ -203,16 +212,24 @@ def paint_surface(layer, base, z, r, colour, rng, specks=None):
             draw.ellipse(box(x, y, 0.9, 0.5), fill=shade(colour_speck, rng.uniform(0.8, 1.15)))
 
 
-def paint_shadow(layer, radius):
+def paint_shadow(layer, radius, base=(FOOT_X, FOOT_Y)):
     """The soft shadow a pot casts on the floor (or the hearth) it stands on. Blurred to nothing at its edge: vanilla
     thins the grass round a player standing on the tile, and a hard-edged ellipse showed there as a ring."""
     shadow = Image.new("RGBA", layer.size, (0, 0, 0, 0))
-    ImageDraw.Draw(shadow).ellipse(box(FOOT_X + 1.5, FOOT_Y + 1, radius + 2, (radius + 2) * SQUASH), fill=SHADOW)
+    ImageDraw.Draw(shadow).ellipse(box(base[0] + 1.5, base[1] + 1, radius + 2, (radius + 2) * SQUASH), fill=SHADOW)
     layer.alpha_composite(shadow.filter(ImageFilter.GaussianBlur(SHADOW_BLUR)))
 
 
 def finish(layer, seed, depth):
     return pzart.weather(shrink(layer), random.Random(seed), depth)
+
+
+def hard_edges(tile, cut=128):
+    """Clears every pixel under half opaque and makes the rest solid, as vanilla's hand-painted edges are. B42 writes
+    depth for a faint edge pixel too, so a soft edge on a raised crock left a ring where the wall or barricade behind
+    it was never drawn."""
+    tile.putalpha(tile.getchannel("A").point(lambda v: 255 if v >= cut else 0))
+    return tile
 
 
 # --- The incubator ----------------------------------------------------------------------------------------------
@@ -347,16 +364,21 @@ def incubator_overlay(stage, face):
 # --- The crock --------------------------------------------------------------------------------------------------
 
 def crock_base():
-    return (FOOT_X, FOOT_Y)
+    return (FOOT_X, FOOT_Y - CROCK_BACK)
 
 
 def paint_crock(face):
     layer = new_layer()
-    paint_shadow(layer, CROCK_BODY[2][1])
-    paint_pot(layer, crock_base(), CROCK_BODY, CROCK_CLAY, band=CROCK_BAND)
-    layer = pzart.darken_down(layer, FOOT_Y - CROCK_BODY[-1][0] * 0.6, FOOT_Y, FOOT_SHADE, SS)
-    paint_mouth(layer, crock_base(), CROCK_BODY, 1.6, 7)
-    return finish(layer, 30 + face, WEATHER)
+    base = crock_base()
+    paint_pot(layer, base, CROCK_BODY, CROCK_CLAY, band=CROCK_BAND)
+    layer = pzart.darken_down(layer, base[1] - CROCK_BODY[-1][0] * 0.6, base[1], FOOT_SHADE, SS)
+    paint_mouth(layer, base, CROCK_BODY, 1.6, 7)
+    # The shadow stays soft under the hard-edged crock: it lies on the counter top, in front of nothing.
+    shadow = new_layer()
+    paint_shadow(shadow, CROCK_SHADOW, base)
+    tile = shrink(shadow)
+    tile.alpha_composite(hard_edges(finish(layer, 30 + face, WEATHER)))
+    return tile
 
 
 def cap_layer():
@@ -383,7 +405,7 @@ def crock_overlay(stage, face):
         top, r = CROCK_BODY[-1]
         specks = [(WHEAT, 40)] if stage == "Developing" else [(WHEAT, 3)]
         paint_surface(layer, crock_base(), top - 2.5, r - 2.4, MILK if stage == "Developing" else CULTURE, rng, specks)
-    return finish(layer, 50 + face, OVERLAY_WEATHER)
+    return hard_edges(finish(layer, 50 + face, OVERLAY_WEATHER))
 
 
 # --- Item icons -------------------------------------------------------------------------------------------------

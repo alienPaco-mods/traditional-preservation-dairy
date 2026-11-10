@@ -98,3 +98,9 @@
   have burnt out (three times as long as a lit fire); the season report has an Embers column.
 - Internal: the Hearth's debug commands and kit moved to TP Core's console (`TPC.hearth`, `copper`, `fuel`, `hot`,
   `TPC.kit()`); `TPD.help()` points there.
+- The Starter Culture Crock stands on a counter or table (built there or put down there, raised to its top) as
+  well as on the floor: tile flags `IsTableTop` and `IsStackable`. Its tooltip says so.
+- The crock's art sits a little back on its tile with a smaller shadow, so on a counter the shadow no longer hangs
+  over the front edge.
+- The crock and its stage overlays have hard edges (only its shadow stays soft): the soft edge left a ring in game
+  where a wall, window or barricade behind a crock on a counter wasn't drawn.
