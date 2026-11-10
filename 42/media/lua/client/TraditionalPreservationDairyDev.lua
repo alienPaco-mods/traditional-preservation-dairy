@@ -17,6 +17,8 @@ function TPD.help()
     say("TPD.kit(kind)        the things a test of kind needs; TPD.kit() for yoghurt, TPD.kit(\"?\") lists the kinds")
     say("TPD.crocks()         every loaded crock: stage, progress, place")
     say("TPD.culture(hours)   move every loaded crock's current stage on by this many hours at the best temperature")
+    say("TPD.ages()           every container of milk you carry: fluid, stage, age, hours to the next stage, place")
+    say("TPD.age(hours)       age the milk you carry by this many hours at 20 C (sours at 36, spoils at 72)")
     say("TPD.tiles()          every station within 3 tiles: object class, sprite and square solid flags")
     say("The Hearth's commands (hearth, copper, fuel, hot, a Hearth kit) are TP Core's: TPC.help()")
 end
@@ -159,6 +161,51 @@ function TPD.culture(hours)
 end
 
 -- What makes a station's tile block: the object's class, its sprite's flags and the square's, within 3 tiles.
+local FluidAgeing = require "TraditionalPreservationCore/FluidAgeing"
+
+-- Every milk container in the player's inventory, brought up to now.
+local function carriedMilk()
+    local now, list = getGameTime():getWorldAgeHours(), {}
+    local items = getPlayer():getInventory():getAllEvalRecurse(function(item) return item:getFluidContainer() ~= nil end)
+    for i = 0, items:size() - 1 do
+        local item = items:get(i)
+        local record, spec = FluidAgeing.look(item, now)
+        if record or FluidAgeing.specIn(item:getFluidContainer()) then table.insert(list, { item = item, record = record, spec = spec }) end
+    end
+    return list
+end
+
+function TPD.ages()
+    local list = carriedMilk()
+    if #list == 0 then return say("You carry no milk.") end
+    for _, entry in ipairs(list) do
+        local item, record, spec = entry.item, entry.record, entry.spec
+        local fluid = item:getFluidContainer():getPrimaryFluid()
+        if not record then
+            say(string.format("%s: %s, no age (sealed store milk, or milk going off is switched off)", item:getDisplayName(),
+                fluid and fluid:getFluidTypeString() or "?"))
+        else
+            local left = FluidAgeing.hoursLeft(record, spec)
+            say(string.format("%s: %s, %s%s, age %.1f h at 20 C, next stage in %s h at 20 C, %s", item:getDisplayName(),
+                fluid and fluid:getFluidTypeString() or "?", FluidAgeing.stage(record, spec), record.steamed and " (steamed)" or "",
+                record.age, left and string.format("%.1f", left) or "never", tostring(record.place)))
+        end
+    end
+end
+
+function TPD.age(hours)
+    hours = hours or M.MILK_TURN_HOURS
+    local count = 0
+    for _, entry in ipairs(carriedMilk()) do
+        if entry.record then
+            entry.record.age = entry.record.age + hours
+            FluidAgeing.apply(entry.item:getFluidContainer(), entry.record, entry.spec)
+            count = count + 1
+        end
+    end
+    say(string.format("Aged %d container(s) of milk by %.1f hours. TPD.ages() to see them.", count, hours))
+end
+
 function TPD.tiles()
     local here = getPlayer():getSquare()
     for dx = -3, 3 do

@@ -178,6 +178,8 @@ Under Traditional Preservation (Dairy):
 | Yoghurt setting time (hours) | 6 | Hours wrapped milk takes to set at its best (40 to 45 C) |
 | Starter culture time (hours) | 24 | The crock's first stage at its best; the second takes half as long |
 | Temperature sensitivity | Normal | Off, Forgiving, Normal or Harsh. Off runs at full speed in any weather; the milk still has to cool before the wrap goes on |
+| Milk goes off | On | Raw milk sours, then spoils; steamed milk spoils without souring |
+| Milk spoiling speed | 1 | 2 goes off twice as fast, 0.5 keeps twice as long |
 
 ## Tuning
 
@@ -202,7 +204,9 @@ Volumes, temperatures, cooling times, the setting and culture curves, the crock'
 - The copper's heating and the pot's cooling are simple exponential curves; the steam takes no holding time at 85 C.
 - Temperature during setting slows it but never spoils a batch.
 - A roofed place is the 10-day mean plus 10 C, capped at 28 C; room heating isn't modelled beyond the Hearth.
-- Milk doesn't spoil, as in vanilla.
+- Milk goes off (TP Core's `FluidAgeing`): raw milk turns to its Soured twin at 36 hours' worth of 20 C and to its Rotten one at
+  72; steamed milk skips souring. The curve (`MILK_CURVE`) and the hours are at the top of the main Lua file. Its age
+  lives in the container's ModData (`tpFluidAge`, TP Core's key) and on Dairy's weather ledger (`milkOpen` and so on).
 
 ## Engineering notes
 

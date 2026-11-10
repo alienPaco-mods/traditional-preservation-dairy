@@ -11,6 +11,7 @@ local M = TraditionalPreservationDairy
 local Weather = require "TraditionalPreservationCore/Weather"
 local Hearth = require "TraditionalPreservationCore/Hearth"
 local Station = require "TraditionalPreservationCore/Station"
+local FluidAgeing = require "TraditionalPreservationCore/FluidAgeing"
 local Tiles = require "TraditionalPreservationDairy/Tiles"
 
 -- Save keys: never rename these once the mod is out (DEVGUIDE, "Rules that keep saves and the game happy").
@@ -67,6 +68,23 @@ M.CROCK_STARTERS = 2
 local CROCK_KIND = "culture"
 -- Grain starters are kept warm, not hot: best at 25 to 35 C, slow when cool, near stopped by 5.
 local CULTURE_CURVE = { { 5, 0.03 }, { 10, 0.1 }, { 15, 0.3 }, { 20, 0.6 }, { 25, 1 }, { 35, 1 }, { 40, 0.6 }, { 45, 0.1 } }
+
+-- Milk going off (TP Core's FluidAgeing). Raw milk sours on its own lactic bacteria, then spoils as long again after;
+-- steamed milk never sours (the heat killed them) and spoils at the same age. Ages are hours at 20 C: about a day
+-- and a half to sour in a 20 C room, 3 days in a 15 C basement, 8 in a fridge, a day at 30 C. Store milk (sealed
+-- cartons and bottles) keeps until it is poured out, and then counts as steamed: it was pasteurised.
+M.MILK_KIND = "milk"
+M.MILK_TURN_HOURS = 36
+M.MILK_SPOIL_HOURS = 72
+M.MILK_SPOILS = true          -- sandbox: Milk goes off
+M.MILK_SPEED = 1              -- sandbox: how fast, 1 as above
+M.SOUR_MILKS = { CowMilk = "SourCowMilk", SheepMilk = "SourSheepMilk", AnimalMilk = "SourAnimalMilk" }
+M.ROTTEN_MILKS = { CowMilk = "RottenCowMilk", SheepMilk = "RottenSheepMilk", AnimalMilk = "RottenAnimalMilk" }
+M.STORE_MILK = { ["Base.Milk"] = true, ["Base.MilkBottle"] = true, ["Base.Milk_Personalsized"] = true }
+-- Souring speed against 20 C. Mesophilic bacteria: frozen milk stops, a fridge crawls, best near blood heat; past
+-- 50 C the heat starts to kill them.
+local MILK_CURVE = { { 0, 0 }, { 2, 0.12 }, { 4, 0.19 }, { 10, 0.33 }, { 15, 0.5 }, { 20, 1 }, { 25, 1.25 }, { 30, 1.5 },
+    { 37, 1.8 }, { 45, 1.2 }, { 55, 0 } }
 
 -- Yield
 -- A jar takes yoghurt to its vanilla capacity and is eaten from in portions of a cup, 250 ml.
@@ -173,7 +191,12 @@ end
 
 -- Weather ledger and history
 
-local KINDS = { [CROCK_KIND] = function(celsius) return M.cultureRate(celsius) end }
+function M.milkRate(celsius)
+    return Weather.curve(MILK_CURVE, celsius)
+end
+
+local KINDS = { [CROCK_KIND] = function(celsius) return M.cultureRate(celsius) end,
+    [M.MILK_KIND] = function(celsius) return M.milkRate(celsius) end }
 
 function M.newLedger(now)
     return Weather.newLedger(now, KINDS)
@@ -188,6 +211,19 @@ function M.getHistory()
     data.history = data.history or {}
     return data.history
 end
+
+FluidAgeing.register({
+    kind = M.MILK_KIND,
+    rate = M.milkRate,
+    turnHours = M.MILK_TURN_HOURS,
+    spoilHours = M.MILK_SPOIL_HOURS,
+    fresh = M.SOUR_MILKS,
+    spoiled = M.ROTTEN_MILKS,
+    sealed = M.STORE_MILK,
+    getLedger = function() return M.getLedger() end,
+    enabled = function() return M.MILK_SPOILS end,
+    speed = function() return M.MILK_SPEED end,
+})
 
 -- One ten-minute reading: the ledger for the crock, and the hour's slot in the history for the incubator.
 -- An hour's slot keeps the last reading in it, with the season mean that goes with it.
@@ -753,6 +789,8 @@ function M.applySandbox()
         M.DEVELOP_HOURS = options.CultureHours / 2
     end
     if options.TemperatureSensitivity then M.SENSITIVITY = Weather.sensitivity(options.TemperatureSensitivity) end
+    if options.MilkSpoils ~= nil then M.MILK_SPOILS = options.MilkSpoils end
+    if options.MilkSpoilSpeed then M.MILK_SPEED = options.MilkSpoilSpeed end
 end
 
 Events.OnInitGlobalModData.Add(M.applySandbox)

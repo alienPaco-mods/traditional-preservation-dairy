@@ -1,3 +1,12 @@
 {
-  "Fluid_Container_WrappedYoghurtPot": "Wrapped Yoghurt Pot"
+  "Fluid_Container_WrappedYoghurtPot": "Wrapped Yoghurt Pot",
+  "Fluid_Name_CowMilk": "Cow's Milk (Fresh)",
+  "Fluid_Name_SourCowMilk": "Cow's Milk (Soured)",
+  "Fluid_Name_RottenCowMilk": "Cow's Milk (Rotten)",
+  "Fluid_Name_SheepMilk": "Sheep's Milk (Fresh)",
+  "Fluid_Name_SourSheepMilk": "Sheep's Milk (Soured)",
+  "Fluid_Name_RottenSheepMilk": "Sheep's Milk (Rotten)",
+  "Fluid_Name_AnimalMilk": "Animal's Milk (Fresh)",
+  "Fluid_Name_SourAnimalMilk": "Animal's Milk (Soured)",
+  "Fluid_Name_RottenAnimalMilk": "Animal's Milk (Rotten)"
 }

@@ -26,3 +26,19 @@ option TraditionalPreservationDairy.TemperatureSensitivity {
     translation = TraditionalPreservationDairy_TemperatureSensitivity,
     valueTranslation = TraditionalPreservationDairy_TemperatureSensitivity,
 }
+
+option TraditionalPreservationDairy.MilkSpoils {
+    type = boolean,
+    default = true,
+    page = TraditionalPreservationDairy,
+    translation = TraditionalPreservationDairy_MilkSpoils,
+}
+
+option TraditionalPreservationDairy.MilkSpoilSpeed {
+    type = double,
+    min = 0.1,
+    max = 10.0,
+    default = 1.0,
+    page = TraditionalPreservationDairy,
+    translation = TraditionalPreservationDairy_MilkSpoilSpeed,
+}

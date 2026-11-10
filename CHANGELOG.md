@@ -1,6 +1,13 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- Milk goes off (D9, step 1). Raw cow's, sheep's and animal milk turns Soured ("Cow's Milk (Soured)") after about a
+  day and a half in a 20 C room (3 days in a basement, 8 in a powered fridge, a day at 30 C, never while frozen), then
+  Rotten as long again after (mild food poisoning). Vanilla's milks now read "(Fresh)". Soured milk keeps its milk's
+  food, a little unhappiness; vanilla churning, baking and the incubator refuse it. Milk steamed in the Hearth's
+  copper never sours and spoils at the same age. Sealed store milk keeps until it is poured out, then counts as
+  steamed. Mixing takes the older age. Sandbox: Milk goes off (on) and Milk spoiling speed (1). Built on TP Core's
+  `FluidAgeing`.
 - Balance (series pass, C23): yoghurt keeps its milk's food. A 250 ml portion, from a jar or in a cup, has a quarter
   litre of the milk's food as vanilla states it: cow's milk 153.75 kcal and -12.5 hunger (was vanilla Yoghurt's 30
   and -10), sheep's milk 205.75 kcal; a mixed pot goes by its shares, so 5 L of milk is worth the same eaten as
