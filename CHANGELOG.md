@@ -1,6 +1,11 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- Menu icons: Pour from Hearth and the crock's Hearth row show TP Core's copper (were the Hearth and a milk carton);
+  Pour Steamed Milk, Pour Out and Feed show the first container they list, drawn with its milk (an empty bucket
+  when none); every container row shows its milk's colour; Add Starter and Collect Starters show the starter; Collect
+  and its rows show the Jar of Yoghurt and each jar; Fill Cups rows a cup of yoghurt; Eat a Portion shows the jar
+  itself, clay or glazed.
 - The Hearth (TP Core) has its real art now; the README no longer calls it a placeholder. The tileset builder uses
   TP Core's shared `pzart.hard_edges`.
 - Fixed: a Jar of Yoghurt collected into a Clay Jar or Glazed Clay Jar had no icon. It now shows its clay or glazed

@@ -16,11 +16,12 @@ local M = TraditionalPreservationDairy
 local say = UI.say
 local STATION_ICON = "media/textures/Item_YoghurtIncubator.png"
 local CROCK_ICON = "media/textures/Item_StarterCultureCrock.png"
-local HEARTH_ICON = "media/textures/Item_TPHearth.png"
+local COPPER_ICON = "media/textures/Item_TPCopperFull.png" -- TP Core's
+local STARTER_ICON = "media/textures/Item_ActiveYoghurtStarter.png"
+local JAR_ICON = "media/textures/Item_JarOfYoghurt.png"
 local WHEAT_ICON = "Item_WheatGrains"
-local MILK_ICON = "Item_Milk"
+local BUCKET_ICON = "Item_MetalBucket"
 local YOGHURT_ICON = "Item_Yoghurt"
-local JAR_ICON = "Item_ClayJar_Fired"
 local PotWindow, CrockWindow -- the info windows, below the menus
 
 local PLACE_TEXT = {
@@ -107,7 +108,7 @@ local function addItemMenu(menu, option, playerObj, station, items, mode, label)
     end
     for _, item in ipairs(items) do
         local entry = sub:addOption(label(item), playerObj, onAction, station, { item }, mode)
-        entry.iconTexture = item:getTex()
+        entry.itemForTexture = item
     end
 end
 
@@ -144,9 +145,19 @@ local function addHearthPourMenu(menu, playerObj, station, state)
     if room > 0 then hearth, copper = hearthFor(station, M.copperHot) end
     if hearth then label = say("ContextMenu_TraditionalPreservationDairy_MilkItem", label, litresText(copper.ml), degrees(copper.tempC)) end
     local option = menu:addOption(label, playerObj, onHearthPour, station, hearth)
-    option.iconTexture = getTexture(HEARTH_ICON)
+    option.iconTexture = getTexture(COPPER_ICON)
     if room <= 0 then return disableWith(option, getText(REFUSALS[reason])) end
     if not hearth then return disableWith(option, hearthRefusal(copper, "IGUI_TraditionalPreservationDairy_CopperNotHot")) end
+end
+
+-- A submenu's icon: the first item it lists, drawn as the inventory draws it (a bucket of milk shows milk), or
+-- fallback when it lists none.
+local function showFirst(option, items, fallback)
+    if items[1] then
+        option.itemForTexture = items[1]
+    else
+        option.iconTexture = getTexture(fallback)
+    end
 end
 
 -- Every container of plain milk, wherever it was carried from. Milk that wasn't drawn steaming from a copper, or
@@ -154,10 +165,10 @@ end
 -- the milk hot on the way.
 local function addCarriedPourMenu(menu, playerObj, station, state)
     local option = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_PourSteamed"))
-    option.iconTexture = getTexture(MILK_ICON)
+    local items = findItems(playerObj, function(item) return M.milkIn(item:getFluidContainer()) ~= nil end)
+    showFirst(option, items, BUCKET_ICON)
     local room, reason = M.milkRoom(state, 1)
     if room <= 0 then return disableWith(option, getText(REFUSALS[reason])) end
-    local items = findItems(playerObj, function(item) return M.milkIn(item:getFluidContainer()) ~= nil end)
     if #items == 0 then return disableWith(option, getText("IGUI_TraditionalPreservationDairy_NoMilkItem")) end
     tooltipFor(option, getText("IGUI_TraditionalPreservationDairy_SteamedHelp"))
     local sub = menu:getNew(menu)
@@ -168,7 +179,7 @@ local function addCarriedPourMenu(menu, playerObj, station, state)
         local heat = M.carriedC(item, now(), playerObj)
         local entry = sub:addOption(say("ContextMenu_TraditionalPreservationDairy_MilkItem", item:getDisplayName(), litresText(ml),
             degrees(heat)), playerObj, onAction, station, { item }, "carried")
-        entry.iconTexture = item:getTex()
+        entry.itemForTexture = item
         local refusal = M.carriedRefusal(M.carryOf(item), ml) or M.coldRefusal(state, ml, heat)
         if refusal then
             entry.notAvailable = true
@@ -179,7 +190,7 @@ end
 
 local function addStarterMenu(menu, playerObj, station, state)
     local option = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_AddStarter"))
-    option.iconTexture = getTexture(YOGHURT_ICON)
+    option.iconTexture = getTexture(STARTER_ICON)
     local ok, reason = M.canAddStarter(state)
     if not ok then return disableWith(option, getText(REFUSALS[reason])) end
     local starters = findItems(playerObj, function(item) return M.STARTERS[item:getFullType()] ~= nil and not item:isRotten() end)
@@ -193,15 +204,15 @@ local function addStarterMenu(menu, playerObj, station, state)
         if not seen[item:getFullType()] then
             seen[item:getFullType()] = true
             local entry = sub:addOption(item:getDisplayName(), playerObj, onAction, station, { item }, "starter")
-            entry.iconTexture = item:getTex()
+            entry.itemForTexture = item
         end
     end
 end
 
 local function addPourOutMenu(menu, playerObj, station, state)
     local option = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_PourOut"))
-    option.iconTexture = getTexture(MILK_ICON)
     local empties = findItems(playerObj, M.isEmptyContainer)
+    showFirst(option, empties, BUCKET_ICON)
     if #empties == 0 then return disableWith(option, getText("IGUI_TraditionalPreservationDairy_NoContainer")) end
     addItemMenu(menu, option, playerObj, station, empties, "pourOut", function(item)
         return say("ContextMenu_TraditionalPreservationDairy_Holds", item:getDisplayName(), litresText(item:getFluidContainer():getCapacity() * 1000))
@@ -225,11 +236,13 @@ local function addCollectMenu(menu, playerObj, station, state)
         local jarType = jar:getFullType()
         if not seen[jarType] then
             seen[jarType] = true
-            sub:addOption(say("ContextMenu_TraditionalPreservationDairy_OneJar", jar:getDisplayName(), litresText(M.JAR_ML[jarType])), playerObj, onAction, station, { jar }, "collect")
+            local entry = sub:addOption(say("ContextMenu_TraditionalPreservationDairy_OneJar", jar:getDisplayName(), litresText(M.JAR_ML[jarType])), playerObj, onAction, station, { jar }, "collect")
+            entry.itemForTexture = jar
         end
     end
     if most > 1 then
-        sub:addOption(say("ContextMenu_TraditionalPreservationDairy_All", tostring(most)), playerObj, onAction, station, picked, "collect")
+        local all = sub:addOption(say("ContextMenu_TraditionalPreservationDairy_All", tostring(most)), playerObj, onAction, station, picked, "collect")
+        all.iconTexture = getTexture(JAR_ICON)
     end
 end
 
@@ -244,9 +257,11 @@ local function addCupMenu(menu, playerObj, station, state)
     for index = 1, most do picked[index] = empties[index] end
     local sub = menu:getNew(menu)
     menu:addSubMenu(option, sub)
-    sub:addOption(getText("ContextMenu_TraditionalPreservationDairy_OneCup"), playerObj, onAction, station, { empties[1] }, "cup")
+    local one = sub:addOption(getText("ContextMenu_TraditionalPreservationDairy_OneCup"), playerObj, onAction, station, { empties[1] }, "cup")
+    one.iconTexture = getTexture(YOGHURT_ICON)
     if most > 1 then
-        sub:addOption(say("ContextMenu_TraditionalPreservationDairy_All", tostring(most)), playerObj, onAction, station, picked, "cup")
+        local all = sub:addOption(say("ContextMenu_TraditionalPreservationDairy_All", tostring(most)), playerObj, onAction, station, picked, "cup")
+        all.iconTexture = getTexture(YOGHURT_ICON)
     end
 end
 
@@ -334,7 +349,7 @@ local function addLoadMenu(menu, playerObj, station)
         local label = getText("ContextMenu_TraditionalPreservationDairy_LoadFromHearth")
         if M.MILKS[copper.fluid] then label = say("ContextMenu_TraditionalPreservationDairy_MilkItem", label, litresText(copper.ml), degrees(copper.tempC)) end
         local entry = sub:addOption(label, playerObj, onCrockAction, station, "load", nil, picked, hearth)
-        entry.iconTexture = getTexture(MILK_ICON)
+        entry.iconTexture = getTexture(COPPER_ICON)
         if not hearth then
             if M.MILKS[copper.fluid] then
                 refuseLoad(entry, copper.ml or 0, copper.tempC or 0)
@@ -349,7 +364,7 @@ local function addLoadMenu(menu, playerObj, station)
         local heat = M.carriedC(item, now(), playerObj)
         local entry = sub:addOption(say("ContextMenu_TraditionalPreservationDairy_MilkItem", item:getDisplayName(), litresText(ml),
             degrees(heat)), playerObj, onCrockAction, station, "load", item, picked)
-        entry.iconTexture = item:getTex()
+        entry.itemForTexture = item
         refuseLoad(entry, ml, heat)
     end
 end
@@ -357,15 +372,15 @@ end
 -- Fresh milk of any warmth, one entry per container.
 local function addFeedMenu(menu, playerObj, station)
     local option = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_FeedCrock"))
-    option.iconTexture = getTexture(MILK_ICON)
     local milks = milkFor(playerObj, M.CROCK_FEED_ML)
+    showFirst(option, milks, BUCKET_ICON)
     if #milks == 0 then return disableWith(option, getText("IGUI_TraditionalPreservationDairy_CrockNoMilk")) end
     local sub = menu:getNew(menu)
     menu:addSubMenu(option, sub)
     for _, item in ipairs(milks) do
         local entry = sub:addOption(say("ContextMenu_TraditionalPreservationDairy_FluidItem", item:getDisplayName(),
             litresText(item:getFluidContainer():getAmount() * 1000)), playerObj, onCrockAction, station, "feed", item)
-        entry.iconTexture = item:getTex()
+        entry.itemForTexture = item
     end
 end
 
@@ -408,7 +423,7 @@ local function addCrockMenu(context, playerObj, station, summary)
     elseif stage == "Ready" then
         local collect = menu:addOption(say("ContextMenu_TraditionalPreservationDairy_CollectStarters", tostring(M.CROCK_STARTERS)),
             playerObj, onCrockAction, station, "collect")
-        collect.iconTexture = getTexture(YOGHURT_ICON)
+        collect.iconTexture = getTexture(STARTER_ICON)
     end
 end
 
@@ -624,7 +639,7 @@ local function onFillInventoryMenu(playerNum, context, items)
     local left = math.ceil(M.jarPortions(jar) - M.EMPTY_PORTIONS)
     M.labelJar(jar)
     local eat = context:addOption(getText("ContextMenu_TraditionalPreservationDairy_EatPortion"), playerObj, onEatPortion, jar)
-    eat.iconTexture = getTexture(YOGHURT_ICON)
+    eat.itemForTexture = jar
     local empties = findItems(playerObj, function(item) return item:getFullType() == M.EMPTY_CUP end)
     local one = context:addOption(getText("ContextMenu_TraditionalPreservationDairy_FillCup"), playerObj, onFillCups, jar, { empties[1] })
     one.iconTexture = getTexture(YOGHURT_ICON)

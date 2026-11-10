@@ -103,6 +103,7 @@ check("pouring from a Hearth is greyed when none is near", pour.isDisabled == tr
 local carried = named(sub, "ContextMenu_TraditionalPreservationDairy_PourSteamed")
 check("and carried milk when none is carried", carried.isDisabled == true
     and carried.toolTip.description == getText("IGUI_TraditionalPreservationDairy_NoMilkItem"))
+check("with none carried, it shows an empty bucket", carried.iconTexture == "Item_MetalBucket" and carried.itemForTexture == nil)
 check("an empty pot has nothing to pour out or collect", named(sub, "ContextMenu_TraditionalPreservationDairy_PourOut") == nil
     and named(sub, "ContextMenu_TraditionalPreservationDairy_Collect") == nil)
 
@@ -119,6 +120,7 @@ sub = open(pot)[1]
 pour = sub.options[3]
 check("steaming milk is offered, with its litres and heat", pour.isDisabled == nil and pour.onSelect ~= nil
     and pour.name:find("4.0", 1, true) ~= nil and pour.name:find("90", 1, true) ~= nil)
+check("pouring from the Hearth shows its copper, full", pour.iconTexture == "media/textures/Item_TPCopperFull.png")
 local character = { isTimedActionInstant = function() return false end }
 pour.onSelect(character, unpack(pour.args))
 check("choosing it walks over and queues the pour from that Hearth", ui.walks == 1 and #ui.queued == 1
@@ -143,6 +145,8 @@ check("with the starter in, hot carried milk is offered and cold milk is red wit
     and potEntries[2].notAvailable == true and potEntries[2].toolTip.description:find("25", 1, true) ~= nil)
 carried = named(open(incubator(5))[1], "ContextMenu_TraditionalPreservationDairy_PourSteamed")
 check("with no starter cold milk still goes in", carried.subOption.options[2].notAvailable == nil)
+check("the option and each row show the real container, drawn with its milk", carried.itemForTexture == ui.carried[1]
+    and carried.iconTexture == nil and carried.subOption.options[2].itemForTexture == ui.carried[2])
 ui.carried = {}
 
 -- A full pot, and one that has set
