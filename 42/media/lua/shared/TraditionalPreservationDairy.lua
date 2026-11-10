@@ -89,8 +89,11 @@ M.EMPTY_CUP = "TraditionalPreservationDairy.EmptyYoghurtContainer"
 M.JAR_ML = { ["Base.EmptyJar"] = 1000, ["Base.ClayJar"] = 2500, ["Base.ClayJarGlazed"] = 2500 }
 M.OLD_JAR_ML = 1000           -- every jar took a litre before F4
 M.YOGHURT_JAR = "TraditionalPreservationDairy.JarOfYoghurt"
--- One item whatever the jar; a clay one changes only its icon (the engine saves an item's own texture).
-M.JAR_ICONS = { ["Base.ClayJar"] = "Item_JarOfYoghurt_Clay", ["Base.ClayJarGlazed"] = "Item_JarOfYoghurt_Glazed" }
+-- One item whatever the jar; a clay one changes only its icon, through modData `customInventoryIcon` (read by
+-- InventoryItem.getTexture, saved with the item). Full paths: a bare "Item_X" name finds a mod texture only
+-- when some script uses it as its Icon, so it was nil here.
+M.JAR_ICONS = { ["Base.ClayJar"] = "media/textures/Item_JarOfYoghurt_Clay.png",
+    ["Base.ClayJarGlazed"] = "media/textures/Item_JarOfYoghurt_Glazed.png" }
 M.COLLECT_XP = 2              -- Cooking, per litre collected, into a jar or cups alike
 
 -- Stations: FACE_COUNT tiles from each base, one per facing. Stage sprites are layered on top once the art

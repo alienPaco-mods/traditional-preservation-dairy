@@ -100,7 +100,9 @@ check("it is named and weighed by its portions", glass.name == "Jar of Yoghurt (
     and glass.customWeight == true)
 local clay = bag:AddItem(M.YOGHURT_JAR)
 M.fillJar(clay, "Base.ClayJar", 2500, 0)
-check("a clay jar holds ten, with its own look", near(M.jarPortions(clay), 10) and clay.texture == M.JAR_ICONS["Base.ClayJar"]
+check("a clay jar holds ten, with its own look", near(M.jarPortions(clay), 10)
+    and clay.data.customInventoryIcon == "media/textures/Item_JarOfYoghurt_Clay.png"
+    and glass.data.customInventoryIcon == nil
     and near(clay.weight, 2.8))
 local part = bag:AddItem(M.YOGHURT_JAR)
 M.fillJar(part, "Base.ClayJar", 1500, 0)
@@ -148,7 +150,7 @@ check("no cup is filled from an empty jar", TPFillYoghurtCup.isValid({ character
 local old = bag:AddItem(M.YOGHURT_JAR)
 old.data.tpdJar, old.data.tpdMl, old.data.tpdCups = "Base.ClayJar", 1000, 3
 check("an old jar gets its cups' worth of food once", near(M.jarPortions(old), 3) and near(M.jarFull(old), 4)
-    and old.data.tpdFood == true)
+    and old.data.tpdFood == true and old.data.customInventoryIcon == M.JAR_ICONS["Base.ClayJar"])
 eat(old, M.portionShare(M.jarPortions(old), M.jarFull(old)))
 eat(old, M.portionShare(M.jarPortions(old), M.jarFull(old)))
 eat(old, M.portionShare(M.jarPortions(old), M.jarFull(old)))

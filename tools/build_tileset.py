@@ -261,13 +261,22 @@ def paint_pot(layer, base, profile, clay, lugs=None, band=None):
             draw.ellipse(box(x + side * 0.6, y - 0.4, 1.2, 0.8), fill=shade(clay, 0.5 if side > 0 else 0.7))
 
 
+def soft_under_hard(shadow, layer, seed, depth):
+    """A soft shadow layer with the hard-edged art over it, as the crock is drawn: a soft edge on the art itself
+    left a ring in game."""
+    tile = shrink(shadow)
+    tile.alpha_composite(hard_edges(finish(layer, seed, depth)))
+    return tile
+
+
 def paint_incubator(face):
     layer = new_layer()
-    paint_shadow(layer, POT[3][1])
     paint_pot(layer, pot_base(), POT, CLAY, lugs=POT_LUGS)
     layer = pzart.darken_down(layer, FOOT_Y - POT[-1][0] * 0.6, FOOT_Y, FOOT_SHADE, SS)
     paint_mouth(layer, pot_base(), POT, 2.2, 10)
-    return finish(layer, 10 + face, WEATHER)
+    shadow = new_layer()
+    paint_shadow(shadow, POT[3][1])
+    return soft_under_hard(shadow, layer, 10 + face, WEATHER)
 
 
 def paint_lid(layer, base, clay, edge, under=GAP):
@@ -299,18 +308,22 @@ def slid_lid_layer(face):
     return layer.rotate(-side * SLID_TILT, resample=Image.BICUBIC, center=pivot)
 
 
-def leaning_lid(layer, face):
-    """The lid off the pot, stood on its rim against the belly, dome out, with a little shadow at its foot."""
+def leaning_lid(layer, shadow, face):
+    """The lid off the pot, stood on its rim against the belly, dome out, with a little shadow at its foot. The
+    shadows go on their own layer, which stays soft."""
     side = -1 if FACES[face] == "S" else 1
     x, y = FOOT_X + side * -LEAN_AT[0], FOOT_Y + LEAN_AT[1]
     r = LID[0][1]
     lid = new_layer()
     paint_lid(lid, (x, y), CLAY, LID_EDGE, under=SHADOW)
+    under = new_layer()
+    ImageDraw.Draw(under).ellipse(box(x, y + 0.8, r + 0.6, (r + 0.6) * SQUASH), fill=SHADOW)
     # PIL turns positive angles anticlockwise: the dome, which points up, swings out to the lid's own side.
     lid = lid.rotate(-side * LEAN_TURN, resample=Image.BICUBIC, center=(x * SS, y * SS))
-    draw = ImageDraw.Draw(layer)
+    under = under.rotate(-side * LEAN_TURN, resample=Image.BICUBIC, center=(x * SS, y * SS))
     foot = r * math.sin(math.radians(LEAN_TURN))
-    draw.ellipse(box(x + side * 2, y + foot - 1, 8, 3), fill=SHADOW)
+    ImageDraw.Draw(shadow).ellipse(box(x + side * 2, y + foot - 1, 8, 3), fill=SHADOW)
+    shadow.alpha_composite(under)
     layer.alpha_composite(lid)
 
 
@@ -342,6 +355,7 @@ def cloth_layer(cloth=CLOTH, stripes=CLOTH_STRIPES, hem=CLOTH_HEM):
 
 
 def incubator_overlay(stage, face):
+    shadow = new_layer()
     if stage == "Cooling":
         layer = lid_layer()
     elif stage == "TooCold":
@@ -357,8 +371,8 @@ def incubator_overlay(stage, face):
         if stage == "Ready":
             top, r = POT[-1]
             paint_surface(layer, pot_base(), top - 3, r - 3.2, YOGHURT, random.Random(face))
-        leaning_lid(layer, face)
-    return finish(layer, 20 + face, OVERLAY_WEATHER)
+        leaning_lid(layer, shadow, face)
+    return soft_under_hard(shadow, layer, 20 + face, OVERLAY_WEATHER)
 
 
 # --- The crock --------------------------------------------------------------------------------------------------
@@ -376,9 +390,7 @@ def paint_crock(face):
     # The shadow stays soft under the hard-edged crock: it lies on the counter top, in front of nothing.
     shadow = new_layer()
     paint_shadow(shadow, CROCK_SHADOW, base)
-    tile = shrink(shadow)
-    tile.alpha_composite(hard_edges(finish(layer, 30 + face, WEATHER)))
-    return tile
+    return soft_under_hard(shadow, layer, 30 + face, WEATHER)
 
 
 def cap_layer():

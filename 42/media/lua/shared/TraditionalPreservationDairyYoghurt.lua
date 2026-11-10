@@ -28,9 +28,10 @@ function M.setPortions(food, portions, full)
 end
 
 -- Portions left in a Jar of Yoghurt. A jar from before F4 (no tpdFood) holds no food values yet: it gets its
--- cups' worth, once.
+-- cups' worth, once. A clay jar filled before the icon fix gets its look here too.
 function M.jarPortions(jar)
     local data = jar:getModData()
+    if not data.customInventoryIcon then data.customInventoryIcon = M.JAR_ICONS[data.tpdJar] end
     if not data.tpdFood then
         M.setPortions(jar, M.cupsLeft(data), M.cupsFor(data.tpdMl or M.OLD_JAR_ML))
         data.tpdFood = true
@@ -65,7 +66,7 @@ function M.fillJar(jar, jarType, ml, age)
     data.tpdJar = jarType
     data.tpdMl = ml
     data.tpdFood = true
-    if M.JAR_ICONS[jarType] then jar:setTexture(getTexture(M.JAR_ICONS[jarType])) end
+    data.customInventoryIcon = M.JAR_ICONS[jarType]
     -- The last jar from a pot may be part-full: it is a full jar for eating shares, short of portions.
     M.setPortions(jar, ml / M.CUP_ML, (M.JAR_ML[jarType] or M.OLD_JAR_ML) / M.CUP_ML)
     M.labelJar(jar)

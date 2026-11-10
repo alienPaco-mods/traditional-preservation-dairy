@@ -1,6 +1,10 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- Fixed: a Jar of Yoghurt collected into a Clay Jar or Glazed Clay Jar had no icon. It now shows its clay or glazed
+  look everywhere, and keeps it through a save.
+- The incubator and its lid have hard edges, as the crock has; only the shadows on the floor stay soft (the soft edge
+  left a light ring round the pot in game).
 - Balance (series pass, F4): a jar takes yoghurt to its real size, 1 L in a glass jar, 2.5 L in a Clay Jar or
   Glazed Clay Jar (every jar took 1 L), and a Jar of Yoghurt is eaten from: **Eat a Portion** eats 250 ml, a
   vanilla Yoghurt's food, and the game's Eat / Eat Half / Eat Quarter work on it too. Its name counts portions, not
