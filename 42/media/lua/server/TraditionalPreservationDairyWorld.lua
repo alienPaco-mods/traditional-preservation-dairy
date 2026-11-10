@@ -8,8 +8,8 @@ if isClient() then return end
 TraditionalPreservationDairyWorld = TraditionalPreservationDairyWorld or {}
 local M = TraditionalPreservationDairy
 local World = TraditionalPreservationDairyWorld
-local Station = require "TraditionalPreservationDairy/Core/Station"
-local Weather = require "TraditionalPreservationDairy/Core/Weather"
+local Station = require "TraditionalPreservationCore/Station"
+local Weather = require "TraditionalPreservationCore/Weather"
 local Tiles = require "TraditionalPreservationDairy/Tiles"
 
 -- Each stage has its own look: an empty pot has its lid on the floor, one too cold for a starter has it slid half off.

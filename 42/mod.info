@@ -5,5 +5,7 @@ modversion=0.0.1
 versionMin=42.20
 description=Traditional Preservation (Dairy). B42 prototype.
 icon=icon.png
+require=\TraditionalPreservationCore
+loadModAfter=\TraditionalPreservationCore
 pack=traditionalpreservationdairy
 tiledef=traditionalpreservationdairy 5172

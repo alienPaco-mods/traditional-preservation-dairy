@@ -10,8 +10,8 @@ require "TimedActions/ISStarterCrock"
 require "TimedActions/ISFillYoghurtCup"
 require "TimedActions/ISDairyHearth"
 require "ISUI/ISCollapsableWindow"
-local UI = require "TraditionalPreservationDairy/Core/UI"
-local Station = require "TraditionalPreservationDairy/Core/Station"
+local UI = require "TraditionalPreservationCore/UI"
+local Station = require "TraditionalPreservationCore/Station"
 
 local M = TraditionalPreservationDairy
 local say = UI.say

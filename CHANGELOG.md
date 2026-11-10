@@ -2,6 +2,7 @@
 
 ## 0.0.1 (in development, not released)
 - Internal: made by `tp new` from the series template, with the shared core.
+- Requires the TP Core mod (`TraditionalPreservationCore`) instead of carrying its own copy of the shared core.
 - Internal: the yoghurt rules. Scalded milk cools in the lidded clay pot by Newton's law towards the temperature
   where it stands, and topping up mixes temperatures. With a starter in, the pot is wrapped at 45 C. The milk sets
   at a speed that follows its own temperature. A starter won't take below 40 C, so cold milk has to be reheated.
