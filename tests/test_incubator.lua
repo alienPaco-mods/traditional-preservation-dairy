@@ -130,6 +130,18 @@ check("by the fire only while the fuel lasts, then the place under it", near(bur
 local onAndOn = { ml = 5000, tempC = 85, last = 11 }
 M.catchUp(onAndOn, 30, "Hearth", history, ledger)
 check("a fire with no burn-out noted burns on", onAndOn.tempC > M.HEARTH_C - 0.5)
+local embersC = M.placeTemperature(ledger, M.EMBERS)
+local embers = { ml = 5000, tempC = 85, last = 11 }
+M.catchUp(embers, 30, M.EMBERS, history, ledger)
+check("banked embers are a cooler fire, whatever the weather", embersC < M.HEARTH_C
+    and M.pastTemperature(history, 3, M.EMBERS) == embersC and embers.tempC < onAndOn.tempC)
+local emberOut = { ml = 5000, tempC = 85, last = 11, fireUntil = 15, under = "Open" }
+M.catchUp(emberOut, 30, M.EMBERS, history, ledger)
+local emberHand = { ml = 5000, tempC = 85 }
+M.advanceBatch(emberHand, 4, embersC, 11)
+M.advanceBatch(emberHand, 5, 30, 15)
+M.advanceBatch(emberHand, 10, 0, 20)
+check("by embers only while they last, then the place under them", near(emberOut.tempC, emberHand.tempC, 1e-6))
 
 -- Hearth copper: TP Core's rules (its tests/test_hearth.lua); milk's own here
 check("the copper's numbers are the core's", M.COPPER_ML == 10000 and M.HOT_C == 85 and M.MILK_MAX_C == 95)
@@ -238,6 +250,16 @@ end
 M.updateCrock(outCrock, ledger, "Hearth")
 check("by a fire that burns out, a crock counts only the fire's hours in a frost",
     near(outCrock.done, 12 * M.cultureRate(M.HEARTH_C) + 13 * M.cultureRate(-10), 0.2))
+local emberCrock = {}
+M.startCrock(emberCrock, ledger)
+emberCrock.fireUntil, emberCrock.under = 123 + 100, "Open"
+for hour = 124, 123 + 11 do
+    H.setHours(hour)
+    M.record(ledger, history, hour, -10)
+end
+M.updateCrock(emberCrock, ledger, M.EMBERS)
+check("a crock by banked embers cultivates at their heat, not the frost's",
+    near(emberCrock.done, 11 * M.cultureRate(M.placeTemperature(ledger, M.EMBERS)), 0.2))
 check("grain cultures like warm, not hot", M.cultureRate(30) == 1 and M.cultureRate(5) < 0.1)
 
 -- Save keys

@@ -3,7 +3,6 @@
 if not isDebugEnabled() then return end
 
 local M = TraditionalPreservationDairy
-local Hearth = require "TraditionalPreservationCore/Hearth"
 TPD = {}
 
 local function say(text) print("[TPD] " .. text) end
@@ -18,11 +17,8 @@ function TPD.help()
     say("TPD.kit(kind)        the things a test of kind needs; TPD.kit() for yoghurt, TPD.kit(\"?\") lists the kinds")
     say("TPD.crocks()         every loaded crock: stage, progress, place")
     say("TPD.culture(hours)   move every loaded crock's current stage on by this many hours at the best temperature")
-    say("TPD.hearth()         the nearest Hearth within 2 tiles: fire, fuel, copper, when the milk steams")
-    say("TPD.copper(l, c, f)  fill its copper: l litres (0 empties it) of fluid f at c degrees (default 10 L CowMilk at 20 C)")
-    say("TPD.fuel(minutes)    set its fuel (default 600, ten hours); vanilla's menu still lights it")
-    say("TPD.hot()            bring its copper to the steam (90 C) now")
     say("TPD.tiles()          every station within 3 tiles: object class, sprite and square solid flags")
+    say("The Hearth's commands (hearth, copper, fuel, hot, a Hearth kit) are TP Core's: TPC.help()")
 end
 
 function TPD.weather()
@@ -103,18 +99,9 @@ local KITS = {
         end,
     },
     crock = {
-        about = string.format("%d wheat grains; warm the copper with TPD.copper(1, 40) by a Hearth", M.CROCK_WHEAT),
+        about = string.format("%d wheat grains; warm the copper with TPC.copper(1, 40) by a Hearth", M.CROCK_WHEAT),
         give = function(inventory)
             for _ = 1, M.CROCK_WHEAT do inventory:AddItem(M.WHEAT) end
-        end,
-    },
-    hearth = {
-        about = "a mason's trowel, 12 clay bricks, 4 clay and a copper sheet, to build a Hearth (Pottery 2)",
-        give = function(inventory)
-            inventory:AddItem("Base.MasonsTrowel_Wood")
-            for _ = 1, 12 do inventory:AddItem("Base.ClayBrick") end
-            for _ = 1, 4 do inventory:AddItem("Base.Clay") end
-            inventory:AddItem("Base.CopperSheet")
         end,
     },
     wrap = {
@@ -194,56 +181,6 @@ function TPD.tiles()
             end
         end
     end
-end
-
--- Hearth
-
-local function nearestHearth()
-    local hearth = M.hearthsNear(getPlayer():getSquare())[1]
-    if not hearth then say("No Hearth within 2 tiles.") end
-    if hearth and Hearth.World then Hearth.World.track(hearth) end
-    return hearth
-end
-
-local hearthCopper = Hearth.copperOf
-
-function TPD.hearth()
-    local hearth = nearestHearth()
-    if not hearth then return end
-    local copper = hearthCopper(hearth)
-    local hotIn = M.hoursToHot(copper)
-    say(string.format("%d,%d,%d %s, fuel %d min, sprite %s; copper %.1f L %s at %.1f C (%s), steaming %s, fire until %s",
-        hearth:getX(), hearth:getY(), hearth:getZ(), hearth:isLit() and "lit" or "out", hearth:getFuelAmount(),
-        hearth:getSprite():getName(), (copper.ml or 0) / 1000, tostring(copper.fluid), copper.tempC or 0, Hearth.look(copper),
-        hotIn and string.format("in %.1f h", hotIn) or "never", copper.fireUntil and string.format("%.2f", copper.fireUntil) or "-"))
-end
-
-function TPD.copper(litres, celsius, fluid)
-    local hearth = nearestHearth()
-    if not hearth then return end
-    local copper = hearthCopper(hearth)
-    Hearth.take(copper)
-    litres = litres or 10
-    if litres > 0 then Hearth.pourInto(copper, fluid or "CowMilk", math.floor(litres * 1000), celsius or 20, getGameTime():getWorldAgeHours()) end
-    Hearth.World.refresh(hearth)
-    TPD.hearth()
-end
-
-function TPD.fuel(minutes)
-    local hearth = nearestHearth()
-    if not hearth then return end
-    hearth:setFuelAmount(minutes or 600)
-    TPD.hearth()
-end
-
-function TPD.hot()
-    local hearth = nearestHearth()
-    if not hearth then return end
-    local copper = hearthCopper(hearth)
-    if (copper.ml or 0) <= 0 then return say("The copper is empty: TPD.copper() first.") end
-    copper.tempC = 90
-    Hearth.World.refresh(hearth)
-    TPD.hearth()
 end
 
 say("Debug commands loaded. Type TPD.help() in the Lua console.")

@@ -94,3 +94,7 @@
   Hearth Info shows Dairy's milk notes through `HearthUI.addNotes`. The "Steaming" row replaces "Ready to pour".
 - Not done yet: Starter Culture Crock window, final Hearth art (with a glow in the oven mouth), guide, README,
   Workshop text.
+- Incubators, crocks and Wrapped Pots by a banked Hearth stand at 24 C ("by banked embers"), until the embers would
+  have burnt out (three times as long as a lit fire); the season report has an Embers column.
+- Internal: the Hearth's debug commands and kit moved to TP Core's console (`TPC.hearth`, `copper`, `fuel`, `hot`,
+  `TPC.kit()`); `TPD.help()` points there.

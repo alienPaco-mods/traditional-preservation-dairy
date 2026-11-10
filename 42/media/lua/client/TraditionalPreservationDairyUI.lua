@@ -29,6 +29,7 @@ local PLACE_TEXT = {
     Sheltered = "IGUI_TraditionalPreservationDairy_Roof",
     Basement = "IGUI_TraditionalPreservationDairy_Basement",
     [M.HEARTH] = "IGUI_TraditionalPreservationDairy_Hearth",
+    [M.EMBERS] = "IGUI_TraditionalPreservationDairy_Embers",
 }
 
 local REFUSALS = {

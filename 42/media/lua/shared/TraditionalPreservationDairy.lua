@@ -36,8 +36,10 @@ M.HISTORY_HOURS = 336         -- two weeks of hourly weather for catching up
 -- By a lit fire, TP Core's opt-in place: a fireplace, an antique stove or a campfire, never an electric or gas
 -- stove. The wrapped pot sat by the hearth in winter. Seen by a lit fire, a station notes fireUntil (now plus the
 -- fuel left): while unloaded, the fire counts until then, and after it the place under the fire (under) does.
+-- By a banked Hearth (EMBERS) it is cooler, and the embers last three times as long.
 M.HEARTH = Hearth.PLACE
 M.HEARTH_C = Hearth.FIRE_C
+M.EMBERS = Hearth.EMBERS
 
 -- The Hearth's copper (TP Core) holds one fluid at a time and heats towards MILK_MAX_C while its fire burns.
 M.COPPER_ML = Hearth.COPPER_ML
@@ -150,7 +152,7 @@ end
 M.SENSITIVITY_SCALES = { 0, 0.5, 1, 1.5 }
 M.SENSITIVITY = 1
 
-M.PLACES = { "Open", "Sheltered", "Basement", M.HEARTH }
+M.PLACES = { "Open", "Sheltered", "Basement", M.HEARTH, M.EMBERS }
 
 M.placeTemperature = Hearth.placeTemperature
 M.fireNear = Hearth.fireNear
@@ -209,7 +211,7 @@ end
 -- The place's temperature in a past hour, or nil when the history has no reading for it.
 function M.pastTemperature(history, hour, place)
     local entry = history[hour % M.HISTORY_HOURS + 1]
-    if place == M.HEARTH then return M.HEARTH_C end
+    if Hearth.isFirePlace(place) then return Hearth.fireC(place) end
     if not entry or entry.hour ~= hour then return nil end
     return Weather.placeTemperature({ temperature = entry.temperature, seasonTemperature = entry.season }, place)
 end
@@ -298,7 +300,7 @@ end
 
 -- By a fire until it burns out (fireUntil), then the place under it.
 local function placeAt(state, place, hour)
-    if place == M.HEARTH and state.fireUntil and hour >= state.fireUntil then return state.under or "Sheltered" end
+    if Hearth.isFirePlace(place) and state.fireUntil and hour >= state.fireUntil then return state.under or "Sheltered" end
     return place
 end
 
@@ -310,7 +312,7 @@ function M.catchUp(batch, now, place, history, ledger)
     while t < now do
         local hour = math.floor(t)
         local stop = math.min(hour + 1, now)
-        if place == M.HEARTH and batch.fireUntil and t < batch.fireUntil then stop = math.min(stop, batch.fireUntil) end
+        if Hearth.isFirePlace(place) and batch.fireUntil and t < batch.fireUntil then stop = math.min(stop, batch.fireUntil) end
         local here = placeAt(batch, place, t)
         M.advanceBatch(batch, stop - t, M.pastTemperature(history, hour, here) or M.placeTemperature(ledger, here), t)
         t = stop
@@ -500,7 +502,7 @@ function M.advanceCarry(carry, now, ledger, herePlace, history)
     while t < now do
         local hour = math.floor(t)
         local stop = math.min(hour + 1, now)
-        if place == M.HEARTH and carry.fireUntil and t < carry.fireUntil then stop = math.min(stop, carry.fireUntil) end
+        if Hearth.isFirePlace(place) and carry.fireUntil and t < carry.fireUntil then stop = math.min(stop, carry.fireUntil) end
         local here = placeAt(carry, place, t)
         M.wrappedC(carry, stop, M.pastTemperature(history, hour, here) or M.placeTemperature(ledger, here))
         t = stop
@@ -556,7 +558,7 @@ end)
 
 -- Crock: Cultivating, then Waiting for fresh milk, then Developing, then Ready.
 
--- The ledger keeps totals for the weather's places only, so time by a fire counts by the clock at HEARTH_C.
+-- The ledger keeps totals for the weather's places only, so time by a fire counts by the clock at its heat.
 local function markCrock(crock, ledger)
     crock.marks = Weather.mark({}, ledger, CROCK_KIND)
     crock.marks.hour = ledger.lastHour
@@ -624,12 +626,12 @@ end
 function M.updateCrock(crock, ledger, place)
     local stage = crock.stage
     if stage ~= "Cultivating" and stage ~= "Developing" then return end
-    if place == M.HEARTH then
+    if Hearth.isFirePlace(place) then
         -- The ledger's totals can't be split at the hour the fire went out, so the place under it gets its
         -- share of the gap's weather by time.
         local from, to = crock.marks.hour or ledger.lastHour, ledger.lastHour
         local byFire = math.max(math.min(crock.fireUntil or to, to) - from, 0)
-        local done = byFire * M.cultureRate(M.HEARTH_C)
+        local done = byFire * M.cultureRate(Hearth.fireC(place))
         if to - from > byFire then
             done = done + Weather.catchUp(crock.marks, ledger, CROCK_KIND, crock.under or "Sheltered") * (to - from - byFire) / (to - from)
         end
