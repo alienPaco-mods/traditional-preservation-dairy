@@ -68,6 +68,9 @@
   holds its heat; any other container cools to room in seconds.
 - A Ready incubator also fills Empty Yoghurt Containers straight away ("Fill Empty Yoghurt Containers": one or
   all), a quarter of a jar (250 ml) each, as old as the batch; the jar stays for carrying a litre.
+- The crock loads milk at 35 to 45 C only (hotter kills the grain's culture), from a Hearth within 2 tiles or from
+  any carried milk container ("Load Wheat and Warm Milk" lists them with litres and heat). A refused entry says
+  why: too little, too cool or too hot.
 - The incubator and the crock no longer block their tile: walk past or through them, and click them from any side.
   Their floor shadow is soft-edged.
 - "Pot Info" is now "Incubator Info", and the menus and notes say "incubator" for the station.

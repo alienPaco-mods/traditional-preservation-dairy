@@ -322,24 +322,58 @@ local function milkFor(playerObj, ml)
     end)
 end
 
--- The wheat and warm milk from a Hearth's copper.
+local LOAD_REFUSALS = {
+    TooLittle = "IGUI_TraditionalPreservationDairy_CrockTooLittle",
+    TooCool = "IGUI_TraditionalPreservationDairy_CrockTooCool",
+    TooHot = "IGUI_TraditionalPreservationDairy_CrockTooHot",
+}
+
+local function refuseLoad(entry, ml, celsius)
+    local refusal = M.crockLoadRefusal(ml, celsius)
+    if not refusal then return end
+    entry.notAvailable = true
+    tooltipFor(entry, say(LOAD_REFUSALS[refusal], degrees(celsius)))
+end
+
+-- Wheat and half a litre of milk at 35 to 45 C: one entry for the nearest Hearth within 2 tiles, one per milk
+-- container carried. Each shows its litres and heat, in red with the reason when it can't load.
 local function addLoadMenu(menu, playerObj, station)
-    local label = getText("ContextMenu_TraditionalPreservationDairy_LoadFromHearth")
-    local hearth, copper = hearthFor(station, ISStarterCrock.copperReady)
-    if hearth then label = say("ContextMenu_TraditionalPreservationDairy_MilkItem", label, litresText(copper.ml), degrees(copper.tempC)) end
-    local wheat = findItems(playerObj, function(item) return item:getFullType() == M.WHEAT end)
-    local picked = {}
-    for index = 1, math.min(#wheat, M.CROCK_WHEAT) do picked[index] = wheat[index] end
-    local option = menu:addOption(label, playerObj, onCrockAction, station, "load", nil, picked, hearth)
+    local option = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_LoadCrock"))
     option.iconTexture = getTexture(WHEAT_ICON)
+    local wheat = findItems(playerObj, function(item) return item:getFullType() == M.WHEAT end)
     if #wheat < M.CROCK_WHEAT then
         return disableWith(option, say("IGUI_TraditionalPreservationDairy_NeedWheat", tostring(M.CROCK_WHEAT), tostring(#wheat)))
     end
-    if not hearth then
-        if copper and M.copperWarm(copper) then return disableWith(option, getText("IGUI_TraditionalPreservationDairy_CopperTooLittle")) end
-        return disableWith(option, hearthRefusal(copper, "IGUI_TraditionalPreservationDairy_CrockMilkCold"))
-    end
+    local hearth, copper = hearthFor(station, ISStarterCrock.copperReady)
+    local milks = findItems(playerObj, function(item) return M.milkIn(item:getFluidContainer()) ~= nil end)
+    if not copper and #milks == 0 then return disableWith(option, getText("IGUI_TraditionalPreservationDairy_CrockNoWarmMilk")) end
     tooltipFor(option, getText("IGUI_TraditionalPreservationDairy_LoadHelp"))
+    local picked = {}
+    for index = 1, M.CROCK_WHEAT do picked[index] = wheat[index] end
+    local sub = menu:getNew(menu)
+    menu:addSubMenu(option, sub)
+    if copper then
+        local label = getText("ContextMenu_TraditionalPreservationDairy_LoadFromHearth")
+        if M.MILKS[copper.fluid] then label = say("ContextMenu_TraditionalPreservationDairy_MilkItem", label, litresText(copper.ml), degrees(copper.tempC)) end
+        local entry = sub:addOption(label, playerObj, onCrockAction, station, "load", nil, picked, hearth)
+        entry.iconTexture = getTexture(MILK_ICON)
+        if not hearth then
+            if M.MILKS[copper.fluid] then
+                refuseLoad(entry, copper.ml or 0, copper.tempC or 0)
+            else
+                entry.notAvailable = true
+                tooltipFor(entry, getText("IGUI_TraditionalPreservationDairy_CopperNoMilk"))
+            end
+        end
+    end
+    for _, item in ipairs(milks) do
+        local ml = M.mlIn(item:getFluidContainer())
+        local heat = M.carriedC(item, now(), playerObj)
+        local entry = sub:addOption(say("ContextMenu_TraditionalPreservationDairy_MilkItem", item:getDisplayName(), litresText(ml),
+            degrees(heat)), playerObj, onCrockAction, station, "load", item, picked)
+        entry.iconTexture = item:getTex()
+        refuseLoad(entry, ml, heat)
+    end
 end
 
 -- Fresh milk of any warmth, one entry per container.

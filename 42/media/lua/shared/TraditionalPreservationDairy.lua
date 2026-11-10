@@ -722,6 +722,12 @@ function M.crockMilkRefusal(celsius)
     if celsius > M.CROCK_HOT_C then return "TooHot" end
 end
 
+-- Why ml of milk at celsius, from the copper or a container, can't load the crock, or nil if it can.
+function M.crockLoadRefusal(ml, celsius)
+    if ml < M.CROCK_LOAD_ML - 0.5 then return "TooLittle" end
+    return M.crockMilkRefusal(celsius)
+end
+
 -- Wheat and warm milk go into an empty crock only.
 function M.loadCrock(crock, ledger)
     if M.crockStage(crock) ~= "Empty" then return false end
