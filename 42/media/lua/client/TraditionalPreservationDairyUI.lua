@@ -8,10 +8,11 @@
 require "TimedActions/ISYoghurtIncubator"
 require "TimedActions/ISStarterCrock"
 require "TimedActions/ISFillYoghurtCup"
-require "TimedActions/ISDairyHearth"
+require "TimedActions/ISHearthCopper"
 require "ISUI/ISCollapsableWindow"
 local UI = require "TraditionalPreservationCore/UI"
 local Station = require "TraditionalPreservationCore/Station"
+local Hearth = require "TraditionalPreservationCore/Hearth"
 
 local M = TraditionalPreservationDairy
 local say = UI.say
@@ -143,11 +144,7 @@ local function addItemMenu(menu, option, playerObj, station, items, mode, label)
 end
 
 -- The copper's state, brought up to now when the World runs here.
-local function copperOf(hearth)
-    local World = TraditionalPreservationDairyWorld
-    if World then return World.updateHearth(hearth, now()) end
-    return M.stateOf(hearth:getModData(), M.HEARTH_KEY)
-end
+local copperOf = Hearth.copperOf
 
 -- The first hearth near the station whose copper passes test, else nil and the nearest one's copper.
 local function hearthFor(station, test)
@@ -438,7 +435,7 @@ end
 local function onHearthAction(playerObj, hearth, item, mode)
     if not luautils.walkAdj(playerObj, hearth:getSquare(), true) then return end
     ISInventoryPaneContextMenu.transferIfNeeded(playerObj, item)
-    ISTimedActionQueue.add(ISDairyHearth:new(playerObj, hearth, item, mode))
+    ISTimedActionQueue.add(ISHearthCopper:new(playerObj, hearth, item, mode))
 end
 
 local function copperStatus(copper)
@@ -468,7 +465,7 @@ local function addPourInMenu(menu, playerObj, hearth, copper)
         local refusal
         if not fluid then
             refusal = getText("IGUI_TraditionalPreservationDairy_NotOneFluid")
-        elseif select(2, M.copperRoom(copper, fluid, 1)) == "Mixed" then
+        elseif select(2, Hearth.copperRoom(copper, fluid, 1)) == "Mixed" then
             refusal = say("IGUI_TraditionalPreservationDairy_CopperMixed", M.fluidName(copper.fluid))
         end
         if refusal then
@@ -484,7 +481,7 @@ local function addFillMenu(menu, playerObj, hearth, copper)
     option.iconTexture = getTexture(HEARTH_ICON)
     local items = findItems(playerObj, function(item)
         local container = item:getFluidContainer()
-        return container ~= nil and ISDairyHearth.canFillFrom(container, copper)
+        return container ~= nil and ISHearthCopper.canFillFrom(container, copper)
     end)
     if #items == 0 then return disableWith(option, getText("IGUI_TraditionalPreservationDairy_NoRoomItem")) end
     local sub = menu:getNew(menu)
@@ -527,7 +524,7 @@ local vanillaInfoFlags = ISMoveableSpriteProps.getInfoPanelFlagsPerTile
 
 local function mustStay(object)
     if not object or not M.isHearth(object) then return false end
-    return object:isLit() or (M.stateOf(object:getModData(), M.HEARTH_KEY).ml or 0) > 0
+    return object:isLit() or (Hearth.stateOf(object:getModData()).ml or 0) > 0
 end
 
 function ISMoveableSpriteProps:canPickUpMoveable(character, square, object)
@@ -861,8 +858,11 @@ local function onFillContextMenu(playerNum, context, worldobjects)
         local incubator, crock, hearth = M.isIncubator(object), M.isCrock(object), M.isHearth(object)
         if incubator or crock or hearth then
             -- A station built or placed this session isn't tracked until its area reloads, so its menu starts it.
+            if hearth then
+                if Hearth.World then Hearth.World.track(object) end
+                return addHearthMenu(context, playerObj, object)
+            end
             if TraditionalPreservationDairyWorld then TraditionalPreservationDairyWorld.track(object) end
-            if hearth then return addHearthMenu(context, playerObj, object) end
             if crock then return addCrockMenu(context, playerObj, object) end
             return addIncubatorMenu(context, playerObj, object)
         end

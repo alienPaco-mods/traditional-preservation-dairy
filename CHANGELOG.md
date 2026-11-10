@@ -84,5 +84,10 @@
 - Guide: the scald note is replaced by a "Pour from the Hearth is greyed out" row.
 - Internal: debug `TPD.hearth()`, `TPD.copper(l, c, fluid)`, `TPD.fuel(min)`, `TPD.hot()`, `TPD.tiles()`;
   `TPD.milk(l, c)` with c optional; the crock kit is wheat only. 78 checks.
+- The Hearth is now TP Core's (S2a). Dairy's copper rules, fire finding, `ISDairyHearth`, the Hearth's OnCreate and
+  its tracking in the World are gone; Dairy reads the copper through `TraditionalPreservationCore/Hearth` and keeps
+  only milk's parts: "Pour from the Hearth", "Load from the Hearth", the steamed-milk record (now set by the core's
+  `filled` hook) and the Wrapped Pot's own heat (the `heatOf` hook). Old `tpdHearth` coppers are not carried over:
+  rebuild hearths in test saves.
 - Not done yet: Starter Culture Crock window, final Hearth art (with a glow in the oven mouth), guide, README,
   Workshop text.

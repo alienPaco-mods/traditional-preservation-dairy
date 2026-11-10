@@ -9,23 +9,22 @@
 TraditionalPreservationDairy = TraditionalPreservationDairy or {}
 local M = TraditionalPreservationDairy
 local Weather = require "TraditionalPreservationCore/Weather"
+local Hearth = require "TraditionalPreservationCore/Hearth"
 local Tiles = require "TraditionalPreservationDairy/Tiles"
 
 -- Save keys: never rename these once the mod is out (DEVGUIDE, "Rules that keep saves and the game happy").
 M.MOD_DATA_KEY = "TraditionalPreservationDairy"
 -- Each station keeps its state as one table under one key, so nothing else on the object can clash with it.
 -- Inside the incubator's: ml, tempC, starter, incubating, wrapHour, done, last, readyHour, fluid, place, at,
--- fireUntil, under. Inside the crock's: stage, done, marks, fireUntil, under. Inside the hearth's copper: ml,
--- fluid, tempC, last, fireUntil.
+-- fireUntil, under. Inside the crock's: stage, done, marks, fireUntil, under. The Hearth and its copper are TP
+-- Core's (TraditionalPreservationCore/Hearth).
 M.INCUBATOR_KEY = "tpdIncubator"
 M.CROCK_KEY = "tpdCrock"
-M.HEARTH_KEY = "tpdHearth"
 
 -- Incubator
 M.CAPACITY_ML = 5000
-M.ROOM_C = 20
-M.MILK_MAX_C = 95             -- the copper over a fire; milk never quite boils in it
-M.HEAT_PER_DEGREE = 1 / 133   -- itemHeat 1.0 is room temperature; 1.6 (water turns clean) is about 100 C
+M.ROOM_C = Hearth.ROOM_C
+M.MILK_MAX_C = Hearth.MAX_C   -- the copper over a fire; milk never quite boils in it
 M.SET_C = 45                  -- the wrap goes on when the milk is down to this with a starter in
 M.STARTER_MIN_C = 40          -- below this a starter won't take: the milk must be reheated
 M.LIDDED_TAU = 2.0            -- hours, for 5 L in the lidded clay pot
@@ -34,21 +33,15 @@ M.WRAPPED_TAU = 16.0          -- hours, for 5 L once wrapped in cloth: about 10 
 M.INCUBATE_HOURS = 6          -- hours to set at the best temperature
 M.STEP_HOURS = 1 / 6          -- the weather's own resolution
 M.HISTORY_HOURS = 336         -- two weeks of hourly weather for catching up
--- A lit fire nearby: a fireplace, an antique stove or a campfire, never an electric or gas stove. The wrapped
--- pot sat by the hearth in winter. While a station is away its fire is taken to burn on as it was last seen.
-M.HEARTH = "Hearth"
-M.HEARTH_C = 28
-M.HEARTH_RADIUS = 2
+-- By a lit fire, TP Core's opt-in place: a fireplace, an antique stove or a campfire, never an electric or gas
+-- stove. The wrapped pot sat by the hearth in winter. Seen by a lit fire, a station notes fireUntil (now plus the
+-- fuel left): while unloaded, the fire counts until then, and after it the place under the fire (under) does.
+M.HEARTH = Hearth.PLACE
+M.HEARTH_C = Hearth.FIRE_C
 
--- The Hearth: a low stone oven (vanilla's fireplace: fuel, lighting, its firebox) with a copper set in its top.
--- The copper holds one fluid at a time. It heats towards MILK_MAX_C while the fire burns and cools to the room
--- when it is out. Seen by a lit fire, a station notes fireUntil (now plus the fuel left): while unloaded, the
--- fire counts until then, and after it the place under the fire (under) does.
-M.COPPER_ML = 10000
-M.HOT_C = 85                  -- milk this hot pours from the copper into a pot
-M.COPPER_LIT_TAU = 0.75       -- hours, for 10 L over a lit fire: 20 to 85 C in about an hour and a half
-M.COPPER_OUT_TAU = 2.0        -- hours, for 10 L once the fire is out: the stone holds its heat
-M.COPPER_FLOOR_ML = 1000      -- a splash heats as fast as a litre
+-- The Hearth's copper (TP Core) holds one fluid at a time and heats towards MILK_MAX_C while its fire burns.
+M.COPPER_ML = Hearth.COPPER_ML
+M.HOT_C = Hearth.HOT_C        -- milk this hot pours from the copper into a pot
 
 -- Carried milk: a container filled from the copper keeps a record in its item modData, so the incubator knows
 -- the milk was steamed. Only the Wrapped Pot (a cooking pot in a rug) holds the heat; any other container
@@ -153,114 +146,23 @@ function M.isCrock(object)
     return isStation(object, M.CROCK_SPRITE)
 end
 
--- The hearth: one tile per look of the copper and facing, all of them fireplaces.
-M.HEARTH_LOOKS = Tiles.HEARTH_LOOKS or {}
-M.HEARTH_SPRITES = Tiles.HEARTHS or {}
-
--- The facing (0 S, 1 E) of a hearth tile, whatever its copper shows; nil for any other tile.
-function M.hearthFace(spriteName)
-    local index = M.spriteIndex(spriteName)
-    if not index then return nil end
-    for _, base in pairs(M.HEARTH_LOOKS) do
-        if index >= base and index < base + M.FACE_COUNT then return index - base end
-    end
-    return nil
-end
-
-function M.isHearth(object)
-    local sprite = object and object:getSprite()
-    return sprite ~= nil and instanceof(object, "IsoFireplace") and M.hearthFace(sprite:getName()) ~= nil
-end
-
-function M.hearthSprite(look, face)
-    return M.spriteName(M.HEARTH_LOOKS[look] + face)
-end
-
 -- Off, Forgiving, Normal, Harsh: how much of a temperature's slowdown applies.
 M.SENSITIVITY_SCALES = { 0, 0.5, 1, 1.5 }
 M.SENSITIVITY = 1
 
 M.PLACES = { "Open", "Sheltered", "Basement", M.HEARTH }
 
-function M.placeTemperature(ledger, place)
-    if place == M.HEARTH then return M.HEARTH_C end
-    return Weather.placeTemperature(ledger, place)
-end
+M.placeTemperature = Hearth.placeTemperature
+M.fireNear = Hearth.fireNear
+M.placeOf = Hearth.placeOf
+M.noteFire = Hearth.noteFire
+M.hearthsNear = Hearth.hearthsNear
+M.isHearth = Hearth.isHearth
 
--- Fireplaces, antique ovens, braziers, cooking pits and burn barrels are IsoFireplace; a player's campfire is a
--- plain object named "Campfire" whose lit state the camping system copies into its modData (ENGINE_NOTES).
-local function isLitFire(object)
-    if instanceof(object, "IsoFireplace") then return object:isLit() end
-    return object:getName() == "Campfire" and object:getModData().isLit == true
-end
-
--- Every object within HEARTH_RADIUS tiles on the same floor that passes test, nearest first.
-local function near(square, test)
-    local found, cell = {}, getCell()
-    for dx = -M.HEARTH_RADIUS, M.HEARTH_RADIUS do
-        for dy = -M.HEARTH_RADIUS, M.HEARTH_RADIUS do
-            local there = cell:getGridSquare(square:getX() + dx, square:getY() + dy, square:getZ())
-            local objects = there and there:getObjects()
-            for i = 0, objects and objects:size() - 1 or -1 do
-                local object = objects:get(i)
-                if test(object) then table.insert(found, { object = object, distance = dx * dx + dy * dy }) end
-            end
-        end
-    end
-    table.sort(found, function(a, b) return a.distance < b.distance end)
-    local list = {}
-    for index, entry in ipairs(found) do list[index] = entry.object end
-    return list
-end
-
--- The nearest lit fire within HEARTH_RADIUS tiles on the same floor, or nil.
-function M.fireNear(square)
-    return near(square, isLitFire)[1]
-end
-
--- Hours of fuel the fire has left; nil if it can't be read (it is then taken to burn on).
-function M.fuelHours(fire)
-    if instanceof(fire, "IsoFireplace") then return fire:getFuelAmount() / 60 end
-    local minutes = fire:getModData().fuelAmt
-    return minutes and minutes / 60 or nil
-end
-
--- By a fire, else below ground, under a roof or in the open. The fire, if any, comes second.
-function M.placeOf(object)
-    local square = object and object:getSquare()
-    local fire = square and M.fireNear(square)
-    if fire then return M.HEARTH, fire end
-    return Weather.placeOf(object)
-end
-
--- Notes on a station's state where it stands: by a fire, until when the fuel lasts and what it stands in
--- without the fire. Catch-up reads them for the time the station is away.
-function M.noteFire(state, object, fire, now)
-    if not fire then
-        state.fireUntil, state.under = nil, nil
-        return
-    end
-    local hours = M.fuelHours(fire)
-    state.fireUntil = hours and now + hours or nil
-    state.under = Weather.placeOf(object)
-end
-
--- Our hearths within HEARTH_RADIUS tiles of a station, nearest first.
-function M.hearthsNear(square)
-    return near(square, M.isHearth)
-end
-
--- Temperatures: vanilla's item heat, for fluids poured between our stores and the player's containers. Vanilla
+-- Temperatures: vanilla's item heat, for milk poured between our stores and the player's containers. Vanilla
 -- cools a container in the player's hands to room heat within seconds, so only the copper and the pot keep heat.
-
-function M.heatCelsius(itemHeat)
-    return math.min(M.ROOM_C + ((itemHeat or 1) - 1) / M.HEAT_PER_DEGREE, M.MILK_MAX_C)
-end
-
--- The other way, for fluid poured back out: it starts at the heat it had.
-function M.itemHeat(celsius)
-    return 1 + (celsius - M.ROOM_C) * M.HEAT_PER_DEGREE
-end
+M.heatCelsius = Hearth.heatCelsius
+M.itemHeat = Hearth.itemHeat
 
 -- More milk holds its heat longer: the time constant grows with the pot's size, so with the cube root of litres.
 function M.tau(ml, wrapped)
@@ -268,9 +170,7 @@ function M.tau(ml, wrapped)
     return base * (math.max(ml, M.TAU_FLOOR_ML) / M.CAPACITY_ML) ^ (1 / 3)
 end
 
-function M.cool(tempC, placeC, hours, tau)
-    return placeC + (tempC - placeC) * math.exp(-hours / tau)
-end
+M.cool = Hearth.cool
 
 function M.setRate(milkC)
     return Weather.scaled(Weather.curve(SET_CURVE, milkC), M.SENSITIVITY, 0)
@@ -483,68 +383,12 @@ function M.forecast(batch, placeC)
     return nil
 end
 
--- Hearth copper
-
-function M.copperTau(ml, lit)
-    local base = lit and M.COPPER_LIT_TAU or M.COPPER_OUT_TAU
-    return base * (math.max(ml, M.COPPER_FLOOR_ML) / M.COPPER_ML) ^ (1 / 3)
-end
-
--- How much of ml of a fluid fits, or 0 with the reason: one fluid at a time, cow's and sheep's milk apart.
-function M.copperRoom(copper, fluid, ml)
-    if (copper.ml or 0) > 0 and copper.fluid ~= fluid then return 0, "Mixed" end
-    local room = M.COPPER_ML - (copper.ml or 0)
-    if room <= 0 then return 0, "Full" end
-    return math.min(ml, room)
-end
-
--- Pours a fluid in; the temperatures mix by volume. Returns the ml taken (0 with a reason when refused).
-function M.pourIntoCopper(copper, fluid, ml, fluidC, now)
-    local taken, reason = M.copperRoom(copper, fluid, ml)
-    if taken <= 0 then return 0, reason end
-    local had = copper.ml or 0
-    copper.tempC = had > 0 and (copper.tempC * had + fluidC * taken) / (had + taken) or fluidC
-    copper.ml, copper.fluid = had + taken, fluid
-    copper.last = copper.last or now
-    return taken
-end
-
--- Takes up to maxMl out, all of it if left out. Returns the ml, the fluid and its temperature.
-function M.takeFromCopper(copper, maxMl)
-    local ml = math.min(copper.ml or 0, maxMl or copper.ml or 0)
-    if ml <= 0 then return 0 end
-    local fluid, tempC = copper.fluid, copper.tempC
-    copper.ml = copper.ml - ml
-    if copper.ml <= 0 then
-        for _, key in ipairs({ "ml", "fluid", "tempC", "last" }) do copper[key] = nil end
-    end
-    return ml, fluid, tempC
-end
-
--- Brings the copper up to now: heating while the fire burns (to fireUntil), cooling to roomC after.
-function M.advanceCopper(copper, now, roomC)
-    if (copper.ml or 0) <= 0 then return end
-    local t = copper.last or now
-    if copper.fireUntil and copper.fireUntil > t then
-        local stop = math.min(copper.fireUntil, now)
-        copper.tempC = M.cool(copper.tempC, M.MILK_MAX_C, stop - t, M.copperTau(copper.ml, true))
-        t = stop
-    end
-    if now > t then copper.tempC = M.cool(copper.tempC, roomC, now - t, M.copperTau(copper.ml, false)) end
-    copper.last = now
-end
-
--- What the copper shows: Empty, Full or Hot (steaming, whatever the fluid).
-function M.copperLook(copper)
-    if (copper.ml or 0) <= 0 then return "Empty" end
-    return copper.tempC >= M.HOT_C and "Hot" or "Full"
-end
+-- Hearth copper: the rules are TP Core's; these are milk's.
 
 -- Hours until the copper is hot if the fire burns on; 0 if it is already, nil if it holds no milk.
 function M.hoursToHot(copper)
     if not M.MILKS[copper.fluid] then return nil end
-    if copper.tempC >= M.HOT_C then return 0 end
-    return M.copperTau(copper.ml, true) * math.log((M.MILK_MAX_C - copper.tempC) / (M.MILK_MAX_C - M.HOT_C))
+    return Hearth.hoursToHot(copper)
 end
 
 function M.copperHot(copper)
@@ -560,7 +404,7 @@ function M.copperToPot(copper, batch, now)
     if not M.copperHot(copper) then return 0, M.MILKS[copper.fluid] and "NotHot" or "NoMilk" end
     local room, reason = M.milkRoom(batch, copper.ml, copper.fluid)
     if room <= 0 then return 0, reason end
-    local ml, fluid, tempC = M.takeFromCopper(copper, room)
+    local ml, fluid, tempC = Hearth.take(copper, room)
     M.addMilk(batch, ml, tempC, now)
     batch.fluid = batch.fluid or fluid
     return ml
@@ -569,7 +413,7 @@ end
 -- Carried milk
 
 function M.carryTau(ml)
-    return M.WRAPPED_POT_TAU * (math.max(ml, M.COPPER_FLOOR_ML) / M.CAPACITY_ML) ^ (1 / 3)
+    return M.WRAPPED_POT_TAU * (math.max(ml, Hearth.FLOOR_ML) / M.CAPACITY_ML) ^ (1 / 3)
 end
 
 -- Records ml of milk at tempC going into a container that already holds hadMl at hadC. The milk stays steamed
@@ -691,6 +535,23 @@ end
 function M.recordTaken(item, carry, ml)
     item:getModData()[M.CARRY_KEY] = M.carryOut(carry, ml)
 end
+
+-- The copper's hooks: a Wrapped Pot pours in at its own heat; milk drawn steaming is marked so the incubator takes
+-- it. Milk that left an item is already gone from the container, so reading the record shrinks it to match.
+Hearth.hook("heatOf", function(item, now, character)
+    local carry = M.isWrappedPot(item) and M.carryOf(item)
+    return carry and M.advanceCarry(carry, now, M.getLedger(), (M.placeOf(character))) or nil
+end)
+
+Hearth.hook("taken", function(item)
+    M.carryOf(item)
+end)
+
+Hearth.hook("filled", function(item, fill)
+    if not M.MILKS[fill.fluid] then return false end
+    M.recordCarry(item, item:getModData()[M.CARRY_KEY], fill.hadMl, fill.hadC, fill.ml, fill.tempC, fill.now, fill.hot)
+    return true
+end)
 
 
 -- Crock: Cultivating, then Waiting for fresh milk, then Developing, then Ready.

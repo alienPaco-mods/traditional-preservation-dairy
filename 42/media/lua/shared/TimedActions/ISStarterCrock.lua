@@ -7,6 +7,7 @@ require "TraditionalPreservationDairy"
 ISStarterCrock = ISBaseTimedAction:derive("ISStarterCrock")
 
 local M = TraditionalPreservationDairy
+local Hearth = require "TraditionalPreservationCore/Hearth"
 local DURATIONS = { load = 120, feed = 60, collect = 60 }
 
 local function state(self)
@@ -30,12 +31,6 @@ local function copperReady(copper)
 end
 ISStarterCrock.copperReady = copperReady
 
-local function copperOf(hearth)
-    local World = TraditionalPreservationDairyWorld
-    if World then return World.updateHearth(hearth, getGameTime():getWorldAgeHours()) end
-    return M.stateOf(hearth:getModData(), M.HEARTH_KEY)
-end
-
 local function inInventory(self, item)
     return self.character:getInventory():containsRecursive(item)
 end
@@ -56,7 +51,7 @@ function ISStarterCrock:isValid()
         end
         if stage ~= "Empty" then return false end
         if self.item then return inInventory(self, self.item) and itemReady(self) end
-        return self.hearth:getSquare() ~= nil and copperReady(M.stateOf(self.hearth:getModData(), M.HEARTH_KEY))
+        return self.hearth:getSquare() ~= nil and copperReady(Hearth.stateOf(self.hearth:getModData()))
     elseif self.mode == "feed" then
         return stage == "Waiting" and inInventory(self, self.item) and hasMilk(self.item, M.CROCK_FEED_ML)
     end
@@ -76,7 +71,7 @@ function ISStarterCrock:complete()
     local crock = state(self)
     local ledger = M.getLedger()
     if self.mode == "load" then
-        local copper = not self.item and copperOf(self.hearth)
+        local copper = not self.item and Hearth.copperOf(self.hearth)
         local ready = self.item and itemReady(self) or copper and copperReady(copper)
         if ready and M.loadCrock(crock, ledger) then
             for _, seed in ipairs(self.wheat) do
@@ -88,8 +83,8 @@ function ISStarterCrock:complete()
                 self.item:getFluidContainer():removeFluid(M.CROCK_LOAD_ML / 1000)
                 M.recordTaken(self.item, carry, M.CROCK_LOAD_ML)
             else
-                M.takeFromCopper(copper, M.CROCK_LOAD_ML)
-                if TraditionalPreservationDairyWorld then TraditionalPreservationDairyWorld.refresh(self.hearth) end
+                Hearth.take(copper, M.CROCK_LOAD_ML)
+                if Hearth.World then Hearth.World.refresh(self.hearth) end
             end
         end
     elseif self.mode == "feed" then

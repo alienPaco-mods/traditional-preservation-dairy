@@ -3,6 +3,7 @@
 if not isDebugEnabled() then return end
 
 local M = TraditionalPreservationDairy
+local Hearth = require "TraditionalPreservationCore/Hearth"
 TPD = {}
 
 local function say(text) print("[TPD] " .. text) end
@@ -191,15 +192,11 @@ end
 local function nearestHearth()
     local hearth = M.hearthsNear(getPlayer():getSquare())[1]
     if not hearth then say("No Hearth within 2 tiles.") end
-    if hearth and TraditionalPreservationDairyWorld then TraditionalPreservationDairyWorld.track(hearth) end
+    if hearth and Hearth.World then Hearth.World.track(hearth) end
     return hearth
 end
 
-local function hearthCopper(hearth)
-    local World = TraditionalPreservationDairyWorld
-    if World then return World.updateHearth(hearth, getGameTime():getWorldAgeHours()) end
-    return M.stateOf(hearth:getModData(), M.HEARTH_KEY)
-end
+local hearthCopper = Hearth.copperOf
 
 function TPD.hearth()
     local hearth = nearestHearth()
@@ -208,7 +205,7 @@ function TPD.hearth()
     local hotIn = M.hoursToHot(copper)
     say(string.format("%d,%d,%d %s, fuel %d min, sprite %s; copper %.1f L %s at %.1f C (%s), steaming %s, fire until %s",
         hearth:getX(), hearth:getY(), hearth:getZ(), hearth:isLit() and "lit" or "out", hearth:getFuelAmount(),
-        hearth:getSprite():getName(), (copper.ml or 0) / 1000, tostring(copper.fluid), copper.tempC or 0, M.copperLook(copper),
+        hearth:getSprite():getName(), (copper.ml or 0) / 1000, tostring(copper.fluid), copper.tempC or 0, Hearth.look(copper),
         hotIn and string.format("in %.1f h", hotIn) or "never", copper.fireUntil and string.format("%.2f", copper.fireUntil) or "-"))
 end
 
@@ -216,10 +213,10 @@ function TPD.copper(litres, celsius, fluid)
     local hearth = nearestHearth()
     if not hearth then return end
     local copper = hearthCopper(hearth)
-    M.takeFromCopper(copper)
+    Hearth.take(copper)
     litres = litres or 10
-    if litres > 0 then M.pourIntoCopper(copper, fluid or "CowMilk", math.floor(litres * 1000), celsius or 20, getGameTime():getWorldAgeHours()) end
-    TraditionalPreservationDairyWorld.refresh(hearth)
+    if litres > 0 then Hearth.pourInto(copper, fluid or "CowMilk", math.floor(litres * 1000), celsius or 20, getGameTime():getWorldAgeHours()) end
+    Hearth.World.refresh(hearth)
     TPD.hearth()
 end
 
@@ -236,7 +233,7 @@ function TPD.hot()
     local copper = hearthCopper(hearth)
     if (copper.ml or 0) <= 0 then return say("The copper is empty: TPD.copper() first.") end
     copper.tempC = 90
-    TraditionalPreservationDairyWorld.refresh(hearth)
+    Hearth.World.refresh(hearth)
     TPD.hearth()
 end
 

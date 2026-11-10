@@ -9,6 +9,7 @@ require "TraditionalPreservationDairyYoghurt"
 ISYoghurtIncubator = ISBaseTimedAction:derive("ISYoghurtIncubator")
 
 local M = TraditionalPreservationDairy
+local Hearth = require "TraditionalPreservationCore/Hearth"
 local BASE_DURATION = 40
 local DURATION_PER_LITRE = 12
 
@@ -22,16 +23,10 @@ local function state(self)
     return M.stateOf(self.station:getModData().movableData or {}, M.INCUBATOR_KEY)
 end
 
-local function copperOf(hearth)
-    local World = TraditionalPreservationDairyWorld
-    if World then return World.updateHearth(hearth, getGameTime():getWorldAgeHours()) end
-    return M.stateOf(hearth:getModData(), M.HEARTH_KEY)
-end
-
 local function canDo(self)
     local batch = M.stateOf(self.station:getModData().movableData or {}, M.INCUBATOR_KEY)
     if self.mode == "hearth" then
-        return M.copperHot(M.stateOf(self.hearth:getModData(), M.HEARTH_KEY)) and M.milkRoom(batch, 1) > 0
+        return M.copperHot(Hearth.stateOf(self.hearth:getModData())) and M.milkRoom(batch, 1) > 0
     elseif self.mode == "carried" then
         local container = self.item:getFluidContainer()
         local fluid = M.milkIn(container)
@@ -84,8 +79,8 @@ function ISYoghurtIncubator:complete()
     local now = getGameTime():getWorldAgeHours()
     local container = self.item and self.item:getFluidContainer()
     if self.mode == "hearth" then
-        M.copperToPot(copperOf(self.hearth), batch, now)
-        if TraditionalPreservationDairyWorld then TraditionalPreservationDairyWorld.refresh(self.hearth) end
+        M.copperToPot(Hearth.copperOf(self.hearth), batch, now)
+        if Hearth.World then Hearth.World.refresh(self.hearth) end
     elseif self.mode == "carried" then
         local carry = M.carryOf(self.item)
         local fluid = M.milkIn(container)
@@ -148,7 +143,7 @@ function ISYoghurtIncubator:getDuration()
     local container = self.item and self.item:getFluidContainer()
     local litres = 0
     if self.mode == "hearth" then
-        local copper = M.stateOf(self.hearth:getModData(), M.HEARTH_KEY)
+        local copper = Hearth.stateOf(self.hearth:getModData())
         local batch = M.stateOf(self.station:getModData().movableData or {}, M.INCUBATOR_KEY)
         litres = math.min(copper.ml or 0, M.milkRoom(batch, copper.ml or 0)) / 1000
     end
