@@ -1,10 +1,13 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- Any milk bakes, fresh or soured (D9, step 2a): vanilla Make Cake Batter, Prepare Muffins and Make Bowl of Cereal
+  take cow's, sheep's or animal milk, fresh or soured (vanilla: cow's only, cereal sheep's too). Churning butter,
+  mildew cure and the incubator still want fresh milk; rotten milk goes in nothing. Built on TP Core's `Recipes.addFluids`.
 - Milk goes off (D9, step 1). Raw cow's, sheep's and animal milk turns Soured ("Cow's Milk (Soured)") after about a
   day and a half in a 20 C room (3 days in a basement, 8 in a powered fridge, a day at 30 C, never while frozen), then
   Rotten as long again after (mild food poisoning). Vanilla's milks now read "(Fresh)". Soured milk keeps its milk's
-  food, a little unhappiness; vanilla churning, baking and the incubator refuse it. Milk steamed in the Hearth's
+  food, a little unhappiness; vanilla churning and the incubator refuse it (baking takes it: below). Milk steamed in the Hearth's
   copper never sours and spoils at the same age. Sealed store milk keeps until it is poured out, then counts as
   steamed. Mixing takes the older age. Sandbox: Milk goes off (on) and Milk spoiling speed (1). Built on TP Core's
   `FluidAgeing`.

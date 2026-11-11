@@ -12,6 +12,7 @@ local Weather = require "TraditionalPreservationCore/Weather"
 local Hearth = require "TraditionalPreservationCore/Hearth"
 local Station = require "TraditionalPreservationCore/Station"
 local FluidAgeing = require "TraditionalPreservationCore/FluidAgeing"
+local Recipes = require "TraditionalPreservationCore/Recipes"
 local Tiles = require "TraditionalPreservationDairy/Tiles"
 
 -- Save keys: never rename these once the mod is out (DEVGUIDE, "Rules that keep saves and the game happy").
@@ -794,3 +795,28 @@ function M.applySandbox()
 end
 
 Events.OnInitGlobalModData.Add(M.applySandbox)
+
+-- Baking
+
+-- Any milk bakes, and soured milk bakes as fresh does (clabbered milk was the old baker's buttermilk), so vanilla's
+-- cake batter, muffins and cereal take all three milks (vanilla: cow's only, cereal sheep's too), fresh or soured.
+-- Butter and mildew cure want fresh milk and keep their lines.
+M.SOUR_BAKING = { "Base.MakeCakeBatter", "Base.PrepareMuffins", "Base.MakeBowlOfCereal" }
+
+-- What a line naming any milk should also take: every milk and its soured twin.
+function M.bakingMilks()
+    local all, extra = {}, {}
+    for milk in pairs(M.MILKS) do all[#all + 1] = milk end
+    table.sort(all)
+    for i = 1, #all do all[#all + 1] = M.SOUR_MILKS[all[i]] end
+    for milk in pairs(M.MILKS) do extra[milk] = all end
+    return extra
+end
+
+function M.applyBaking()
+    local extra = M.bakingMilks()
+    for _, recipe in ipairs(M.SOUR_BAKING) do Recipes.addFluids(recipe, extra, "TPD") end
+end
+
+-- Before the game builds each recipe's fluid filter (Recipes).
+Events.OnInitWorld.Add(M.applyBaking)

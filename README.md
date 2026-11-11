@@ -207,6 +207,9 @@ Volumes, temperatures, cooling times, the setting and culture curves, the crock'
 - Milk goes off (TP Core's `FluidAgeing`): raw milk turns to its Soured twin at 36 hours' worth of 20 C and to its Rotten one at
   72; steamed milk skips souring. The curve (`MILK_CURVE`) and the hours are at the top of the main Lua file. Its age
   lives in the container's ModData (`tpFluidAge`, TP Core's key) and on Dairy's weather ledger (`milkOpen` and so on).
+- Any milk bakes, fresh or soured: vanilla Make Cake Batter, Prepare Muffins and Make Bowl of Cereal take all three
+  milks and their soured twins (`SOUR_BAKING`, `bakingMilks`; TP Core's `Recipes.addFluids` widens their fluid line
+  at `OnInitWorld`). Vanilla took cow's only (cereal sheep's too). Butter and mildew cure stay fresh only.
 
 ## Engineering notes
 
