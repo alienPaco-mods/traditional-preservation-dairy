@@ -7,7 +7,8 @@ local H = dofile((os.getenv("TPCORE") or "../TraditionalPreservationCore") .. "/
 H.useModPaths()
 H.installClock(0)
 H.installModData()
-Events = { OnInitGlobalModData = { Add = function() end }, OnInitWorld = { Add = function() end } }
+Events = { OnInitGlobalModData = { Add = function() end }, OnInitWorld = { Add = function() end },
+    OnTick = { Add = function() end } }
 dofile("42/media/lua/shared/TraditionalPreservationDairy.lua")
 local M = TraditionalPreservationDairy
 

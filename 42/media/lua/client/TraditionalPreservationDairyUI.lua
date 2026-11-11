@@ -50,6 +50,14 @@ end
 local litresText, degrees, hoursText = UI.litres, UI.degrees, UI.hoursText
 local tooltipFor, disableWith, findItems = UI.tooltip, UI.disable, UI.findItems
 
+-- A wrapped pot, jar or bucket by its own name in every menu ("Wrapped Cooking Pot"): vanilla's display name doesn't
+-- see the wrap, only the inventory's fluid name does. The Wrapped Yoghurt Pot is named so already.
+UI.nameHook(function(item)
+    if item:getFullType() ~= M.WRAPPED_POT and M.isWrapped(item) then
+        return say("IGUI_TraditionalPreservationDairy_WrappedName", item:getDisplayName())
+    end
+end)
+
 -- Glass and clay jars a pot of ml fills.
 local function glassJars(ml) return math.ceil(ml / M.JAR_ML["Base.EmptyJar"]) end
 local function clayJars(ml) return math.ceil(ml / M.JAR_ML["Base.ClayJar"]) end
@@ -178,7 +186,7 @@ local function addCarriedPourMenu(menu, playerObj, station, state)
         local container = item:getFluidContainer()
         local ml = M.mlIn(container)
         local heat = M.carriedC(item, now(), playerObj)
-        local entry = sub:addOption(say("ContextMenu_TraditionalPreservationDairy_MilkItem", item:getDisplayName(), litresText(ml),
+        local entry = sub:addOption(say("ContextMenu_TraditionalPreservationDairy_MilkItem", UI.itemName(item), litresText(ml),
             degrees(heat)), playerObj, onAction, station, { item }, "carried")
         entry.itemForTexture = item
         local _, parts = M.milkIn(container)
@@ -205,7 +213,7 @@ local function addStarterMenu(menu, playerObj, station, state)
     for _, item in ipairs(starters) do
         if not seen[item:getFullType()] then
             seen[item:getFullType()] = true
-            local entry = sub:addOption(item:getDisplayName(), playerObj, onAction, station, { item }, "starter")
+            local entry = sub:addOption(UI.itemName(item), playerObj, onAction, station, { item }, "starter")
             entry.itemForTexture = item
             if item:getFullType() == M.YOGHURT_JAR then tooltipFor(entry, getText("IGUI_TraditionalPreservationDairy_JarStarter")) end
         end
@@ -218,7 +226,7 @@ local function addPourOutMenu(menu, playerObj, station, state)
     showFirst(option, empties, BUCKET_ICON)
     if #empties == 0 then return disableWith(option, getText("IGUI_TraditionalPreservationDairy_NoContainer")) end
     addItemMenu(menu, option, playerObj, station, empties, "pourOut", function(item)
-        return say("ContextMenu_TraditionalPreservationDairy_Holds", item:getDisplayName(), litresText(item:getFluidContainer():getCapacity() * 1000))
+        return say("ContextMenu_TraditionalPreservationDairy_Holds", UI.itemName(item), litresText(item:getFluidContainer():getCapacity() * 1000))
     end)
 end
 
@@ -365,7 +373,7 @@ local function addLoadMenu(menu, playerObj, station)
     for _, item in ipairs(milks) do
         local ml = M.mlIn(item:getFluidContainer())
         local heat = M.carriedC(item, now(), playerObj)
-        local entry = sub:addOption(say("ContextMenu_TraditionalPreservationDairy_MilkItem", item:getDisplayName(), litresText(ml),
+        local entry = sub:addOption(say("ContextMenu_TraditionalPreservationDairy_MilkItem", UI.itemName(item), litresText(ml),
             degrees(heat)), playerObj, onCrockAction, station, "load", item, picked)
         entry.itemForTexture = item
         refuseLoad(entry, ml, heat)
@@ -389,7 +397,7 @@ local function addClabberMenu(menu, playerObj, station)
     menu:addSubMenu(option, sub)
     for _, item in ipairs(milks) do
         local container = item:getFluidContainer()
-        local entry = sub:addOption(say("ContextMenu_TraditionalPreservationDairy_FluidItem", item:getDisplayName(),
+        local entry = sub:addOption(say("ContextMenu_TraditionalPreservationDairy_FluidItem", UI.itemName(item),
             litresText(container:getAmount() * 1000)), playerObj, onCrockAction, station, "clabber", item)
         entry.itemForTexture = item
         local refusal = M.clabberRefusal(container)
@@ -409,7 +417,7 @@ local function addFeedMenu(menu, playerObj, station)
     local sub = menu:getNew(menu)
     menu:addSubMenu(option, sub)
     for _, item in ipairs(milks) do
-        local entry = sub:addOption(say("ContextMenu_TraditionalPreservationDairy_FluidItem", item:getDisplayName(),
+        local entry = sub:addOption(say("ContextMenu_TraditionalPreservationDairy_FluidItem", UI.itemName(item),
             litresText(item:getFluidContainer():getAmount() * 1000)), playerObj, onCrockAction, station, "feed", item)
         entry.itemForTexture = item
     end

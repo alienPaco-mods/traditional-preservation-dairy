@@ -1,6 +1,17 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- Wrap any milk carrier (user 2026-11-11): Wrap / Unwrap a Pot, Jar or Bucket (crafting menu, Cooking, empty only;
+  Sheet + Twine, given back on unwrap) for Base.Pot, PotForged, EmptyJar, JarCrafted, ClayJar, Bucket, BucketEmpty,
+  BucketCarved. The item stays itself with its capacity; the mark is its fluid container's name (TPDWrappedPot / Jar /
+  Bucket, saved by the game and shown in its name; vanilla caches the shown name and Lua can't clear it, so a tick later
+  the item is swapped for a new one of its type with the same fluid, ModData, heat, condition and favourite; on the
+  floor it shows after a load. The first two builds called a protected `reset()` and package-private
+  `add/removeComponent`: errors in game; every Dairy and Hearth menu names a wrapped one "Wrapped <its name>" through
+  `UI.nameHook`, as vanilla's display name doesn't see the wrap) and `tpdWrapped` (old name and rain factor) in ModData. No rain while wrapped. It carries milk hot as the
+  Wrapped Yoghurt Pot does (`M.isWrapped`). A wrap in a container at 1.3 or hotter within 8 tiles of a player burns
+  each game minute: Sheet and Twine gone; on a stove, oven or barbecue a fire starts (as burnt food), in a fireplace,
+  Hearth or campfire not; a Wrapped Yoghurt Pot becomes a bare Yoghurt Pot and its milk is lost. Test `test_wrap.lua`.
 - A Jar of Yoghurt as a starter (user 2026-11-11): Add Starter takes one portion (250 ml, a Yoghurt cup's worth) from
   a jar with a whole portion left and not gone off; the rest stays in the jar, and the empty jar comes back with the
   last portion. Its hover says so. `M.isStarter`, `M.takeJarPortion`.

@@ -100,5 +100,6 @@
   "IGUI_TraditionalPreservationDairy_InfoCultureSpeed": "Speed",
   "IGUI_TraditionalPreservationDairy_InfoStopped": "stopped here",
   "IGUI_TraditionalPreservationDairy_InfoStarters": "Starters",
-  "IGUI_TraditionalPreservationDairy_ScaldedHelp": "Scalded milk (85 C or more: a Hearth's copper, a stove or a fire) in any container. It goes in at the heat it has now: an open pot cools in minutes, a Wrapped Yoghurt Pot in hours."
+  "IGUI_TraditionalPreservationDairy_ScaldedHelp": "Scalded milk (85 C or more: a Hearth's copper, a stove or a fire) in any container. It goes in at the heat it has now: an open pot cools in minutes, a Wrapped Yoghurt Pot in hours.",
+  "IGUI_TraditionalPreservationDairy_WrappedName": "Wrapped %1"
 }

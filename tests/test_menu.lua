@@ -154,6 +154,11 @@ carried = named(open(incubator(5))[1], "ContextMenu_TraditionalPreservationDairy
 check("with no starter cold milk still goes in", carried.subOption.options[2].notAvailable == nil)
 check("the option and each row show the real container, drawn with its milk", carried.itemForTexture == ui.carried[1]
     and carried.iconTexture == nil and carried.subOption.options[2].itemForTexture == ui.carried[2])
+ui.carried[2]:getModData()[M.WRAP_KEY] = { name = "Bucket", rain = 0.5 }
+carried = named(open(incubator(5))[1], "ContextMenu_TraditionalPreservationDairy_PourScalded")
+check("a wrapped bucket is named so in the menu", carried.subOption.options[2].name:find(
+    getText("IGUI_TraditionalPreservationDairy_WrappedName", "Cold Bucket"), 1, true) == 1
+    and carried.subOption.options[1].name:find("Hot Bucket", 1, true) == 1)
 ui.carried = {}
 
 -- A full pot, and one that has set

@@ -79,4 +79,44 @@ module TraditionalPreservationDairy
             item 1 Base.Twine,
         }
     }
+
+    /* Any pot, jar or bucket, empty, wrapped the same way: it keeps its capacity and carries milk hot (M.wrap marks
+       the item itself; M.WRAPPABLE lists the same items). Its wrap burns in a hot stove or fire. */
+    craftRecipe WrapMilkCarrier
+    {
+        timedAction = Making,
+        time = 60,
+        Tags = InHandCraft;Cooking,
+        category = Cooking,
+        OnTest = TraditionalPreservationDairy.canWrap,
+        OnCreate = TraditionalPreservationDairy.onWrapped,
+        inputs
+        {
+            item 1 [Base.Pot;Base.PotForged;Base.EmptyJar;Base.JarCrafted;Base.ClayJar;Base.Bucket;Base.BucketEmpty;Base.BucketCarved] mode:keep flags[IsEmpty],
+            item 1 [Base.Sheet],
+            item 1 [Base.Twine],
+        }
+        outputs
+        {
+        }
+    }
+
+    craftRecipe UnwrapMilkCarrier
+    {
+        timedAction = Making,
+        time = 30,
+        Tags = InHandCraft;Cooking,
+        category = Cooking,
+        OnTest = TraditionalPreservationDairy.canUnwrap,
+        OnCreate = TraditionalPreservationDairy.onUnwrapped,
+        inputs
+        {
+            item 1 [Base.Pot;Base.PotForged;Base.EmptyJar;Base.JarCrafted;Base.ClayJar;Base.Bucket;Base.BucketEmpty;Base.BucketCarved] mode:keep flags[IsEmpty],
+        }
+        outputs
+        {
+            item 1 Base.Sheet,
+            item 1 Base.Twine,
+        }
+    }
 }

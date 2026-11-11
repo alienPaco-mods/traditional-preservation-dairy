@@ -92,7 +92,7 @@ This mod lets you **set your own yoghurt the old way**: milk brought to the stea
 
 That's it. A full copper is four pots, 20 L of yoghurt from one firing.
 
-**No Hearth yet?** Any pot of milk on a lit stove, fireplace, barbecue or campfire scalds at 85 C, as vanilla boils tainted water clean. Take it off and pour it straight into the incubator (**Pour Scalded Milk**) while it's hot: an open pot loses its heat in minutes. Pour it into a **Wrapped Yoghurt Pot** first if the walk is long. The Hearth's gifts are the size of its copper, pouring straight into a pot or crock within 2 tiles, and a banked fire's steady low heat.
+**No Hearth yet?** Any pot of milk on a lit stove, fireplace, barbecue or campfire scalds at 85 C, as vanilla boils tainted water clean. Take it off and pour it straight into the incubator (**Pour Scalded Milk**) while it's hot: an open pot loses its heat in minutes. Pour it into a **Wrapped Yoghurt Pot**, or any pot, jar or bucket you've wrapped in a sheet, first if the walk is long. The Hearth's gifts are the size of its copper, pouring straight into a pot or crock within 2 tiles, and a banked fire's steady low heat.
 
 ---
 
@@ -276,6 +276,7 @@ No yoghurt left to start from? Grow one.
 |---|---|---|---|
 | **Yoghurt Pot** | pottery wheel, 6 Clay + a little water, then the kiln | Pottery 2 | Pottery 20 |
 | **Wrapped Yoghurt Pot** | crafting menu (Cooking): Yoghurt Pot + Sheet + Twine | | |
+| **Wrapped Pot, Jar or Bucket** | crafting menu (Cooking), **Wrap a Pot, Jar or Bucket**: an empty cooking pot, forged pot, jar, clay jar or bucket + Sheet + Twine. It keeps its own capacity | | |
 
 | Work | XP |
 |---|---|
@@ -344,6 +345,8 @@ Hours for 5 L poured at 85 C at 18:00 with the starter in, **cooling + setting**
 - 🔥 **The fire counts only while it would have burned.** Away from a lit Hearth, the pot is "by a fire" until the fuel would have run out, then the room takes over.
 - 🥛 **Mixed herds welcome.** Cow's and sheep's milk mix in the copper, a container and the pot, and the blend keeps its shares.
 - 🧺 **The Wrapped Yoghurt Pot carries 5 L of hot milk** and loses only about 15 C an hour. Unwrap it when empty for the pot, sheet and twine back.
+- 🪣 **Any pot, jar or bucket can be wrapped** the same way and keeps its own size: a wrapped bucket carries 10 L and holds its heat longest, a wrapped jar only a litre and cools sooner.
+- 🔥 **Never put a wrapped pot on the heat.** The sheet and twine catch within a minute. On a stove or in an oven the kitchen goes up with them; in a fireplace or the Hearth they just burn away.
 - 🫙 **Your jar comes back** with the last spoonful.
 - 🥄 **Part portions are kept.** Eat Quarter on a jar, and the next cup you fill has exactly what was left.
 - 🍶 **It's real vanilla Yoghurt** in the cups, so it works in oatmeal and every recipe that wants yoghurt.

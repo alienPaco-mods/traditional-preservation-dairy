@@ -58,6 +58,10 @@ Copy this folder to `~/Zomboid/mods/TraditionalPreservationDairy`, as a real cop
 
 The **Yoghurt Pot** is thrown on the pottery wheel (Pottery 2, 6 Clay, a little water) and fired in a kiln. Wrapped in a Sheet and tied with Twine (crafting menu, Cooking) it becomes a **Wrapped Yoghurt Pot**, which carries 5 L of hot milk and loses only about 15 C an hour. Unwrap it when empty to get the pot, sheet and twine back.
 
+Any **cooking pot, forged pot, jar, clay jar or bucket** wraps the same way (**Wrap a Pot, Jar or Bucket**, crafting menu, Cooking, empty only) and keeps its own capacity: it shows as a "Wrapped Pot", "Wrapped Jar" or "Wrapped Bucket", catches no rain, and keeps milk hot as the Wrapped Yoghurt Pot does, a small jar for less long (about 2.3 hours' time constant for 1 L against 4 for 5 L) and a full bucket longer (about 5). **Unwrap a Pot, Jar or Bucket** gives the sheet and twine back. The mark is the item's own fluid-container name (saved by the game) plus `tpdWrapped` in its ModData.
+
+**Keep the cloth off the heat.** A wrapped pot, jar or bucket (or a Wrapped Yoghurt Pot) in a hot stove, oven, barbecue, fireplace, Hearth firebox or campfire burns its wrap within a game minute: the sheet and twine are gone. On a stove, oven or barbecue that sets the kitchen alight, as burnt food does; in an open fire it burns away in the flames. A Wrapped Yoghurt Pot burns down to a bare Yoghurt Pot, which holds no fluid, so its milk is lost.
+
 You can walk through the incubator and the crock. Both work anywhere, but pouring straight from the copper needs the Hearth within 2 tiles.
 
 ## How it works

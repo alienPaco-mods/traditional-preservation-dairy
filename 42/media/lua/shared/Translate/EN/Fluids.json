@@ -11,5 +11,8 @@
   "Fluid_Name_AnimalMilk": "Animal's Milk (Fresh)",
   "Fluid_Name_ScaldedAnimalMilk": "Animal's Milk (Scalded)",
   "Fluid_Name_SourAnimalMilk": "Animal's Milk (Soured)",
-  "Fluid_Name_RottenAnimalMilk": "Animal's Milk (Rotten)"
+  "Fluid_Name_RottenAnimalMilk": "Animal's Milk (Rotten)",
+  "Fluid_Container_TPDWrappedPot": "Wrapped Pot",
+  "Fluid_Container_TPDWrappedJar": "Wrapped Jar",
+  "Fluid_Container_TPDWrappedBucket": "Wrapped Bucket"
 }

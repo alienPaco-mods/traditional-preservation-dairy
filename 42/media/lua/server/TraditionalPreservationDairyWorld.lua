@@ -115,10 +115,10 @@ function World.stations(crock)
     return list
 end
 
--- Warm milk a player carries (a Wrapped Yoghurt Pot, or an open pot off the heat) cools where the player is; set
--- down, it keeps that place (M.carryTick).
+-- Warm milk a player carries (in a wrapped pot, jar or bucket, or an open pot off the heat) cools where the player is;
+-- set down, it keeps that place (M.carryTick).
 local function carried(item)
-    return item:getModData()[M.CARRY_KEY] ~= nil or item:getFullType() == M.WRAPPED_POT
+    return item:getModData()[M.CARRY_KEY] ~= nil or M.isWrapped(item)
 end
 
 local function tickWrappedPots(player, now, ledger)
@@ -140,9 +140,35 @@ local function tickWrappedPots(player, now, ledger)
     end
 end
 
+-- A wrap in a hot stove, oven, barbecue or fire burns: the Sheet and Twine are gone (M.burnWrap). On a stove, oven or
+-- barbecue it sets the kitchen alight, as vanilla's burnt food does; in an open fire (a fireplace, the Hearth's
+-- firebox, a campfire) it burns away in the fire, as burnt food there never spreads (ENGINE_NOTES).
+World.BURN_RADIUS = 8
+
+local function isOpenFire(object)
+    return instanceof(object, "IsoFireplace") or object:getName() == "Campfire"
+end
+
+local function burnWraps(square)
+    Station.hotContainers(square, World.BURN_RADIUS, M.BURN_HEAT, function(container, object)
+        local wrapped = container:getAllEvalRecurse(M.isWrapped)
+        for i = 0, wrapped:size() - 1 do
+            local item = wrapped:get(i)
+            log("TPD", "a wrap burnt on %s at %d,%d,%d", item:getFullType(), object:getX(), object:getY(), object:getZ())
+            M.burnWrap(item)
+            if not isOpenFire(object) and object:getSquare() then
+                IsoFireManager.StartFire(getCell(), object:getSquare(), true, 500000)
+            end
+        end
+    end)
+end
+
 Events.EveryOneMinute.Add(function()
     local now, ledger, list = getGameTime():getWorldAgeHours(), M.getLedger(), Station.players()
-    for i = 0, list:size() - 1 do tickWrappedPots(list:get(i), now, ledger) end
+    for i = 0, list:size() - 1 do
+        tickWrappedPots(list:get(i), now, ledger)
+        burnWraps(list:get(i):getSquare())
+    end
 end)
 
 Weather.record(function(now, climate)
