@@ -104,7 +104,7 @@ The Hearth is TP Core's station: a vanilla fireplace (Add Fuel, Light, a firebox
 - **Heat mixes by volume.** Cold milk poured onto hot cools the lot.
 - **The fire heats the copper towards 95 C.** 10 L goes from 20 C to 85 C in about 1.5 hours, a full 20 L in about 2; less milk heats faster.
 - **With the fire out it cools slowly**, over a few hours, as the stone holds heat.
-- **Bank the Fire** burns a third of the wood, holds the copper at about 50 C and cooks a third as fast in the firebox. **Stoke the Fire** brings it back up.
+- **Bank the Fire** burns a third of the wood, holds the copper at about 50 C, warms only the 2 tiles round it and cooks a third as fast in the firebox. **Stoke the Fire** brings it back up.
 - **At 85 C the copper steams**, in its sprite and in Hearth Info, and its milk reads **Scalded**.
 
 | Copper | From 20 C to 85 C |
