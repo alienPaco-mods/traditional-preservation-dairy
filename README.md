@@ -21,7 +21,8 @@ Copy this folder to `~/Zomboid/mods/TraditionalPreservationDairy`, as a real cop
 3. **Throw a Yoghurt Pot** on the wheel and fire it, then build it into a Yoghurt Incubator within 2 tiles of the Hearth.
 4. **Keep one yoghurt back.** Each batch takes one vanilla Yoghurt or one Active Yoghurt Starter. With none left, build a Starter Culture Crock.
 5. **Save your Empty Yoghurt Containers and jars.** Each cup of yoghurt needs a container; a glass jar holds a litre, a clay jar 2.5 L, and you eat from the jar itself.
-6. **Set it by the fire in winter.** A lit Hearth within 2 tiles keeps the pot at 28 C: it sets in about 6 hours in any month.
+6. **Set it by the fire in winter.** A lit fire within 2 tiles (the Hearth, a fireplace, an antique stove or a campfire) keeps the pot at 28 C: it sets in about 6 hours in any month.
+7. **Mind the milk.** Raw milk sours in about a day and a half in a warm room; scald it or keep it cold (see Milk goes off).
 
 ## The loop at a glance
 
@@ -51,9 +52,9 @@ Copy this folder to `~/Zomboid/mods/TraditionalPreservationDairy`, as a real cop
 
 | Station | Where | Skill | Materials |
 |---|---|---|---|
-| **Hearth** (TP Core) | Build menu | Masonry 2 | 12 Clay Bricks, 4 Clay, 1 Copper Sheet, a trowel (kept) |
-| **Yoghurt Incubator** | Build menu, floor | Tailoring 1 | 1 Yoghurt Pot, 2 Ripped Sheets, 1 Twine |
-| **Starter Culture Crock** | Build menu, floor, counter or table | Cooking 4 | 1 Clay Jar, Glazed Clay Jar or Clay Pot, 1 Ripped Sheet, 1 Twine |
+| **Hearth** (TP Core) | Build menu, Masonry | Masonry 2 | 12 Clay Bricks, 4 Clay, 1 Copper Sheet, a trowel (kept) |
+| **Yoghurt Incubator** | Build menu, Pottery; floor | Tailoring 1 | 1 Yoghurt Pot, 2 Ripped Sheets, 1 Twine |
+| **Starter Culture Crock** | Build menu, Pottery; floor, counter or table | Cooking 4 | 1 Clay Jar, Glazed Clay Jar or Clay Pot, 1 Ripped Sheet, 1 Twine |
 
 The **Yoghurt Pot** is thrown on the pottery wheel (Pottery 2, 6 Clay, a little water) and fired in a kiln. Wrapped in a Sheet and tied with Twine (crafting menu, Cooking) it becomes a **Wrapped Yoghurt Pot**, which carries 5 L of hot milk and loses only about 15 C an hour. Unwrap it when empty to get the pot, sheet and twine back.
 
@@ -63,13 +64,13 @@ You can walk through the incubator and the crock. Both work anywhere, but pourin
 
 ### 1. The Hearth's copper
 
-The Hearth is TP Core's station: a vanilla fireplace (Add Fuel, Light, a firebox that cooks, room heat) with a 20 L copper set in its top. Right-click it for **Pour into the Copper** and **Hearth Info**.
+The Hearth is TP Core's station, documented in full in TP Core's `README.md` and guide (`6_Core_Guide.md`): a vanilla fireplace (Add Fuel, Light, a firebox that cooks, room heat) with a 20 L copper set in its top. Right-click it for **Pour into the Copper**, **Fill from the Copper** (into your own containers), **Bank the Fire** / **Stoke the Fire** and **Hearth Info**.
 
 - The copper holds one fluid at a time. Cow's and sheep's milk count as one: they mix freely, and a blend keeps its shares in the copper, a container and the pot. Any other mix is refused, shown in red with the reason.
 - Poured milk mixes its temperature with what's already in the copper, by volume.
 - While the fire burns, the copper heats towards 95 C: 10 L go from 20 C to 85 C in about 1.5 hours, a full 20 L in about 2, less milk faster. With the fire out it cools towards the room over a few hours, as the stone holds heat.
-- **Bank the Fire** burns a third of the wood and holds the copper at 50 C. **Stoke the Fire** brings it back.
-- At 85 C the copper steams, in its sprite and in Hearth Info ("Yes: steaming"), and its milk reads Scalded.
+- **Bank the Fire** burns a third of the wood, holds the copper at about 50 C and cooks a third as fast in the firebox. **Stoke the Fire** brings it back.
+- At 85 C the copper steams, in its sprite and in Hearth Info ("Steaming: Yes"), and its milk reads Scalded.
 
 ### 2. Filling the incubator
 
@@ -84,9 +85,9 @@ Once the starter is in, milk that would leave the pot under 40 C is refused as t
 
 1. **Cooling** (lid on): the milk cools towards the temperature where the incubator stands, about 85 to 45 C in 2 hours at 20 C. Less than 2.5 L cools as slowly as 2.5 L, so a litre still sets.
 2. **The wrap goes on by itself** at 45 C if a starter is in.
-3. **Setting** (striped cloth on): wrapped, it loses only about 10 C overnight in a 20 C room. It sets in 6 hours at 40 to 45 C, slower when cooler, and stalls below about 18 C. Above 50 C it slows again.
+3. **Setting** (striped cloth on): wrapped, it loses only about 10 C overnight in a 20 C room. It sets in 6 hours at 40 to 45 C, slower when cooler, and stalls below about 18 C. Above 45 C it slows again, and stops at 55 C.
 
-If the milk falls under 40 C with no starter in, it is **Too cold** (the lid slides half off). **Pour Out Milk** into a container, pour it back into the copper and reheat it, or top the pot up with steaming milk.
+If the milk falls under 40 C with no starter in, it is **Too cold** (the lid slides half off). **Pour Out Milk** into a container and reheat it, in the copper or on a stove or fire, or top the pot up with steaming milk.
 
 ### 4. Collecting
 
@@ -94,7 +95,7 @@ When the status line reads **Ready**:
 - **Collect into a Jar**: each empty jar is filled to its size, 1 L in a glass jar, 2.5 L in a Clay Jar or Glazed Clay Jar; the last one takes what is left. A **Jar of Yoghurt** holds a 250 ml portion per quarter litre (4 in glass, 10 in clay), keeps the yoghurt's age, stays fresh 10 days and is rotten at 15.
 - **Fill Empty Yoghurt Containers**: 250 ml each, straight into a vanilla Yoghurt the same age as the batch.
 
-Eat from the jar: **Eat a Portion** in its right-click menu eats 250 ml, a vanilla Yoghurt's food. The game's own Eat, Eat Half and Eat Quarter work too (they eat that share of a full jar). Or **Fill a Yoghurt Cup** / **Fill All Cups** spoons portions into Empty Yoghurt Containers. The jar gets lighter, its name shows the portions left (a part-portion after Eat Quarter makes a cup with that much food), and the last spoonful gives the empty jar back.
+Eat from the jar: **Eat a Portion** in its right-click menu eats 250 ml, a quarter litre of its milk's food: 153.75 kcal and -12.5 hunger from cow's milk, 205.75 kcal from sheep's, a mixed pot by its shares. A cup filled from the pot or the jar has the same, and vanilla Yoghurt found from now on has the cow's figures (it had 30 kcal and -10 hunger); jars, cups and Yoghurt from before keep theirs. The game's own Eat, Eat Half and Eat Quarter work too (they eat that share of a full jar). Or **Fill a Yoghurt Cup** / **Fill All Cups** spoons portions into Empty Yoghurt Containers. The jar gets lighter, its name shows the portions left (a part-portion after Eat Quarter makes a cup with that much food), and the last spoonful gives the empty jar back.
 
 Every vanilla Yoghurt eaten, or stirred into oatmeal, leaves an **Empty Yoghurt Container**, so the cups go round.
 
@@ -104,11 +105,38 @@ No yoghurt left to start from? Grow a starter.
 
 1. **Load Wheat and Warm Milk**: 20 wheat grains and 0.5 L of milk at 35 to 45 C, from a Hearth within 2 tiles or a carried container (in practice a Wrapped Yoghurt Pot, or a copper cooling with the fire out). Hotter milk kills the grain's culture; the menu says why it refuses.
 2. **Cultivating**: 24 hours at its best (25 to 35 C), slower outside that. Keep it by the fire in winter.
-3. **Feed Fresh Milk**: 0.5 L of any milk, warm or cold, from any container.
+3. **Feed Fresh Milk**: 0.5 L of any milk, fresh or scalded, warm or cold, from any container. Soured and rotten milk are refused.
 4. **Developing**: 12 hours at its best.
 5. **Collect 2 Starters**: two **Active Yoghurt Starters**, fresh 5 days and rotten at 10. Each sets one batch.
 
 The crock is small enough to stand on a kitchen counter or a table, as long as nothing else stands on it, or on the floor.
+
+### 6. Milk goes off
+
+Vanilla milk keeps for ever. Here it doesn't (TP Core's `FluidAgeing`; sandbox **Milk goes off**, on by default).
+
+| Milk reads | When | Good for |
+|---|---|---|
+| Cow's Milk (Fresh) | Raw, young | Everything |
+| Cow's Milk (Scalded) | Has been at 85 C or more (the copper, or a pot on a lit stove or fire), poured out of the incubator, or poured out of a store carton | Everything. It never sours |
+| Cow's Milk (Soured) | Raw milk after 36 hours' worth of 20 C | Drinking (its milk's food, a little unhappiness), Make Cake Batter, Prepare Muffins, Make Bowl of Cereal. The incubator, the crock, Churn Butter and Make Mildew Cure refuse it |
+| Cow's Milk (Rotten) | Any milk after 72 hours' worth of 20 C | Nothing: food poisoning. Pour it away |
+
+Sheep's and the game's generic animal milk go the same way under their own names.
+
+| Kept at | Raw milk sours | Any milk is rotten |
+|---|---|---|
+| 30 C | 1 day | 2 days |
+| 20 C | 1.5 days | 3 days |
+| A basement, 15 C | 3 days | 6 days |
+| A powered fridge, 4 C | about 8 days | about 16 days |
+| A powered freezer | never | never |
+
+- Milk ages by the place it was last seen in (outdoors, under a roof, a basement, a fridge or freezer), also while you are away.
+- Pouring never makes milk young: the older age wins, and raw milk mixed into scalded makes the whole lot raw again. Milking into a container emptied of its old milk starts afresh.
+- Sealed store milk (carton, bottle, personal size) doesn't age until it is poured out; then it counts as scalded.
+- Milk left in the copper ages there too. A steaming copper scalds what is in it.
+- Any milk bakes: vanilla Make Cake Batter, Prepare Muffins and Make Bowl of Cereal take cow's, sheep's or animal milk, fresh, scalded or soured (vanilla took cow's only, cereal sheep's too). Churn Butter and Make Mildew Cure take their milks scalded as well as fresh.
 
 ## What the stations show
 
@@ -143,7 +171,7 @@ Five kinds of place:
 - **Outdoors**: the day's weather.
 - **Under a roof**: the average outdoor temperature of the last 10 days or so, plus 10 C, never above 28 C.
 - **In a basement**: 15 C all year.
-- **By a fire**: a lit Hearth within 2 tiles holds a station at 28 C. While you're away it counts only until its fuel would have run out, then the room counts.
+- **By a fire**: any lit fire within 2 tiles (the Hearth, a fireplace, an antique stove or a campfire; never an electric or gas stove) holds a station at 28 C. While you're away it counts only until its fuel would have run out, then the room counts.
 - **By banked embers**: a banked Hearth within 2 tiles, 24 C.
 
 Hours for 5 L poured at 85 C at 18:00 with the starter in, cooling then setting (`tools/season_report.lua`); "never" means it hadn't set after 72 hours:
@@ -163,6 +191,7 @@ The crock's first stage takes 24 hours by a fire in any month, about 80 in a bas
 
 | Step | XP |
 |---|---|
+| Build a Hearth (TP Core) | Masonry 10 |
 | Throw a Yoghurt Pot | Pottery 20 |
 | Build a Yoghurt Incubator | Tailoring 5 |
 | Build a Starter Culture Crock | Cooking 10 |
@@ -187,7 +216,7 @@ Volumes, temperatures, cooling times, the setting and culture curves, the crock'
 
 `python3 tools/build_tileset.py` (needs Pillow) paints the incubator, the crock and their stage overlays and writes `42/media/traditionalpreservationdairy.tiles`, `42/media/texturepacks/traditionalpreservationdairy.pack`, the icons and the generated `42/media/lua/shared/TraditionalPreservationDairy/Tiles.lua` (don't edit it by hand). `luajit tests/test_tiles.lua` checks the entity scripts against it.
 
-`luajit tests/test_incubator.lua` checks the rules (cooling, setting, mixing, refusals, the crock, catching up), `tests/test_menu.lua` the right-click menus on stand-ins for the engine, `tests/test_console.lua` the debug console, and `luajit tools/season_report.lua` prints the season tables (golden-checked by `tp test Dairy`).
+`luajit tests/test_incubator.lua` checks the rules (cooling, setting, mixing, refusals, the crock, catching up), `tests/test_menu.lua` the right-click menus on stand-ins for the engine, `tests/test_jar.lua` the Jar of Yoghurt (portions, food, weight, the empty jar back), `tests/test_baking.lua` the milks added to vanilla's recipes, `tests/test_console.lua` the debug console, and `luajit tools/season_report.lua` prints the season tables (golden-checked by `tp test Dairy`).
 
 ## Realism notes for review
 
@@ -215,7 +244,7 @@ Volumes, temperatures, cooling times, the setting and culture curves, the crock'
 
 ## Engineering notes
 
-- The pot's milk, temperature, starter, stage and set hours live in the station's ModData (`tpdIncubator`), the crock's in `tpdCrock`, and hot milk carried in a container in `tpdCarry` (litres, heat, hour, steamed). Never rename them once the mod is out.
+- The pot's milk, temperature, starter, stage and set hours live in the station's ModData (`tpdIncubator`), the crock's in `tpdCrock`, and hot milk carried in a container in `tpdCarry` (`ml`, `c`, `hour`, `scalded`; `steamed` from test builds is still read). Never rename them once the mod is out.
 - Weather is TP Core's shared ledger; a pot catches up hour by hour over the two weeks of kept weather, and the hours before that as one spell.
 - A Jar of Yoghurt keeps its jar type and litres in its ModData (`tpdJar`, `tpdMl`); its portions are its own food values (hunger, calories and so on, which the engine saves), and `tpdFood` marks a jar that has them. `tpdPortion` holds one portion's food, a quarter litre of the batch's milk by its shares (C23); a jar without it is in old vanilla Yoghurt's portions (30 kcal). Vanilla Yoghurt's script food is set to a cow's milk portion at load, beside its `ReplaceOnUse`. A jar from before that (only `tpdCups`) gets its cups' worth the first time it is touched. Its weight is a custom weight the engine saves. Vanilla's eat action is wrapped (`complete`, `serverStop`) to relabel the jar and give the empty jar back.
 - Every vanilla Yoghurt gets `ReplaceOnUse` = Empty Yoghurt Container at load, so eating or oatmeal leaves the cup.
@@ -228,8 +257,8 @@ In debug mode, `TPD.help()` in the Lua console lists commands for testing this m
 ## Known prototype caveats
 
 - **Empty Yoghurt Containers can't be made yet**: they come only from eating looted or home-made Yoghurt.
-- A cup or a jar portion of yoghurt is a vanilla Yoghurt's food, so 1 L of milk (about 615 kcal) becomes four portions of 30 kcal. Under review in the series' balance pass (C23, later).
-- Milk never spoils in vanilla, so yoghurt doesn't yet win on shelf life.
+- Vanilla is changed in four places: Yoghurt (leaves its cup, and has a cow's milk portion's food), the milk fluids' names ("Cow's Milk (Fresh)"), milk going off, and the milk line of five vanilla recipes (Make Cake Batter, Prepare Muffins, Make Bowl of Cereal, Churn Butter, Make Mildew Cure). Another mod that changes the same things may conflict.
+- The player guide has no page yet on clabber (soured milk as a starter): it comes with the clabber crock.
 - Several vanilla UI functions are wrapped (the station's right-click entry and the click on a station), so compare them with vanilla after a game update.
 - The tiledef number 5172 must be unique among your active mods.
 - Multiplayer is not supported. This mod is singleplayer only for now.

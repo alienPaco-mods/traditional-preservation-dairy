@@ -11,7 +11,7 @@
   "IGUI_TraditionalPreservationDairy_StageTooCold": "Too cold: %1 L at %2 C",
   "IGUI_TraditionalPreservationDairy_StageIncubating": "Setting: %1 L at %2 C",
   "IGUI_TraditionalPreservationDairy_StageReady": "Ready: %1 L of yoghurt",
-  "IGUI_TraditionalPreservationDairy_HelpEmpty": "Bring milk to the steam (85 C) in a Hearth's copper and pour it in, up to 5 L: from a Hearth within 2 tiles, or carried in any container (only a Wrapped Yoghurt Pot keeps it hot on the way). Add a yoghurt or a starter. Once it has cooled to 45 C the incubator is wrapped and the milk sets by itself.",
+  "IGUI_TraditionalPreservationDairy_HelpEmpty": "Scald milk (85 C) in a Hearth's copper, or in a pot on a lit stove or fire, and pour it in, up to 5 L: from a Hearth within 2 tiles, or carried in any container (only a Wrapped Yoghurt Pot keeps it hot on the way). Add a yoghurt or a starter. Once it has cooled to 45 C the incubator is wrapped and the milk sets by itself.",
   "IGUI_TraditionalPreservationDairy_StarterIn": "Starter in: the incubator is wrapped once the milk is down to 45 C.",
   "IGUI_TraditionalPreservationDairy_NoStarter": "No starter yet. Add one before the milk drops below 40 C.",
   "IGUI_TraditionalPreservationDairy_SetProgress": "Set %1, setting at %2 speed",

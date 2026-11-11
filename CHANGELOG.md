@@ -1,6 +1,15 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- Docs: the Hearth's full reference moved to TP Core's README and guide (`6_Core_Guide.md`); Dairy's keep what a
+  dairymaid needs and point there.
+- Docs (2026-11-11 pass against the code): README and guide gain a section on milk going off (Fresh, Scalded,
+  Soured, Rotten, times by place, baking); "by a fire" is any lit fire within 2 tiles, not only the Hearth; the
+  Hearth's menu lists Fill from the Copper and Bank / Stoke; Hearth Info reads "Steaming: Yes"; setting slows above
+  45 C (said 50); a portion's food is its milk's (C23) everywhere; the stale caveats (30 kcal portions, milk never
+  spoils) are gone; the guide's sandbox table and toolkit list the milk options and `TPD.ages` / `TPD.age`; the
+  Workshop text is brought up to the 20 L copper, scalding on any stove or fire, milk going off and the changed
+  vanilla recipes. The incubator's help line and build tooltip say milk scalds on a stove or fire too.
 - Yoghurt without a Hearth (user 2026-11-11): milk scalds on any lit stove, fireplace, barbecue or campfire at 85 C
   (vanilla's lowest stove setting gets there). The pot's Pour Scalded Milk takes any scalded milk, store milk poured
   out included; Dairy's own scalded record still counts, for when milk never goes off. Milk taken off the heat keeps

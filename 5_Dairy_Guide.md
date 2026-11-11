@@ -13,6 +13,7 @@
 5. The Hearth's Copper
 6. The Yoghurt Incubator
 7. Jars and Cups
+7½. When Milk Goes Off
 8. The Starter Culture Crock
 9. Stations Reference
 10. The Dairymaid's Almanac (Seasons & Places)
@@ -35,7 +36,7 @@ This mod lets you **set your own yoghurt the old way**: milk brought to the stea
 
 ## 2. Quick Start
 
-> **Requires TP Core** (Traditional Preservation Core), the series' shared mod. Enable it alongside this one; it loads first. The Hearth is part of TP Core.
+> **Requires Traditional Preservation (Core)**, the series' shared mod (TP Core for short). Enable it alongside this one; it loads first. The Hearth is part of TP Core.
 
 | Step | You need | You get |
 |---|---|---|
@@ -83,7 +84,7 @@ This mod lets you **set your own yoghurt the old way**: milk brought to the stea
 3. **Make the Yoghurt Pot** on the pottery wheel and fire it in a kiln.
 4. **Build the Yoghurt Incubator** from the Build menu, within 2 tiles of the Hearth.
 5. **Pour into the Copper** (right-click the Hearth) from your milk buckets, then **Light** the fire.
-6. Check **Hearth Info**. When it reads "Yes: steaming", the milk is at 85 C.
+6. Check **Hearth Info**. When it reads "Steaming: Yes", the milk is at 85 C.
 7. Right-click the incubator: **Pour from the Hearth**, then **Add Starter** with a Yoghurt you kept back.
 8. Go to bed. The lid stays on while it cools, and at 45 C the cloth wraps itself on.
 9. In the morning the status reads **Ready**. **Collect into a Jar** or **Fill Empty Yoghurt Containers**.
@@ -97,21 +98,23 @@ That's it. A full copper is four pots, 20 L of yoghurt from one firing.
 
 ## 5. The Hearth's Copper
 
-The Hearth is TP Core's station: a vanilla fireplace (Add Fuel, Light, a firebox that cooks, room heat) with a 20 L copper set in its top. Right-click it for **Pour into the Copper** and **Hearth Info**.
+The Hearth is TP Core's station: a vanilla fireplace (Add Fuel, Light, a firebox that cooks, room heat) with a 20 L copper set in its top. Right-click it for **Pour into the Copper**, **Fill from the Copper** (into your own containers), **Bank the Fire** / **Stoke the Fire** and **Hearth Info**.
 
 - **One fluid at a time.** Cow's and sheep's milk count as one: they mix freely, and a blend keeps its shares in the copper, in a container and in the pot. Any other mix is refused, shown in red with the reason.
 - **Heat mixes by volume.** Cold milk poured onto hot cools the lot.
 - **The fire heats the copper towards 95 C.** 10 L goes from 20 C to 85 C in about 1.5 hours, a full 20 L in about 2; less milk heats faster.
 - **With the fire out it cools slowly**, over a few hours, as the stone holds heat.
-- **Bank the Fire** burns a third of the wood and holds the copper at 50 C. **Stoke the Fire** brings it back up.
+- **Bank the Fire** burns a third of the wood, holds the copper at about 50 C and cooks a third as fast in the firebox. **Stoke the Fire** brings it back up.
 - **At 85 C the copper steams**, in its sprite and in Hearth Info, and its milk reads **Scalded**.
 
 | Copper | From 20 C to 85 C |
 |---|---|
 | 20 L (full) | about 2 hours |
 | 10 L | about 1.5 hours |
-| 5 L | less |
+| 5 L | about 1¼ hours |
 | Banked | holds 50 C, never steams |
+
+The Hearth has its own guide, **Traditional Preservation: Core** (number 6), with banking, the places by a fire and the full tables.
 
 > ✏ *Margin note:* a "copper" was the big boiling pot built into a farmhouse's brickwork over its own firebox. Washday, brewing, the pig's mash and the dairy all shared it, which is why so many old kitchens had only the one.
 
@@ -130,7 +133,7 @@ A lidded clay pot holding 5 L, wrapped in a striped cloth when it's setting. Rig
 
 1. **Cooling** (lid on): the milk cools towards the temperature of the place, about 85 to 45 C in 2 hours at 20 C. Less than 2.5 L cools as slowly as 2.5 L, so a litre still sets.
 2. **The wrap goes on by itself** at 45 C, if a starter is in.
-3. **Setting** (cloth on): wrapped, it loses only about 10 C overnight in a 20 C room. It sets in 6 hours at 40 to 45 C, slower when cooler, and stalls below about 18 C. Above 50 C it slows again.
+3. **Setting** (cloth on): wrapped, it loses only about 10 C overnight in a 20 C room. It sets in 6 hours at 40 to 45 C, slower when cooler, and stalls below about 18 C. Above 45 C it slows again, and stops at 55 C.
 
 | Milk in the pot | Setting speed |
 |---|---|
@@ -186,6 +189,41 @@ the old figures until eaten. A Yoghurt stirred into oatmeal now brings its fulle
 
 ---
 
+## 7½. When Milk Goes Off
+
+Vanilla milk keeps for ever. With this mod it doesn't, and what you do with a bucket of milk in its first day decides what it's good for.
+
+| The milk reads | When | Good for |
+|---|---|---|
+| **Cow's Milk (Fresh)** | Raw and young | Everything |
+| **Cow's Milk (Scalded)** | It has been at 85 C or more (the copper, or a pot on a lit stove or fire), or it came out of the incubator or a store carton | Everything. It never sours |
+| **Cow's Milk (Soured)** | Raw milk, a day and a half old in a warm room | Drinking (the same food, a little unhappiness) and baking: cake batter, muffins, cereal. Not yoghurt, the crock, butter or mildew cure |
+| **Cow's Milk (Rotten)** | Any milk, twice that old | Nothing. It poisons you: pour it away |
+
+Sheep's milk and the game's plain "animal's milk" go the same way under their own names.
+
+| Kept at | Raw milk sours in | Any milk is rotten in |
+|---|---|---|
+| 30 C | 1 day | 2 days |
+| 20 C, a warm room | 1½ days | 3 days |
+| A basement, 15 C | 3 days | 6 days |
+| A powered fridge | about 8 days | about 16 days |
+| A powered freezer | never | never |
+
+- **Scalding buys you the first half.** Scalded milk skips souring and stays good until the day raw milk would be rotten.
+- **Pouring never makes milk young.** Mix two lots and the older age wins. Raw milk poured into scalded makes the whole lot raw again.
+- **A fresh milking into an emptied bucket starts afresh.**
+- **Sealed store milk doesn't age** until you pour it out. Then it counts as scalded: it was pasteurised.
+- **Milk in the copper ages too**, and a steaming copper scalds whatever is in it.
+- **Any milk bakes.** Cake batter, muffins and a bowl of cereal take cow's, sheep's or animal's milk, fresh, scalded or soured. Butter and mildew cure take their milk fresh or scalded.
+- It keeps counting while you're away, by the place the milk was left in.
+
+> ✏ *Margin note:* raw milk carries its own lactic bacteria, which is why it sours on the shelf: that's clabber, the old baker's buttermilk. Scalding kills them, so scalded milk has nothing to sour it and simply goes bad in the end.
+
+Both can be changed in the sandbox: **Milk goes off** and **Milk spoiling speed**.
+
+---
+
 ## 8. The Starter Culture Crock
 
 No yoghurt left to start from? Grow one.
@@ -210,9 +248,9 @@ No yoghurt left to start from? Grow one.
 
 | Station | Build menu | Skill | Materials | XP |
 |---|---|---|---|---|
-| **Hearth** (TP Core) | yes | Masonry 2 | 12 Clay Bricks, 4 Clay, 1 Copper Sheet, trowel (kept) | |
-| **Yoghurt Incubator** | floor | Tailoring 1 | 1 Yoghurt Pot, 2 Ripped Sheets, 1 Twine | Tailoring 5 |
-| **Starter Culture Crock** | floor, counter or table | Cooking 4 | 1 Clay Jar, Glazed Clay Jar or Clay Pot, 1 Ripped Sheet, 1 Twine | Cooking 10 |
+| **Hearth** (TP Core) | Masonry | Masonry 2 | 12 Clay Bricks, 4 Clay, 1 Copper Sheet, trowel (kept) | Masonry 10 |
+| **Yoghurt Incubator** | Pottery; floor | Tailoring 1 | 1 Yoghurt Pot, 2 Ripped Sheets, 1 Twine | Tailoring 5 |
+| **Starter Culture Crock** | Pottery; floor, counter or table | Cooking 4 | 1 Clay Jar, Glazed Clay Jar or Clay Pot, 1 Ripped Sheet, 1 Twine | Cooking 10 |
 
 | Item | Made | Skill | XP |
 |---|---|---|---|
@@ -254,7 +292,7 @@ The milk's temperature follows where the station stands. There are five kinds of
 | Outdoors | the day's weather |
 | Under a roof | the last 10 days' outdoor average plus 10 C, never above 28 C |
 | In a basement | 15 C all year |
-| **By a fire** (lit Hearth within 2 tiles) | 28 C |
+| **By a fire** (any lit fire within 2 tiles: the Hearth, a fireplace, an antique stove or a campfire, never an electric or gas stove) | 28 C |
 | By banked embers (banked Hearth within 2 tiles) | 24 C |
 
 > ✏ *Margin note:* "under a roof" means any roof overhead, walls or not. A porch roof or a floor laid on the level above is enough; four walls with no roof are still outdoors.
@@ -303,7 +341,7 @@ Hours for 5 L poured at 85 C at 18:00 with the starter in, **cooling + setting**
 | One pot | 5 L of milk + 1 Yoghurt or starter |
 | Makes | 5 L of yoghurt |
 | Fills | 5 glass jars, 2 clay jars, or 20 cups |
-| Firewood | about 1.5 hours of fire for a full copper, enough for two pots |
+| Firewood | about 1.5 hours of fire for 10 L (two pots), about 2 for a full 20 L copper (four) |
 | Cooking XP | 10 a pot |
 
 > ✏ *Margin note:* one Yoghurt starts a whole pot here. Real dairies use 3 to 5 spoonfuls in a hundred of milk, about a cup for 5 L. The game is kinder.
@@ -326,8 +364,8 @@ Hours for 5 L poured at 85 C at 18:00 with the starter in, **cooling + setting**
 
 ## 12. Tips
 
-- **Fire up a full copper.** 10 L costs about the same wood as 5 and fills two pots.
-- **Set it by the fire in winter.** A lit Hearth within 2 tiles holds a pot at 28 C: about 9 hours from pouring to Ready in any month.
+- **Fire up a full copper.** 20 L takes only half an hour more fire than 10 and fills four pots.
+- **Set it by the fire in winter.** A lit Hearth, fireplace or campfire within 2 tiles holds a pot at 28 C: about 9 hours from pouring to Ready in any month.
 - **Bank the fire overnight.** It holds the copper at 50 C on a third of the wood, and banked embers still keep a pot at 24 C.
 - **Keep one yoghurt back. Always.** Otherwise it's a day and a half with the crock.
 - **Use the clay jars.** 2.5 L each, 10 portions, and you eat from the jar itself.
@@ -344,6 +382,7 @@ Hours for 5 L poured at 85 C at 18:00 with the starter in, **cooling + setting**
 | Pour Scalded Milk says "Not scalded" | The milk isn't scalded: bring it to 85 C in the copper or on a stove or fire. Raw milk mixed in makes scalded milk plain again |
 | Pour refused as too cold | The starter is in, and the milk would bring the pot under 40 C. Use hotter milk |
 | Pour into the Copper refused, in red | The copper holds one fluid at a time. Only cow's and sheep's milk mix |
+| My milk reads Soured or Rotten | Raw milk sours in a day and a half in a warm room. Scald it, or keep it in a basement or a powered fridge. Soured milk still bakes; rotten milk is only fit to pour away |
 | Pot reads **Too cold** | It fell under 40 C before the starter went in. Pour it out, reheat it in the copper, or top it up with steaming milk |
 | Setting doesn't move | The pot is below about 18 C. Move it by a fire, or wait for warmer weather |
 | Crock won't take the warm milk | It must be 35 to 45 C. The menu says whether it's too hot or too cold |
@@ -362,6 +401,8 @@ Under **Traditional Preservation (Dairy)**:
 | Yoghurt setting time (hours) | 6 | Hours wrapped milk takes to set at its best, 40 to 45 C (1 to 48) |
 | Starter culture time (hours) | 24 | The crock's first stage at its best (1 to 240); the second takes half as long |
 | Temperature sensitivity | Normal | Off / Forgiving / Normal / Harsh. Off runs at full speed in any weather; the milk still has to cool before the wrap goes on |
+| Milk goes off | On | Raw milk sours, then rots; scalded milk rots without souring. Off, milk keeps for ever as in vanilla |
+| Milk spoiling speed | 1 | 2 goes off twice as fast, 0.5 keeps twice as long (0.1 to 10) |
 
 ---
 
@@ -384,6 +425,8 @@ Copied from `DEVHELP.md`; change both together.
 | `TPD.kit(kind)` | What a test needs: yoghurt (default), `"crock"` or `"wrap"`; `"?"` lists them. |
 | `TPD.crocks()` | Every loaded crock: stage, progress, place. |
 | `TPD.culture(hours)` | Moves every loaded crock's current stage on by this many hours. |
+| `TPD.ages()` | Each container of milk you carry: fluid, stage, age, hours to the next stage, place. |
+| `TPD.age(hours)` | Ages the milk you carry by this many hours at 20 C (36 if left out: one souring). |
 | `TPD.tiles()` | Every station within 3 tiles: object class, sprite, solid flags. |
 
 **Typical check:** within 2 tiles of a Hearth, `TPC.copper(5)` and `TPC.hot()`, then `TPD.kit()`, Pour from the Hearth and Add Starter. `TPD.skip(3)` should show it wrapped and setting, `TPD.skip(7)` Ready.
