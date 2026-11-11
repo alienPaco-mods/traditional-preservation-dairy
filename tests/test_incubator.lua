@@ -198,7 +198,7 @@ M.advanceBatch(emberHand, 10, 0, 20)
 check("by embers only while they last, then the place under them", near(emberOut.tempC, emberHand.tempC, 1e-6))
 
 -- Hearth copper: TP Core's rules (its tests/test_hearth.lua); milk's own here
-check("the copper's numbers are the core's", Hearth.COPPER_ML == 10000 and M.HOT_C == 85 and Hearth.MAX_C == 95)
+check("the copper's numbers are the core's", Hearth.COPPER_ML == 20000 and M.HOT_C == 85 and Hearth.MAX_C == 95)
 check("water is never poured into a pot", M.copperToPot({ ml = 4000, fluid = "Water", tempC = 90 }, {}, 0) == 0
     and select(2, M.copperToPot({ ml = 4000, fluid = "Water", tempC = 90 }, {}, 0)) == "NoMilk")
 check("the time to hot means nothing for water", M.hoursToHot({ ml = 100, fluid = "Water", tempC = 20 }) == nil
@@ -247,17 +247,17 @@ check("with no starter cold milk still goes in, to be reheated", M.addMilk({}, 2
 
 -- Carried milk
 local carry = M.carryIn(nil, 0, 20, 3000, 90, 0, true)
-check("milk drawn hot from the copper is steamed", M.isSteamed(carry, 3000) and M.carriedRefusal(carry, 3000) == nil)
-check("milk added some other way voids it", not M.isSteamed(carry, 4000) and M.carriedRefusal(carry, 4000) == "NotSteamed")
-check("milk taken out by vanilla is harmless", M.isSteamed(carry, 2000))
+check("milk drawn hot from the copper is scalded", M.isScalded(carry, 3000) and M.carriedRefusal(carry, 3000) == nil)
+check("milk added some other way voids it", not M.isScalded(carry, 4000) and M.carriedRefusal(carry, 4000) == "NotScalded")
+check("milk taken out by vanilla is harmless", M.isScalded(carry, 2000))
 local drunk = M.carryIn(nil, 0, 20, 3000, 90, 0, true)
 M.noteCarry(drunk, 2000)
-check("seen after, the record shrinks, so a top-up is caught", drunk.ml == 2000 and not M.isSteamed(drunk, 3000))
+check("seen after, the record shrinks, so a top-up is caught", drunk.ml == 2000 and not M.isScalded(drunk, 3000))
 check("an emptied container drops its record", M.noteCarry(drunk, 0) == nil)
-check("no record, no steaming", M.carriedRefusal(nil, 1000) == "NotSteamed")
+check("no record, no steaming", M.carriedRefusal(nil, 1000) == "NotScalded")
 local mixed = M.carryIn(carry, 3000, 90, 1000, 20, 0, false)
-check("unsteamed milk poured in voids it, heat mixes", not mixed.steamed and near(mixed.c, 72.5) and mixed.ml == 4000)
-check("steamed into steamed stays steamed", M.isSteamed(M.carryIn(carry, 3000, 90, 2000, 88, 0, true), 5000))
+check("unscalded milk poured in voids it, heat mixes", not mixed.scalded and near(mixed.c, 72.5) and mixed.ml == 4000)
+check("scalded into scalded stays scalded", M.isScalded(M.carryIn(carry, 3000, 90, 2000, 88, 0, true), 5000))
 local wrapped = M.carryIn(nil, 0, 20, 5000, 85, 0, true)
 check("a wrapped pot loses about 15 C in an hour at 20 C", M.wrappedC(wrapped, 1, 20) > 68 and wrapped.c < 72 and wrapped.hour == 1)
 local ledger5 = M.getLedger()
@@ -277,8 +277,17 @@ local stepped = M.cool(M.cool(85, 30, 9, M.carryTau(5000)), 0, 10, M.carryTau(50
 check("a long gap replays the weather hour by hour", near(M.advanceCarry(night, 30, ledger5, M.HEARTH), stepped, 1e-6))
 check("topping up keeps the place notes", M.carryIn(warm, 5000, 50, 0, 85, 6, true).place == M.HEARTH)
 check("a smaller amount cools faster", M.carryTau(1000) < M.carryTau(5000) and M.carryTau(200) == M.carryTau(1000))
+local open = M.carryIn(nil, 0, 20, 5000, 85, 0, true)
+M.wrappedC(open, 0.25, 20, true)
+check("an open pot off the heat is at about 45 C after a quarter hour", open.c > 40 and open.c < 50)
+M.wrappedC(open, 0.3, 20, true)
+check("and in the crock's window a few minutes later", open.c >= 35 and open.c <= 45)
+check("scalded milk goes in with no record", M.carriedRefusal(nil, 1000, { ScaldedCowMilk = 600, ScaldedSheepMilk = 400 }) == nil)
+check("plain milk among it doesn't", M.carriedRefusal(nil, 1000, { ScaldedCowMilk = 600, CowMilk = 400 }) == "NotScalded")
+check("a scalded record still does, for when milk never goes off", M.carriedRefusal(carry, 3000, { CowMilk = 3000 }) == nil)
+check("a scalded milk is in the scalded set, a plain one isn't", M.SCALDED.ScaldedAnimalMilk and not M.SCALDED.AnimalMilk)
 local part = M.carryIn(nil, 0, 20, 2000, 85, 0, true)
-check("pouring part out keeps the record", M.isSteamed(M.carryOut(part, 500), 1500))
+check("pouring part out keeps the record", M.isScalded(M.carryOut(part, 500), 1500))
 check("pouring it all out drops the record", M.carryOut(part, 1500) == nil)
 
 -- Crock

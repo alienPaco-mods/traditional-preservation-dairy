@@ -15,7 +15,7 @@ These console commands load only when the game runs in **debug mode** (launch op
 | `TPD.kit(kind)` | Gives what a test needs. `TPD.kit()` is the yoghurt kit (a Yoghurt, a Clay Jar, a glass jar, 4 Empty Yoghurt Containers), `TPD.kit("crock")` 20 wheat grains, `TPD.kit("wrap")` a Yoghurt Pot, a Sheet and Twine. `TPD.kit("?")` lists them. |
 | `TPD.crocks()` | Every loaded crock: position, stage, place, progress, speed and hours left. |
 | `TPD.culture(hours)` | Moves every loaded crock's current stage on by this many hours at the best temperature (a whole first stage if you leave it out). |
-| `TPD.ages()` | Each container of milk you carry: fluid, stage (Fresh, Turned, Spoiled; steamed), age in hours at 20 C, hours to the next stage, the place it is counted at. Sealed store milk shows "no age". |
+| `TPD.ages()` | Each container of milk you carry: fluid, stage (Fresh, Turned, Spoiled; scalded), age in hours at 20 C, hours to the next stage, the place it is counted at. Sealed store milk shows "no age". |
 | `TPD.age(hours)` | Ages the milk you carry by this many hours at 20 C (36 if left out: one souring) and swaps it at once. |
 | `TPD.tiles()` | Every incubator, crock and Hearth within 3 tiles: object class, sprite and the square's solid flags, for placement bugs. |
 

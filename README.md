@@ -17,7 +17,7 @@ Copy this folder to `~/Zomboid/mods/TraditionalPreservationDairy`, as a real cop
 ## Getting started
 
 1. **Keep a cow or sheep in milk.** Cow's and sheep's milk both work, and mix.
-2. **Build a Hearth** (TP Core) and keep wood for it. A full copper takes about 1.5 hours to steam.
+2. **Build a Hearth** (TP Core) and keep wood for it. 10 L take about 1.5 hours to steam, a full 20 L about 2. (No Hearth yet: a pot of milk on any lit stove or fire scalds too; see Filling the incubator.)
 3. **Throw a Yoghurt Pot** on the wheel and fire it, then build it into a Yoghurt Incubator within 2 tiles of the Hearth.
 4. **Keep one yoghurt back.** Each batch takes one vanilla Yoghurt or one Active Yoghurt Starter. With none left, build a Starter Culture Crock.
 5. **Save your Empty Yoghurt Containers and jars.** Each cup of yoghurt needs a container; a glass jar holds a litre, a clay jar 2.5 L, and you eat from the jar itself.
@@ -27,8 +27,8 @@ Copy this folder to `~/Zomboid/mods/TraditionalPreservationDairy`, as a real cop
 
 | # | Step | Where | In | Out | Time |
 |---|---|---|---|---|---|
-| 1 | Pour into the Copper | Hearth's right-click menu | milk, from any container | up to 10 L in the copper | a moment |
-| 2 | Bring to the steam | Lit Hearth | | milk at 85 C | about 1.5 hours for 10 L |
+| 1 | Pour into the Copper | Hearth's right-click menu | milk, from any container | up to 20 L in the copper | a moment |
+| 2 | Bring to the steam | Lit Hearth | | milk at 85 C | about 1.5 hours for 10 L, 2 for 20 L |
 | 3 | Pour from the Hearth | Incubator's menu, Hearth within 2 tiles | steaming milk | up to 5 L in the pot | a moment |
 | 4 | Add Starter | Incubator's menu | 1 Yoghurt or Active Yoghurt Starter | | a moment |
 | 5 | Cool | Incubator, lid on | | milk at 45 C, the wrap goes on | about 2 hours* |
@@ -43,7 +43,7 @@ Copy this folder to `~/Zomboid/mods/TraditionalPreservationDairy`, as a real cop
 |---|---|
 | Milk | 5 L, cow's, sheep's or both |
 | Starter | 1 Yoghurt or 1 Active Yoghurt Starter |
-| Wood | about 1.5 hours of fire to steam 10 L, enough for two pots |
+| Wood | about 1.5 hours of fire to steam 10 L (two pots), 2 hours for 20 L (four) |
 | Yoghurt | 5 L: 5 glass jars, 2 clay jars, or 20 cups (250 ml portions) |
 | Cooking XP | 2 per litre collected |
 
@@ -63,19 +63,19 @@ You can walk through the incubator and the crock. Both work anywhere, but pourin
 
 ### 1. The Hearth's copper
 
-The Hearth is TP Core's station: a vanilla fireplace (Add Fuel, Light, a firebox that cooks, room heat) with a 10 L copper set in its top. Right-click it for **Pour into the Copper** and **Hearth Info**.
+The Hearth is TP Core's station: a vanilla fireplace (Add Fuel, Light, a firebox that cooks, room heat) with a 20 L copper set in its top. Right-click it for **Pour into the Copper** and **Hearth Info**.
 
 - The copper holds one fluid at a time. Cow's and sheep's milk count as one: they mix freely, and a blend keeps its shares in the copper, a container and the pot. Any other mix is refused, shown in red with the reason.
 - Poured milk mixes its temperature with what's already in the copper, by volume.
-- While the fire burns, the copper heats towards 95 C: a full copper goes from 20 C to 85 C in about 1.5 hours, less milk heats faster. With the fire out it cools towards the room over a few hours, as the stone holds heat.
+- While the fire burns, the copper heats towards 95 C: 10 L go from 20 C to 85 C in about 1.5 hours, a full 20 L in about 2, less milk faster. With the fire out it cools towards the room over a few hours, as the stone holds heat.
 - **Bank the Fire** burns a third of the wood and holds the copper at 50 C. **Stoke the Fire** brings it back.
-- At 85 C the copper steams, in its sprite and in Hearth Info ("Yes: steaming").
+- At 85 C the copper steams, in its sprite and in Hearth Info ("Yes: steaming"), and its milk reads Scalded.
 
 ### 2. Filling the incubator
 
 Right-click the incubator:
 - **Pour from the Hearth** draws steaming milk from a Hearth within 2 tiles, up to the pot's 5 L.
-- **Pour Steamed Milk** takes milk from any container you filled at the copper at 85 C or more. It goes in at the heat it has now: a plain container drops to room heat in seconds, a Wrapped Yoghurt Pot keeps it hot. Milk that never went through the copper is refused as "Not steamed".
+- **Pour Scalded Milk** takes scalded milk from any container: milk that has been at 85 C or more in the copper, or in a pot on a lit stove, fireplace, barbecue or campfire (vanilla's lowest stove setting already gets there), or store milk poured out of its carton. It goes in at the heat it has now: off the heat an open pot or bucket cools in minutes (85 to 45 C in about a quarter hour), a Wrapped Yoghurt Pot in hours, and a pour between containers carries the heat over. Milk that isn't scalded is refused as "Not scalded".
 - **Add Starter** takes one vanilla Yoghurt or one Active Yoghurt Starter, before or after the milk. One per batch.
 
 Once the starter is in, milk that would leave the pot under 40 C is refused as too cold, so a set batch is never spoiled by a cold top-up.
@@ -178,7 +178,7 @@ Under Traditional Preservation (Dairy):
 | Yoghurt setting time (hours) | 6 | Hours wrapped milk takes to set at its best (40 to 45 C) |
 | Starter culture time (hours) | 24 | The crock's first stage at its best; the second takes half as long |
 | Temperature sensitivity | Normal | Off, Forgiving, Normal or Harsh. Off runs at full speed in any weather; the milk still has to cool before the wrap goes on |
-| Milk goes off | On | Raw milk sours, then spoils; steamed milk spoils without souring |
+| Milk goes off | On | Raw milk sours, then spoils; scalded milk spoils without souring |
 | Milk spoiling speed | 1 | 2 goes off twice as fast, 0.5 keeps twice as long |
 
 ## Tuning
@@ -205,11 +205,13 @@ Volumes, temperatures, cooling times, the setting and culture curves, the crock'
 - Temperature during setting slows it but never spoils a batch.
 - A roofed place is the 10-day mean plus 10 C, capped at 28 C; room heating isn't modelled beyond the Hearth.
 - Milk goes off (TP Core's `FluidAgeing`): raw milk turns to its Soured twin at 36 hours' worth of 20 C and to its Rotten one at
-  72; steamed milk skips souring. The curve (`MILK_CURVE`) and the hours are at the top of the main Lua file. Its age
+  72; scalded milk (85 C or more) skips souring and goes by its Scalded twin (`SCALDED_MILKS`, "Cow's Milk (Scalded)") until raw milk
+  is mixed in; it spoils to its milk's Rotten one. The curve (`MILK_CURVE`) and the hours are at the top of the main Lua file. Its age
   lives in the container's ModData (`tpFluidAge`, TP Core's key) and on Dairy's weather ledger (`milkOpen` and so on).
-- Any milk bakes, fresh or soured: vanilla Make Cake Batter, Prepare Muffins and Make Bowl of Cereal take all three
-  milks and their soured twins (`SOUR_BAKING`, `bakingMilks`; TP Core's `Recipes.addFluids` widens their fluid line
-  at `OnInitWorld`). Vanilla took cow's only (cereal sheep's too). Butter and mildew cure stay fresh only.
+- Any milk bakes, fresh, scalded or soured: vanilla Make Cake Batter, Prepare Muffins and Make Bowl of Cereal take all
+  three milks and their scalded and soured twins (`SOUR_BAKING`, `bakingMilks`; TP Core's `Recipes.addFluids` widens
+  their fluid line at `OnInitWorld`). Vanilla took cow's only (cereal sheep's too). Churn Butter and Make Mildew Cure
+  take their milks scalded too, never soured (`SCALDED_ONLY`, `scaldedMilks`): store milk poured out is scalded.
 
 ## Engineering notes
 

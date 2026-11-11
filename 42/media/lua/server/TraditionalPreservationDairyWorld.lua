@@ -7,6 +7,7 @@ if isClient() then return end
 TraditionalPreservationDairyWorld = TraditionalPreservationDairyWorld or {}
 local M = TraditionalPreservationDairy
 local World = TraditionalPreservationDairyWorld
+require "Fluids/ISFluidTransferAction"
 local Station = require "TraditionalPreservationCore/Station"
 local Weather = require "TraditionalPreservationCore/Weather"
 local Tiles = require "TraditionalPreservationDairy/Tiles"
@@ -114,9 +115,14 @@ function World.stations(crock)
     return list
 end
 
--- A Wrapped Yoghurt Pot a player carries cools where the player is; set down, it keeps that place (M.carryTick).
+-- Warm milk a player carries (a Wrapped Yoghurt Pot, or an open pot off the heat) cools where the player is; set
+-- down, it keeps that place (M.carryTick).
+local function carried(item)
+    return item:getModData()[M.CARRY_KEY] ~= nil or item:getFullType() == M.WRAPPED_POT
+end
+
 local function tickWrappedPots(player, now, ledger)
-    local pots = player:getInventory():getAllTypeRecurse(M.WRAPPED_POT)
+    local pots = player:getInventory():getAllEvalRecurse(carried)
     if pots:isEmpty() then return end
     local place, fire = M.placeOf(player)
     local notes = {}
@@ -126,7 +132,7 @@ local function tickWrappedPots(player, now, ledger)
         local pot = pots:get(i)
         local carry = M.carryOf(pot)
         if carry then
-            M.carryTick(carry, now, ledger, place, notes.fireUntil, notes.under)
+            M.carryTick(carry, now, ledger, place, notes.fireUntil, notes.under, not M.isWrappedPot(pot))
             pot:setItemHeat(M.itemHeat(carry.c))
         elseif pot:getItemHeat() ~= 1 then
             pot:setItemHeat(1)
@@ -142,5 +148,53 @@ end)
 Weather.record(function(now, climate)
     M.record(M.getLedger(), M.getHistory(), now, climate:getTemperature())
 end)
+
+-- A vanilla pour carries the heat: what goes in mixes, by volume, with what was there, so a pot just off the stove
+-- poured into a Wrapped Pot keeps its heat. Read at the start, written when the pour ends or is stopped.
+local function itemOf(fluidObject)
+    local owner = fluidObject and fluidObject:getOwner()
+    return instanceof(owner, "InventoryItem") and owner or nil
+end
+
+local vanillaStart, vanillaStop, vanillaComplete = ISFluidTransferAction.start, ISFluidTransferAction.stop, ISFluidTransferAction.complete
+
+function ISFluidTransferAction:start()
+    local source, target = itemOf(self.source), itemOf(self.target)
+    if source and target and M.milkIn(source:getFluidContainer()) then
+        local now, character = getGameTime():getWorldAgeHours(), self.character
+        local sourceCarry, targetContainer = M.carryOf(source), target:getFluidContainer()
+        local hadMl = M.mlIn(targetContainer)
+        self.tpdPour = {
+            fromC = M.carriedC(source, now, character),
+            scalded = M.isScalded(sourceCarry, M.mlIn(source:getFluidContainer())),
+            warm = sourceCarry ~= nil,
+            hadMl = hadMl,
+            hadC = hadMl > 0 and M.carriedC(target, now, character) or 0,
+        }
+    end
+    return vanillaStart(self)
+end
+
+local function finishPour(self)
+    local pour, target = self.tpdPour, itemOf(self.target)
+    self.tpdPour = nil
+    if not pour or not target then return end
+    -- Only warm milk, or milk onto a record, needs one: cold onto nothing stays vanilla.
+    local carry = target:getModData()[M.CARRY_KEY]
+    if not pour.warm and not carry then return end
+    local moved = M.mlIn(target:getFluidContainer()) - pour.hadMl
+    M.pouredInto(target, carry, pour.hadMl, pour.hadC, moved, pour.fromC, pour.scalded, getGameTime():getWorldAgeHours())
+end
+
+function ISFluidTransferAction:stop()
+    finishPour(self)
+    return vanillaStop(self)
+end
+
+function ISFluidTransferAction:complete()
+    local result = vanillaComplete(self)
+    finishPour(self)
+    return result
+end
 
 tracker.start()

@@ -87,7 +87,7 @@
   "IGUI_TraditionalPreservationDairy_CopperNotHot": "The milk in the copper is at %1 C: it must steam (85 C). Keep the fire lit.",
   "IGUI_TraditionalPreservationDairy_HearthHelpEmpty": "For yoghurt: milk steaming at 85 C pours into a Yoghurt Incubator within 2 tiles, or carry it in a Wrapped Yoghurt Pot, which keeps it hot. Milk at 35 to 45 C loads a Starter Culture Crock.",
   "IGUI_TraditionalPreservationDairy_HearthHelpWater": "Only milk pours into an incubator or a crock. Fill your own containers from it.",
-  "IGUI_TraditionalPreservationDairy_NotSteamed": "Not steamed: only milk drawn from a Hearth's copper at 85 C or more goes in.",
+  "IGUI_TraditionalPreservationDairy_NotScalded": "Not scalded: bring the milk to 85 C first, in a Hearth's copper or on a stove or fire.",
   "IGUI_TraditionalPreservationDairy_ColdForStarter": "Too cold at %1 C: the starter is in, and this would leave the pot too cold to set. Reheat the milk in a Hearth's copper first.",
   "IGUI_TraditionalPreservationDairy_NoMilkItem": "You have no container of milk.",
   "IGUI_TraditionalPreservationDairy_InfoCultureHeat": "Culture heat",
@@ -96,5 +96,5 @@
   "IGUI_TraditionalPreservationDairy_InfoCultureSpeed": "Speed",
   "IGUI_TraditionalPreservationDairy_InfoStopped": "stopped here",
   "IGUI_TraditionalPreservationDairy_InfoStarters": "Starters",
-  "IGUI_TraditionalPreservationDairy_SteamedHelp": "Milk drawn steaming from a Hearth's copper, in any container. It goes in at the heat it has now: only a Wrapped Yoghurt Pot keeps it hot on the way."
+  "IGUI_TraditionalPreservationDairy_ScaldedHelp": "Scalded milk (85 C or more: a Hearth's copper, a stove or a fire) in any container. It goes in at the heat it has now: an open pot cools in minutes, a Wrapped Yoghurt Pot in hours."
 }

@@ -16,6 +16,12 @@ end
 
 -- Engine stand-ins
 local ui = H.installMenus()
+ISInventoryTransferAction = {}
+-- Carried milk with a heat record reads it where the player stands: indoors, by the pot.
+local playerSquare = { getX = function() return 5 end, getY = function() return 4 end, getZ = function() return 0 end,
+    isOutside = function() return false end }
+local playerObj = { getSquare = function() return playerSquare end, isOutside = function() return false end }
+function getSpecificPlayer() return playerObj end
 function getClimateManager()
     return { getTemperature = function() return 18 end, getHumidity = function() return 50 end }
 end
@@ -101,7 +107,7 @@ check("Incubator Info is on it", named(sub, "ContextMenu_TraditionalPreservation
 local pour = named(sub, POUR)
 check("pouring from a Hearth is greyed when none is near", pour.isDisabled == true
     and pour.toolTip.description == getText("IGUI_TraditionalPreservationDairy_NoHearth"))
-local carried = named(sub, "ContextMenu_TraditionalPreservationDairy_PourSteamed")
+local carried = named(sub, "ContextMenu_TraditionalPreservationDairy_PourScalded")
 check("and carried milk when none is carried", carried.isDisabled == true
     and carried.toolTip.description == getText("IGUI_TraditionalPreservationDairy_NoMilkItem"))
 check("with none carried, it shows an empty bucket", carried.iconTexture == "Item_MetalBucket" and carried.itemForTexture == nil)
@@ -134,17 +140,17 @@ pour = open(incubator(5, { ml = 1000, fluid = "SheepMilk", tempC = 80 }))[1].opt
 check("cow's milk is offered to a pot of sheep's: milks mix", pour.isDisabled == nil and pour.onSelect ~= nil)
 
 -- Carried milk and a starter already in the pot
-local function steamedMilk(name, celsius)
-    local modData = { [M.CARRY_KEY] = { ml = 2000, c = celsius, hour = 100, steamed = true } }
+local function scaldedMilk(name, celsius)
+    local modData = { [M.CARRY_KEY] = { ml = 2000, c = celsius, hour = 100, scalded = true } }
     return H.vessel(name, "CowMilk", 2, 5, { getFullType = function() return "Base.Bucket" end,
         getModData = function() return modData end, getItemHeat = function() return Hearth.itemHeat(celsius) end })
 end
-ui.carried = { steamedMilk("Hot Bucket", 80), steamedMilk("Cold Bucket", 25) }
-carried = named(open(incubator(5, { starter = "Yoghurt" }))[1], "ContextMenu_TraditionalPreservationDairy_PourSteamed")
+ui.carried = { scaldedMilk("Hot Bucket", 80), scaldedMilk("Cold Bucket", 25) }
+carried = named(open(incubator(5, { starter = "Yoghurt" }))[1], "ContextMenu_TraditionalPreservationDairy_PourScalded")
 local potEntries = carried.subOption.options
 check("with the starter in, hot carried milk is offered and cold milk is red with its heat", potEntries[1].notAvailable == nil
     and potEntries[2].notAvailable == true and potEntries[2].toolTip.description:find("25", 1, true) ~= nil)
-carried = named(open(incubator(5))[1], "ContextMenu_TraditionalPreservationDairy_PourSteamed")
+carried = named(open(incubator(5))[1], "ContextMenu_TraditionalPreservationDairy_PourScalded")
 check("with no starter cold milk still goes in", carried.subOption.options[2].notAvailable == nil)
 check("the option and each row show the real container, drawn with its milk", carried.itemForTexture == ui.carried[1]
     and carried.iconTexture == nil and carried.subOption.options[2].itemForTexture == ui.carried[2])

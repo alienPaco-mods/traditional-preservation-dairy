@@ -1,6 +1,6 @@
 -- Traditional Preservation (Dairy): the hand jobs at a Yoghurt Incubator. "hearth" pours milk steaming from a
--- Hearth's copper (within 2 tiles) in, "carried" pours steamed milk in from a container, "starter" stirs in a yoghurt or an Active Yoghurt Starter, "pourOut" takes the milk back out into an empty
--- container (still steamed) to reheat it, "collect" fills an empty jar (glass 1 L, clay 2.5 L) with set yoghurt,
+-- Hearth's copper (within 2 tiles) in, "carried" pours scalded milk in from a container, "starter" stirs in a yoghurt or an Active Yoghurt Starter, "pourOut" takes the milk back out into an empty
+-- container (still scalded) to reheat it, "collect" fills an empty jar (glass 1 L, clay 2.5 L) with set yoghurt,
 -- and "cup" fills an Empty Yoghurt Container with a quarter litre.
 require "TimedActions/ISBaseTimedAction"
 require "TraditionalPreservationDairy"
@@ -11,6 +11,7 @@ TPYoghurtIncubator = ISBaseTimedAction:derive("TPYoghurtIncubator")
 local M = TraditionalPreservationDairy
 local Hearth = require "TraditionalPreservationCore/Hearth"
 local Action = require "TraditionalPreservationCore/Action"
+local FluidAgeing = require "TraditionalPreservationCore/FluidAgeing"
 
 local function state(self)
     local World = TraditionalPreservationDairyWorld
@@ -29,7 +30,8 @@ local function canDo(self)
     elseif self.mode == "carried" then
         local container = self.item:getFluidContainer()
         local ml = M.mlIn(container)
-        return M.milkIn(container) ~= nil and M.carriedRefusal(M.carryOf(self.item), ml) == nil and M.milkRoom(batch, 1) > 0
+        local name, parts = M.milkIn(container)
+        return name ~= nil and M.carriedRefusal(M.carryOf(self.item), ml, parts) == nil and M.milkRoom(batch, 1) > 0
             and M.coldRefusal(batch, ml, M.carriedC(self.item, getGameTime():getWorldAgeHours(), self.character)) == nil
     elseif self.mode == "starter" then
         return M.STARTERS[self.item:getFullType()] ~= nil and not self.item:isRotten() and M.canAddStarter(batch)
@@ -103,9 +105,11 @@ function COMPLETE.pourOut(self, batch, now)
     if ml > 0 then
         -- A pot from before the milk's kind was kept gives cow's milk.
         if not M.hasAny(parts) then parts = { CowMilk = ml } end
+        FluidAgeing.clearIfEmpty(self.item)
         for name, part in pairs(parts) do container:addFluid(name, part / 1000) end
-        -- Everything in the pot came in steamed, so it goes out steamed.
+        -- Everything in the pot came in scalded, so it goes out scalded.
         M.recordCarry(self.item, nil, 0, 0, ml, tempC, now, true)
+        FluidAgeing.markScalded(self.item, now)
     end
 end
 

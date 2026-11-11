@@ -29,8 +29,8 @@ module TraditionalPreservationDairy
         Tooltip = Tooltip_TraditionalPreservationDairy_YoghurtPot,
     }
 
-    /* The Yoghurt Pot wrapped in a sheet: it carries steamed milk from the Hearth and holds its heat (about 15 C lost
-       in an hour). Its milk's heat and steamed mark are in ModData tpdCarry, not in vanilla's item heat. */
+    /* The Yoghurt Pot wrapped in a sheet: it carries scalded milk from the Hearth and holds its heat (about 15 C lost
+       in an hour). Its milk's heat and scalded mark are in ModData tpdCarry, not in vanilla's item heat. */
     item WrappedYoghurtPot
     {
         DisplayCategory = Cooking,

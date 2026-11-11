@@ -4,6 +4,7 @@
 -- the starters. The status line at the top says what the station is doing, and its hover says more. Both also have
 -- info windows (TP Core's InfoWindow), opened from their menus or by clicking them. A Jar of Yoghurt's own menu spoons
 -- it into cups. The Hearth's own menu and Hearth Info are TP Core's (HearthUI); Dairy adds its milk notes there.
+require "TimedActions/ISInventoryTransferAction"
 require "TimedActions/TPYoghurtIncubator"
 require "TimedActions/TPStarterCrock"
 require "TimedActions/TPFillYoghurtCup"
@@ -38,7 +39,7 @@ local REFUSALS = {
     Incubating = "IGUI_TraditionalPreservationDairy_Wrapped",
     Ready = "IGUI_TraditionalPreservationDairy_Wrapped",
     Full = "IGUI_TraditionalPreservationDairy_PotFull",
-    NotSteamed = "IGUI_TraditionalPreservationDairy_NotSteamed",
+    NotScalded = "IGUI_TraditionalPreservationDairy_NotScalded",
     ColdForStarter = "IGUI_TraditionalPreservationDairy_ColdForStarter",
 }
 
@@ -160,17 +161,17 @@ local function showFirst(option, items, fallback)
     end
 end
 
--- Every container of plain milk, wherever it was carried from. Milk that wasn't drawn steaming from a copper, or
--- is too cold for the starter already in the pot, shows in red with the reason. Only a Wrapped Yoghurt Pot keeps
--- the milk hot on the way.
+-- Every container of plain milk, wherever it was carried from. Milk that isn't scalded (never at 85 C: copper, stove
+-- or fire), or is too cold for the starter already in the pot, shows in red with the reason. An open pot loses its
+-- heat in minutes, a Wrapped Yoghurt Pot in hours.
 local function addCarriedPourMenu(menu, playerObj, station, state)
-    local option = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_PourSteamed"))
+    local option = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_PourScalded"))
     local items = findItems(playerObj, function(item) return M.milkIn(item:getFluidContainer()) ~= nil end)
     showFirst(option, items, BUCKET_ICON)
     local room, reason = M.milkRoom(state, 1)
     if room <= 0 then return disableWith(option, getText(REFUSALS[reason])) end
     if #items == 0 then return disableWith(option, getText("IGUI_TraditionalPreservationDairy_NoMilkItem")) end
-    tooltipFor(option, getText("IGUI_TraditionalPreservationDairy_SteamedHelp"))
+    tooltipFor(option, getText("IGUI_TraditionalPreservationDairy_ScaldedHelp"))
     local sub = menu:getNew(menu)
     menu:addSubMenu(option, sub)
     for _, item in ipairs(items) do
@@ -180,7 +181,8 @@ local function addCarriedPourMenu(menu, playerObj, station, state)
         local entry = sub:addOption(say("ContextMenu_TraditionalPreservationDairy_MilkItem", item:getDisplayName(), litresText(ml),
             degrees(heat)), playerObj, onAction, station, { item }, "carried")
         entry.itemForTexture = item
-        local refusal = M.carriedRefusal(M.carryOf(item), ml) or M.coldRefusal(state, ml, heat)
+        local _, parts = M.milkIn(container)
+        local refusal = M.carriedRefusal(M.carryOf(item), ml, parts) or M.coldRefusal(state, ml, heat)
         if refusal then
             entry.notAvailable = true
             tooltipFor(entry, say(REFUSALS[refusal], degrees(heat)))
@@ -654,3 +656,15 @@ local function onFillInventoryMenu(playerNum, context, items)
 end
 
 Events.OnFillInventoryObjectContextMenu.Add(onFillInventoryMenu)
+
+-- Milk taken off a stove or a fire keeps its heat as a record (vanilla's drops within seconds): read as it is moved,
+-- while it is still on the heat.
+local vanillaTransferItem = ISInventoryTransferAction.transferItem
+function ISInventoryTransferAction:transferItem(item)
+    local from = self.srcContainer
+    if item and item:getFluidContainer() and from and not from:isInCharacterInventory(self.character)
+        and from:getTemperature() > 1 then
+        M.stampHeat(item, getGameTime():getWorldAgeHours())
+    end
+    return vanillaTransferItem(self, item)
+end

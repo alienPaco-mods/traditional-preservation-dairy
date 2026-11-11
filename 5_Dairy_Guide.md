@@ -39,10 +39,10 @@ This mod lets you **set your own yoghurt the old way**: milk brought to the stea
 
 | Step | You need | You get |
 |---|---|---|
-| Build a **Hearth** | 12 Clay Bricks, 4 Clay, 1 Copper Sheet, a trowel (kept). Masonry 2 | A fireplace with a 10 L copper |
+| Build a **Hearth** | 12 Clay Bricks, 4 Clay, 1 Copper Sheet, a trowel (kept). Masonry 2 | A fireplace with a 20 L copper |
 | Throw a **Yoghurt Pot** and fire it | 6 Clay, a little water. Pottery 2, wheel and kiln | The pot |
 | Build a **Yoghurt Incubator** within 2 tiles of the Hearth | 1 Yoghurt Pot, 2 Ripped Sheets, 1 Twine. Tailoring 1 | The incubator |
-| **Pour into the Copper** and light the fire | Up to 10 L of cow's or sheep's milk, firewood | Steaming milk in **about 1.5 hours** |
+| **Pour into the Copper** and light the fire | Up to 20 L of cow's or sheep's milk, firewood | Steaming milk in **about 1.5 hours** for 10 L, 2 for 20 L |
 | **Pour from the Hearth**, then **Add Starter** | 1 vanilla Yoghurt or 1 Active Yoghurt Starter | 5 L cooling in the pot |
 | Wait **about 8 hours** (2 cooling, 6 setting, in a 20 C room) | | 5 L of yoghurt |
 | **Collect** | Empty jars or Empty Yoghurt Containers | Jars of Yoghurt or vanilla Yoghurts |
@@ -53,7 +53,7 @@ This mod lets you **set your own yoghurt the old way**: milk brought to the stea
 
 ```
  cow / sheep ──milk──► HEARTH'S COPPER ──85 C──► YOGHURT INCUBATOR ──► jars & cups
-                        (10 L, lit fire)          (5 L pot)                │
+                        (20 L, lit fire)          (5 L pot)                │
                                                      ▲                     │
                                 1 Yoghurt ───────────┘                     │
                                 (or a crock starter)                       │
@@ -63,8 +63,8 @@ This mod lets you **set your own yoghurt the old way**: milk brought to the stea
 
 | # | Step | Where | In | Out | Time |
 |---|---|---|---|---|---|
-| 1 | Pour into the Copper | Hearth's right-click menu | milk, from any container | up to 10 L in the copper | a moment |
-| 2 | Bring to the steam | Lit Hearth | | milk at 85 C | about 1.5 hours for 10 L |
+| 1 | Pour into the Copper | Hearth's right-click menu | milk, from any container | up to 20 L in the copper | a moment |
+| 2 | Bring to the steam | Lit Hearth | | milk at 85 C | about 1.5 hours for 10 L, 2 for 20 L |
 | 3 | Pour from the Hearth | Incubator's menu | steaming milk | up to 5 L in the pot | a moment |
 | 4 | Add Starter | Incubator's menu | 1 Yoghurt or Active Yoghurt Starter | | a moment |
 | 5 | Cool | Incubator, lid on | | milk at 45 C, the wrap goes on | about 2 hours* |
@@ -89,24 +89,27 @@ This mod lets you **set your own yoghurt the old way**: milk brought to the stea
 9. In the morning the status reads **Ready**. **Collect into a Jar** or **Fill Empty Yoghurt Containers**.
 10. Keep one Yoghurt back for the next batch.
 
-That's it. A full copper is two pots, 10 L of yoghurt from one firing.
+That's it. A full copper is four pots, 20 L of yoghurt from one firing.
+
+**No Hearth yet?** Any pot of milk on a lit stove, fireplace, barbecue or campfire scalds at 85 C, as vanilla boils tainted water clean. Take it off and pour it straight into the incubator (**Pour Scalded Milk**) while it's hot: an open pot loses its heat in minutes. Pour it into a **Wrapped Yoghurt Pot** first if the walk is long. The Hearth's gifts are the size of its copper, pouring straight into a pot or crock within 2 tiles, and a banked fire's steady low heat.
 
 ---
 
 ## 5. The Hearth's Copper
 
-The Hearth is TP Core's station: a vanilla fireplace (Add Fuel, Light, a firebox that cooks, room heat) with a 10 L copper set in its top. Right-click it for **Pour into the Copper** and **Hearth Info**.
+The Hearth is TP Core's station: a vanilla fireplace (Add Fuel, Light, a firebox that cooks, room heat) with a 20 L copper set in its top. Right-click it for **Pour into the Copper** and **Hearth Info**.
 
 - **One fluid at a time.** Cow's and sheep's milk count as one: they mix freely, and a blend keeps its shares in the copper, in a container and in the pot. Any other mix is refused, shown in red with the reason.
 - **Heat mixes by volume.** Cold milk poured onto hot cools the lot.
-- **The fire heats the copper towards 95 C.** A full copper goes from 20 C to 85 C in about 1.5 hours; less milk heats faster.
+- **The fire heats the copper towards 95 C.** 10 L goes from 20 C to 85 C in about 1.5 hours, a full 20 L in about 2; less milk heats faster.
 - **With the fire out it cools slowly**, over a few hours, as the stone holds heat.
 - **Bank the Fire** burns a third of the wood and holds the copper at 50 C. **Stoke the Fire** brings it back up.
-- **At 85 C the copper steams**, in its sprite and in Hearth Info.
+- **At 85 C the copper steams**, in its sprite and in Hearth Info, and its milk reads **Scalded**.
 
 | Copper | From 20 C to 85 C |
 |---|---|
-| 10 L (full) | about 1.5 hours |
+| 20 L (full) | about 2 hours |
+| 10 L | about 1.5 hours |
 | 5 L | less |
 | Banked | holds 50 C, never steams |
 
@@ -119,7 +122,7 @@ The Hearth is TP Core's station: a vanilla fireplace (Add Fuel, Light, a firebox
 A lidded clay pot holding 5 L, wrapped in a striped cloth when it's setting. Right-click it:
 
 - **Pour from the Hearth** draws steaming milk from a Hearth within 2 tiles, up to the pot's 5 L.
-- **Pour Steamed Milk** takes milk from any container you filled at the copper at 85 C or more. It goes in at the heat it has *now*: a plain container drops to room heat in seconds, a **Wrapped Yoghurt Pot** keeps it hot.
+- **Pour Scalded Milk** takes **scalded** milk from any container: milk that has been at 85 C or more, in the copper or in a pot on a stove or a fire, or store milk poured out of its carton (it was pasteurised). It goes in at the heat it has *now*: off the heat, an open pot or bucket cools in minutes (85 to 45 C in about a quarter hour), a **Wrapped Yoghurt Pot** in hours. Pouring between containers carries the heat over, so a pot just off the stove poured into a Wrapped Pot stays hot.
 - **Add Starter** takes one vanilla Yoghurt or one Active Yoghurt Starter, before or after the milk. One per batch, whatever the size.
 - **Pour Out Milk** empties the pot into a container.
 
@@ -138,7 +141,7 @@ A lidded clay pot holding 5 L, wrapped in a striped cloth when it's setting. Rig
 
 ### Too cold
 
-If the milk falls under 40 C with **no starter** in, the pot is **Too cold** and the lid slides half off. Pour it out into a container and back into the copper to reheat, or top the pot up with steaming milk.
+If the milk falls under 40 C with **no starter** in, the pot is **Too cold** and the lid slides half off. Pour it out into a container and reheat it in the copper or on a stove, or top the pot up with steaming milk.
 
 Once the starter **is** in, milk that would bring the pot under 40 C is refused, so a cold top-up can never spoil a started batch.
 
@@ -338,7 +341,7 @@ Hours for 5 L poured at 85 C at 18:00 with the starter in, **cooling + setting**
 | Problem | Why |
 |---|---|
 | Pour from the Hearth greyed out | The Hearth must stand within 2 tiles of the pot, and its copper must steam (85 C). Keep the fire lit; Hearth Info says when it will be ready |
-| Pour Steamed Milk says "Not steamed" | The milk never went through the copper at 85 C or more |
+| Pour Scalded Milk says "Not scalded" | The milk isn't scalded: bring it to 85 C in the copper or on a stove or fire. Raw milk mixed in makes scalded milk plain again |
 | Pour refused as too cold | The starter is in, and the milk would bring the pot under 40 C. Use hotter milk |
 | Pour into the Copper refused, in red | The copper holds one fluid at a time. Only cow's and sheep's milk mix |
 | Pot reads **Too cold** | It fell under 40 C before the starter went in. Pour it out, reheat it in the copper, or top it up with steaming milk |

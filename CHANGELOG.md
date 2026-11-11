@@ -1,15 +1,27 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- Yoghurt without a Hearth (user 2026-11-11): milk scalds on any lit stove, fireplace, barbecue or campfire at 85 C
+  (vanilla's lowest stove setting gets there). The pot's Pour Scalded Milk takes any scalded milk, store milk poured
+  out included; Dairy's own scalded record still counts, for when milk never goes off. Milk taken off the heat keeps
+  a record of its heat: an open pot cools in minutes (85 to 45 C in about a quarter hour), a Wrapped Yoghurt Pot in
+  hours, and a vanilla pour carries the heat over by volume. The Hearth keeps its 20 L copper (TP Core), its pour
+  into a pot or crock within 2 tiles, and the banked fire's steady 50 C.
+- "Steamed" is "scalded" throughout (user 2026-11-11): the menu is Pour Scalded Milk, the refusal "Not scalded",
+  `TPD.ages()` says scalded; only the copper still steams. Records from test builds that say steamed still read.
+- Scalded milk (D9, step 2b): milk brought to the steam in the Hearth's copper, poured out of the incubator, or poured out
+  of a store carton is "Cow's Milk (Scalded)" (sheep's, animal's), with its milk's food. It never sours and spoils to its
+  milk's Rotten one; raw milk mixed in makes it plain milk again. The copper, the incubator, the crock and the yoghurt's
+  food take it as milk; baking takes it, and Churn Butter and Make Mildew Cure take their milks scalded too.
 - Any milk bakes, fresh or soured (D9, step 2a): vanilla Make Cake Batter, Prepare Muffins and Make Bowl of Cereal
   take cow's, sheep's or animal milk, fresh or soured (vanilla: cow's only, cereal sheep's too). Churning butter,
   mildew cure and the incubator still want fresh milk; rotten milk goes in nothing. Built on TP Core's `Recipes.addFluids`.
 - Milk goes off (D9, step 1). Raw cow's, sheep's and animal milk turns Soured ("Cow's Milk (Soured)") after about a
   day and a half in a 20 C room (3 days in a basement, 8 in a powered fridge, a day at 30 C, never while frozen), then
   Rotten as long again after (mild food poisoning). Vanilla's milks now read "(Fresh)". Soured milk keeps its milk's
-  food, a little unhappiness; vanilla churning and the incubator refuse it (baking takes it: below). Milk steamed in the Hearth's
+  food, a little unhappiness; vanilla churning and the incubator refuse it (baking takes it: below). Milk scalded in the Hearth's
   copper never sours and spoils at the same age. Sealed store milk keeps until it is poured out, then counts as
-  steamed. Mixing takes the older age. Sandbox: Milk goes off (on) and Milk spoiling speed (1). Built on TP Core's
+  scalded. Mixing takes the older age. Sandbox: Milk goes off (on) and Milk spoiling speed (1). Built on TP Core's
   `FluidAgeing`.
 - Balance (series pass, C23): yoghurt keeps its milk's food. A 250 ml portion, from a jar or in a cup, has a quarter
   litre of the milk's food as vanilla states it: cow's milk 153.75 kcal and -12.5 hunger (was vanilla Yoghurt's 30
@@ -23,7 +35,7 @@
 - Player guide `5_Dairy_Guide.md` written (was the template stub): the loop, the copper, incubator, jars and cups,
   the crock, stations, the season almanac, the Dairymaid's Notebook, tips, troubleshooting, sandbox, testers' toolkit.
 - Menu icons: Pour from Hearth and the crock's Hearth row show TP Core's copper (were the Hearth and a milk carton);
-  Pour Steamed Milk, Pour Out and Feed show the first container they list, drawn with its milk (an empty bucket
+  Pour Scalded Milk, Pour Out and Feed show the first container they list, drawn with its milk (an empty bucket
   when none); every container row shows its milk's colour; Add Starter and Collect Starters show the starter; Collect
   and its rows show the Jar of Yoghurt and each jar; Fill Cups rows a cup of yoghurt; Eat a Portion shows the jar
   itself, clay or glazed.

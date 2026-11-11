@@ -86,7 +86,91 @@ module Base
         }
     }
 
-    /* Milk gone bad, soured or steamed, each milk its own: food poisoning, as tainted water. */
+    /* Milk brought to steaming (85 C, in a Hearth's copper) or poured out of a store carton: the milk's own food. The
+       heat killed the lactic bacteria, so TP Core's FluidAgeing never sours it; it spoils to its milk's rotten one.
+       Raw milk mixed in makes it plain milk again. */
+    fluid ScaldedCowMilk
+    {
+        ColorReference = White,
+        DisplayName = Fluid_Name_ScaldedCowMilk,
+        Categories
+        {
+            Beverage,
+        }
+        Properties
+        {
+            HungerChange = -50.0,
+            ThirstChange = -50.0,
+            Calories = 615.0,
+            Carbohydrates = 46.0,
+            Lipids = 22.0,
+            Proteins = 33.0,
+        }
+        BlendWhiteList
+        {
+            whitelist = true,
+            categories
+            {
+                Beverage,
+            }
+        }
+    }
+
+    fluid ScaldedSheepMilk
+    {
+        ColorReference = White,
+        DisplayName = Fluid_Name_ScaldedSheepMilk,
+        Categories
+        {
+            Beverage,
+        }
+        Properties
+        {
+            HungerChange = -50.0,
+            ThirstChange = -50.0,
+            Calories = 823.0,
+            Carbohydrates = 23.0,
+            Lipids = 17.0,
+            Proteins = 23.0,
+        }
+        BlendWhiteList
+        {
+            whitelist = true,
+            categories
+            {
+                Beverage,
+            }
+        }
+    }
+
+    fluid ScaldedAnimalMilk
+    {
+        ColorReference = White,
+        DisplayName = Fluid_Name_ScaldedAnimalMilk,
+        Categories
+        {
+            Beverage,
+        }
+        Properties
+        {
+            HungerChange = -50.0,
+            ThirstChange = -50.0,
+            Calories = 615.0,
+            Carbohydrates = 46.0,
+            Lipids = 22.0,
+            Proteins = 33.0,
+        }
+        BlendWhiteList
+        {
+            whitelist = true,
+            categories
+            {
+                Beverage,
+            }
+        }
+    }
+
+    /* Milk gone bad, soured or scalded, each milk its own: food poisoning, as tainted water. */
     fluid RottenCowMilk
     {
         ColorReference = Khaki,

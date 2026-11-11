@@ -187,7 +187,7 @@ function TPD.ages()
         else
             local left = FluidAgeing.hoursLeft(record, spec)
             say(string.format("%s: %s, %s%s, age %.1f h at 20 C, next stage in %s h at 20 C, %s", item:getDisplayName(),
-                fluid and fluid:getFluidTypeString() or "?", FluidAgeing.stage(record, spec), record.steamed and " (steamed)" or "",
+                fluid and fluid:getFluidTypeString() or "?", FluidAgeing.stage(record, spec), record.scalded and " (scalded)" or "",
                 record.age, left and string.format("%.1f", left) or "never", tostring(record.place)))
         end
     end
