@@ -1,6 +1,8 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- TP Core's copper is now 60 L (was 20): README, guide 5 and Workshop text updated (a full copper is twelve pots,
+  about 2.75 h to the steam). Test pins `Hearth.COPPER_ML == 60000`.
 - Wrap any milk carrier (user 2026-11-11): Wrap / Unwrap a Pot, Jar or Bucket (crafting menu, Cooking, empty only;
   Sheet + Twine, given back on unwrap) for Base.Pot, PotForged, EmptyJar, JarCrafted, ClayJar, Bucket, BucketEmpty,
   BucketCarved. The item stays itself with its capacity; the mark is its fluid container's name (TPDWrappedPot / Jar /

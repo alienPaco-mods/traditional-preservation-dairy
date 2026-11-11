@@ -9,7 +9,7 @@ Traditional Preservation (Dairy) requires [b]Traditional Preservation (Core)[/b]
 [h2]Features[/h2]
 [list]
 [*]A Yoghurt Incubator thrown on the pottery wheel and wrapped in cloth, with its own art for every stage
-[*]Milk scalded in the 20 L copper of TP Core's Hearth and poured straight in, or scalded in a pot on any lit stove or fire and carried over, hot for hours in a Wrapped Yoghurt Pot, or any pot, jar or bucket you wrap in a sheet (keep the cloth off the heat: it burns)
+[*]Milk scalded in the 60 L copper of TP Core's Hearth and poured straight in, or scalded in a pot on any lit stove or fire and carried over, hot for hours in a Wrapped Yoghurt Pot, or any pot, jar or bucket you wrap in a sheet (keep the cloth off the heat: it burns)
 [*]Milk goes off: raw milk sours and then rots, scalded milk never sours, a fridge slows both, and soured milk still bakes
 [*]Real temperatures: the milk cools, the wrap goes on at 45 C, and it sets in about 6 hours when kept warm
 [*]Cow's and sheep's milk, alone or mixed, as a mixed herd's always was
@@ -22,8 +22,8 @@ Traditional Preservation (Dairy) requires [b]Traditional Preservation (Core)[/b]
 
 [h2]The loop[/h2]
 [olist]
-[*][b]Pour into the Copper[/b] (the Hearth's right-click menu): up to 20 L of milk from any container.
-[*][b]Light the fire[/b]: 10 L steams (85 C) in about 1.5 hours, a full 20 L in about 2. Hearth Info shows when.
+[*][b]Pour into the Copper[/b] (the Hearth's right-click menu): up to 60 L of milk from any container.
+[*][b]Light the fire[/b]: 10 L steams (85 C) in about 1.5 hours, 20 L in about 2, a full 60 L in about 2.75. Hearth Info shows when.
 [*][b]Pour from the Hearth[/b] into a Yoghurt Incubator within 2 tiles, up to 5 L. No Hearth yet? Scald a pot of milk on any lit stove or fire and use [b]Pour Scalded Milk[/b] while it's hot.
 [*][b]Add Starter[/b]: one vanilla Yoghurt, one portion of a Jar of Yoghurt, or one Active Yoghurt Starter.
 [*][b]Wait[/b]: the milk cools to 45 C in about 2 hours, the incubator wraps itself, and the milk sets in about 6 hours at 40 to 45 C.

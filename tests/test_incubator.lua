@@ -198,7 +198,7 @@ M.advanceBatch(emberHand, 10, 0, 20)
 check("by embers only while they last, then the place under them", near(emberOut.tempC, emberHand.tempC, 1e-6))
 
 -- Hearth copper: TP Core's rules (its tests/test_hearth.lua); milk's own here
-check("the copper's numbers are the core's", Hearth.COPPER_ML == 20000 and M.HOT_C == 85 and Hearth.MAX_C == 95)
+check("the copper's numbers are the core's", Hearth.COPPER_ML == 60000 and M.HOT_C == 85 and Hearth.MAX_C == 95)
 check("water is never poured into a pot", M.copperToPot({ ml = 4000, fluid = "Water", tempC = 90 }, {}, 0) == 0
     and select(2, M.copperToPot({ ml = 4000, fluid = "Water", tempC = 90 }, {}, 0)) == "NoMilk")
 check("the time to hot means nothing for water", M.hoursToHot({ ml = 100, fluid = "Water", tempC = 20 }) == nil

@@ -17,7 +17,7 @@ Copy this folder to `~/Zomboid/mods/TraditionalPreservationDairy`, as a real cop
 ## Getting started
 
 1. **Keep a cow or sheep in milk.** Cow's and sheep's milk both work, and mix.
-2. **Build a Hearth** (TP Core) and keep wood for it. 10 L take about 1.5 hours to steam, a full 20 L about 2. (No Hearth yet: a pot of milk on any lit stove or fire scalds too; see Filling the incubator.)
+2. **Build a Hearth** (TP Core) and keep wood for it. 10 L take about 1.5 hours to steam, 20 L about 2, a full 60 L about 2.75. (No Hearth yet: a pot of milk on any lit stove or fire scalds too; see Filling the incubator.)
 3. **Throw a Yoghurt Pot** on the wheel and fire it, then build it into a Yoghurt Incubator within 2 tiles of the Hearth.
 4. **Keep one yoghurt back.** Each batch takes one vanilla Yoghurt, one portion of a Jar of Yoghurt, or one Active Yoghurt Starter. With none left, build a Starter Culture Crock.
 5. **Save your Empty Yoghurt Containers and jars.** Each cup of yoghurt needs a container; a glass jar holds a litre, a clay jar 2.5 L, and you eat from the jar itself.
@@ -28,8 +28,8 @@ Copy this folder to `~/Zomboid/mods/TraditionalPreservationDairy`, as a real cop
 
 | # | Step | Where | In | Out | Time |
 |---|---|---|---|---|---|
-| 1 | Pour into the Copper | Hearth's right-click menu | milk, from any container | up to 20 L in the copper | a moment |
-| 2 | Bring to the steam | Lit Hearth | | milk at 85 C | about 1.5 hours for 10 L, 2 for 20 L |
+| 1 | Pour into the Copper | Hearth's right-click menu | milk, from any container | up to 60 L in the copper | a moment |
+| 2 | Bring to the steam | Lit Hearth | | milk at 85 C | about 1.5 hours for 10 L, 2 for 20 L, 2.75 for 60 L |
 | 3 | Pour from the Hearth | Incubator's menu, Hearth within 2 tiles | steaming milk | up to 5 L in the pot | a moment |
 | 4 | Add Starter | Incubator's menu | 1 Yoghurt, a jar's portion, or an Active Yoghurt Starter | | a moment |
 | 5 | Cool | Incubator, lid on | | milk at 45 C, the wrap goes on | about 2 hours* |
@@ -44,7 +44,7 @@ Copy this folder to `~/Zomboid/mods/TraditionalPreservationDairy`, as a real cop
 |---|---|
 | Milk | 5 L, cow's, sheep's or both |
 | Starter | 1 Yoghurt, 1 portion of a Jar of Yoghurt, or 1 Active Yoghurt Starter |
-| Wood | about 1.5 hours of fire to steam 10 L (two pots), 2 hours for 20 L (four) |
+| Wood | about 1.5 hours of fire to steam 10 L (two pots), 2 hours for 20 L (four), 2.75 for 60 L (twelve) |
 | Yoghurt | 5 L: 5 glass jars, 2 clay jars, or 20 cups (250 ml portions) |
 | Cooking XP | 2 per litre collected |
 
@@ -68,11 +68,11 @@ You can walk through the incubator and the crock. Both work anywhere, but pourin
 
 ### 1. The Hearth's copper
 
-The Hearth is TP Core's station, documented in full in TP Core's `README.md` and guide (`6_Core_Guide.md`): a vanilla fireplace (Add Fuel, Light, a firebox that cooks, room heat) with a 20 L copper set in its top. Right-click it for **Pour into the Copper**, **Fill from the Copper** (into your own containers), **Empty the Copper**, **Bank the Fire** / **Stoke the Fire** and **Hearth Info**.
+The Hearth is TP Core's station, documented in full in TP Core's `README.md` and guide (`6_Core_Guide.md`): a vanilla fireplace (Add Fuel, Light, a firebox that cooks, room heat) with a 60 L copper set in its top. Right-click it for **Pour into the Copper**, **Fill from the Copper** (into your own containers), **Empty the Copper**, **Bank the Fire** / **Stoke the Fire** and **Hearth Info**.
 
 - The copper holds one fluid at a time. Cow's and sheep's milk count as one: they mix freely, and a blend keeps its shares in the copper, a container and the pot. Any other mix is refused, shown in red with the reason.
 - Poured milk mixes its temperature with what's already in the copper, by volume.
-- While the fire burns, the copper heats towards 95 C: 10 L go from 20 C to 85 C in about 1.5 hours, a full 20 L in about 2, less milk faster. With the fire out it cools towards the room over a few hours, as the stone holds heat.
+- While the fire burns, the copper heats towards 95 C: 10 L go from 20 C to 85 C in about 1.5 hours, 20 L in about 2, a full 60 L in about 2.75, less milk faster. With the fire out it cools towards the room over a few hours, as the stone holds heat.
 - **Bank the Fire** burns a third of the wood, holds the copper at about 50 C and cooks a third as fast in the firebox. **Stoke the Fire** brings it back.
 - At 85 C the copper steams, in its sprite and in Hearth Info ("Steaming: Yes"), and its milk reads Scalded.
 
