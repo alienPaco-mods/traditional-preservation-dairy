@@ -146,6 +146,28 @@ check("the last part-portion makes a half-food cup and gives the jar back", not 
     and bag:count("Base.ClayJar") == 2 and bag:count(M.YOGHURT_JAR) == 0)
 check("no cup is filled from an empty jar", TPFillYoghurtCup.isValid({ character = player, jar = part, cup = last }) == false)
 
+-- A Jar of Yoghurt as a starter: one portion out, the rest kept
+local function notRotten(item) item.isRotten = function() return item.rotten == true end return item end
+local starterBag = container()
+local jar = notRotten(starterBag:AddItem(M.YOGHURT_JAR))
+M.fillJar(jar, "Base.EmptyJar", 1000, 1)
+check("a jar with portions in it is a starter", M.isStarter(jar))
+check("taking one leaves three, the jar kept", M.takeJarPortion(jar) == nil and near(M.jarPortions(jar), 3)
+    and starterBag:contains(jar) and jar.name == "Jar of Yoghurt (3 portions)")
+jar.rotten = true
+check("not once it has gone off", not M.isStarter(jar))
+jar.rotten = nil
+eat(jar, 2.5 / M.jarFull(jar))
+check("half a portion left is too little to start a batch", near(M.jarPortions(jar), 0.5) and not M.isStarter(jar))
+local lastJar = notRotten(starterBag:AddItem(M.YOGHURT_JAR))
+M.fillJar(lastJar, "Base.ClayJar", 250, 1)
+local back = M.takeJarPortion(lastJar)
+check("and the jar of yoghurt is gone", back ~= nil and back:getFullType() == "Base.ClayJar"
+    and not starterBag:contains(lastJar) and starterBag:count("Base.ClayJar") == 1)
+local cupOf = notRotten(food("Base.Yoghurt"))
+check("a Yoghurt and a crock starter still count", M.isStarter(cupOf) and M.isStarter(notRotten(food(M.STARTER)))
+    and not M.isStarter(notRotten(food(M.EMPTY_CUP))))
+
 -- C23: a jar of cow's milk yoghurt, and a cup spooned from it
 local COW = M.portionFood({ fluid = "CowMilk", ml = 1000 })
 local milky = bag:AddItem(M.YOGHURT_JAR)

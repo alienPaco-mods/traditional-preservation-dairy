@@ -1,7 +1,7 @@
 -- Traditional Preservation (Dairy) B42: the Yoghurt Incubator and the Starter Culture Crock are worked from their
 -- right-click menus. The pot: pour milk steaming from a Hearth's copper in, add a starter, pour the milk back out, and
--- collect the set yoghurt into jars. The crock: load wheat and warm milk from the copper, feed it fresh milk, collect
--- the starters. The status line at the top says what the station is doing, and its hover says more. Both also have
+-- collect the set yoghurt into jars. The crock: load wheat and warm milk from the copper, or soured milk alone, feed it
+-- fresh milk, collect the starters. The status line at the top says what the station is doing, and its hover says more. Both also have
 -- info windows (TP Core's InfoWindow), opened from their menus or by clicking them. A Jar of Yoghurt's own menu spoons
 -- it into cups. The Hearth's own menu and Hearth Info are TP Core's (HearthUI); Dairy adds its milk notes there.
 require "TimedActions/ISInventoryTransferAction"
@@ -195,7 +195,7 @@ local function addStarterMenu(menu, playerObj, station, state)
     option.iconTexture = getTexture(STARTER_ICON)
     local ok, reason = M.canAddStarter(state)
     if not ok then return disableWith(option, getText(REFUSALS[reason])) end
-    local starters = findItems(playerObj, function(item) return M.STARTERS[item:getFullType()] ~= nil and not item:isRotten() end)
+    local starters = findItems(playerObj, M.isStarter)
     if #starters == 0 then return disableWith(option, getText("IGUI_TraditionalPreservationDairy_NoStarterItem")) end
     tooltipFor(option, getText("IGUI_TraditionalPreservationDairy_StarterHelp"))
     -- One is all a batch takes, so there's no "all".
@@ -207,6 +207,7 @@ local function addStarterMenu(menu, playerObj, station, state)
             seen[item:getFullType()] = true
             local entry = sub:addOption(item:getDisplayName(), playerObj, onAction, station, { item }, "starter")
             entry.itemForTexture = item
+            if item:getFullType() == M.YOGHURT_JAR then tooltipFor(entry, getText("IGUI_TraditionalPreservationDairy_JarStarter")) end
         end
     end
 end
@@ -371,6 +372,34 @@ local function addLoadMenu(menu, playerObj, station)
     end
 end
 
+local CLABBER_REFUSALS = {
+    Rotten = "IGUI_TraditionalPreservationDairy_ClabberRotten",
+    TooLittle = "IGUI_TraditionalPreservationDairy_CrockTooLittle",
+}
+
+-- Half a litre of soured milk of any warmth, no wheat: one entry per container of soured or rotten milk, rotten
+-- and too little in red with the reason.
+local function addClabberMenu(menu, playerObj, station)
+    local option = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_ClabberCrock"))
+    local milks = findItems(playerObj, function(item) return M.clabberIn(item:getFluidContainer()) ~= nil end)
+    showFirst(option, milks, BUCKET_ICON)
+    if #milks == 0 then return disableWith(option, getText("IGUI_TraditionalPreservationDairy_ClabberNoMilk")) end
+    tooltipFor(option, getText("IGUI_TraditionalPreservationDairy_ClabberHelp"))
+    local sub = menu:getNew(menu)
+    menu:addSubMenu(option, sub)
+    for _, item in ipairs(milks) do
+        local container = item:getFluidContainer()
+        local entry = sub:addOption(say("ContextMenu_TraditionalPreservationDairy_FluidItem", item:getDisplayName(),
+            litresText(container:getAmount() * 1000)), playerObj, onCrockAction, station, "clabber", item)
+        entry.itemForTexture = item
+        local refusal = M.clabberRefusal(container)
+        if refusal then
+            entry.notAvailable = true
+            tooltipFor(entry, getText(CLABBER_REFUSALS[refusal]))
+        end
+    end
+end
+
 -- Fresh milk of any warmth, one entry per container.
 local function addFeedMenu(menu, playerObj, station)
     local option = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_FeedCrock"))
@@ -420,6 +449,7 @@ local function addCrockMenu(context, playerObj, station, summary)
 
     if stage == "Empty" then
         addLoadMenu(menu, playerObj, station)
+        addClabberMenu(menu, playerObj, station)
     elseif stage == "Waiting" then
         addFeedMenu(menu, playerObj, station)
     elseif stage == "Ready" then

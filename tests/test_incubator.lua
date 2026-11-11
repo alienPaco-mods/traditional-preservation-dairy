@@ -316,6 +316,26 @@ M.updateCrock(crock, ledger, "Open")
 check("and develops into starter", crock.stage == "Ready")
 check("collecting gives the starters and empties it", M.collectStarters(crock) == M.CROCK_STARTERS
     and M.crockStage(crock) == "Empty" and crock.marks == nil)
+
+-- Clabber: soured milk alone, any warmth, no wheat
+Fluid = Fluid or { Get = function() return nil end }
+local function jug(fluid, litres) return H.vessel("Jug", fluid, litres, 2):getFluidContainer() end
+check("soured milk clabbers, of any kind", M.clabberIn(jug("SourCowMilk", 1)) == "Soured"
+    and M.clabberIn(jug("SourSheepMilk", 1)) == "Soured" and M.clabberRefusal(jug("SourAnimalMilk", 0.5)) == nil)
+check("rotten milk is refused, and said so", M.clabberIn(jug("RottenCowMilk", 1)) == "Rotten"
+    and M.clabberRefusal(jug("RottenSheepMilk", 1)) == "Rotten")
+check("fresh, scalded or no milk isn't soured", M.clabberRefusal(jug("CowMilk", 1)) == "NoSour"
+    and M.clabberRefusal(jug("ScaldedCowMilk", 1)) == "NoSour" and M.clabberRefusal(jug("Water", 1)) == "NoSour"
+    and M.clabberIn(jug("SourCowMilk", 0)) == nil)
+check("it needs half a litre", M.clabberRefusal(jug("SourCowMilk", 0.4)) == "TooLittle")
+check("soured milk may share the copper, as fresh milk does", Hearth.blends("SourCowMilk", "SourSheepMilk")
+    and not Hearth.blends("SourCowMilk", "CowMilk"))
+local clabber = {}
+check("a clabber skips Cultivating: the crock waits for fresh milk at once", M.clabberCrock(clabber)
+    and clabber.stage == "Waiting" and not M.clabberCrock(clabber) and M.feedCrock(clabber, ledger)
+    and clabber.stage == "Developing")
+check("a crock already started takes no clabber", not M.clabberCrock({ stage = "Cultivating" }))
+
 local hearthCrock = {}
 M.startCrock(hearthCrock, ledger)
 for hour = 74, 74 + 24 do

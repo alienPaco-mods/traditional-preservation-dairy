@@ -34,7 +34,7 @@ local function canDo(self)
         return name ~= nil and M.carriedRefusal(M.carryOf(self.item), ml, parts) == nil and M.milkRoom(batch, 1) > 0
             and M.coldRefusal(batch, ml, M.carriedC(self.item, getGameTime():getWorldAgeHours(), self.character)) == nil
     elseif self.mode == "starter" then
-        return M.STARTERS[self.item:getFullType()] ~= nil and not self.item:isRotten() and M.canAddStarter(batch)
+        return M.isStarter(self.item) and M.canAddStarter(batch)
     elseif self.mode == "pourOut" then
         return M.isEmptyContainer(self.item) and (M.stage(batch) == "Cooling" or M.stage(batch) == "TooCold")
     elseif self.mode == "cup" then
@@ -94,6 +94,7 @@ end
 function COMPLETE.starter(self, batch)
     local fullType = self.item:getFullType()
     if M.addStarter(batch, M.STARTERS[fullType]) then
+        if fullType == M.YOGHURT_JAR then return M.takeJarPortion(self.item) end
         removeItem(self.item)
         if fullType == "Base.Yoghurt" then give(self, M.EMPTY_CUP) end
     end

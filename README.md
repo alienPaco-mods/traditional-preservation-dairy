@@ -19,7 +19,7 @@ Copy this folder to `~/Zomboid/mods/TraditionalPreservationDairy`, as a real cop
 1. **Keep a cow or sheep in milk.** Cow's and sheep's milk both work, and mix.
 2. **Build a Hearth** (TP Core) and keep wood for it. 10 L take about 1.5 hours to steam, a full 20 L about 2. (No Hearth yet: a pot of milk on any lit stove or fire scalds too; see Filling the incubator.)
 3. **Throw a Yoghurt Pot** on the wheel and fire it, then build it into a Yoghurt Incubator within 2 tiles of the Hearth.
-4. **Keep one yoghurt back.** Each batch takes one vanilla Yoghurt or one Active Yoghurt Starter. With none left, build a Starter Culture Crock.
+4. **Keep one yoghurt back.** Each batch takes one vanilla Yoghurt, one portion of a Jar of Yoghurt, or one Active Yoghurt Starter. With none left, build a Starter Culture Crock.
 5. **Save your Empty Yoghurt Containers and jars.** Each cup of yoghurt needs a container; a glass jar holds a litre, a clay jar 2.5 L, and you eat from the jar itself.
 6. **Set it by the fire in winter.** A lit fire within 2 tiles (the Hearth, a fireplace, an antique stove or a campfire) keeps the pot at 28 C: it sets in about 6 hours in any month.
 7. **Mind the milk.** Raw milk sours in about a day and a half in a warm room; scald it or keep it cold (see Milk goes off).
@@ -31,7 +31,7 @@ Copy this folder to `~/Zomboid/mods/TraditionalPreservationDairy`, as a real cop
 | 1 | Pour into the Copper | Hearth's right-click menu | milk, from any container | up to 20 L in the copper | a moment |
 | 2 | Bring to the steam | Lit Hearth | | milk at 85 C | about 1.5 hours for 10 L, 2 for 20 L |
 | 3 | Pour from the Hearth | Incubator's menu, Hearth within 2 tiles | steaming milk | up to 5 L in the pot | a moment |
-| 4 | Add Starter | Incubator's menu | 1 Yoghurt or Active Yoghurt Starter | | a moment |
+| 4 | Add Starter | Incubator's menu | 1 Yoghurt, a jar's portion, or an Active Yoghurt Starter | | a moment |
 | 5 | Cool | Incubator, lid on | | milk at 45 C, the wrap goes on | about 2 hours* |
 | 6 | Set | Incubator, wrapped | | 5 L of yoghurt | 6 hours at 40 to 45 C* |
 | 7 | Collect | Incubator's menu | empty jars, or Empty Yoghurt Containers | Jars of Yoghurt (glass 1 L, clay 2.5 L), or Yoghurts | a moment |
@@ -43,7 +43,7 @@ Copy this folder to `~/Zomboid/mods/TraditionalPreservationDairy`, as a real cop
 | One full pot | |
 |---|---|
 | Milk | 5 L, cow's, sheep's or both |
-| Starter | 1 Yoghurt or 1 Active Yoghurt Starter |
+| Starter | 1 Yoghurt, 1 portion of a Jar of Yoghurt, or 1 Active Yoghurt Starter |
 | Wood | about 1.5 hours of fire to steam 10 L (two pots), 2 hours for 20 L (four) |
 | Yoghurt | 5 L: 5 glass jars, 2 clay jars, or 20 cups (250 ml portions) |
 | Cooking XP | 2 per litre collected |
@@ -64,7 +64,7 @@ You can walk through the incubator and the crock. Both work anywhere, but pourin
 
 ### 1. The Hearth's copper
 
-The Hearth is TP Core's station, documented in full in TP Core's `README.md` and guide (`6_Core_Guide.md`): a vanilla fireplace (Add Fuel, Light, a firebox that cooks, room heat) with a 20 L copper set in its top. Right-click it for **Pour into the Copper**, **Fill from the Copper** (into your own containers), **Bank the Fire** / **Stoke the Fire** and **Hearth Info**.
+The Hearth is TP Core's station, documented in full in TP Core's `README.md` and guide (`6_Core_Guide.md`): a vanilla fireplace (Add Fuel, Light, a firebox that cooks, room heat) with a 20 L copper set in its top. Right-click it for **Pour into the Copper**, **Fill from the Copper** (into your own containers), **Empty the Copper**, **Bank the Fire** / **Stoke the Fire** and **Hearth Info**.
 
 - The copper holds one fluid at a time. Cow's and sheep's milk count as one: they mix freely, and a blend keeps its shares in the copper, a container and the pot. Any other mix is refused, shown in red with the reason.
 - Poured milk mixes its temperature with what's already in the copper, by volume.
@@ -77,7 +77,7 @@ The Hearth is TP Core's station, documented in full in TP Core's `README.md` and
 Right-click the incubator:
 - **Pour from the Hearth** draws steaming milk from a Hearth within 2 tiles, up to the pot's 5 L.
 - **Pour Scalded Milk** takes scalded milk from any container: milk that has been at 85 C or more in the copper, or in a pot on a lit stove, fireplace, barbecue or campfire (vanilla's lowest stove setting already gets there), or store milk poured out of its carton. It goes in at the heat it has now: off the heat an open pot or bucket cools in minutes (85 to 45 C in about a quarter hour), a Wrapped Yoghurt Pot in hours, and a pour between containers carries the heat over. Milk that isn't scalded is refused as "Not scalded".
-- **Add Starter** takes one vanilla Yoghurt or one Active Yoghurt Starter, before or after the milk. One per batch.
+- **Add Starter** takes one vanilla Yoghurt, one portion (250 ml) of a Jar of Yoghurt with a whole portion left (the rest stays; the empty jar comes back with the last), or one Active Yoghurt Starter, before or after the milk. None gone off. One per batch.
 
 Once the starter is in, milk that would leave the pot under 40 C is refused as too cold, so a set batch is never spoiled by a cold top-up.
 
@@ -105,6 +105,7 @@ No yoghurt left to start from? Grow a starter.
 
 1. **Load Wheat and Warm Milk**: 20 wheat grains and 0.5 L of milk at 35 to 45 C, from a Hearth within 2 tiles or a carried container (in practice a Wrapped Yoghurt Pot, or a copper cooling with the fire out). Hotter milk kills the grain's culture; the menu says why it refuses.
 2. **Cultivating**: 24 hours at its best (25 to 35 C), slower outside that. Keep it by the fire in winter.
+   *Or* **Load Soured Milk** instead of steps 1 and 2: 0.5 L of soured milk, any warmth, no wheat (a clabber). It already holds lactic bacteria, so the crock goes straight to step 3. Rotten milk is refused.
 3. **Feed Fresh Milk**: 0.5 L of any milk, fresh or scalded, warm or cold, from any container. Soured and rotten milk are refused.
 4. **Developing**: 12 hours at its best.
 5. **Collect 2 Starters**: two **Active Yoghurt Starters**, fresh 5 days and rotten at 10. Each sets one batch.
@@ -119,7 +120,7 @@ Vanilla milk keeps for ever. Here it doesn't (TP Core's `FluidAgeing`; sandbox *
 |---|---|---|
 | Cow's Milk (Fresh) | Raw, young | Everything |
 | Cow's Milk (Scalded) | Has been at 85 C or more (the copper, or a pot on a lit stove or fire), poured out of the incubator, or poured out of a store carton | Everything. It never sours |
-| Cow's Milk (Soured) | Raw milk after 36 hours' worth of 20 C | Drinking (its milk's food, a little unhappiness), Make Cake Batter, Prepare Muffins, Make Bowl of Cereal. The incubator, the crock, Churn Butter and Make Mildew Cure refuse it |
+| Cow's Milk (Soured) | Raw milk after 36 hours' worth of 20 C | Drinking (its milk's food, a little unhappiness), Make Cake Batter, Prepare Muffins, Make Bowl of Cereal, and Load Soured Milk on an empty crock. The incubator, the crock's feed, Churn Butter and Make Mildew Cure refuse it |
 | Cow's Milk (Rotten) | Any milk after 72 hours' worth of 20 C | Nothing: food poisoning. Pour it away |
 
 Sheep's and the game's generic animal milk go the same way under their own names.
@@ -258,7 +259,6 @@ In debug mode, `TPD.help()` in the Lua console lists commands for testing this m
 
 - **Empty Yoghurt Containers can't be made yet**: they come only from eating looted or home-made Yoghurt.
 - Vanilla is changed in four places: Yoghurt (leaves its cup, and has a cow's milk portion's food), the milk fluids' names ("Cow's Milk (Fresh)"), milk going off, and the milk line of five vanilla recipes (Make Cake Batter, Prepare Muffins, Make Bowl of Cereal, Churn Butter, Make Mildew Cure). Another mod that changes the same things may conflict.
-- The player guide has no page yet on clabber (soured milk as a starter): it comes with the clabber crock.
 - Several vanilla UI functions are wrapped (the station's right-click entry and the click on a station), so compare them with vanilla after a game update.
 - The tiledef number 5172 must be unique among your active mods.
 - Multiplayer is not supported. This mod is singleplayer only for now.

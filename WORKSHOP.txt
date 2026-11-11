@@ -25,7 +25,7 @@ Traditional Preservation (Dairy) requires [b]Traditional Preservation (Core)[/b]
 [*][b]Pour into the Copper[/b] (the Hearth's right-click menu): up to 20 L of milk from any container.
 [*][b]Light the fire[/b]: 10 L steams (85 C) in about 1.5 hours, a full 20 L in about 2. Hearth Info shows when.
 [*][b]Pour from the Hearth[/b] into a Yoghurt Incubator within 2 tiles, up to 5 L. No Hearth yet? Scald a pot of milk on any lit stove or fire and use [b]Pour Scalded Milk[/b] while it's hot.
-[*][b]Add Starter[/b]: one vanilla Yoghurt or one Active Yoghurt Starter.
+[*][b]Add Starter[/b]: one vanilla Yoghurt, one portion of a Jar of Yoghurt, or one Active Yoghurt Starter.
 [*][b]Wait[/b]: the milk cools to 45 C in about 2 hours, the incubator wraps itself, and the milk sets in about 6 hours at 40 to 45 C.
 [*][b]Collect[/b] into empty jars, glass 1 L or clay 2.5 L, or straight into Empty Yoghurt Containers.
 [*][b]Eat a Portion[/b] from a Jar of Yoghurt: 250 ml, with a quarter litre of its milk's food (154 kcal from cow's milk, 206 from sheep's); 4 in a glass jar, 10 in a clay one.
@@ -40,7 +40,7 @@ Traditional Preservation (Dairy) requires [b]Traditional Preservation (Core)[/b]
 [/list]
 
 [h2]No yoghurt left?[/h2]
-Load the crock with 20 wheat grains and half a litre of milk at 35 to 45 C. In about a day it cultivates; feed it half a litre of fresh milk, and 12 hours later collect two Active Yoghurt Starters. Each sets one batch. Keep it warm: by the fire it takes a day in any month, outdoors in winter weeks.
+Load the crock with 20 wheat grains and half a litre of milk at 35 to 45 C. In about a day it cultivates; feed it half a litre of fresh milk, and 12 hours later collect two Active Yoghurt Starters. Half a litre of soured milk does the wheat's work at once: no grain, no day's wait. Each sets one batch. Keep it warm: by the fire it takes a day in any month, outdoors in winter weeks.
 
 [h2]Temperature[/h2]
 [list]

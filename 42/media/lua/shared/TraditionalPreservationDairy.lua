@@ -4,7 +4,7 @@
 -- sets at a speed that follows its own temperature. Cooling depends on what the milk was, not only on the
 -- weather now, so the core ledger's running totals can't replay it: an hourly history of the weather in
 -- global ModData lets an unloaded pot catch up hour by hour. The crock is an ordinary weather-weighted run
--- on the ledger, in two stages with a feed of fresh milk between them.
+-- on the ledger, in two stages with a feed of fresh milk between them; soured milk (a clabber) skips the first.
 -- A batch is a plain table (modData[M.INCUBATOR_KEY] or [M.CROCK_KEY]); every function here works on it without the engine.
 TraditionalPreservationDairy = TraditionalPreservationDairy or {}
 local M = TraditionalPreservationDairy
@@ -68,6 +68,9 @@ M.CROCK_HOT_C = 45            -- and no hotter than this, or it kills the grain'
 M.CULTIVATE_HOURS = 24        -- wheat and warm milk, at the best temperature
 M.DEVELOP_HOURS = 12          -- after the fresh-milk feed, at the best temperature
 M.CROCK_STARTERS = 2
+-- Clabber: half a litre of soured milk, of any warmth, starts the crock with no wheat. Its own lactic bacteria are
+-- the culture the grain would have grown, so it skips Cultivating and waits for fresh milk at once.
+M.CLABBER_ML = 500
 local CROCK_KIND = "culture"
 -- Grain starters are kept warm, not hot: best at 25 to 35 C, slow when cool, near stopped by 5.
 local CULTURE_CURVE = { { 5, 0.03 }, { 10, 0.1 }, { 15, 0.3 }, { 20, 0.6 }, { 25, 1 }, { 35, 1 }, { 40, 0.6 }, { 45, 0.1 } }
@@ -88,6 +91,9 @@ M.SCALDED_MILKS = { CowMilk = "ScaldedCowMilk", SheepMilk = "ScaldedSheepMilk", 
 M.SCALDED = {}
 for _, scalded in pairs(M.SCALDED_MILKS) do M.SCALDED[scalded] = true end
 M.STORE_MILK = { ["Base.Milk"] = true, ["Base.MilkBottle"] = true, ["Base.Milk_Personalsized"] = true }
+M.SOURED, M.ROTTEN = {}, {}
+for milk, sour in pairs(M.SOUR_MILKS) do M.SOURED[sour], M.ROTTEN[M.ROTTEN_MILKS[milk]] = true, true end
+Hearth.blend("SourCowMilk", "SourSheepMilk", "SourAnimalMilk")
 -- Souring speed against 20 C. Mesophilic bacteria: frozen milk stops, a fridge crawls, best near blood heat; past
 -- 50 C the heat starts to kill them.
 local MILK_CURVE = { { 0, 0 }, { 2, 0.12 }, { 4, 0.19 }, { 10, 0.33 }, { 15, 0.5 }, { 20, 1 }, { 25, 1.25 }, { 30, 1.5 },
@@ -117,7 +123,8 @@ M.MILKS = { CowMilk = true, SheepMilk = true, AnimalMilk = true }
 for milk, scalded in pairs(M.SCALDED_MILKS) do M.MILKS[scalded] = true end
 Hearth.blend("CowMilk", "SheepMilk", "AnimalMilk", "ScaldedCowMilk", "ScaldedSheepMilk", "ScaldedAnimalMilk")
 M.STARTER = "TraditionalPreservationDairy.ActiveYoghurtStarter"
-M.STARTERS = { ["Base.Yoghurt"] = "Yoghurt", [M.STARTER] = "Starter" }
+-- A Jar of Yoghurt gives one portion, as much as a Yoghurt cup holds, and keeps the rest (M.isStarter).
+M.STARTERS = { ["Base.Yoghurt"] = "Yoghurt", [M.STARTER] = "Starter", ["TraditionalPreservationDairy.JarOfYoghurt"] = "Yoghurt" }
 M.EMPTY_CUP = "TraditionalPreservationDairy.EmptyYoghurtContainer"
 -- The jars yoghurt is collected into, with the ml each holds (vanilla capacities). Clay Jars need Pottery 5 and
 -- are rare loot; the glass canning jar is common.
@@ -760,6 +767,31 @@ end
 function M.loadCrock(crock, ledger)
     if M.crockStage(crock) ~= "Empty" then return false end
     M.startCrock(crock, ledger)
+    return true
+end
+
+-- What a container holds for a clabber: "Soured" if it is all soured milk (one kind or a blend), "Rotten" if its
+-- main fluid is rotten milk, else nil.
+function M.clabberIn(container)
+    local parts, name = Hearth.partsIn(container)
+    if parts and M.SOURED[name] then return "Soured" end
+    local primary = container and not container:isEmpty() and container:getPrimaryFluid()
+    if primary and M.ROTTEN[primary:getFluidTypeString()] then return "Rotten" end
+end
+
+-- Why a container can't clabber the crock ("Rotten", "TooLittle", "NoSour"), or nil if it can.
+function M.clabberRefusal(container)
+    local kind = M.clabberIn(container)
+    if kind == "Rotten" then return "Rotten" end
+    if not kind then return "NoSour" end
+    if M.mlIn(container) < M.CLABBER_ML - 0.5 then return "TooLittle" end
+end
+
+-- Soured milk goes into an empty crock only, and it waits for fresh milk straight away.
+function M.clabberCrock(crock)
+    if M.crockStage(crock) ~= "Empty" then return false end
+    crock.stage = "Waiting"
+    crock.done = 0
     return true
 end
 

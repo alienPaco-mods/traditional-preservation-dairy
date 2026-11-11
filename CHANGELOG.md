@@ -1,6 +1,15 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- A Jar of Yoghurt as a starter (user 2026-11-11): Add Starter takes one portion (250 ml, a Yoghurt cup's worth) from
+  a jar with a whole portion left and not gone off; the rest stays in the jar, and the empty jar comes back with the
+  last portion. Its hover says so. `M.isStarter`, `M.takeJarPortion`.
+- Hearth: Empty the Copper (TP Core) is listed with the Hearth's options in the README and guide.
+- The clabber crock (D9 step 2b): Load Soured Milk on an empty Starter Culture Crock takes half a litre of soured
+  milk, warm or cold, with no wheat, and the crock waits for fresh milk at once (starters in about 12 hours instead of
+  36). Rotten milk is listed in red, and so is less than half a litre. Soured milks of different animals now blend, as
+  fresh ones do. The crock's waiting stage reads "Cultured" (was "Cultivated"). Guide: "Clabber or yoghurt?" in 7½
+  (mesophilic vs thermophilic, backslopping), the crock's short way in 8, a tip and a troubleshooting line.
 - Docs: the Hearth's full reference moved to TP Core's README and guide (`6_Core_Guide.md`); Dairy's keep what a
   dairymaid needs and point there.
 - Docs (2026-11-11 pass against the code): README and guide gain a section on milk going off (Fresh, Scalded,

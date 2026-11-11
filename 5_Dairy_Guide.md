@@ -44,7 +44,7 @@ This mod lets you **set your own yoghurt the old way**: milk brought to the stea
 | Throw a **Yoghurt Pot** and fire it | 6 Clay, a little water. Pottery 2, wheel and kiln | The pot |
 | Build a **Yoghurt Incubator** within 2 tiles of the Hearth | 1 Yoghurt Pot, 2 Ripped Sheets, 1 Twine. Tailoring 1 | The incubator |
 | **Pour into the Copper** and light the fire | Up to 20 L of cow's or sheep's milk, firewood | Steaming milk in **about 1.5 hours** for 10 L, 2 for 20 L |
-| **Pour from the Hearth**, then **Add Starter** | 1 vanilla Yoghurt or 1 Active Yoghurt Starter | 5 L cooling in the pot |
+| **Pour from the Hearth**, then **Add Starter** | 1 vanilla Yoghurt, a portion of a Jar of Yoghurt, or 1 Active Yoghurt Starter | 5 L cooling in the pot |
 | Wait **about 8 hours** (2 cooling, 6 setting, in a 20 C room) | | 5 L of yoghurt |
 | **Collect** | Empty jars or Empty Yoghurt Containers | Jars of Yoghurt or vanilla Yoghurts |
 
@@ -67,7 +67,7 @@ This mod lets you **set your own yoghurt the old way**: milk brought to the stea
 | 1 | Pour into the Copper | Hearth's right-click menu | milk, from any container | up to 20 L in the copper | a moment |
 | 2 | Bring to the steam | Lit Hearth | | milk at 85 C | about 1.5 hours for 10 L, 2 for 20 L |
 | 3 | Pour from the Hearth | Incubator's menu | steaming milk | up to 5 L in the pot | a moment |
-| 4 | Add Starter | Incubator's menu | 1 Yoghurt or Active Yoghurt Starter | | a moment |
+| 4 | Add Starter | Incubator's menu | 1 Yoghurt, a jar's portion, or an Active Yoghurt Starter | | a moment |
 | 5 | Cool | Incubator, lid on | | milk at 45 C, the wrap goes on | about 2 hours* |
 | 6 | Set | Incubator, wrapped | | 5 L of yoghurt | 6 hours at 40 to 45 C* |
 | 7 | Collect | Incubator's menu | empty jars or Empty Yoghurt Containers | Jars of Yoghurt or Yoghurts | a moment |
@@ -85,7 +85,7 @@ This mod lets you **set your own yoghurt the old way**: milk brought to the stea
 4. **Build the Yoghurt Incubator** from the Build menu, within 2 tiles of the Hearth.
 5. **Pour into the Copper** (right-click the Hearth) from your milk buckets, then **Light** the fire.
 6. Check **Hearth Info**. When it reads "Steaming: Yes", the milk is at 85 C.
-7. Right-click the incubator: **Pour from the Hearth**, then **Add Starter** with a Yoghurt you kept back.
+7. Right-click the incubator: **Pour from the Hearth**, then **Add Starter** with a Yoghurt or a Jar of Yoghurt you kept back.
 8. Go to bed. The lid stays on while it cools, and at 45 C the cloth wraps itself on.
 9. In the morning the status reads **Ready**. **Collect into a Jar** or **Fill Empty Yoghurt Containers**.
 10. Keep one Yoghurt back for the next batch.
@@ -98,7 +98,7 @@ That's it. A full copper is four pots, 20 L of yoghurt from one firing.
 
 ## 5. The Hearth's Copper
 
-The Hearth is TP Core's station: a vanilla fireplace (Add Fuel, Light, a firebox that cooks, room heat) with a 20 L copper set in its top. Right-click it for **Pour into the Copper**, **Fill from the Copper** (into your own containers), **Bank the Fire** / **Stoke the Fire** and **Hearth Info**.
+The Hearth is TP Core's station: a vanilla fireplace (Add Fuel, Light, a firebox that cooks, room heat) with a 20 L copper set in its top. Right-click it for **Pour into the Copper**, **Fill from the Copper** (into your own containers), **Empty the Copper**, **Bank the Fire** / **Stoke the Fire** and **Hearth Info**.
 
 - **One fluid at a time.** Cow's and sheep's milk count as one: they mix freely, and a blend keeps its shares in the copper, in a container and in the pot. Any other mix is refused, shown in red with the reason.
 - **Heat mixes by volume.** Cold milk poured onto hot cools the lot.
@@ -126,7 +126,7 @@ A lidded clay pot holding 5 L, wrapped in a striped cloth when it's setting. Rig
 
 - **Pour from the Hearth** draws steaming milk from a Hearth within 2 tiles, up to the pot's 5 L.
 - **Pour Scalded Milk** takes **scalded** milk from any container: milk that has been at 85 C or more, in the copper or in a pot on a stove or a fire, or store milk poured out of its carton (it was pasteurised). It goes in at the heat it has *now*: off the heat, an open pot or bucket cools in minutes (85 to 45 C in about a quarter hour), a **Wrapped Yoghurt Pot** in hours. Pouring between containers carries the heat over, so a pot just off the stove poured into a Wrapped Pot stays hot.
-- **Add Starter** takes one vanilla Yoghurt or one Active Yoghurt Starter, before or after the milk. One per batch, whatever the size.
+- **Add Starter** takes one vanilla Yoghurt, one portion from a Jar of Yoghurt (250 ml, a cup's worth: the rest stays in the jar, and the empty jar comes back with the last), or one Active Yoghurt Starter, before or after the milk. None of them gone off. One per batch, whatever the size.
 - **Pour Out Milk** empties the pot into a container.
 
 ### Cooling, wrapping, setting
@@ -197,7 +197,7 @@ Vanilla milk keeps for ever. With this mod it doesn't, and what you do with a bu
 |---|---|---|
 | **Cow's Milk (Fresh)** | Raw and young | Everything |
 | **Cow's Milk (Scalded)** | It has been at 85 C or more (the copper, or a pot on a lit stove or fire), or it came out of the incubator or a store carton | Everything. It never sours |
-| **Cow's Milk (Soured)** | Raw milk, a day and a half old in a warm room | Drinking (the same food, a little unhappiness) and baking: cake batter, muffins, cereal. Not yoghurt, the crock, butter or mildew cure |
+| **Cow's Milk (Soured)** | Raw milk, a day and a half old in a warm room | Drinking (the same food, a little unhappiness), baking (cake batter, muffins, cereal) and starting the crock without wheat (§8). Not yoghurt, butter or mildew cure |
 | **Cow's Milk (Rotten)** | Any milk, twice that old | Nothing. It poisons you: pour it away |
 
 Sheep's milk and the game's plain "animal's milk" go the same way under their own names.
@@ -222,6 +222,24 @@ Sheep's milk and the game's plain "animal's milk" go the same way under their ow
 
 Both can be changed in the sandbox: **Milk goes off** and **Milk spoiling speed**.
 
+### Clabber or yoghurt?
+
+Soured milk and yoghurt are both milk turned by lactic bacteria. They're not the same bacteria, and they don't like the same heat.
+
+| | Clabber (soured milk) | Yoghurt |
+|---|---|---|
+| Who does the work | Mesophilic bacteria: *Lactococcus*, carried in raw milk | Thermophilic bacteria: *S. thermophilus* and *L. bulgaricus*, from a starter |
+| Happiest at | 20 to 30 C, a warm kitchen | 40 to 45 C, a wrapped pot |
+| Started by | Nothing: raw milk left alone | A spoonful of the last batch |
+| Scalded milk | Never clabbers: the heat killed them | Wants it: the heat cleared the way |
+| Here it's good for | Drinking, baking, a quick start for the crock | Eating, cooking, the next batch |
+
+- **Load Soured Milk** puts half a litre of clabber into an empty Starter Culture Crock, warm or cold, with no wheat. It skips the grain's day of cultivating and waits for fresh milk at once: **starters in about 12 hours instead of 36.**
+- **Rotten milk won't do.** By then other things are living in it.
+- **Backslopping** is the old word for starting a batch with a little of the last one. Every yoghurt you set from a cup of the last pot is backslopped, and so is every crock you start from soured milk.
+
+> ✏ *Margin note:* in Russia soured raw milk is *prostokvasha*, "simply soured", and the Irish called it *bainne clábair*, "thick milk", which English made into bonny clabber. Every farm kitchen had a jug of it going, for pancakes and soda bread. The crock here takes a little game licence: a real clabber won't turn into yoghurt by itself. Fed warm fresh milk, though, its acid and bacteria give the crock the head start the wheat would take a day to grow.
+
 ---
 
 ## 8. The Starter Culture Crock
@@ -232,11 +250,13 @@ No yoghurt left to start from? Grow one.
 |---|---|---|---|
 | 1 | **Load Wheat and Warm Milk** | 20 wheat grains + 0.5 L milk at 35 to 45 C | |
 | 2 | Cultivating | | 24 hours |
+| 1-2 | *or* **Load Soured Milk** | 0.5 L soured milk, any warmth, no wheat | none: on to step 3 |
 | 3 | **Feed Fresh Milk** | 0.5 L of any milk, warm or cold | |
 | 4 | Developing | | 12 hours |
 | 5 | **Collect 2 Starters** | | 2 Active Yoghurt Starters |
 
 - **The warm milk is the hard part.** It must be 35 to 45 C: from a Hearth within 2 tiles (a copper cooling with the fire out), or carried in a Wrapped Yoghurt Pot. Hotter milk kills the grain's culture, and the menu says why it refuses.
+- **Soured milk is the short way.** Half a litre of it, warm or cold, starts the crock with no wheat and goes straight to Feed Fresh Milk. Rotten milk is refused. See *Clabber or yoghurt?* in §7½.
 - **An Active Yoghurt Starter** is fresh 5 days and rotten at 10. Each sets one batch.
 - **The crock stands on the floor, a kitchen counter or a table**, never on a stove, a fridge or a freezer.
 
@@ -367,7 +387,8 @@ Hours for 5 L poured at 85 C at 18:00 with the starter in, **cooling + setting**
 - **Fire up a full copper.** 20 L takes only half an hour more fire than 10 and fills four pots.
 - **Set it by the fire in winter.** A lit Hearth, fireplace or campfire within 2 tiles holds a pot at 28 C: about 9 hours from pouring to Ready in any month.
 - **Bank the fire overnight.** It holds the copper at 50 C on a third of the wood, and banked embers still keep a pot at 24 C.
-- **Keep one yoghurt back. Always.** Otherwise it's a day and a half with the crock.
+- **Keep one yoghurt back. Always.** A portion of a jar will do. Otherwise it's a day and a half with the crock, or half a day if you have soured milk.
+- **Soured milk isn't waste.** Bake with it, or start the crock with it.
 - **Use the clay jars.** 2.5 L each, 10 portions, and you eat from the jar itself.
 - **Save every Empty Yoghurt Container.** They can't be made, only emptied.
 - **Grow two starters before you need them.** They're fresh 5 days: start the crock when you're down to your last yoghurt, not after.
@@ -382,10 +403,11 @@ Hours for 5 L poured at 85 C at 18:00 with the starter in, **cooling + setting**
 | Pour Scalded Milk says "Not scalded" | The milk isn't scalded: bring it to 85 C in the copper or on a stove or fire. Raw milk mixed in makes scalded milk plain again |
 | Pour refused as too cold | The starter is in, and the milk would bring the pot under 40 C. Use hotter milk |
 | Pour into the Copper refused, in red | The copper holds one fluid at a time. Only cow's and sheep's milk mix |
-| My milk reads Soured or Rotten | Raw milk sours in a day and a half in a warm room. Scald it, or keep it in a basement or a powered fridge. Soured milk still bakes; rotten milk is only fit to pour away |
+| My milk reads Soured or Rotten | Raw milk sours in a day and a half in a warm room. Scald it, or keep it in a basement or a powered fridge. Soured milk still bakes; rotten milk is only fit to pour away (a copper of it: Empty the Copper) |
 | Pot reads **Too cold** | It fell under 40 C before the starter went in. Pour it out, reheat it in the copper, or top it up with steaming milk |
 | Setting doesn't move | The pot is below about 18 C. Move it by a fire, or wait for warmer weather |
 | Crock won't take the warm milk | It must be 35 to 45 C. The menu says whether it's too hot or too cold |
+| Load Soured Milk greyed out | You need half a litre of soured milk in one container. Fresh or scalded milk isn't soured; rotten milk is refused |
 | Crock won't place | It stands on the floor, a counter or a table, never on a stove, a fridge or a freezer |
 | No Empty Yoghurt Containers | They come only from eating Yoghurt. Use jars instead |
 | Stations or recipes missing | Check `~/Zomboid/console.txt`. TP Core must be enabled, and the tiledef 5172 must be unique among your mods |

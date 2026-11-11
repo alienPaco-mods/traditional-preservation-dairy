@@ -173,6 +173,50 @@ check("named with its status, so they can be told apart", context.options[1].nam
     and context.options[1].name:find("2.0", 1, true) ~= nil and context.options[2].name:find("(", 1, true) ~= nil)
 check("the crock's menu opens with its status and Crock Info", subs[2].options[1].isDisabled == true and #subs[2].options >= 2)
 
+-- A Jar of Yoghurt as a starter: a whole portion left, not gone off
+local function jarOf(name, portions, rotten)
+    local data = { tpdFood = true, customInventoryIcon = "icon" }
+    return { getFullType = function() return M.YOGHURT_JAR end, getDisplayName = function() return name end,
+        isFavorite = function() return false end, isRotten = function() return rotten end, getModData = function() return data end,
+        getHungChange = function() return M.PORTION.hunger * portions end, getFluidContainer = function() return nil end }
+end
+ui.carried = { jarOf("Low Jar", 0.5), jarOf("Bad Jar", 3, true), jarOf("Good Jar", 2) }
+local addStarter = named(open(incubator(5))[1], "ContextMenu_TraditionalPreservationDairy_AddStarter")
+local starters = addStarter.subOption.options
+check("a jar with a whole portion is offered as a starter, a low or rotten one isn't", #starters == 1
+    and starters[1].name == "Good Jar" and starters[1].itemForTexture == ui.carried[3])
+check("its hover says it takes one portion", starters[1].toolTip.description == getText("IGUI_TraditionalPreservationDairy_JarStarter"))
+ui.carried = { jarOf("Low Jar", 0.5) }
+addStarter = named(open(incubator(5))[1], "ContextMenu_TraditionalPreservationDairy_AddStarter")
+check("with only a nearly empty jar, Add Starter is greyed", addStarter.isDisabled == true
+    and addStarter.toolTip.description == getText("IGUI_TraditionalPreservationDairy_NoStarterItem"))
+ui.carried = {}
+
+-- An empty crock: soured milk alone (a clabber)
+local CLABBER = "ContextMenu_TraditionalPreservationDairy_ClabberCrock"
+local clabber = named(open(crock(5))[1], CLABBER)
+check("with no soured milk carried, Load Soured Milk is greyed and says why", clabber.isDisabled == true
+    and clabber.toolTip.description == getText("IGUI_TraditionalPreservationDairy_ClabberNoMilk"))
+local function jug(name, fluid, litres)
+    return H.vessel(name, fluid, litres, 2, { getFullType = function() return "Base.WaterBottle" end })
+end
+ui.carried = { jug("Sour Jug", "SourSheepMilk", 1), jug("Rotten Jug", "RottenCowMilk", 1), jug("Small Jug", "SourCowMilk", 0.3),
+    jug("Fresh Jug", "CowMilk", 1) }
+clabber = named(open(crock(5))[1], CLABBER)
+local rows = clabber.subOption.options
+check("soured and rotten milk are listed, fresh milk isn't", #rows == 3 and clabber.itemForTexture == ui.carried[1])
+check("soured milk is offered, whatever its heat", rows[1].notAvailable == nil and rows[1].name:find("1.0", 1, true) ~= nil)
+check("rotten milk is red: pour it out", rows[2].notAvailable == true
+    and rows[2].toolTip.description == getText("IGUI_TraditionalPreservationDairy_ClabberRotten"))
+check("too little soured milk is red", rows[3].notAvailable == true
+    and rows[3].toolTip.description == getText("IGUI_TraditionalPreservationDairy_CrockTooLittle"))
+ui.queued = {}
+rows[1].onSelect(character, unpack(rows[1].args))
+check("choosing it queues the clabber with that container", #ui.queued == 1 and ui.queued[1].Type == "TPStarterCrock"
+    and ui.queued[1].mode == "clabber" and ui.queued[1].item == ui.carried[1])
+check("a crock already started offers no clabber", named(open(crock(5, { stage = "Cultivating", done = 0 }))[1], CLABBER) == nil)
+ui.carried = {}
+
 check("no text would make the game's formatter warn" .. (H.textWarnings[1] and " (" .. table.concat(H.textWarnings, "; ") .. ")" or ""),
     #H.textWarnings == 0)
 

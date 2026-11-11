@@ -23,4 +23,4 @@ Right-click a station once to start tracking it if `TPD.pots()` or `TPD.crocks()
 
 **Typical check of a batch:** within 2 tiles of a Hearth, `TPC.copper(5)` and `TPC.hot()` for 5 L of steaming milk (`TPC.copper(5, 20, "SheepMilk")` for sheep's), `TPD.kit()`, then Pour from the Hearth and Add Starter on the incubator. `TPD.skip(3)` should show it wrapped and setting, `TPD.skip(7)` Ready.
 
-**Typical check of the crock:** `TPD.kit("crock")`, `TPC.copper(1, 40)` by a Hearth within 2 tiles, Load Wheat and Warm Milk, `TPD.culture()`, Feed Fresh Milk from `TPD.milk(1)`, `TPD.culture(12)`, then Collect 2 Starters.
+**Typical check of the crock:** `TPD.kit("crock")`, `TPC.copper(1, 40)` by a Hearth within 2 tiles, Load Wheat and Warm Milk, `TPD.culture()`, Feed Fresh Milk from `TPD.milk(1)`, `TPD.culture(12)`, then Collect 2 Starters. **The clabber:** `TPD.milk(1)`, `TPD.age()` (it reads Soured), Load Soured Milk on an empty crock (Cultured at once), feed, `TPD.culture(12)`, collect.

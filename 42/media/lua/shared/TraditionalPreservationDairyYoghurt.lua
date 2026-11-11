@@ -89,6 +89,22 @@ function M.fillJar(jar, jarType, ml, age, portion)
     M.labelJar(jar)
 end
 
+-- Whether an item can start a batch: a starter that hasn't gone off, and a Jar of Yoghurt only with a whole portion
+-- left (the engine keeps hunger as a 32-bit float, so a portion may read a hair under 1).
+function M.isStarter(item)
+    local fullType = item:getFullType()
+    if not M.STARTERS[fullType] or item:isRotten() then return false end
+    return fullType ~= M.YOGHURT_JAR or M.jarPortions(item) >= 1 - 1e-3
+end
+
+-- Takes one portion out of a Jar of Yoghurt for a starter. Returns the empty jar when that was the last.
+function M.takeJarPortion(jar)
+    local container = jar:getContainer()
+    local left = M.jarPortions(jar)
+    jar:multiplyFoodValues(math.max(left - 1, 0) / left)
+    return M.afterJarUse(jar, container)
+end
+
 -- After any eat or spoonful: an emptied jar goes back to the container it was in as its own empty jar; one with
 -- yoghurt left is relabelled. Returns the empty jar, if any.
 function M.afterJarUse(jar, container)
