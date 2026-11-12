@@ -117,7 +117,7 @@ The Hearth is TP Core's station: a vanilla fireplace (Add Fuel, Light, a firebox
 
 The Hearth has its own guide, **Traditional Preservation: Core** (number 6), with banking, the places by a fire and the full tables.
 
-> ✏ *Margin note:* a "copper" was the big boiling pot built into a farmhouse's brickwork over its own firebox. Washday, brewing, the pig's mash and the dairy all shared it, which is why so many old kitchens had only the one.
+> *Margin note:* a "copper" was the big boiling pot built into a farmhouse's brickwork over its own firebox. Washday, brewing, the pig's mash and the dairy all shared it, which is why so many old kitchens had only the one.
 
 ---
 
@@ -149,7 +149,7 @@ If the milk falls under 40 C with **no starter** in, the pot is **Too cold** and
 
 Once the starter **is** in, milk that would bring the pot under 40 C is refused, so a cold top-up can never spoil a started batch.
 
-> ✏ *Margin note:* the old test had no thermometer. You cooled the milk until you could hold a finger in it for a count of ten. That's about 45 C, the same point where this pot wraps itself.
+> *Margin note:* the old test had no thermometer. You cooled the milk until you could hold a finger in it for a count of ten. That's about 45 C, the same point where this pot wraps itself.
 
 ---
 
@@ -220,7 +220,7 @@ Sheep's milk and the game's plain "animal's milk" go the same way under their ow
 - **Any milk bakes.** Cake batter, muffins and a bowl of cereal take cow's, sheep's or animal's milk, fresh, scalded or soured. Butter and mildew cure take their milk fresh or scalded.
 - It keeps counting while you're away, by the place the milk was left in.
 
-> ✏ *Margin note:* raw milk carries its own lactic bacteria, which is why it sours on the shelf: that's clabber, the old baker's buttermilk. Scalding kills them, so scalded milk has nothing to sour it and simply goes bad in the end.
+> *Margin note:* raw milk carries its own lactic bacteria, which is why it sours on the shelf: that's clabber, the old baker's buttermilk. Scalding kills them, so scalded milk has nothing to sour it and simply goes bad in the end.
 
 Both can be changed in the sandbox: **Milk goes off** and **Milk spoiling speed**.
 
@@ -240,7 +240,7 @@ Soured milk and yogurt are both milk turned by lactic bacteria. They're not the 
 - **Rotten milk won't do.** By then other things are living in it.
 - **Backslopping** is the old word for starting a batch with a little of the last one. Every yogurt you set from a cup of the last pot is backslopped, and so is every crock you start from soured milk.
 
-> ✏ *Margin note:* in Russia soured raw milk is *prostokvasha*, "simply soured", and the Irish called it *bainne clábair*, "thick milk", which English made into bonny clabber. Every farm kitchen had a jug of it going, for pancakes and soda bread. The crock here takes a little game licence: a real clabber won't turn into yogurt by itself. Fed warm fresh milk, though, its acid and bacteria give the crock the head start the wheat would take a day to grow.
+> *Margin note:* in Russia soured raw milk is *prostokvasha*, "simply soured", and the Irish called it *bainne clábair*, "thick milk", which English made into bonny clabber. Every farm kitchen had a jug of it going, for pancakes and soda bread. The crock here takes a little game licence: a real clabber won't turn into yogurt by itself. Fed warm fresh milk, though, its acid and bacteria give the crock the head start the wheat would take a day to grow.
 
 ---
 
@@ -262,7 +262,7 @@ No yogurt left to start from? Grow one.
 - **An Active Yogurt Starter** is fresh 5 days and rotten at 10. Each sets one batch.
 - **The crock stands on the floor, a kitchen counter or a table**, never on a stove, a fridge or a freezer.
 
-> ✏ *Margin note:* village recipes from the Balkans start yogurt from a few wheat kernels, a crust of bread, or a twig of cornelian cherry dropped into warm milk. The bacteria that sour milk live on plants and grain too. It's slow and a little uncertain, which is why a household that lost its starter usually just borrowed a spoonful from the neighbours.
+> *Margin note:* village recipes from the Balkans start yogurt from a few wheat kernels, a crust of bread, or a twig of cornelian cherry dropped into warm milk. The bacteria that sour milk live on plants and grain too. It's slow and a little uncertain, which is why a household that lost its starter usually just borrowed a spoonful from the neighbours.
 
 ---
 
@@ -319,7 +319,7 @@ The milk's temperature follows where the station stands. There are six kinds of 
 | **By a fire** (any lit fire within 2 tiles: the Hearth, a fireplace, an antique stove or a campfire, never an electric or gas stove) | 28 C |
 | By banked embers (banked Hearth within 2 tiles) | 24 C |
 
-> ✏ *Margin note:* four walls with no roof are still open air. A shed you build with walls and a whole roof is a room.
+> *Margin note:* four walls with no roof are still open air. A shed you build with walls and a whole roof is a room.
 
 Hours for 5 L poured at 85 C at 18:00 with the starter in, **cooling + setting**, the grid off. "Never" means it hadn't set after 72 hours.
 
@@ -340,23 +340,23 @@ Hours for 5 L poured at 85 C at 18:00 with the starter in, **cooling + setting**
 | In a basement in November | about 9 days |
 | Indoors from November, or in a basement from December | weeks |
 
-> ✏ *Margin note:* a cellar runs a month behind the weather. It still holds the summer's warmth in November and December, so a full pot sets in the basement from May to December, indoors only from June to November.
+> *Margin note:* a cellar runs a month behind the weather. It still holds the summer's warmth in November and December, so a full pot sets in the basement from May to December, indoors only from June to November.
 
-> ✏ *Margin note:* yogurt is a summer job in an unheated house, and a fire's the rest of the year. Farm wives set the crock on the warm side of the hearth, and a Kentucky winter gives no other way.
+> *Margin note:* yogurt is a summer job in an unheated house, and a fire's the rest of the year. Farm wives set the crock on the warm side of the hearth, and a Kentucky winter gives no other way.
 
 ---
 
 ## 11. Secrets & Hidden Features
 
-- ⏱ **It works while you're away**, even in unloaded areas. A pot left for a week reads right when you come back.
-- 🔥 **The fire counts only while it would have burned.** Away from a lit Hearth, the pot is "by a fire" until the fuel would have run out, then the room takes over.
-- 🥛 **Mixed herds welcome.** Cow's and sheep's milk mix in the copper, a container and the pot, and the blend keeps its shares.
-- 🧺 **The Wrapped Yogurt Pot carries 5 L of hot milk** and loses only about 15 C an hour. Unwrap it when empty for the pot, sheet and twine back.
-- 🪣 **Any pot, jar or bucket can be wrapped** the same way and keeps its own size: a wrapped bucket carries 10 L and holds its heat longest, a wrapped jar only a litre and cools sooner.
-- 🔥 **Never put a wrapped pot on the heat.** The sheet and twine catch within a minute. On a stove or in an oven the kitchen goes up with them; in a fireplace or the Hearth they just burn away.
-- 🫙 **Your jar comes back** with the last spoonful.
-- 🥄 **Part portions are kept.** Eat Quarter on a jar, and the next cup you fill has exactly what was left.
-- 🍶 **It's real vanilla Yogurt** in the cups, so it works in oatmeal and every recipe that wants yogurt.
+- **It works while you're away**, even in unloaded areas. A pot left for a week reads right when you come back.
+- **The fire counts only while it would have burned.** Away from a lit Hearth, the pot is "by a fire" until the fuel would have run out, then the room takes over.
+- **Mixed herds welcome.** Cow's and sheep's milk mix in the copper, a container and the pot, and the blend keeps its shares.
+- **The Wrapped Yogurt Pot carries 5 L of hot milk** and loses only about 15 C an hour. Unwrap it when empty for the pot, sheet and twine back.
+- **Any pot, jar or bucket can be wrapped** the same way and keeps its own size: a wrapped bucket carries 10 L and holds its heat longest, a wrapped jar only a litre and cools sooner.
+- **Never put a wrapped pot on the heat.** The sheet and twine catch within a minute. On a stove or in an oven the kitchen goes up with them; in a fireplace or the Hearth they just burn away.
+- **Your jar comes back** with the last spoonful.
+- **Part portions are kept.** Eat Quarter on a jar, and the next cup you fill has exactly what was left.
+- **It's real vanilla Yogurt** in the cups, so it works in oatmeal and every recipe that wants yogurt.
 
 ---
 
@@ -374,7 +374,7 @@ Hours for 5 L poured at 85 C at 18:00 with the starter in, **cooling + setting**
 | Firewood | about 1.5 hours of fire for 10 L (two pots), about 2 for 20 L (four), 2¾ for a full 60 L copper (twelve) |
 | Cooking XP | 10 a pot |
 
-> ✏ *Margin note:* one Yogurt starts a whole pot here. Real dairies use 3 to 5 spoonfuls in a hundred of milk, about a cup for 5 L. The game is kinder.
+> *Margin note:* one Yogurt starts a whole pot here. Real dairies use 3 to 5 spoonfuls in a hundred of milk, about a cup for 5 L. The game is kinder.
 
 ### Why it works the way it does
 
@@ -442,7 +442,7 @@ Under **Traditional Preservation (Dairy)**:
 
 *For testers, modders and the curious. These commands exist only when the game is started in debug mode (Steam launch option `-debug`). Type them into the in-game **Command Console** and press Enter. `TPD.help()` lists them in the game; the Hearth's are TP Core's, `TPC.help()`.*
 
-> ⚠ They change your save directly, so try them on a test save, not a playthrough you care about.
+> **Warning:** They change your save directly, so try them on a test save, not a playthrough you care about.
 
 Copied from `DEVHELP.md`; change both together.
 

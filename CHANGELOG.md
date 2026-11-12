@@ -1,6 +1,7 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- Guide: no emojis (2026-11-12): the decorative bullets and margin-note marks are gone, warning signs read **Warning:**.
 - **The cellar runs a month behind** (2026-11-12, TP Core): a basement follows the ground (the history keeps it,
   `ground`), about 5 C from January to March and 13 C from July to September. A full pot sets in a basement from May
   to December, indoors from June to November; the crock's first stage takes 4 to 5 days in a basement July to
