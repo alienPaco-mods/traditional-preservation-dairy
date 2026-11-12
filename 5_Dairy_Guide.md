@@ -453,7 +453,8 @@ Copied from `DEVHELP.md`; change both together.
 | `TPD.pots()` | Every loaded incubator: stage, litres, milk temperature, what's next. |
 | `TPD.age(hours)` | Moves every loaded incubator and crock on by this many hours (1 if left out): an incubator replays the recorded weather, a crock's stage takes them as hours at the best temperature. |
 | `TPD.fast(hours)` | Test timer for setting. `TPD.fast()` goes back to the sandbox time. |
-| `TPD.milk(litres, c)` | A cooking pot of cow's milk (default 5 L), at c degrees if given. |
+| `TPD.milk(litres, c, fluid)` | A cooking pot of milk (default 5 L of cow's), at c degrees if given; fluid `"SheepMilk"` or `"AnimalMilk"` for the others. |
+| `TPD.give(name, n, option)` | Spawns `jar` (a full Jar of Yogurt; option `"clay"` or `"glazed"`), `starter` or `cup`; no name lists them. |
 | `TPD.kit(kind)` | What a test needs: yogurt (default), `"crock"` or `"wrap"`; `"?"` lists them. |
 | `TPD.crocks()` | Every loaded crock: stage, progress, place. |
 | `TPD.ages()` | Each container of milk you carry: fluid, stage, age, hours to the next stage, place. |

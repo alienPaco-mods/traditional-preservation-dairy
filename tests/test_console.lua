@@ -47,4 +47,13 @@ check("kit(\"crock\") gives the wheat", #player.given == 7 + M.CROCK_WHEAT and p
 check("an unknown kind lists the kits and gives nothing", run("kit", "?"):find("TPD.kit(\"wrap\")", 1, true) ~= nil
     and #player.given == 7 + M.CROCK_WHEAT)
 
+local before = #player.given
+check("give with no name lists the things", run("give"):find("jar", 1, true) ~= nil and #player.given == before)
+run("give", "starter", 2)
+run("give", "cup")
+check("give spawns starters and cups", #player.given == before + 3 and player.given[before + 1] == M.STARTER
+    and player.given[before + 3] == M.EMPTY_CUP)
+check("milk names the milks for a fluid that isn't one", run("milk", 1, nil, "Water"):find("SheepMilk", 1, true) ~= nil
+    and #player.given == before + 3)
+
 H.done()

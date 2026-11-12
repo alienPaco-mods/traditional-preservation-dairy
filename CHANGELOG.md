@@ -1,6 +1,8 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- Debug console (2026-11-12): `TPD.give(name, n, option)` spawns a full Jar of Yogurt (glass, clay or glazed), a
+  starter or an empty cup; `TPD.milk` takes a third argument for sheep's or Animal's Milk. Test, DEVHELP, guide.
 - Guide: no emojis (2026-11-12): the decorative bullets and margin-note marks are gone, warning signs read **Warning:**.
 - **The cellar runs a month behind** (2026-11-12, TP Core): a basement follows the ground (the history keeps it,
   `ground`), about 5 C from January to March and 13 C from July to September. A full pot sets in a basement from May

@@ -11,7 +11,8 @@ These console commands load only when the game runs in **debug mode** (launch op
 | `TPD.pots()` | Every loaded incubator: position, stage, litres, milk temperature, starter, set hours, place, and what comes next and when. |
 | `TPD.age(hours)` | Moves every loaded incubator and crock on by this many hours (1 if left out): an incubator replays the recorded weather, a crock's stage takes them as hours at the best temperature. |
 | `TPD.fast(hours)` | Test timer: milk sets in this many hours at the best temperature. `TPD.fast()` goes back to the sandbox time. |
-| `TPD.milk(litres, c)` | Gives a cooking pot of cow's milk, 5 L if you leave the litres out, at `c` degrees if given. Raw, not scalded: heat it in a copper or on a stove. |
+| `TPD.milk(litres, c, fluid)` | Gives a cooking pot of milk, 5 L if you leave the litres out, at `c` degrees if given; cow's unless `fluid` is `"SheepMilk"` or `"AnimalMilk"`. Raw, not scalded: heat it in a copper or on a stove. |
+| `TPD.give(name, n, option)` | Spawns `n` of: `jar` (a full, new Jar of Yogurt of cow's milk; glass, or option `"clay"` or `"glazed"`), `starter` (an Active Yogurt Starter) or `cup` (an Empty Yogurt Container). `TPD.give()` lists them. |
 | `TPD.kit(kind)` | Gives what a test needs. `TPD.kit()` is the yogurt kit (a Yogurt, a Clay Jar, a glass jar, 4 Empty Yogurt Containers), `TPD.kit("crock")` 20 wheat grains, `TPD.kit("wrap")` a Yogurt Pot, a Sheet and Twine. `TPD.kit("?")` lists them. |
 | `TPD.crocks()` | Every loaded crock: position, stage, place, progress, speed and hours left. |
 | `TPD.ages()` | Each container of milk you carry: fluid, stage (Fresh, Turned, Spoiled; scalded), age in hours at 20 C, hours to the next stage, the place it is counted at. Sealed store milk shows "no age". |

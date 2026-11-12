@@ -13,7 +13,8 @@ function TPD.help()
     say("TPD.pots()           every loaded incubator: stage, litres, milk temperature, what's next")
     say("TPD.age(hours)       move every loaded incubator and crock on by this many hours (default 1; a crock's at the best temperature)")
     say("TPD.fast(hours)      setting takes this many hours at the best temperature. TPD.fast() goes back to the sandbox")
-    say("TPD.milk(litres, c)  a cooking pot of cow's milk (default 5 L), at c degrees if given")
+    say("TPD.milk(litres, c, fluid) a cooking pot of milk (default 5 L of CowMilk), at c degrees if given; fluid SheepMilk or AnimalMilk for the others")
+    say("TPD.give(name, n, option) spawn n of: jar (a full Jar of Yogurt; option \"clay\" or \"glazed\"), starter, cup (an Empty Yogurt Container). TPD.give() lists them")
     say("TPD.kit(kind)        the things a test of kind needs; TPD.kit() for yogurt, TPD.kit(\"?\") lists the kinds")
     say("TPD.crocks()         every loaded crock: stage, progress, place")
     say("TPD.ages()           every container of milk you carry: fluid, stage, age, hours to the next stage, place")
@@ -77,13 +78,33 @@ function TPD.fast(hours)
     say(string.format("Test timer on: milk sets in %s hours at the best temperature.", tostring(hours)))
 end
 
-function TPD.milk(litres, celsius)
+function TPD.milk(litres, celsius, fluid)
+    if fluid and not M.MILKS[fluid] then return say("Milks: CowMilk, SheepMilk, AnimalMilk") end
     local pot = getPlayer():getInventory():AddItem("Base.Pot")
     local container = pot:getFluidContainer()
     container:Empty()
-    container:addFluid("CowMilk", math.min(litres or 5, container:getCapacity()))
+    container:addFluid(fluid or "CowMilk", math.min(litres or 5, container:getCapacity()))
     if celsius then pot:setItemHeat(M.itemHeat(celsius)) end
-    say(string.format("Gave a pot of %.1f L of milk%s.", container:getAmount(), celsius and string.format(" at %.0f C", celsius) or ""))
+    say(string.format("Gave a pot of %.1f L of %s%s.", container:getAmount(), fluid or "CowMilk", celsius and string.format(" at %.0f C", celsius) or ""))
+end
+
+-- The other things a test wants, by name. A jar is full, new, of cow's milk yogurt, in glass unless option says
+-- "clay" or "glazed".
+local JAR_TYPES = { clay = "Base.ClayJar", glazed = "Base.ClayJarGlazed" }
+local GIVES = {
+    jar = function(inventory, option)
+        local jarType = JAR_TYPES[option] or "Base.EmptyJar"
+        M.fillJar(inventory:AddItem(M.YOGHURT_JAR), jarType, M.JAR_ML[jarType], 0, M.portionFood({}))
+    end,
+    starter = function(inventory) inventory:AddItem(M.STARTER) end,
+    cup = function(inventory) inventory:AddItem(M.EMPTY_CUP) end,
+}
+
+function TPD.give(name, count, option)
+    if not GIVES[name] then return say("Things: jar (option \"clay\" or \"glazed\"), starter, cup") end
+    local inventory = getPlayer():getInventory()
+    for _ = 1, count or 1 do GIVES[name](inventory, option) end
+    say(string.format("Gave %d %s%s.", count or 1, name, option and (" (" .. option .. ")") or ""))
 end
 
 -- One kit per kind of test, so each new dairy (kefir, emmental-style, brined cheese) adds an entry here.
