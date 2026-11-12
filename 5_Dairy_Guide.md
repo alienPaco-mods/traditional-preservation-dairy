@@ -315,6 +315,7 @@ The milk's temperature follows where the station stands. There are six kinds of 
 | Open air | the day's weather |
 | Under an open roof (a porch, an open shed) | the last 10 days' outdoor average |
 | Indoors (a room) | the same; 22 C while the power grid is on |
+| In a loft (the top storey: a room upstairs with no room over it) | as indoors, plus three tenths of whatever the 10-day average is above 10 C: the sun on the roof (about 24 C in a 21 C July, no warmer than a room from October to April); 22 C while the power grid is on |
 | In a basement | follows the ground, a month behind the season: about 5 C from January to March, 13 C from July to September |
 | **By a fire** (any lit fire within 2 tiles: the Hearth, a fireplace, an antique stove or a campfire, never an electric or gas stove) | 28 C |
 | By banked embers (banked Hearth within 2 tiles) | 24 C |

@@ -1,6 +1,10 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- **TP Core's loft** (2026-11-12, consistency sweep step H): `M.PLACES` has Loft. In the top storey a full pot
+  sets about an hour sooner from July to September and the crock makes starter a quarter sooner in summer; raw milk
+  sours a little faster there (1.2 days in July against 1.4). Season report has a Loft column; golden re-recorded.
+  README, guide, Workshop text.
 - Debug console (2026-11-12): `TPD.give(name, n, option)` spawns a full Jar of Yogurt (glass, clay or glazed), a
   starter or an empty cup; `TPD.milk` takes a third argument for sheep's or Animal's Milk. Test, DEVHELP, guide.
 - Guide: no emojis (2026-11-12): the decorative bullets and margin-note marks are gone, warning signs read **Warning:**.

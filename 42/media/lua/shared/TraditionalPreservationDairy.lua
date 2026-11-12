@@ -176,7 +176,7 @@ end
 
 M.SENSITIVITY = 1
 
-M.PLACES = { "Open", "Covered", "Sheltered", "Basement", M.HEARTH, M.EMBERS }
+M.PLACES = { "Open", "Covered", "Sheltered", "Loft", "Basement", M.HEARTH, M.EMBERS }
 
 M.placeTemperature = Hearth.placeTemperature
 M.placeOf = Hearth.placeOf
