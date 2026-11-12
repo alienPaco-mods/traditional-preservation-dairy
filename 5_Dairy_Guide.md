@@ -445,14 +445,13 @@ Copied from `DEVHELP.md`; change both together.
 | `TPD.weather()` | Temperature by place, and how fast milk sets at each. |
 | `TPD.here()` | Which kind of place you're standing in. |
 | `TPD.pots()` | Every loaded incubator: stage, litres, milk temperature, what's next. |
-| `TPD.skip(hours)` | Moves every loaded incubator on by this many hours. |
+| `TPD.age(hours)` | Moves every loaded incubator and crock on by this many hours (1 if left out): an incubator replays the recorded weather, a crock's stage takes them as hours at the best temperature. |
 | `TPD.fast(hours)` | Test timer for setting. `TPD.fast()` goes back to the sandbox time. |
 | `TPD.milk(litres, c)` | A cooking pot of cow's milk (default 5 L), at c degrees if given. |
 | `TPD.kit(kind)` | What a test needs: yogurt (default), `"crock"` or `"wrap"`; `"?"` lists them. |
 | `TPD.crocks()` | Every loaded crock: stage, progress, place. |
-| `TPD.culture(hours)` | Moves every loaded crock's current stage on by this many hours. |
 | `TPD.ages()` | Each container of milk you carry: fluid, stage, age, hours to the next stage, place. |
-| `TPD.age(hours)` | Ages the milk you carry by this many hours at 20 C (36 if left out: one souring). |
+| `TPD.sour(hours)` | Ages the milk you carry by this many hours at 20 C (36 if left out: one souring). |
 | `TPD.tiles()` | Every station within 3 tiles: object class, sprite, solid flags. |
 
-**Typical check:** within 2 tiles of a Hearth, `TPC.copper(5)` and `TPC.hot()`, then `TPD.kit()`, Pour from the Hearth and Add Starter. `TPD.skip(3)` should show it wrapped and setting, `TPD.skip(7)` Ready.
+**Typical check:** within 2 tiles of a Hearth, `TPC.copper(5)` and `TPC.hot()`, then `TPD.kit()`, Pour from the Hearth and Add Starter. `TPD.age(3)` should show it wrapped and setting, `TPD.age(7)` Ready.

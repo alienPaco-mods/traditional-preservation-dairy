@@ -11,14 +11,13 @@ function TPD.help()
     say("TPD.weather()        the temperature by place, and how fast milk sets there")
     say("TPD.here()           which place you're standing in (outdoors, under a roof, a basement or by a fire)")
     say("TPD.pots()           every loaded incubator: stage, litres, milk temperature, what's next")
-    say("TPD.skip(hours)      move every loaded incubator on by this many hours")
+    say("TPD.age(hours)       move every loaded incubator and crock on by this many hours (default 1; a crock's at the best temperature)")
     say("TPD.fast(hours)      setting takes this many hours at the best temperature. TPD.fast() goes back to the sandbox")
     say("TPD.milk(litres, c)  a cooking pot of cow's milk (default 5 L), at c degrees if given")
     say("TPD.kit(kind)        the things a test of kind needs; TPD.kit() for yogurt, TPD.kit(\"?\") lists the kinds")
     say("TPD.crocks()         every loaded crock: stage, progress, place")
-    say("TPD.culture(hours)   move every loaded crock's current stage on by this many hours at the best temperature")
     say("TPD.ages()           every container of milk you carry: fluid, stage, age, hours to the next stage, place")
-    say("TPD.age(hours)       age the milk you carry by this many hours at 20 C (sours at 36, spoils at 72)")
+    say("TPD.sour(hours)      age the milk you carry by this many hours at 20 C (sours at 36, spoils at 72)")
     say("TPD.tiles()          every station within 3 tiles: object class, sprite and square solid flags")
     say("The Hearth's commands (hearth, copper, fuel, hot, a Hearth kit) are TP Core's: TPC.help()")
 end
@@ -59,8 +58,7 @@ end
 
 -- The pot's clock is set back, so the next look runs those hours again from the recorded weather. Hours
 -- before the history began count at the place's temperature now.
-function TPD.skip(hours)
-    hours = hours or 1
+local function agePots(hours)
     for _, station in ipairs(pots()) do
         local state = TraditionalPreservationDairyWorld.incubatorState(station)
         if state.last then state.last = state.last - hours end
@@ -68,7 +66,6 @@ function TPD.skip(hours)
         TraditionalPreservationDairyWorld.refresh(station)
     end
     say(string.format("Moved %d incubator(s) on by %.1f hours.", #pots(), hours))
-    TPD.pots()
 end
 
 function TPD.fast(hours)
@@ -149,14 +146,22 @@ function TPD.crocks()
     end
 end
 
-function TPD.culture(hours)
-    hours = hours or M.CULTIVATE_HOURS
+local function ageCrocks(hours)
     for _, station in ipairs(crocks()) do
         local state = TraditionalPreservationDairyWorld.crockState(station)
         if state.done then state.done = state.done + hours end
         TraditionalPreservationDairyWorld.refresh(station)
     end
     say(string.format("Moved %d crock(s) on by %.1f hours.", #crocks(), hours))
+end
+
+-- Every loaded station on by this many hours: an incubator runs them again from the recorded weather, a crock's
+-- stage takes them as hours at the best temperature.
+function TPD.age(hours)
+    hours = hours or 1
+    agePots(hours)
+    ageCrocks(hours)
+    TPD.pots()
     TPD.crocks()
 end
 
@@ -193,7 +198,7 @@ function TPD.ages()
     end
 end
 
-function TPD.age(hours)
+function TPD.sour(hours)
     hours = hours or M.MILK_TURN_HOURS
     local count = 0
     for _, entry in ipairs(carriedMilk()) do

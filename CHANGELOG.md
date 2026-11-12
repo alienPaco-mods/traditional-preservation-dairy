@@ -1,6 +1,9 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- Debug console by the series' convention (2026-11-12, consistency sweep): `TPD.age(hours)` now moves every loaded
+  incubator and crock on (it was `skip` and `culture`, both gone); the milk you carry ages with `TPD.sour(hours)`.
+  Tests, DEVHELP, guide.
 - **Yogurt, as the base game spells it** (2026-11-12, consistency sweep): every text the player sees, the guide,
   README and Workshop text; `TPD.kit("yogurt")`. Item, station and save names keep their spelling. *Yogurt Pot
   (Unfired)*, as vanilla's unfired clay.

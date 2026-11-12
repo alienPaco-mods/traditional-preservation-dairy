@@ -31,8 +31,8 @@ check("here says where the player stands", run("here"):find("Basement", 1, true)
 
 check("pots says so when none is tracked", run("pots"):find("No incubator", 1, true) ~= nil)
 check("crocks too", run("crocks"):find("No crock", 1, true) ~= nil)
-check("skip and culture move none on", run("skip", 2):find("Moved 0 incubator", 1, true) ~= nil
-    and run("culture"):find("Moved 0 crock", 1, true) ~= nil)
+local aged = run("age", 2)
+check("age moves pots and crocks, here none", aged:find("Moved 0 incubator", 1, true) ~= nil and aged:find("Moved 0 crock", 1, true) ~= nil)
 check("tiles finds no station on unloaded ground", run("tiles") == "")
 
 run("fast", 1)
