@@ -138,7 +138,7 @@ Sheep's and the game's generic animal milk go the same way under their own names
 | A powered fridge, 4 C | about 8 days | about 16 days |
 | A powered freezer | never | never |
 
-- Milk ages by the place it was last seen in (open air, under an open roof, indoors, a basement, by a fire, a fridge or freezer), also while you are away.
+- Milk ages by the place it was last seen in (open air, under an open roof, indoors, a loft, a basement, by a fire, a fridge or freezer), also while you are away.
 - Pouring never makes milk young: the older age wins, and raw milk mixed into scalded makes the whole lot raw again. Milking into a container emptied of its old milk starts afresh.
 - Sealed store milk (carton, bottle, personal size) doesn't age until it is poured out; then it counts as scalded.
 - Milk left in the copper ages there too. A steaming copper scalds what is in it.
@@ -172,27 +172,29 @@ Time counts by the game clock, at any Day Length, and keeps counting while the a
 | Setting (incubator) | below 18 C | 18–40 C | 40–45 C | above 45 C, stops at 55 C |
 | Culture (crock) | | below 25 C | 25–35 C | above 35 C, 10% at 45 C |
 
-Six kinds of place (TP Core's):
+Seven kinds of place (TP Core's):
 
 - **Open air**: the day's weather.
 - **Under an open roof** (a porch, an open shed) or **indoors** (a room): the average outdoor temperature of the last 10 days or so. A room is 22 C while the power grid is on.
 - **In a loft** (the top storey: a room upstairs with no room over it): as indoors, plus three tenths of whatever the 10-day average is above 10 C: the sun on the roof (about 24 C in a 21 C July, no warmer than a room from October to April); 22 C while the power grid is on.
 - **In a basement**: the ground, a month behind the season, two fifths as far from 10 C: about 5 C from January to March, 13 C from July to September.
 - **By a fire**: any lit fire within 2 tiles (the Hearth, a fireplace, an antique stove or a campfire; never an electric or gas stove) holds a station at 28 C. While you're away it counts only until its fuel would have run out, then the room counts.
-- **By banked embers**: a banked Hearth within 2 tiles, 24 C.
+- **By banked embers**: a banked Hearth or Firebox within 2 tiles, 24 C.
 
 Hours for 5 L poured at 85 C at 18:00 with the starter in, cooling then setting, the grid off (`tools/season_report.lua`); "never" means it hadn't set after 72 hours:
 
-| Month | Open air | Indoors | Basement | By a fire | By banked embers |
-|---|---|---|---|---|---|
-| Jan | never | never | never | 2.5 + 6.2 | 2.2 + 6.3 |
-| Mar | never | never | never | 2.5 + 6.2 | 2.2 + 6.3 |
-| May | never | never | 1.5 + 13.7 | 2.5 + 6.2 | 2.2 + 6.3 |
-| Jul | 1.8 + 8.8 | 2.0 + 7.7 | 1.7 + 9.5 | 2.5 + 6.2 | 2.2 + 6.3 |
-| Sep | 1.7 + 14.8 | 1.8 + 7.8 | 1.7 + 8.2 | 2.5 + 6.2 | 2.2 + 6.3 |
-| Nov | never | 1.5 + 14.5 | 1.7 + 13.7 | 2.5 + 6.2 | 2.2 + 6.3 |
+| Month | Open air | Indoors | Loft | Basement | By a fire | By banked embers |
+|---|---|---|---|---|---|---|
+| Jan | never | never | never | never | 2.5 + 6.2 | 2.2 + 6.3 |
+| Mar | never | never | never | never | 2.5 + 6.2 | 2.2 + 6.3 |
+| May | never | never | never | 1.5 + 13.7 | 2.5 + 6.2 | 2.2 + 6.3 |
+| Jul | 1.8 + 8.8 | 2.0 + 7.7 | 2.0 + 6.5 | 1.7 + 9.5 | 2.5 + 6.2 | 2.2 + 6.3 |
+| Sep | 1.7 + 14.8 | 1.8 + 7.8 | 1.8 + 6.8 | 1.7 + 8.2 | 2.5 + 6.2 | 2.2 + 6.3 |
+| Nov | never | 1.5 + 14.5 | 1.5 + 14.5 | 1.7 + 13.7 | 2.5 + 6.2 | 2.2 + 6.3 |
 
-The crock's first stage takes 24 hours by a fire in any month, about 2 days indoors in summer, 4 to 5 in a basement from July to October (9 in November), and weeks anywhere else in winter.
+While the grid is on a room or a loft is 22 C in every month: 2.2 + 7.0 hours.
+
+The crock's first stage takes 24 hours by a fire in any month, about 32 hours in a powered room, about 2 days indoors in summer, 4 to 5 in a basement from July to October (9 in November), and weeks anywhere else in winter.
 
 ## Skills
 

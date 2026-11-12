@@ -44,7 +44,7 @@ Load the crock with 20 wheat grains and half a litre of milk at 35 to 45 C. In a
 
 [h2]Temperature[/h2]
 [list]
-[*][b]By a fire[/b]: a lit fire within 2 tiles (the Hearth, a fireplace, an antique stove or a campfire) holds 28 C. Yogurt sets in about 6 hours all year. A banked Hearth's embers hold 24 C.
+[*][b]By a fire[/b]: a lit fire within 2 tiles (the Hearth, a fireplace, an antique stove or a campfire) holds 28 C. Yogurt sets in about 6 hours all year. A banked Hearth's or Firebox's embers hold 24 C.
 [*][b]Indoors[/b] or [b]under an open roof[/b]: the last 10 days' outdoor average (22 C while the grid is on). Sets from June to November.
 [*][b]In a loft[/b] (the top storey: a room upstairs with no room over it): as indoors, plus three tenths of whatever the 10-day average is above 10 C: the sun on the roof (about 24 C in a 21 C July, no warmer than a room from October to April); 22 C while the power grid is on.
 [*][b]In a basement[/b]: a month behind the season, about 5 C from January to March, 13 C from July to September. Sets from May to December.
@@ -69,7 +69,7 @@ Set the yogurt setting time, the starter culture time, the temperature sensitivi
 Herders from the Balkans to the steppe made yogurt for thousands of years without a thermometer. Milk was heated until it steamed, cooled until a finger could stand it for a count of ten, given a spoonful of yesterday's yogurt and wrapped in a blanket or set by the embers overnight. A household that lost its starter grew a new one from a few wheat kernels in warm milk.
 
 [h2]Works well with[/h2]
-[b]Traditional Preservation (Salt)[/b], [b](Fish)[/b], [b](Yeast)[/b] and [b](Vinegar)[/b] complete the preserving pantry. This mod needs no other mods besides TP Core.
+[b]Traditional Preservation (Salt)[/b], [b](Fish & Meat)[/b], [b](Yeast)[/b] and [b](Vinegar)[/b] complete the preserving pantry. This mod needs no other mods besides TP Core.
 
 [h2]Known limitations[/h2]
 [list]

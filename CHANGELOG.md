@@ -1,6 +1,7 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- **Docs pass, sweep step G** (2026-11-12): seven kinds of place (guide, README); banked embers are a Hearth's or a Firebox's; README: a Loft column, the grid's hours and the crock in a powered room, milk ages in a loft too; Workshop text names Fish & Meat.
 - Needs Build 42.22 or newer (`versionMin`, was 42.20: everything is checked on 42.22). Workshop text (sweep step F).
 - **A powered room in the numbers** (2026-11-12): the season report has an *Indoors, grid on* column (22 C, its own
   ledger and history with the grid on); the guide gives the figures under its month table: 2.2 + 7.0 hours for 5 L,

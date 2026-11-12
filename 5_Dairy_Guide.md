@@ -308,7 +308,7 @@ You can walk through the incubator and the crock. **Incubator Info** and **Crock
 
 ## 11. The Dairymaid's Almanac (Seasons & Places)
 
-The milk's temperature follows where the station stands. There are six kinds of place:
+The milk's temperature follows where the station stands. There are seven kinds of place:
 
 | Place | Temperature |
 |---|---|
@@ -318,7 +318,7 @@ The milk's temperature follows where the station stands. There are six kinds of 
 | In a loft (the top storey: a room upstairs with no room over it) | as indoors, plus three tenths of whatever the 10-day average is above 10 C: the sun on the roof (about 24 C in a 21 C July, no warmer than a room from October to April); 22 C while the power grid is on |
 | In a basement | follows the ground, a month behind the season: about 5 C from January to March, 13 C from July to September |
 | **By a fire** (any lit fire within 2 tiles: the Hearth, a fireplace, an antique stove or a campfire, never an electric or gas stove) | 28 C |
-| By banked embers (banked Hearth within 2 tiles) | 24 C |
+| By banked embers (a banked Hearth or Firebox within 2 tiles) | 24 C |
 
 > *Margin note:* four walls with no roof are still open air. A shed you build with walls and a whole roof is a room.
 
