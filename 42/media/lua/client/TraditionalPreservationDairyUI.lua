@@ -25,14 +25,6 @@ local BUCKET_ICON = "Item_MetalBucket"
 local YOGHURT_ICON = "Item_Yoghurt"
 local PotWindow, CrockWindow -- the info windows, below the menus
 
-local PLACE_TEXT = {
-    Open = "IGUI_TraditionalPreservationDairy_Open",
-    Sheltered = "IGUI_TraditionalPreservationDairy_Roof",
-    Basement = "IGUI_TraditionalPreservationDairy_Basement",
-    [M.HEARTH] = "IGUI_TraditionalPreservationDairy_Hearth",
-    [M.EMBERS] = "IGUI_TraditionalPreservationDairy_Embers",
-}
-
 local REFUSALS = {
     HasStarter = "IGUI_TraditionalPreservationDairy_HasStarter",
     TooCold = "IGUI_TraditionalPreservationDairy_TooCold",
@@ -82,7 +74,7 @@ end
 local function detailText(station, state)
     local place = state.place or M.placeOf(station)
     local placeC = M.placeTemperature(M.getLedger(), place)
-    local lines = { say(PLACE_TEXT[place], degrees(placeC)) }
+    local lines = { UI.placeText(place, placeC) }
     local stage = M.stage(state)
     if stage == "Empty" then
         table.insert(lines, getText("IGUI_TraditionalPreservationDairy_HelpEmpty"))
@@ -426,7 +418,7 @@ end
 local function crockDetail(station, state)
     local ledger = M.getLedger()
     local place = state.place or M.placeOf(station)
-    local lines = { say(PLACE_TEXT[place], degrees(M.placeTemperature(ledger, place))) }
+    local lines = { UI.placeText(place, M.placeTemperature(ledger, place)) }
     local stage = M.crockStage(state)
     if stage == "Cultivating" or stage == "Developing" then
         local status = M.crockStatus(state, ledger, place)
@@ -518,7 +510,7 @@ function PotWindow:render()
     y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoMilk", milkC)
     y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoSetting",
         say("IGUI_TraditionalPreservationDairy_InfoSettingValue", degrees(M.SET_C), degrees(M.STARTER_MIN_C)))
-    y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoPlace", say(PLACE_TEXT[info.place], degrees(info.placeC)))
+    y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoPlace", UI.placeText(info.place, info.placeC))
     y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoStarter", getText(STARTER_TEXT[state.starter] or "IGUI_TraditionalPreservationDairy_InfoStarterNone"))
     if stage == "Incubating" or stage == "Ready" then
         local share = math.min((state.done or 0) / M.INCUBATE_HOURS, 1)
@@ -547,7 +539,7 @@ function PotWindow:render()
     elseif stage == "Incubating" and not info.hours then
         table.insert(notes, getText("IGUI_TraditionalPreservationDairy_NeverSets"))
     end
-    if (stage == "Cooling" or stage == "Incubating") and info.hours and info.place ~= "Basement" then
+    if (stage == "Cooling" or stage == "Incubating") and info.hours then
         table.insert(notes, getText("IGUI_TraditionalPreservationDairy_InfoAssumes"))
     end
     self:drawNotes(y, notes)
@@ -592,7 +584,7 @@ function CrockWindow:render()
     local y = self:top()
 
     y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoStage", getText("IGUI_TraditionalPreservationDairy_Crock" .. stage))
-    y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoPlace", say(PLACE_TEXT[status.place], degrees(status.temperature)))
+    y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoPlace", UI.placeText(status.place, status.temperature))
     y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoCultureHeat", getText("IGUI_TraditionalPreservationDairy_InfoCultureHeatValue"))
     if working then
         y = self:bar(y, "IGUI_TraditionalPreservationDairy_InfoProgress", status.progress, BAR_COLOURS.culture, UI.percent(status.progress))
@@ -609,7 +601,7 @@ function CrockWindow:render()
         table.insert(notes, getText("IGUI_TraditionalPreservationDairy_CrockHelp" .. stage))
     elseif not status.hoursLeft then
         table.insert(notes, getText("IGUI_TraditionalPreservationDairy_CrockStalled"))
-    elseif status.place ~= "Basement" then
+    else
         table.insert(notes, getText("IGUI_TraditionalPreservationDairy_InfoAssumes"))
     end
     self:drawNotes(y, notes)

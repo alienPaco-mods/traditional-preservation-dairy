@@ -9,7 +9,7 @@ local function say(text) print("[TPD] " .. text) end
 
 function TPD.help()
     say("TPD.weather()        the temperature by place, and how fast milk sets there")
-    say("TPD.here()           which place you're standing in (outdoors, under a roof, a basement or by a fire)")
+    say("TPD.here()           which place you're standing in (open air, an open roof, indoors, a basement or by a fire)")
     say("TPD.pots()           every loaded incubator: stage, litres, milk temperature, what's next")
     say("TPD.age(hours)       move every loaded incubator and crock on by this many hours (default 1; a crock's at the best temperature)")
     say("TPD.fast(hours)      setting takes this many hours at the best temperature. TPD.fast() goes back to the sandbox")

@@ -206,8 +206,9 @@ Sheep's milk and the game's plain "animal's milk" go the same way under their ow
 | Kept at | Raw milk sours in | Any milk is rotten in |
 |---|---|---|
 | 30 C | 1 day | 2 days |
-| 20 C, a warm room | 1½ days | 3 days |
-| A basement, 15 C | 3 days | 6 days |
+| 20 C, a room in July | 1½ to 2 days | 3 days |
+| A basement in summer, about 13 C | 3½ days | 7 days |
+| A basement in winter, about 5 C | 6 to 7 days | about 2 weeks |
 | A powered fridge | about 8 days | about 16 days |
 | A powered freezer | never | never |
 
@@ -307,36 +308,38 @@ You can walk through the incubator and the crock. **Incubator Info** and **Crock
 
 ## 10. The Dairymaid's Almanac (Seasons & Places)
 
-The milk's temperature follows where the station stands. There are five kinds of place:
+The milk's temperature follows where the station stands. There are six kinds of place:
 
 | Place | Temperature |
 |---|---|
-| Outdoors | the day's weather |
-| Under a roof | the last 10 days' outdoor average plus 10 C, never above 28 C |
-| In a basement | 15 C all year |
+| Open air | the day's weather |
+| Under an open roof (a porch, an open shed) | the last 10 days' outdoor average |
+| Indoors (a room) | the same; 22 C while the power grid is on |
+| In a basement | follows the season a third as far: about 5 C in January, 14 C in July |
 | **By a fire** (any lit fire within 2 tiles: the Hearth, a fireplace, an antique stove or a campfire, never an electric or gas stove) | 28 C |
 | By banked embers (banked Hearth within 2 tiles) | 24 C |
 
-> ✏ *Margin note:* "under a roof" means any roof overhead, walls or not. A porch roof or a floor laid on the level above is enough; four walls with no roof are still outdoors.
+> ✏ *Margin note:* four walls with no roof are still open air. A shed you build with walls and a whole roof is a room.
 
-Hours for 5 L poured at 85 C at 18:00 with the starter in, **cooling + setting**. "Never" means it hadn't set after 72 hours.
+Hours for 5 L poured at 85 C at 18:00 with the starter in, **cooling + setting**, the grid off. "Never" means it hadn't set after 72 hours.
 
-| Month | Outdoors | Under a roof | Basement | By a fire | By banked embers |
+| Month | Open air | Indoors | Basement | By a fire | By banked embers |
 |---|---|---|---|---|---|
-| Jan | never | never | 1.8 + 9.2 | 2.5 + 6.2 | 2.2 + 6.3 |
-| Mar | never | 1.5 + 13.3 | 1.8 + 9.2 | 2.5 + 6.2 | 2.2 + 6.3 |
-| May | never | 2.0 + 7.7 | 1.8 + 9.2 | 2.5 + 6.2 | 2.2 + 6.3 |
-| Jul | 2.0 + 7.5 | 2.5 + 6.2 | 1.8 + 9.2 | 2.5 + 6.2 | 2.2 + 6.3 |
-| Sep | 2.0 + 7.2 | 2.5 + 6.3 | 1.8 + 9.2 | 2.5 + 6.2 | 2.2 + 6.3 |
-| Nov | 1.7 + 11.5 | 1.8 + 7.0 | 1.8 + 9.2 | 2.5 + 6.2 | 2.2 + 6.3 |
+| Jan | never | never | never | 2.5 + 6.2 | 2.2 + 6.3 |
+| Mar | never | never | never | 2.5 + 6.2 | 2.2 + 6.3 |
+| May | never | 1.5 + 9.8 | never | 2.5 + 6.2 | 2.2 + 6.3 |
+| Jul | 2.0 + 7.5 | 2.0 + 7.5 | 1.7 + 8.3 | 2.5 + 6.2 | 2.2 + 6.3 |
+| Sep | 2.0 + 7.2 | 1.8 + 7.5 | 1.7 + 9.2 | 2.5 + 6.2 | 2.2 + 6.3 |
+| Nov | 1.7 + 11.5 | 1.5 + 12.7 | never | 2.5 + 6.2 | 2.2 + 6.3 |
 
 | The crock's first stage | |
 |---|---|
 | By a fire, any month | 24 hours |
-| In a basement | about 80 hours |
-| Outdoors in winter | weeks |
+| Indoors in summer | 2 to 3 days |
+| In a basement in summer | 4 to 6 days |
+| Indoors or in a basement in winter | weeks |
 
-> ✏ *Margin note:* a cellar is too cold for yogurt on its own, but it never stalls it. Basement batches take a steady 11 hours in January and July alike. By the fire is faster still, and the only way to set yogurt outdoors in a Kentucky winter is to not.
+> ✏ *Margin note:* yogurt is a summer job in an unheated house, and a fire's the rest of the year. Farm wives set the crock on the warm side of the hearth, and a Kentucky winter gives no other way.
 
 ---
 
@@ -407,7 +410,7 @@ Hours for 5 L poured at 85 C at 18:00 with the starter in, **cooling + setting**
 | Pour Scalded Milk says "Not scalded" | The milk isn't scalded: bring it to 85 C in the copper or on a stove or fire. Raw milk mixed in makes scalded milk plain again |
 | Pour refused as too cold | The starter is in, and the milk would bring the pot under 40 C. Use hotter milk |
 | Pour into the Copper refused, in red | The copper holds one fluid at a time. Only cow's and sheep's milk mix |
-| My milk reads Soured or Rotten | Raw milk sours in a day and a half in a warm room. Scald it, or keep it in a basement or a powered fridge. Soured milk still bakes; rotten milk is only fit to pour away (a copper of it: Empty the Copper) |
+| My milk reads Soured or Rotten | Raw milk sours in a day and a half in a warm room, sooner by the fire. Scald it, or keep it in a basement or a powered fridge. Soured milk still bakes; rotten milk is only fit to pour away (a copper of it: Empty the Copper) |
 | Pot reads **Too cold** | It fell under 40 C before the starter went in. Pour it out, reheat it in the copper, or top it up with steaming milk |
 | Setting doesn't move | The pot is below about 18 C. Move it by a fire, or wait for warmer weather |
 | Crock won't take the warm milk | It must be 35 to 45 C. The menu says whether it's too hot or too cold |

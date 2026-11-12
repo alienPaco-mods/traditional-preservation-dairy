@@ -1,10 +1,5 @@
 {
   "IGUI_CraftingWindow_YoghurtIncubator": "Yogurt Incubator",
-  "IGUI_TraditionalPreservationDairy_Open": "%1 C outdoors",
-  "IGUI_TraditionalPreservationDairy_Roof": "%1 C under a roof",
-  "IGUI_TraditionalPreservationDairy_Basement": "%1 C in a basement",
-  "IGUI_TraditionalPreservationDairy_Hearth": "%1 C by a fire",
-  "IGUI_TraditionalPreservationDairy_Embers": "%1 C by banked embers",
   "IGUI_TraditionalPreservationDairy_Empty": "Empty",
   "IGUI_TraditionalPreservationDairy_EmptyStarter": "Empty, starter waiting",
   "IGUI_TraditionalPreservationDairy_StageCooling": "Cooling: %1 L at %2 C",

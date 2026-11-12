@@ -11,7 +11,7 @@
   "Sandbox_TraditionalPreservationDairy_TemperatureSensitivity_option3": "Normal",
   "Sandbox_TraditionalPreservationDairy_TemperatureSensitivity_option4": "Harsh",
   "Sandbox_TraditionalPreservationDairy_MilkSpoils": "Milk goes off",
-  "Sandbox_TraditionalPreservationDairy_MilkSpoils_tooltip": "Raw milk sours after about a day and a half in a 20 C room (3 days in a basement, 8 in a powered fridge, never frozen), then spoils as long again after. Milk scalded at 85 C (a Hearth's copper, a stove or a fire) never sours: it keeps as long and then spoils. Sealed store milk keeps until it is poured out.",
+  "Sandbox_TraditionalPreservationDairy_MilkSpoils_tooltip": "Raw milk sours after about a day and a half in a 20 C room (3 to 4 days in a summer basement, a week in a winter one, 8 in a powered fridge, never frozen), then spoils as long again after. Milk scalded at 85 C (a Hearth's copper, a stove or a fire) never sours: it keeps as long and then spoils. Sealed store milk keeps until it is poured out.",
   "Sandbox_TraditionalPreservationDairy_MilkSpoilSpeed": "Milk spoiling speed",
   "Sandbox_TraditionalPreservationDairy_MilkSpoilSpeed_tooltip": "1 is the times above. 2 goes off twice as fast, 0.5 keeps twice as long."
 }

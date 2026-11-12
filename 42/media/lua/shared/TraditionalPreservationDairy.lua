@@ -176,7 +176,7 @@ end
 
 M.SENSITIVITY = 1
 
-M.PLACES = { "Open", "Sheltered", "Basement", M.HEARTH, M.EMBERS }
+M.PLACES = { "Open", "Covered", "Sheltered", "Basement", M.HEARTH, M.EMBERS }
 
 M.placeTemperature = Hearth.placeTemperature
 M.placeOf = Hearth.placeOf
@@ -248,7 +248,8 @@ FluidAgeing.register({
 function M.record(ledger, history, now, temperature)
     Weather.advance(ledger, now, temperature, KINDS)
     local hour = math.floor(now)
-    history[hour % M.HISTORY_HOURS + 1] = { hour = hour, temperature = ledger.temperature, season = ledger.seasonTemperature }
+    history[hour % M.HISTORY_HOURS + 1] = { hour = hour, temperature = ledger.temperature, season = ledger.seasonTemperature,
+        grid = ledger.gridOn }
 end
 
 -- The place's temperature in a past hour, or nil when the history has no reading for it.
@@ -256,7 +257,7 @@ function M.pastTemperature(history, hour, place)
     local entry = history[hour % M.HISTORY_HOURS + 1]
     if Hearth.isFirePlace(place) then return Hearth.fireC(place) end
     if not entry or entry.hour ~= hour then return nil end
-    return Weather.placeTemperature({ temperature = entry.temperature, seasonTemperature = entry.season }, place)
+    return Weather.placeTemperature({ temperature = entry.temperature, seasonTemperature = entry.season, gridOn = entry.grid }, place)
 end
 
 -- Incubator
@@ -858,10 +859,9 @@ end)
 
 -- Crock: Cultivating, then Waiting for fresh milk, then Developing, then Ready.
 
--- The ledger keeps totals for the weather's places only, so time by a fire counts by the clock at its heat.
+-- The ledger keeps totals for the weather's places only, so time by a fire counts by the clock (Hearth.catchUp).
 local function markCrock(crock, ledger)
-    crock.marks = Weather.mark({}, ledger, CROCK_KIND)
-    crock.marks.hour = ledger.lastHour
+    crock.marks = Hearth.mark({}, ledger, CROCK_KIND)
 end
 
 function M.startCrock(crock, ledger)
@@ -951,20 +951,7 @@ end
 function M.updateCrock(crock, ledger, place)
     local stage = crock.stage
     if stage ~= "Cultivating" and stage ~= "Developing" then return end
-    if Hearth.isFirePlace(place) then
-        -- The ledger's totals can't be split at the hour the fire went out, so the place under it gets its
-        -- share of the gap's weather by time.
-        local from, to = crock.marks.hour or ledger.lastHour, ledger.lastHour
-        local byFire = math.max(math.min(crock.fireUntil or to, to) - from, 0)
-        local done = byFire * M.cultureRate(Hearth.fireC(place))
-        if to - from > byFire then
-            done = done + Weather.catchUp(crock.marks, ledger, CROCK_KIND, crock.under or "Sheltered") * (to - from - byFire) / (to - from)
-        end
-        crock.done = crock.done + done
-    else
-        crock.done = crock.done + Weather.catchUp(crock.marks, ledger, CROCK_KIND, place)
-    end
-    markCrock(crock, ledger)
+    crock.done = crock.done + Hearth.catchUp(crock, crock.marks, ledger, CROCK_KIND, place, M.cultureRate)
     if crock.done >= M.crockHours(crock) then
         crock.stage = stage == "Cultivating" and "Waiting" or "Ready"
     end

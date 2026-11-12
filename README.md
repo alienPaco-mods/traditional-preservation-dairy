@@ -132,12 +132,13 @@ Sheep's and the game's generic animal milk go the same way under their own names
 | Kept at | Raw milk sours | Any milk is rotten |
 |---|---|---|
 | 30 C | 1 day | 2 days |
-| 20 C | 1.5 days | 3 days |
-| A basement, 15 C | 3 days | 6 days |
+| 20 C, a room in July | 1.5 to 2 days | 3 days |
+| A basement in summer, about 13 C | 3½ days | 7 days |
+| A basement in winter, about 5 C | 6 to 7 days | about 2 weeks |
 | A powered fridge, 4 C | about 8 days | about 16 days |
 | A powered freezer | never | never |
 
-- Milk ages by the place it was last seen in (outdoors, under a roof, a basement, a fridge or freezer), also while you are away.
+- Milk ages by the place it was last seen in (open air, under an open roof, indoors, a basement, by a fire, a fridge or freezer), also while you are away.
 - Pouring never makes milk young: the older age wins, and raw milk mixed into scalded makes the whole lot raw again. Milking into a container emptied of its old milk starts afresh.
 - Sealed store milk (carton, bottle, personal size) doesn't age until it is poured out; then it counts as scalded.
 - Milk left in the copper ages there too. A steaming copper scalds what is in it.
@@ -171,26 +172,26 @@ Time counts by the game clock, at any Day Length, and keeps counting while the a
 | Setting (incubator) | below 18 C | 18–40 C | 40–45 C | above 45 C, stops at 55 C |
 | Culture (crock) | | below 25 C | 25–35 C | above 35 C, 10% at 45 C |
 
-Five kinds of place:
+Six kinds of place (TP Core's):
 
-- **Outdoors**: the day's weather.
-- **Under a roof**: the average outdoor temperature of the last 10 days or so, plus 10 C, never above 28 C.
-- **In a basement**: 15 C all year.
+- **Open air**: the day's weather.
+- **Under an open roof** (a porch, an open shed) or **indoors** (a room): the average outdoor temperature of the last 10 days or so. A room is 22 C while the power grid is on.
+- **In a basement**: the season, a third as far from 10 C: about 5 C in January, 14 C in July.
 - **By a fire**: any lit fire within 2 tiles (the Hearth, a fireplace, an antique stove or a campfire; never an electric or gas stove) holds a station at 28 C. While you're away it counts only until its fuel would have run out, then the room counts.
 - **By banked embers**: a banked Hearth within 2 tiles, 24 C.
 
-Hours for 5 L poured at 85 C at 18:00 with the starter in, cooling then setting (`tools/season_report.lua`); "never" means it hadn't set after 72 hours:
+Hours for 5 L poured at 85 C at 18:00 with the starter in, cooling then setting, the grid off (`tools/season_report.lua`); "never" means it hadn't set after 72 hours:
 
-| Month | Outdoors | Under a roof | Basement | By a fire | By banked embers |
+| Month | Open air | Indoors | Basement | By a fire | By banked embers |
 |---|---|---|---|---|---|
-| Jan | never | never | 1.8 + 9.2 | 2.5 + 6.2 | 2.2 + 6.3 |
-| Mar | never | 1.5 + 13.3 | 1.8 + 9.2 | 2.5 + 6.2 | 2.2 + 6.3 |
-| May | never | 2.0 + 7.7 | 1.8 + 9.2 | 2.5 + 6.2 | 2.2 + 6.3 |
-| Jul | 2.0 + 7.5 | 2.5 + 6.2 | 1.8 + 9.2 | 2.5 + 6.2 | 2.2 + 6.3 |
-| Sep | 2.0 + 7.2 | 2.5 + 6.3 | 1.8 + 9.2 | 2.5 + 6.2 | 2.2 + 6.3 |
-| Nov | 1.7 + 11.5 | 1.8 + 7.0 | 1.8 + 9.2 | 2.5 + 6.2 | 2.2 + 6.3 |
+| Jan | never | never | never | 2.5 + 6.2 | 2.2 + 6.3 |
+| Mar | never | never | never | 2.5 + 6.2 | 2.2 + 6.3 |
+| May | never | 1.5 + 9.8 | never | 2.5 + 6.2 | 2.2 + 6.3 |
+| Jul | 2.0 + 7.5 | 2.0 + 7.5 | 1.7 + 8.3 | 2.5 + 6.2 | 2.2 + 6.3 |
+| Sep | 2.0 + 7.2 | 1.8 + 7.5 | 1.7 + 9.2 | 2.5 + 6.2 | 2.2 + 6.3 |
+| Nov | 1.7 + 11.5 | 1.5 + 12.7 | never | 2.5 + 6.2 | 2.2 + 6.3 |
 
-The crock's first stage takes 24 hours by a fire in any month, about 80 in a basement, and weeks outdoors in winter.
+The crock's first stage takes 24 hours by a fire in any month, 2 to 3 days indoors in summer, 4 to 6 in a summer basement, and weeks anywhere else in winter.
 
 ## Skills
 
@@ -231,13 +232,13 @@ Volumes, temperatures, cooling times, the setting and culture curves, the crock'
 3. A wrapped pot, or one set by the embers, holds that warmth long enough to set overnight, in roughly 4 to 8 hours.
 4. A spoonful of the last batch starts the next. Lost starters were regrown from grain or bread in warm milk.
 5. Cow's and sheep's milk were freely mixed in the same pot.
-6. A cellar holds near the year's average, about 15 C, too cold for yogurt to set well without help.
+6. A cellar takes the edge off the seasons, cool in summer and above frost in winter: too cold for yogurt to set without help, except at the height of summer.
 
 **Simplifications made for play**
 - One yogurt or starter sets a whole pot, whatever its size (real practice is 3 to 5% of the milk).
 - The copper's heating and the pot's cooling are simple exponential curves; the steam takes no holding time at 85 C.
 - Temperature during setting slows it but never spoils a batch.
-- A roofed place is the 10-day mean plus 10 C, capped at 28 C; room heating isn't modelled beyond the Hearth.
+- A room or an open roof is the 10-day mean (22 C while the grid is on); a basement swings a third as far from 10 C; room heating isn't modelled beyond a fire within 2 tiles.
 - Milk goes off (TP Core's `FluidAgeing`): raw milk turns to its Soured twin at 36 hours' worth of 20 C and to its Rotten one at
   72; scalded milk (85 C or more) skips souring and goes by its Scalded twin (`SCALDED_MILKS`, "Cow's Milk (Scalded)") until raw milk
   is mixed in; it spoils to its milk's Rotten one. The curve (`MILK_CURVE`) and the hours are at the top of the main Lua file. Its age

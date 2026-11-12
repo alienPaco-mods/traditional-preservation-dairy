@@ -134,7 +134,8 @@ local stepped = { ml = 5000, tempC = 85 }
 M.advanceBatch(stepped, 9, 30, 11)
 M.advanceBatch(stepped, 10, 0, 20)
 check("an unloaded pot replays the hours it missed", near(away.tempC, stepped.tempC, 1e-6) and away.last == 30)
-check("a basement is 15 C whatever the history", M.pastTemperature(history, 25, "Basement") == 15)
+check("a basement follows the season the history kept", M.pastTemperature(history, 25, "Basement")
+    == 10 + 0.35 * (history[25 % M.HISTORY_HOURS + 1].season - 10))
 
 -- A year away: the hours before the history run as one spell
 local realCool, steps = M.cool, 0
@@ -150,7 +151,8 @@ check("and comes out as the long way does", M.stage(yearAway) == "Ready" and nea
     and near(yearAway.tempC, yearByHand.tempC, 0.01) and yearAway.last == 11 + YEAR)
 local coldYear = { ml = 5000, tempC = 85, last = 11 }
 M.catchUp(coldYear, 11 + YEAR, "Basement", history, ledger)
-check("milk with no starter just cools", M.stage(coldYear) == "TooCold" and near(coldYear.tempC, 15, 0.01))
+check("milk with no starter just cools", M.stage(coldYear) == "TooCold"
+    and near(coldYear.tempC, M.placeTemperature(ledger, "Basement"), 0.01))
 local stalled = { ml = 5000, tempC = 85, starter = "Yogurt", last = 11 }
 M.catchUp(stalled, 11 + YEAR, "Open", history, ledger)
 local stalledByHand = { ml = 5000, tempC = 85, starter = "Yogurt" }
@@ -265,12 +267,12 @@ local shed = M.carryIn(nil, 0, 20, 5000, 85, 0, true)
 M.carryTick(shed, 0, ledger5, "Basement")
 local byFire = M.advanceCarry(shed, 8, ledger5, M.HEARTH)
 check("set down, the gap counts where it was last carried, not where it is looked at",
-    near(byFire, M.cool(85, 15, 8, M.carryTau(5000))))
+    near(byFire, M.cool(85, M.placeTemperature(ledger5, "Basement"), 8, M.carryTau(5000))))
 local warm = M.carryIn(nil, 0, 20, 5000, 85, 0, true)
 M.carryTick(warm, 0, ledger5, M.HEARTH, 2, "Basement")
 local fireOut = M.advanceCarry(warm, 6, ledger5, M.HEARTH)
 check("by a fire until its fuel ran out, then the place under it",
-    near(fireOut, M.cool(M.cool(85, Hearth.FIRE_C, 2, M.carryTau(5000)), 15, 4, M.carryTau(5000))))
+    near(fireOut, M.cool(M.cool(85, Hearth.FIRE_C, 2, M.carryTau(5000)), M.placeTemperature(ledger5, "Basement"), 4, M.carryTau(5000))))
 local night = M.carryIn(nil, 0, 20, 5000, 85, 11, true)
 M.carryTick(night, 11, ledger5, "Open")
 local stepped = M.cool(M.cool(85, 30, 9, M.carryTau(5000)), 0, 10, M.carryTau(5000))

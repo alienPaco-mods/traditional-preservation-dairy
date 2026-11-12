@@ -6,7 +6,7 @@ These console commands load only when the game runs in **debug mode** (launch op
 
 | Command | What it does |
 |---|---|
-| `TPD.weather()` | The temperature outdoors, under a roof, in a basement, by a fire and by banked embers, and how fast milk sets at each. |
+| `TPD.weather()` | The temperature in each place (open air, under an open roof, indoors, a basement, by a fire, by banked embers), and how fast milk sets at each. |
 | `TPD.here()` | Which kind of place you're standing in. |
 | `TPD.pots()` | Every loaded incubator: position, stage, litres, milk temperature, starter, set hours, place, and what comes next and when. |
 | `TPD.age(hours)` | Moves every loaded incubator and crock on by this many hours (1 if left out): an incubator replays the recorded weather, a crock's stage takes them as hours at the best temperature. |

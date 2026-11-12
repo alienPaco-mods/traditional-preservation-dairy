@@ -1,6 +1,10 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- **TP Core's new places** (2026-11-12, consistency sweep step C): a room is the season's mean (22 C while the grid
+  is on), Covered counts as its own place (`M.PLACES`), a basement follows the season a third as far. Yogurt in an
+  unheated room sets May to October; by a fire as before. The place words are Core's ("12 C (Indoors)"); the crock's
+  fire catch-up is Core's `Hearth.catchUp` (same numbers). Season report, README, guide, Workshop text, sandbox tooltip.
 - Debug console by the series' convention (2026-11-12, consistency sweep): `TPD.age(hours)` now moves every loaded
   incubator and crock on (it was `skip` and `culture`, both gone); the milk you carry ages with `TPD.sour(hours)`.
   Tests, DEVHELP, guide.
