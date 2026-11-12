@@ -13,10 +13,12 @@ dofile("42/media/lua/shared/TraditionalPreservationDairy.lua")
 local M = TraditionalPreservationDairy
 
 local MONTHS = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" }
--- An open roof reads as indoors (the season's mean), so it gets no column of its own.
+-- An open roof reads as indoors (the season's mean), so it gets no column of its own. Grid is a room while the
+-- power grid is on (22 C, Weather.GRID_ROOM_C): it runs on a ledger and history of its own with the grid on.
 local PLACES = {}
 for _, place in ipairs(M.PLACES) do
     if place ~= "Covered" then table.insert(PLACES, place) end
+    if place == "Sheltered" then table.insert(PLACES, "Grid") end
 end
 local STEPS_PER_HOUR = 6
 local START_HOUR = 18   -- the evening milking, set overnight as it traditionally was
@@ -53,8 +55,17 @@ end
 
 local days = readDays(arg[1] or "tools/climate_year.csv")
 local ledger, history = M.getLedger(), M.getHistory()
--- The ledger starts as a long-running save's would on 1 January.
+local gridLedger, gridHistory = M.newLedger(0), {}
+gridLedger.gridOn = true
+-- The ledgers start as a long-running save's would on 1 January.
 ledger.seasonTemperature, ledger.groundTemperature = settle(days)(days[1].month, days[1].offset)
+gridLedger.seasonTemperature, gridLedger.groundTemperature = ledger.seasonTemperature, ledger.groundTemperature
+
+-- The station's place, ledger and history for a column.
+local function whereFor(place)
+    if place == "Grid" then return "Sheltered", gridLedger, gridHistory end
+    return place, ledger, history
+end
 
 -- Per month and place: a full 5 L pot and a 1 L pot with a starter, a 5 L pot with none (how long until
 -- it is too cold for one), and a crock fed as soon as it asks. All start on the first of the month at
@@ -62,18 +73,21 @@ ledger.seasonTemperature, ledger.groundTemperature = settle(days)(days[1].month,
 local runs = {}
 local function startRuns(month)
     for _, place in ipairs(PLACES) do
+        local where, runLedger, runHistory = whereFor(place)
         local function pot(kind, ml, starter)
             local batch = {}
             M.addMilk(batch, ml, POUR_C, H.hours)
             batch.starter = starter
-            table.insert(runs, { kind = kind, place = place, month = month, start = H.hours, batch = batch })
+            table.insert(runs, { kind = kind, place = place, where = where, ledger = runLedger, history = runHistory,
+                month = month, start = H.hours, batch = batch })
         end
         pot("full", 5000, "Yogurt")
         pot("small", 1000, "Yogurt")
         pot("bare", 5000, nil)
         local crock = {}
-        M.startCrock(crock, ledger)
-        table.insert(runs, { kind = "crock", place = place, month = month, start = H.hours, batch = crock })
+        M.startCrock(crock, runLedger)
+        table.insert(runs, { kind = "crock", place = place, where = where, ledger = runLedger, history = runHistory,
+            month = month, start = H.hours, batch = crock })
     end
 end
 
@@ -87,7 +101,7 @@ end
 local function updatePot(run)
     local batch = run.batch
     local was = M.stage(batch)
-    M.catchUp(batch, H.hours, run.place, history, ledger)
+    M.catchUp(batch, H.hours, run.where, run.history, run.ledger)
     local now, r = M.stage(batch), result(run)
     local since = H.hours - run.start
     if batch.wrapHour then r.wrap = batch.wrapHour - run.start end
@@ -102,10 +116,10 @@ end
 
 local function updateCrock(run)
     local crock = run.batch
-    M.updateCrock(crock, ledger, run.place)
+    M.updateCrock(crock, run.ledger, run.where)
     if crock.stage == "Waiting" then
         result(run).cultivated = H.hours - run.start
-        M.feedCrock(crock, ledger)
+        M.feedCrock(crock, run.ledger)
     elseif crock.stage == "Ready" then
         result(run).ready = H.hours - run.start
         run.finished = true
@@ -121,7 +135,9 @@ for _, day in ipairs(days) do
         end
         for step = 1, STEPS_PER_HOUR do
             H.setHours(H.hours + 1 / STEPS_PER_HOUR)
-            M.record(ledger, history, H.hours, temperatureAt(day, hour + step / STEPS_PER_HOUR))
+            local temperature = temperatureAt(day, hour + step / STEPS_PER_HOUR)
+            M.record(ledger, history, H.hours, temperature)
+            M.record(gridLedger, gridHistory, H.hours, temperature)
             for _, run in ipairs(runs) do
                 if not run.finished then
                     if run.kind == "crock" then updateCrock(run) else updatePot(run) end
@@ -144,8 +160,8 @@ print(string.format("Yogurt Incubator: 5 L poured at %d C at %02d:00 on the firs
 print(string.format("Hours to cool to %d C (wrap on), then hours to set (%g h at the best temperature), and the", M.SET_C, M.INCUBATE_HOURS))
 print(string.format("milk's temperature when it set. '-' means it hadn't set after %d hours.", GIVE_UP_HOURS))
 print("")
-print("| Month | Outdoors: cool / set / C | Indoors | Loft | Basement | By a fire | By banked embers |")
-print("|---|---|---|---|---|---|---|")
+print("| Month | Outdoors: cool / set / C | Indoors | Indoors, grid on | Loft | Basement | By a fire | By banked embers |")
+print("|---|---|---|---|---|---|---|---|")
 for month = 1, 12 do
     local cells = {}
     for _, place in ipairs(PLACES) do
@@ -159,8 +175,8 @@ end
 
 print("")
 print("Same, 1 L: total hours from pouring to set")
-print("| Month | Outdoors | Indoors | Loft | Basement | By a fire | By banked embers |")
-print("|---|---|---|---|---|---|---|")
+print("| Month | Outdoors | Indoors | Indoors, grid on | Loft | Basement | By a fire | By banked embers |")
+print("|---|---|---|---|---|---|---|---|")
 for month = 1, 12 do
     local cells = {}
     for _, place in ipairs(PLACES) do table.insert(cells, hoursText(get(month, place, "small", "ready"))) end
@@ -169,8 +185,8 @@ end
 
 print("")
 print(string.format("No starter: hours after pouring 5 L until the milk is below %d C and must be reheated", M.STARTER_MIN_C))
-print("| Month | Outdoors | Indoors | Loft | Basement | By a fire | By banked embers |")
-print("|---|---|---|---|---|---|---|")
+print("| Month | Outdoors | Indoors | Indoors, grid on | Loft | Basement | By a fire | By banked embers |")
+print("|---|---|---|---|---|---|---|---|")
 for month = 1, 12 do
     local cells = {}
     for _, place in ipairs(PLACES) do table.insert(cells, hoursText(get(month, place, "bare", "cold"))) end
@@ -179,8 +195,8 @@ end
 
 print("")
 print(string.format("Starter Culture Crock: hours to cultivate (%g at best), then total hours to starter, fed at once", M.CULTIVATE_HOURS))
-print("| Month | Outdoors | Indoors | Loft | Basement | By a fire | By banked embers |")
-print("|---|---|---|---|---|---|---|")
+print("| Month | Outdoors | Indoors | Indoors, grid on | Loft | Basement | By a fire | By banked embers |")
+print("|---|---|---|---|---|---|---|---|")
 for month = 1, 12 do
     local cells = {}
     for _, place in ipairs(PLACES) do

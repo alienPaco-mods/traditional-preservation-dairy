@@ -333,9 +333,12 @@ Hours for 5 L poured at 85 C at 18:00 with the starter in, **cooling + setting**
 | Sep | 1.7 + 14.8 | 1.8 + 7.8 | 1.8 + 6.8 | 1.7 + 8.2 | 2.5 + 6.2 | 2.2 + 6.3 |
 | Nov | never | 1.5 + 14.5 | 1.5 + 14.5 | 1.7 + 13.7 | 2.5 + 6.2 | 2.2 + 6.3 |
 
+**While the grid is on** a room is 22 C in every month: 2.2 + 7.0 hours, and a 1 L pot about 9 hours from pouring. The crock's first stage takes about 32 hours there, and its starter is ready in two days.
+
 | The crock's first stage | |
 |---|---|
 | By a fire, any month | 24 hours |
+| Indoors while the grid is on, any month | about 32 hours |
 | Indoors in summer | about 2 days |
 | In a basement, July to October | 4 to 5 days |
 | In a basement in November | about 9 days |

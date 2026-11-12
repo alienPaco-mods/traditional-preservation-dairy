@@ -1,6 +1,9 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- **A powered room in the numbers** (2026-11-12): the season report has an *Indoors, grid on* column (22 C, its own
+  ledger and history with the grid on); the guide gives the figures under its month table: 2.2 + 7.0 hours for 5 L,
+  about 9 for 1 L, the crock's first stage about 32 hours.
 - **On TP Core's shared modules** (2026-11-12; nothing a player sees): the Jar of Yogurt's portions, name, weight and
   empty jar go through Core's `Portions` (its `onEat` in place of the mod's own wrap of the eat action; the jar's
   texts are Core's), the heat record rides a pour through Core's `Pour` (in place of the mod's own wrap of
