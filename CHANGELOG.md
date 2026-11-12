@@ -1,6 +1,9 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- **Yogurt, as the base game spells it** (2026-11-12, consistency sweep): every text the player sees, the guide,
+  README and Workshop text; `TPD.kit("yogurt")`. Item, station and save names keep their spelling. *Yogurt Pot
+  (Unfired)*, as vanilla's unfired clay.
 - Milk taken off the heat is stamped through TP Core's `Transfer.before` (2026-11-12) instead of Dairy's own wrap of
   `transferItem`. No change in play.
 - TP Core's copper is now 60 L (was 20): README, guide 5 and Workshop text updated (a full copper is twelve pots,

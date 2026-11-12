@@ -1,4 +1,4 @@
--- Checks a Jar of Yoghurt (F4): filled to its jar's size, eaten in portions through vanilla's eat action (stubbed
+-- Checks a Jar of Yogurt (F4): filled to its jar's size, eaten in portions through vanilla's eat action (stubbed
 -- as the engine's Eat behaves), spooned into cups, an old 1 L jar from a save. Run from the mod folder:
 -- luajit tests/test_jar.lua
 local H = dofile((os.getenv("TPCORE") or "../TraditionalPreservationCore") .. "/tests/harness.lua")
@@ -22,7 +22,7 @@ local WEIGHTS = { ["Base.EmptyJar"] = 0.2, ["Base.ClayJar"] = 0.3, ["Base.ClayJa
 ScriptManager = { instance = { getItem = function(_, fullType)
     return WEIGHTS[fullType] and { getActualWeight = function() return WEIGHTS[fullType] end }
 end } }
-function getItemNameFromFullType() return "Jar of Yoghurt" end
+function getItemNameFromFullType() return "Jar of Yogurt" end
 function getTexture(name) return name end
 
 local function food(fullType)
@@ -94,9 +94,9 @@ dofile("42/media/lua/shared/TimedActions/TPFillYoghurtCup.lua")
 local bag = container()
 local glass = bag:AddItem(M.YOGHURT_JAR)
 M.fillJar(glass, "Base.EmptyJar", 1000, 2)
-check("a glass jar holds four portions of vanilla Yoghurt's food", near(M.jarPortions(glass), 4) and near(M.jarFull(glass), 4)
+check("a glass jar holds four portions of vanilla Yogurt's food", near(M.jarPortions(glass), 4) and near(M.jarFull(glass), 4)
     and near(glass.calories, 120) and glass.age == 2)
-check("it is named and weighed by its portions", glass.name == "Jar of Yoghurt (4 portions)" and near(glass.weight, 1.2)
+check("it is named and weighed by its portions", glass.name == "Jar of Yogurt (4 portions)" and near(glass.weight, 1.2)
     and glass.customWeight == true)
 local clay = bag:AddItem(M.YOGHURT_JAR)
 M.fillJar(clay, "Base.ClayJar", 2500, 0)
@@ -110,17 +110,17 @@ check("a part-full clay jar: six portions, eaten as shares of a full one", near(
 
 -- Eating a portion at a time
 eat(glass, M.portionShare(M.jarPortions(glass), M.jarFull(glass)))
-check("a portion eaten: three left", near(M.jarPortions(glass), 3) and glass.name == "Jar of Yoghurt (3 portions)" and near(glass.weight, 0.95))
+check("a portion eaten: three left", near(M.jarPortions(glass), 3) and glass.name == "Jar of Yogurt (3 portions)" and near(glass.weight, 0.95))
 eat(glass, M.portionShare(M.jarPortions(glass), M.jarFull(glass)))
 eat(glass, M.portionShare(M.jarPortions(glass), M.jarFull(glass)))
-check("one left reads as one portion", glass.name == "Jar of Yoghurt (1 portion)")
+check("one left reads as one portion", glass.name == "Jar of Yogurt (1 portion)")
 eat(glass, M.portionShare(M.jarPortions(glass), M.jarFull(glass)))
 check("the last portion gives the glass jar back, once", not bag:contains(glass) and bag:count("Base.EmptyJar") == 1
     and bag:count(M.YOGHURT_JAR) == 2)
 
 -- Vanilla's Eat Quarter on a clay jar, then the part-portion
 eat(clay, 0.25)
-check("Eat Quarter takes 2.5 portions", near(M.jarPortions(clay), 7.5) and clay.name == "Jar of Yoghurt (7.5 portions)")
+check("Eat Quarter takes 2.5 portions", near(M.jarPortions(clay), 7.5) and clay.name == "Jar of Yogurt (7.5 portions)")
 for _ = 1, 7 do eat(clay, M.portionShare(M.jarPortions(clay), M.jarFull(clay))) end
 check("half a portion left", near(M.jarPortions(clay), 0.5) and near(M.portionShare(M.jarPortions(clay), 10), 0.05))
 eat(clay, M.portionShare(M.jarPortions(clay), M.jarFull(clay)))
@@ -133,27 +133,27 @@ function player:isTimedActionInstant() return false end
 local cup = bag:AddItem(M.EMPTY_CUP)
 local action = TPFillYoghurtCup:new(player, part, cup)
 action:complete()
-local yoghurt
-for _, held in ipairs(bag.items) do if held:getFullType() == "Base.Yoghurt" then yoghurt = held end end
+local yogurt
+for _, held in ipairs(bag.items) do if held:getFullType() == "Base.Yoghurt" then yogurt = held end end
 check("a cup takes one portion and the empty container", near(M.jarPortions(part), 5) and bag:count(M.EMPTY_CUP) == 0
-    and yoghurt ~= nil and yoghurt.age == part.age)
+    and yogurt ~= nil and yogurt.age == part.age)
 eat(part, 0.45)
 check("4.5 portions eaten: half a portion left", near(M.jarPortions(part), 0.5))
-yoghurt.fullType = "Done"
+yogurt.fullType = "Done"
 local last = bag:AddItem(M.EMPTY_CUP)
 TPFillYoghurtCup:new(player, part, last):complete()
 check("the last part-portion makes a half-food cup and gives the jar back", not bag:contains(part)
     and bag:count("Base.ClayJar") == 2 and bag:count(M.YOGHURT_JAR) == 0)
 check("no cup is filled from an empty jar", TPFillYoghurtCup.isValid({ character = player, jar = part, cup = last }) == false)
 
--- A Jar of Yoghurt as a starter: one portion out, the rest kept
+-- A Jar of Yogurt as a starter: one portion out, the rest kept
 local function notRotten(item) item.isRotten = function() return item.rotten == true end return item end
 local starterBag = container()
 local jar = notRotten(starterBag:AddItem(M.YOGHURT_JAR))
 M.fillJar(jar, "Base.EmptyJar", 1000, 1)
 check("a jar with portions in it is a starter", M.isStarter(jar))
 check("taking one leaves three, the jar kept", M.takeJarPortion(jar) == nil and near(M.jarPortions(jar), 3)
-    and starterBag:contains(jar) and jar.name == "Jar of Yoghurt (3 portions)")
+    and starterBag:contains(jar) and jar.name == "Jar of Yogurt (3 portions)")
 jar.rotten = true
 check("not once it has gone off", not M.isStarter(jar))
 jar.rotten = nil
@@ -162,13 +162,13 @@ check("half a portion left is too little to start a batch", near(M.jarPortions(j
 local lastJar = notRotten(starterBag:AddItem(M.YOGHURT_JAR))
 M.fillJar(lastJar, "Base.ClayJar", 250, 1)
 local back = M.takeJarPortion(lastJar)
-check("and the jar of yoghurt is gone", back ~= nil and back:getFullType() == "Base.ClayJar"
+check("and the jar of yogurt is gone", back ~= nil and back:getFullType() == "Base.ClayJar"
     and not starterBag:contains(lastJar) and starterBag:count("Base.ClayJar") == 1)
 local cupOf = notRotten(food("Base.Yoghurt"))
-check("a Yoghurt and a crock starter still count", M.isStarter(cupOf) and M.isStarter(notRotten(food(M.STARTER)))
+check("a Yogurt and a crock starter still count", M.isStarter(cupOf) and M.isStarter(notRotten(food(M.STARTER)))
     and not M.isStarter(notRotten(food(M.EMPTY_CUP))))
 
--- C23: a jar of cow's milk yoghurt, and a cup spooned from it
+-- C23: a jar of cow's milk yogurt, and a cup spooned from it
 local COW = M.portionFood({ fluid = "CowMilk", ml = 1000 })
 local milky = bag:AddItem(M.YOGHURT_JAR)
 M.fillJar(milky, "Base.EmptyJar", 1000, 0, COW)
@@ -184,12 +184,12 @@ check("a cup from it has the milk's food, not vanilla's", cowCup and near(cowCup
     and near(cowCup.base, -0.125) and near(M.jarPortions(milky), 2))
 cowCup.fullType = "Done"
 
--- C23: shop Yoghurt gets a cow's milk portion's food, in script units
+-- C23: shop Yogurt gets a cow's milk portion's food, in script units
 local params, realManager = {}, ScriptManager
 ScriptManager = { instance = { getItem = function() return { DoParam = function(_, line) table.insert(params, line) end } end } }
 M.applyYoghurtReplacement()
 ScriptManager = realManager
-check("vanilla Yoghurt: its empty cup and a cow's milk portion", table.concat(params, "; ") == "ReplaceOnUse = " .. M.EMPTY_CUP
+check("vanilla Yogurt: its empty cup and a cow's milk portion", table.concat(params, "; ") == "ReplaceOnUse = " .. M.EMPTY_CUP
     .. "; HungerChange = -12.5; Calories = 153.75; Carbohydrates = 11.5; Lipids = 5.5; Proteins = 8.25")
 
 -- A jar from a save before F4: no food values, its cups in modData

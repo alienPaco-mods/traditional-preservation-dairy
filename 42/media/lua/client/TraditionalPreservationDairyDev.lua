@@ -14,7 +14,7 @@ function TPD.help()
     say("TPD.skip(hours)      move every loaded incubator on by this many hours")
     say("TPD.fast(hours)      setting takes this many hours at the best temperature. TPD.fast() goes back to the sandbox")
     say("TPD.milk(litres, c)  a cooking pot of cow's milk (default 5 L), at c degrees if given")
-    say("TPD.kit(kind)        the things a test of kind needs; TPD.kit() for yoghurt, TPD.kit(\"?\") lists the kinds")
+    say("TPD.kit(kind)        the things a test of kind needs; TPD.kit() for yogurt, TPD.kit(\"?\") lists the kinds")
     say("TPD.crocks()         every loaded crock: stage, progress, place")
     say("TPD.culture(hours)   move every loaded crock's current stage on by this many hours at the best temperature")
     say("TPD.ages()           every container of milk you carry: fluid, stage, age, hours to the next stage, place")
@@ -91,8 +91,8 @@ end
 
 -- One kit per kind of test, so each new dairy (kefir, emmental-style, brined cheese) adds an entry here.
 local KITS = {
-    yoghurt = {
-        about = "a yoghurt for a starter, a Clay Jar, a glass jar and four empty yoghurt containers",
+    yogurt = {
+        about = "a yogurt for a starter, a Clay Jar, a glass jar and four empty yogurt containers",
         give = function(inventory)
             inventory:AddItem("Base.Yoghurt")
             inventory:AddItem("Base.ClayJar")
@@ -107,7 +107,7 @@ local KITS = {
         end,
     },
     wrap = {
-        about = "a Yoghurt Pot, a Sheet and Twine, to make a Wrapped Yoghurt Pot",
+        about = "a Yogurt Pot, a Sheet and Twine, to make a Wrapped Yogurt Pot",
         give = function(inventory)
             inventory:AddItem("TraditionalPreservationDairy.YoghurtPot")
             inventory:AddItem("Base.Sheet")
@@ -117,7 +117,7 @@ local KITS = {
 }
 
 function TPD.kit(kind)
-    local kit = KITS[kind or "yoghurt"]
+    local kit = KITS[kind or "yogurt"]
     if not kit then
         local names = {}
         for name in pairs(KITS) do table.insert(names, name) end

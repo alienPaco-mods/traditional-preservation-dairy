@@ -1,4 +1,4 @@
--- Traditional Preservation (Dairy) B42: keeps track of every Yoghurt Incubator and Starter Culture Crock, records
+-- Traditional Preservation (Dairy) B42: keeps track of every Yogurt Incubator and Starter Culture Crock, records
 -- the weather and its hourly history, brings each pot's milk and each crock's culture up to the hour and layers the
 -- sprite for its stage. A station's state sits in movableData, so it goes with it when it is picked up full and
 -- carried to the fire. The Hearth is TP Core's, which keeps its copper up to date (TraditionalPreservationCore/HearthWorld).

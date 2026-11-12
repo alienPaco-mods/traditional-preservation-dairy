@@ -29,7 +29,7 @@ module TraditionalPreservationDairy
         Tooltip = Tooltip_TraditionalPreservationDairy_YoghurtPot,
     }
 
-    /* The Yoghurt Pot wrapped in a sheet: it carries scalded milk from the Hearth and holds its heat (about 15 C lost
+    /* The Yogurt Pot wrapped in a sheet: it carries scalded milk from the Hearth and holds its heat (about 15 C lost
        in an hour). Its milk's heat and scalded mark are in ModData tpdCarry, not in vanilla's item heat. */
     item WrappedYoghurtPot
     {
@@ -49,9 +49,9 @@ module TraditionalPreservationDairy
         }
     }
 
-    /* Set yoghurt in a glass jar (1 L) or a Clay Jar (2.5 L). Its food values are its portions, a vanilla Yoghurt
+    /* Set yogurt in a glass jar (1 L) or a Clay Jar (2.5 L). Its food values are its portions, a vanilla Yogurt
        each per 250 ml, set in Lua when it is filled (none here, so a jar from before F4 is told by tpdFood in its
-       ModData). The jar's type and litres are in ModData (tpdJar, tpdMl); its age is the yoghurt's, carried over
+       ModData). The jar's type and litres are in ModData (tpdJar, tpdMl); its age is the yogurt's, carried over
        from the incubator. Eaten from, or spooned into cups from its right-click menu. */
     item JarOfYoghurt
     {
@@ -83,7 +83,7 @@ module TraditionalPreservationDairy
         Tooltip = Tooltip_TraditionalPreservationDairy_ActiveYoghurtStarter,
     }
 
-    /* Every vanilla Yoghurt leaves one when eaten or stirred into oatmeal (ReplaceOnUse, set in Lua). */
+    /* Every vanilla Yogurt leaves one when eaten or stirred into oatmeal (ReplaceOnUse, set in Lua). */
     item EmptyYoghurtContainer
     {
         DisplayCategory = Junk,

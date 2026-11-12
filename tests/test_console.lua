@@ -41,7 +41,7 @@ run("fast")
 check("fast with no number goes back to the sandbox", M.INCUBATE_HOURS == 6)
 
 run("kit")
-check("kit gives the yoghurt kit", #player.given == 7 and player.given[1] == "Base.Yoghurt" and player.given[7] == M.EMPTY_CUP)
+check("kit gives the yogurt kit", #player.given == 7 and player.given[1] == "Base.Yoghurt" and player.given[7] == M.EMPTY_CUP)
 run("kit", "crock")
 check("kit(\"crock\") gives the wheat", #player.given == 7 + M.CROCK_WHEAT and player.given[8] == M.WHEAT)
 check("an unknown kind lists the kits and gives nothing", run("kit", "?"):find("TPD.kit(\"wrap\")", 1, true) ~= nil

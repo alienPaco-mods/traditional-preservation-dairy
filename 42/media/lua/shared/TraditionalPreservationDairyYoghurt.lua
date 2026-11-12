@@ -1,8 +1,8 @@
--- Traditional Preservation (Dairy): every vanilla Yoghurt leaves an Empty Yoghurt Container, and a Jar of Yoghurt
+-- Traditional Preservation (Dairy): every vanilla Yogurt leaves an Empty Yogurt Container, and a Jar of Yogurt
 -- is eaten from in portions. ReplaceOnUse covers eating and the evolved Oatmeal (both go through Use()); no vanilla
--- craft takes a Yoghurt, so Salt's ISHandcraftAction wrap isn't needed here.
+-- craft takes a Yogurt, so Salt's ISHandcraftAction wrap isn't needed here.
 -- A jar's portions are its food values (a portion each of its milk's, kept in modData `tpdPortion`; vanilla
--- Yoghurt's for a jar from before C23), so vanilla's own Eat, Eat Half and
+-- Yogurt's for a jar from before C23), so vanilla's own Eat, Eat Half and
 -- Eat Quarter work on it too; the eat action is wrapped only to relabel the jar and give the empty one back.
 require "TraditionalPreservationDairy"
 require "TimedActions/ISEatFoodAction"
@@ -10,23 +10,23 @@ local M = TraditionalPreservationDairy
 
 local YOGHURT = "Base.Yoghurt"
 
--- Shop yoghurt is cow's milk yoghurt too (C23): new Yoghurts get a cow's milk portion's food, as script units
+-- Shop yogurt is cow's milk yogurt too (C23): new Yoghurts get a cow's milk portion's food, as script units
 -- (hunger x100). Ones already in a save keep what they were made with; the engine saves each item's values.
 function M.applyYoghurtReplacement()
-    local yoghurt = ScriptManager.instance:getItem(YOGHURT)
-    if not yoghurt then return end
-    yoghurt:DoParam("ReplaceOnUse = " .. M.EMPTY_CUP)
+    local yogurt = ScriptManager.instance:getItem(YOGHURT)
+    if not yogurt then return end
+    yogurt:DoParam("ReplaceOnUse = " .. M.EMPTY_CUP)
     local cow = M.portionFood({ fluid = "CowMilk", ml = M.CUP_ML })
-    yoghurt:DoParam("HungerChange = " .. cow.hunger * 100)
-    yoghurt:DoParam("Calories = " .. cow.calories)
-    yoghurt:DoParam("Carbohydrates = " .. cow.carbohydrates)
-    yoghurt:DoParam("Lipids = " .. cow.lipids)
-    yoghurt:DoParam("Proteins = " .. cow.proteins)
+    yogurt:DoParam("HungerChange = " .. cow.hunger * 100)
+    yogurt:DoParam("Calories = " .. cow.calories)
+    yogurt:DoParam("Carbohydrates = " .. cow.carbohydrates)
+    yogurt:DoParam("Lipids = " .. cow.lipids)
+    yogurt:DoParam("Proteins = " .. cow.proteins)
 end
 
 Events.OnInitGlobalModData.Add(M.applyYoghurtReplacement)
 
--- Sets a food item's values to the given number of portions of p (vanilla Yoghurt's if not given); full is the
+-- Sets a food item's values to the given number of portions of p (vanilla Yogurt's if not given); full is the
 -- whole item's, for vanilla's eat shares.
 function M.setPortions(food, portions, full, p)
     p = p or M.PORTION
@@ -38,12 +38,12 @@ function M.setPortions(food, portions, full, p)
     food:setProteins(p.proteins * portions)
 end
 
--- One portion of a Jar of Yoghurt's food.
+-- One portion of a Jar of Yogurt's food.
 function M.jarPortion(jar)
     return jar:getModData().tpdPortion or M.PORTION
 end
 
--- Portions left in a Jar of Yoghurt. A jar from before F4 (no tpdFood) holds no food values yet: it gets its
+-- Portions left in a Jar of Yogurt. A jar from before F4 (no tpdFood) holds no food values yet: it gets its
 -- cups' worth, once. A clay jar filled before the icon fix gets its look here too.
 function M.jarPortions(jar)
     local data = jar:getModData()
@@ -60,7 +60,7 @@ function M.jarFull(jar)
     return M.portionsIn(jar:getBaseHunger(), M.jarPortion(jar))
 end
 
--- A Jar of Yoghurt says how many portions are left and weighs the empty jar plus what's still in it.
+-- A Jar of Yogurt says how many portions are left and weighs the empty jar plus what's still in it.
 function M.labelJar(jar)
     local left = M.jarPortions(jar)
     local base = getItemNameFromFullType(M.YOGHURT_JAR)
@@ -75,7 +75,7 @@ function M.labelJar(jar)
     jar:setCustomWeight(true)
 end
 
--- A freshly collected jar: ml of yoghurt in an empty jar of jarType, aged in days, portion being one portion's food.
+-- A freshly collected jar: ml of yogurt in an empty jar of jarType, aged in days, portion being one portion's food.
 function M.fillJar(jar, jarType, ml, age, portion)
     jar:setAge(age)
     local data = jar:getModData()
@@ -89,7 +89,7 @@ function M.fillJar(jar, jarType, ml, age, portion)
     M.labelJar(jar)
 end
 
--- Whether an item can start a batch: a starter that hasn't gone off, and a Jar of Yoghurt only with a whole portion
+-- Whether an item can start a batch: a starter that hasn't gone off, and a Jar of Yogurt only with a whole portion
 -- left (the engine keeps hunger as a 32-bit float, so a portion may read a hair under 1).
 function M.isStarter(item)
     local fullType = item:getFullType()
@@ -97,7 +97,7 @@ function M.isStarter(item)
     return fullType ~= M.YOGHURT_JAR or M.jarPortions(item) >= 1 - 1e-3
 end
 
--- Takes one portion out of a Jar of Yoghurt for a starter. Returns the empty jar when that was the last.
+-- Takes one portion out of a Jar of Yogurt for a starter. Returns the empty jar when that was the last.
 function M.takeJarPortion(jar)
     local container = jar:getContainer()
     local left = M.jarPortions(jar)
@@ -106,7 +106,7 @@ function M.takeJarPortion(jar)
 end
 
 -- After any eat or spoonful: an emptied jar goes back to the container it was in as its own empty jar; one with
--- yoghurt left is relabelled. Returns the empty jar, if any.
+-- yogurt left is relabelled. Returns the empty jar, if any.
 function M.afterJarUse(jar, container)
     if container and container:contains(jar) and M.jarPortions(jar) >= M.EMPTY_PORTIONS then
         M.labelJar(jar)

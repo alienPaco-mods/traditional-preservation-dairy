@@ -1,7 +1,7 @@
 -- Traditional Preservation (Dairy): the hand jobs at a Starter Culture Crock. "load" puts in wheat and half a litre
 -- of milk at 35 to 45 C from a Hearth's copper (within 2 tiles) or a carried container, "clabber" puts in half a litre
 -- of soured milk instead (no wheat, any warmth), "feed" adds half a litre of fresh milk once the culture has taken, and
--- "collect" takes out the Active Yoghurt Starters.
+-- "collect" takes out the Active Yogurt Starters.
 require "TimedActions/ISBaseTimedAction"
 require "TraditionalPreservationDairy"
 

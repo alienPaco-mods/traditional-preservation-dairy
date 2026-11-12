@@ -146,7 +146,7 @@ local function scaldedMilk(name, celsius)
         getModData = function() return modData end, getItemHeat = function() return Hearth.itemHeat(celsius) end })
 end
 ui.carried = { scaldedMilk("Hot Bucket", 80), scaldedMilk("Cold Bucket", 25) }
-carried = named(open(incubator(5, { starter = "Yoghurt" }))[1], "ContextMenu_TraditionalPreservationDairy_PourScalded")
+carried = named(open(incubator(5, { starter = "Yogurt" }))[1], "ContextMenu_TraditionalPreservationDairy_PourScalded")
 local potEntries = carried.subOption.options
 check("with the starter in, hot carried milk is offered and cold milk is red with its heat", potEntries[1].notAvailable == nil
     and potEntries[2].notAvailable == true and potEntries[2].toolTip.description:find("25", 1, true) ~= nil)
@@ -165,8 +165,8 @@ ui.carried = {}
 pour = named(open(incubator(5, { ml = M.CAPACITY_ML, fluid = "CowMilk", tempC = 80 }))[1], POUR)
 check("a full pot takes no more", pour.isDisabled == true
     and pour.toolTip.description == getText("IGUI_TraditionalPreservationDairy_PotFull"))
-sub = open(incubator(5, { ml = 2000, fluid = "CowMilk", tempC = 30, starter = "Yoghurt", done = M.INCUBATE_HOURS, readyHour = 90 }))[1]
-check("set yoghurt is collected, not poured", named(sub, "ContextMenu_TraditionalPreservationDairy_Collect") ~= nil
+sub = open(incubator(5, { ml = 2000, fluid = "CowMilk", tempC = 30, starter = "Yogurt", done = M.INCUBATE_HOURS, readyHour = 90 }))[1]
+check("set yogurt is collected, not poured", named(sub, "ContextMenu_TraditionalPreservationDairy_Collect") ~= nil
     and named(sub, "ContextMenu_TraditionalPreservationDairy_FillPotCups") ~= nil and named(sub, POUR) == nil)
 
 -- Several stations under one click
@@ -178,7 +178,7 @@ check("named with its status, so they can be told apart", context.options[1].nam
     and context.options[1].name:find("2.0", 1, true) ~= nil and context.options[2].name:find("(", 1, true) ~= nil)
 check("the crock's menu opens with its status and Crock Info", subs[2].options[1].isDisabled == true and #subs[2].options >= 2)
 
--- A Jar of Yoghurt as a starter: a whole portion left, not gone off
+-- A Jar of Yogurt as a starter: a whole portion left, not gone off
 local function jarOf(name, portions, rotten)
     local data = { tpdFood = true, customInventoryIcon = "icon" }
     return { getFullType = function() return M.YOGHURT_JAR end, getDisplayName = function() return name end,

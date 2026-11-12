@@ -1,7 +1,7 @@
--- Traditional Preservation (Dairy): the hand jobs at a Yoghurt Incubator. "hearth" pours milk steaming from a
--- Hearth's copper (within 2 tiles) in, "carried" pours scalded milk in from a container, "starter" stirs in a yoghurt or an Active Yoghurt Starter, "pourOut" takes the milk back out into an empty
--- container (still scalded) to reheat it, "collect" fills an empty jar (glass 1 L, clay 2.5 L) with set yoghurt,
--- and "cup" fills an Empty Yoghurt Container with a quarter litre.
+-- Traditional Preservation (Dairy): the hand jobs at a Yogurt Incubator. "hearth" pours milk steaming from a
+-- Hearth's copper (within 2 tiles) in, "carried" pours scalded milk in from a container, "starter" stirs in a yogurt or an Active Yogurt Starter, "pourOut" takes the milk back out into an empty
+-- container (still scalded) to reheat it, "collect" fills an empty jar (glass 1 L, clay 2.5 L) with set yogurt,
+-- and "cup" fills an Empty Yogurt Container with a quarter litre.
 require "TimedActions/ISBaseTimedAction"
 require "TraditionalPreservationDairy"
 require "TraditionalPreservationDairyYoghurt"
@@ -119,9 +119,9 @@ function COMPLETE.cup(self, batch, now)
     if ml > 0 then
         removeItem(self.item)
         -- The milk's food; the pot's last cup may be short, and holds only what it took.
-        local yoghurt = give(self, "Base.Yoghurt")
-        yoghurt:setAge(age)
-        M.setPortions(yoghurt, ml / M.CUP_ML, 1, portion)
+        local yogurt = give(self, "Base.Yoghurt")
+        yogurt:setAge(age)
+        M.setPortions(yogurt, ml / M.CUP_ML, 1, portion)
         self.character:getXp():AddXP(Perks.Cooking, M.COLLECT_XP * ml / 1000)
     end
 end

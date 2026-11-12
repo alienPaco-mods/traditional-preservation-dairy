@@ -1,8 +1,8 @@
--- Traditional Preservation (Dairy) B42: the Yoghurt Incubator and the Starter Culture Crock are worked from their
+-- Traditional Preservation (Dairy) B42: the Yogurt Incubator and the Starter Culture Crock are worked from their
 -- right-click menus. The pot: pour milk steaming from a Hearth's copper in, add a starter, pour the milk back out, and
--- collect the set yoghurt into jars. The crock: load wheat and warm milk from the copper, or soured milk alone, feed it
+-- collect the set yogurt into jars. The crock: load wheat and warm milk from the copper, or soured milk alone, feed it
 -- fresh milk, collect the starters. The status line at the top says what the station is doing, and its hover says more. Both also have
--- info windows (TP Core's InfoWindow), opened from their menus or by clicking them. A Jar of Yoghurt's own menu spoons
+-- info windows (TP Core's InfoWindow), opened from their menus or by clicking them. A Jar of Yogurt's own menu spoons
 -- it into cups. The Hearth's own menu and Hearth Info are TP Core's (HearthUI); Dairy adds its milk notes there.
 require "TimedActions/TPYoghurtIncubator"
 require "TimedActions/TPStarterCrock"
@@ -51,7 +51,7 @@ local litresText, degrees, hoursText = UI.litres, UI.degrees, UI.hoursText
 local tooltipFor, disableWith, findItems = UI.tooltip, UI.disable, UI.findItems
 
 -- A wrapped pot, jar or bucket by its own name in every menu ("Wrapped Cooking Pot"): vanilla's display name doesn't
--- see the wrap, only the inventory's fluid name does. The Wrapped Yoghurt Pot is named so already.
+-- see the wrap, only the inventory's fluid name does. The Wrapped Yogurt Pot is named so already.
 UI.nameHook(function(item)
     if item:getFullType() ~= M.WRAPPED_POT and M.isWrapped(item) then
         return say("IGUI_TraditionalPreservationDairy_WrappedName", item:getDisplayName())
@@ -97,7 +97,7 @@ local function detailText(station, state)
             table.insert(lines, say("IGUI_TraditionalPreservationDairy_SetProgress", UI.percent(math.min(state.done / M.INCUBATE_HOURS, 1)),
                 UI.percent(M.setRate(state.tempC))))
         end
-        -- Next: the wrap goes on, the yoghurt sets, or the milk goes too cold for a starter.
+        -- Next: the wrap goes on, the yogurt sets, or the milk goes too cold for a starter.
         local hours, nextStage = M.forecast(state, placeC)
         if hours then
             table.insert(lines, say("IGUI_TraditionalPreservationDairy_Next" .. nextStage, hoursText(hours)))
@@ -171,7 +171,7 @@ end
 
 -- Every container of plain milk, wherever it was carried from. Milk that isn't scalded (never at 85 C: copper, stove
 -- or fire), or is too cold for the starter already in the pot, shows in red with the reason. An open pot loses its
--- heat in minutes, a Wrapped Yoghurt Pot in hours.
+-- heat in minutes, a Wrapped Yogurt Pot in hours.
 local function addCarriedPourMenu(menu, playerObj, station, state)
     local option = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_PourScalded"))
     local items = findItems(playerObj, function(item) return M.milkIn(item:getFluidContainer()) ~= nil end)
@@ -257,7 +257,7 @@ local function addCollectMenu(menu, playerObj, station, state)
     end
 end
 
--- Empty Yoghurt Containers filled straight from the pot, a quarter of a jar each, as old as the batch.
+-- Empty Yogurt Containers filled straight from the pot, a quarter of a jar each, as old as the batch.
 local function addCupMenu(menu, playerObj, station, state)
     local option = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_FillPotCups"))
     option.iconTexture = getTexture(YOGHURT_ICON)
@@ -469,7 +469,7 @@ end
 
 -- Pot Info: the status line and its hover laid out as a table, kept up to date while open.
 local BAR_COLOURS = { contents = { 0.6, 0.57, 0.46 }, set = { 0.55, 0.6, 0.25 }, culture = { 0.7, 0.62, 0.35 } }
-local STARTER_TEXT = { Yoghurt = "IGUI_TraditionalPreservationDairy_InfoStarterYoghurt", Starter = "IGUI_TraditionalPreservationDairy_InfoStarterCulture" }
+local STARTER_TEXT = { Yogurt = "IGUI_TraditionalPreservationDairy_InfoStarterYoghurt", Starter = "IGUI_TraditionalPreservationDairy_InfoStarterCulture" }
 
 PotWindow = InfoWindow:derive("TraditionalPreservationDairyPotWindow")
 
@@ -629,7 +629,7 @@ for face = 0, M.FACE_COUNT - 1 do crockFaces[M.spriteName(M.CROCK_SPRITE + face)
 UI.offAppliances(crockFaces)
 
 -- Every pot and crock the click took in gets its own menu. With more than one, each is named with its status
--- ("Yoghurt Incubator (Cooling: 2.0 L at 60 C)"), so the player picks the right one.
+-- ("Yogurt Incubator (Cooling: 2.0 L at 60 C)"), so the player picks the right one.
 local function onFillContextMenu(playerNum, context, worldobjects, test)
     local stations, seen = {}, {}
     for _, object in ipairs(worldobjects) do
@@ -659,7 +659,7 @@ local function onEatPortion(playerObj, jar)
     ISInventoryPaneContextMenu.eatItem(jar, M.portionShare(M.jarPortions(jar), M.jarFull(jar)), playerObj:getPlayerNum())
 end
 
--- Jar of Yoghurt: eat a portion, or spoon one cup, or every cup the jar and the empty containers allow.
+-- Jar of Yogurt: eat a portion, or spoon one cup, or every cup the jar and the empty containers allow.
 local function onFillCups(playerObj, jar, cups)
     ISInventoryPaneContextMenu.transferIfNeeded(playerObj, jar)
     for _, cup in ipairs(cups) do

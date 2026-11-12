@@ -1,4 +1,4 @@
--- Traditional Preservation (Dairy) B42: the rules for the Yoghurt Incubator and the Starter Culture Crock.
+-- Traditional Preservation (Dairy) B42: the rules for the Yogurt Incubator and the Starter Culture Crock.
 -- The incubator is a lidded clay pot: milk brought to the boil in the hearth's copper cools in it by Newton's law towards the temperature where
 -- it stands, and once it is down to setting heat with a starter in, the pot is wrapped in cloth and the milk
 -- sets at a speed that follows its own temperature. Cooling depends on what the milk was, not only on the
@@ -47,7 +47,7 @@ M.HOT_C = Hearth.HOT_C        -- milk this hot pours from the copper into a pot
 
 -- Carried milk: a container filled from the copper, taken hot off a stove or a fire, or poured into from one of those
 -- keeps a record of its heat in its item modData (vanilla's item heat drops to the room within seconds of leaving
--- the heat). An open pot or bucket cools in minutes; the Wrapped Yoghurt Pot (a clay pot in its cloth) in hours.
+-- the heat). An open pot or bucket cools in minutes; the Wrapped Yogurt Pot (a clay pot in its cloth) in hours.
 M.CARRY_KEY = "tpdCarry"      -- { ml, c, hour, scalded }
 M.WRAPPED_POT_TAU = 4.0       -- hours, for 5 L: 85 to 70 C in about an hour at 20 C
 M.OPEN_TAU = 0.25             -- hours, for 5 L: 85 to 45 C in about 15 minutes at 20 C, to 35 C in about 8 more
@@ -100,15 +100,15 @@ local MILK_CURVE = { { 0, 0 }, { 2, 0.12 }, { 4, 0.19 }, { 10, 0.33 }, { 15, 0.5
     { 37, 1.8 }, { 45, 1.2 }, { 55, 0 } }
 
 -- Yield
--- A jar takes yoghurt to its vanilla capacity and is eaten from in portions of a cup, 250 ml.
+-- A jar takes yogurt to its vanilla capacity and is eaten from in portions of a cup, 250 ml.
 M.CUPS_PER_LITRE = 4          -- 8 oz cups
-M.CUP_ML = 1000 / M.CUPS_PER_LITRE   -- an Empty Yoghurt Container, and one portion from a jar
+M.CUP_ML = 1000 / M.CUPS_PER_LITRE   -- an Empty Yogurt Container, and one portion from a jar
 M.CUP_KG = 0.25               -- a portion's weight
--- One portion's food: vanilla Yoghurt's (hunger as the engine keeps it, -10 in the script). Jars and cups from
--- before C23 keep it; new yoghurt keeps its milk's food instead (MILK_FOOD).
+-- One portion's food: vanilla Yogurt's (hunger as the engine keeps it, -10 in the script). Jars and cups from
+-- before C23 keep it; new yogurt keeps its milk's food instead (MILK_FOOD).
 M.PORTION = { hunger = -0.1, calories = 30, carbohydrates = 1, lipids = 1, proteins = 5 }
 -- A litre of each milk's food, as vanilla's fluid scripts state it (hunger as the engine keeps it, -50 there).
--- Yoghurt is the milk set, so a portion is a quarter of this: eating it is worth drinking the milk.
+-- Yogurt is the milk set, so a portion is a quarter of this: eating it is worth drinking the milk.
 M.MILK_FOOD = {
     CowMilk = { hunger = -0.5, calories = 615, carbohydrates = 46, lipids = 22, proteins = 33 },
     SheepMilk = { hunger = -0.5, calories = 823, carbohydrates = 23, lipids = 17, proteins = 23 },
@@ -117,16 +117,16 @@ M.MILK_FOOD = {
 for milk, scalded in pairs(M.SCALDED_MILKS) do M.MILK_FOOD[scalded] = M.MILK_FOOD[milk] end
 
 -- Items and fluids. Only animal milk sets: a cow's, a sheep's, or the game's generic AnimalMilk (debug spawns and
--- some loot, which vanilla's own milking and cheese accept as milk). Yoghurt is yoghurt, so they may share a
+-- some loot, which vanilla's own milking and cheese accept as milk). Yogurt is yogurt, so they may share a
 -- copper, a container and a pot, as a mixed herd's milk always did. Scalded milk is milk too.
 M.MILKS = { CowMilk = true, SheepMilk = true, AnimalMilk = true }
 for milk, scalded in pairs(M.SCALDED_MILKS) do M.MILKS[scalded] = true end
 Hearth.blend("CowMilk", "SheepMilk", "AnimalMilk", "ScaldedCowMilk", "ScaldedSheepMilk", "ScaldedAnimalMilk")
 M.STARTER = "TraditionalPreservationDairy.ActiveYoghurtStarter"
--- A Jar of Yoghurt gives one portion, as much as a Yoghurt cup holds, and keeps the rest (M.isStarter).
-M.STARTERS = { ["Base.Yoghurt"] = "Yoghurt", [M.STARTER] = "Starter", ["TraditionalPreservationDairy.JarOfYoghurt"] = "Yoghurt" }
+-- A Jar of Yogurt gives one portion, as much as a Yogurt cup holds, and keeps the rest (M.isStarter).
+M.STARTERS = { ["Base.Yoghurt"] = "Yogurt", [M.STARTER] = "Starter", ["TraditionalPreservationDairy.JarOfYoghurt"] = "Yogurt" }
 M.EMPTY_CUP = "TraditionalPreservationDairy.EmptyYoghurtContainer"
--- The jars yoghurt is collected into, with the ml each holds (vanilla capacities). Clay Jars need Pottery 5 and
+-- The jars yogurt is collected into, with the ml each holds (vanilla capacities). Clay Jars need Pottery 5 and
 -- are rare loot; the glass canning jar is common.
 M.JAR_ML = { ["Base.EmptyJar"] = 1000, ["Base.ClayJar"] = 2500, ["Base.ClayJarGlazed"] = 2500 }
 M.OLD_JAR_ML = 1000           -- every jar took a litre before F4
@@ -157,7 +157,7 @@ function M.milkIn(container)
     return name, parts
 end
 
--- Only empty containers take milk or yoghurt out, so nothing is ever topped up into a mixture.
+-- Only empty containers take milk or yogurt out, so nothing is ever topped up into a mixture.
 function M.isEmptyContainer(item)
     local container = item:getFluidContainer()
     return container ~= nil and container:isEmpty() and container:getCapacity() > 0
@@ -336,7 +336,7 @@ function M.pourOut(batch, maxMl)
 end
 
 -- Runs the pot for hours at one place temperature, from hour now. Each step cools exactly; the wrap goes on
--- and the yoghurt is done within a step's resolution.
+-- and the yogurt is done within a step's resolution.
 function M.advanceBatch(batch, hours, placeC, now)
     if (batch.ml or 0) <= 0 then return end
     local t = 0
@@ -413,7 +413,7 @@ function M.catchUp(batch, now, place, history, ledger)
     batch.last = now
 end
 
--- Days since the yoghurt set, for the jar's food age: freshness carries over and never resets.
+-- Days since the yogurt set, for the jar's food age: freshness carries over and never resets.
 function M.ageDays(batch, now)
     return batch.readyHour and math.max(now - batch.readyHour, 0) / 24 or 0
 end
@@ -438,7 +438,7 @@ function M.portionFood(batch)
     return food
 end
 
--- Takes up to want ml of set yoghurt. Returns the ml taken, the age in days and a portion's food; an emptied pot
+-- Takes up to want ml of set yogurt. Returns the ml taken, the age in days and a portion's food; an emptied pot
 -- starts over.
 local function collect(batch, now, want)
     if M.stage(batch) ~= "Ready" then return 0 end
@@ -469,12 +469,12 @@ function M.jarsFor(ml, jarTypes)
     return count
 end
 
--- Fills one Empty Yoghurt Container straight from the pot, a quarter of a jar; the last one takes what is left.
+-- Fills one Empty Yogurt Container straight from the pot, a quarter of a jar; the last one takes what is left.
 function M.collectCup(batch, now)
     return collect(batch, now, M.CUP_ML)
 end
 
--- Empty Yoghurt Containers a Ready pot still fills.
+-- Empty Yogurt Containers a Ready pot still fills.
 function M.cupsInPot(batch)
     if M.stage(batch) ~= "Ready" then return 0 end
     return math.ceil(batch.ml / M.CUP_ML)
@@ -484,12 +484,12 @@ function M.cupsFor(ml)
     return math.max(math.floor(ml / 1000 * M.CUPS_PER_LITRE + 0.5), 1)
 end
 
--- Cups in a Jar of Yoghurt from before F4 (eaten by the cup only), from its modData; older still, by its litres.
+-- Cups in a Jar of Yogurt from before F4 (eaten by the cup only), from its modData; older still, by its litres.
 function M.cupsLeft(jarData)
     return jarData.tpdCups or M.cupsFor(jarData.tpdMl or M.OLD_JAR_ML)
 end
 
--- Portions left in a Jar of Yoghurt, from the hunger it still holds and one portion's (vanilla Yoghurt's if not
+-- Portions left in a Jar of Yogurt, from the hunger it still holds and one portion's (vanilla Yogurt's if not
 -- given). Vanilla's Eat Half / Quarter may leave a part.
 function M.portionsIn(hunger, portion)
     return hunger / (portion or M.PORTION).hunger
@@ -624,7 +624,7 @@ end
 M.WRAPPED_POT = "TraditionalPreservationDairy.WrappedYoghurtPot"
 
 -- Wrapping: a vanilla pot, jar or bucket, empty, wrapped in a Sheet tied with Twine, keeps milk hot as the Wrapped
--- Yoghurt Pot does, and keeps its own capacity. The mark is the fluid container's own name, which the game saves and
+-- Yogurt Pot does, and keeps its own capacity. The mark is the fluid container's own name, which the game saves and
 -- the inventory shows ("Pot" becomes "TPDWrappedPot", "Wrapped Pot"); the old name and rain factor are kept in
 -- modData WRAP_KEY. A wrapped item seen in a hot cooking container burns its wrap (World).
 M.WRAP_KEY = "tpdWrapped"     -- { name, rain }
@@ -639,7 +639,7 @@ function M.isWrapped(item)
     return item:getFullType() == M.WRAPPED_POT or item:getModData()[M.WRAP_KEY] ~= nil
 end
 
--- Kept for the callers that knew only the Wrapped Yoghurt Pot.
+-- Kept for the callers that knew only the Wrapped Yogurt Pot.
 M.isWrappedPot = M.isWrapped
 
 -- Gives an item's fluid container another name, in place: the game saves it, so it shows from the next load. Vanilla
@@ -740,7 +740,7 @@ function M.onUnwrapped(craftRecipeData)
 end
 
 -- Burnt in a hot cooking container: the Sheet and the Twine are gone. A wrapped pot, jar or bucket is itself again;
--- the Wrapped Yoghurt Pot is a bare Yoghurt Pot, which holds no fluid (its milk is lost). Returns the item now there.
+-- the Wrapped Yogurt Pot is a bare Yogurt Pot, which holds no fluid (its milk is lost). Returns the item now there.
 M.BURN_HEAT = 1.3             -- a container this hot burns a wrap (vanilla: 1.0 cold; the lowest stove setting about 1.5)
 
 function M.burnWrap(item)

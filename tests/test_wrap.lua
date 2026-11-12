@@ -139,9 +139,9 @@ check("burnt, the wrap is gone and the milk stays", not M.isWrapped(burnt) and s
     and burnt.fluid.fluids.ScaldedCowMilk == 1.0)
 local old = bag:AddItem(M.WRAPPED_POT)
 local bare = M.burnWrap(old)
-check("a Wrapped Yoghurt Pot burns down to a bare Yoghurt Pot", bare.fullType == "TraditionalPreservationDairy.YoghurtPot"
+check("a Wrapped Yogurt Pot burns down to a bare Yogurt Pot", bare.fullType == "TraditionalPreservationDairy.YoghurtPot"
     and not bag:contains(old) and bag:contains(bare))
-check("the Wrapped Yoghurt Pot still counts as wrapped", M.isWrapped(item(M.WRAPPED_POT)))
+check("the Wrapped Yogurt Pot still counts as wrapped", M.isWrapped(item(M.WRAPPED_POT)))
 check("a cold stove doesn't burn a wrap, the lowest setting does", M.BURN_HEAT > 1.0 and M.BURN_HEAT < 1.5)
 
 H.done()
