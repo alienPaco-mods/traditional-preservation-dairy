@@ -1,6 +1,8 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- Milk taken off the heat is stamped through TP Core's `Transfer.before` (2026-11-12) instead of Dairy's own wrap of
+  `transferItem`. No change in play.
 - TP Core's copper is now 60 L (was 20): README, guide 5 and Workshop text updated (a full copper is twelve pots,
   about 2.75 h to the steam). Test pins `Hearth.COPPER_ML == 60000`.
 - Wrap any milk carrier (user 2026-11-11): Wrap / Unwrap a Pot, Jar or Bucket (crafting menu, Cooking, empty only;

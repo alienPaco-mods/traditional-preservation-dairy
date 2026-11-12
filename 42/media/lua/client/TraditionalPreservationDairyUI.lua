@@ -4,7 +4,6 @@
 -- fresh milk, collect the starters. The status line at the top says what the station is doing, and its hover says more. Both also have
 -- info windows (TP Core's InfoWindow), opened from their menus or by clicking them. A Jar of Yoghurt's own menu spoons
 -- it into cups. The Hearth's own menu and Hearth Info are TP Core's (HearthUI); Dairy adds its milk notes there.
-require "TimedActions/ISInventoryTransferAction"
 require "TimedActions/TPYoghurtIncubator"
 require "TimedActions/TPStarterCrock"
 require "TimedActions/TPFillYoghurtCup"
@@ -12,6 +11,7 @@ local UI = require "TraditionalPreservationCore/UI"
 local Hearth = require "TraditionalPreservationCore/Hearth"
 local InfoWindow = require "TraditionalPreservationCore/InfoWindow"
 local HearthUI = require "TraditionalPreservationCore/HearthUI"
+local Transfer = require "TraditionalPreservationCore/Transfer"
 
 local M = TraditionalPreservationDairy
 local say = UI.say
@@ -697,12 +697,10 @@ Events.OnFillInventoryObjectContextMenu.Add(onFillInventoryMenu)
 
 -- Milk taken off a stove or a fire keeps its heat as a record (vanilla's drops within seconds): read as it is moved,
 -- while it is still on the heat.
-local vanillaTransferItem = ISInventoryTransferAction.transferItem
-function ISInventoryTransferAction:transferItem(item)
-    local from = self.srcContainer
-    if item and item:getFluidContainer() and from and not from:isInCharacterInventory(self.character)
+Transfer.before(function(action, item)
+    local from = action.srcContainer
+    if item:getFluidContainer() and from and not from:isInCharacterInventory(action.character)
         and from:getTemperature() > 1 then
         M.stampHeat(item, getGameTime():getWorldAgeHours())
     end
-    return vanillaTransferItem(self, item)
-end
+end)
