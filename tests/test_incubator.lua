@@ -134,8 +134,9 @@ local stepped = { ml = 5000, tempC = 85 }
 M.advanceBatch(stepped, 9, 30, 11)
 M.advanceBatch(stepped, 10, 0, 20)
 check("an unloaded pot replays the hours it missed", near(away.tempC, stepped.tempC, 1e-6) and away.last == 30)
-check("a basement follows the season the history kept", M.pastTemperature(history, 25, "Basement")
-    == 10 + 0.35 * (history[25 % M.HISTORY_HOURS + 1].season - 10))
+local kept = history[25 % M.HISTORY_HOURS + 1]
+check("a basement follows the ground the history kept", kept.ground ~= nil and kept.ground ~= kept.season
+    and M.pastTemperature(history, 25, "Basement") == 10 + 0.4 * (kept.ground - 10))
 
 -- A year away: the hours before the history run as one spell
 local realCool, steps = M.cool, 0

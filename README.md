@@ -176,7 +176,7 @@ Six kinds of place (TP Core's):
 
 - **Open air**: the day's weather.
 - **Under an open roof** (a porch, an open shed) or **indoors** (a room): the average outdoor temperature of the last 10 days or so. A room is 22 C while the power grid is on.
-- **In a basement**: the season, a third as far from 10 C: about 5 C in January, 14 C in July.
+- **In a basement**: the ground, a month behind the season, two fifths as far from 10 C: about 5 C from January to March, 13 C from July to September.
 - **By a fire**: any lit fire within 2 tiles (the Hearth, a fireplace, an antique stove or a campfire; never an electric or gas stove) holds a station at 28 C. While you're away it counts only until its fuel would have run out, then the room counts.
 - **By banked embers**: a banked Hearth within 2 tiles, 24 C.
 
@@ -186,12 +186,12 @@ Hours for 5 L poured at 85 C at 18:00 with the starter in, cooling then setting,
 |---|---|---|---|---|---|
 | Jan | never | never | never | 2.5 + 6.2 | 2.2 + 6.3 |
 | Mar | never | never | never | 2.5 + 6.2 | 2.2 + 6.3 |
-| May | never | 1.5 + 9.8 | never | 2.5 + 6.2 | 2.2 + 6.3 |
-| Jul | 2.0 + 7.5 | 2.0 + 7.5 | 1.7 + 8.3 | 2.5 + 6.2 | 2.2 + 6.3 |
-| Sep | 2.0 + 7.2 | 1.8 + 7.5 | 1.7 + 9.2 | 2.5 + 6.2 | 2.2 + 6.3 |
-| Nov | 1.7 + 11.5 | 1.5 + 12.7 | never | 2.5 + 6.2 | 2.2 + 6.3 |
+| May | never | never | 1.5 + 13.7 | 2.5 + 6.2 | 2.2 + 6.3 |
+| Jul | 1.8 + 8.8 | 2.0 + 7.7 | 1.7 + 9.5 | 2.5 + 6.2 | 2.2 + 6.3 |
+| Sep | 1.7 + 14.8 | 1.8 + 7.8 | 1.7 + 8.2 | 2.5 + 6.2 | 2.2 + 6.3 |
+| Nov | never | 1.5 + 14.5 | 1.7 + 13.7 | 2.5 + 6.2 | 2.2 + 6.3 |
 
-The crock's first stage takes 24 hours by a fire in any month, 2 to 3 days indoors in summer, 4 to 6 in a summer basement, and weeks anywhere else in winter.
+The crock's first stage takes 24 hours by a fire in any month, about 2 days indoors in summer, 4 to 5 in a basement from July to October (9 in November), and weeks anywhere else in winter.
 
 ## Skills
 
@@ -232,13 +232,13 @@ Volumes, temperatures, cooling times, the setting and culture curves, the crock'
 3. A wrapped pot, or one set by the embers, holds that warmth long enough to set overnight, in roughly 4 to 8 hours.
 4. A spoonful of the last batch starts the next. Lost starters were regrown from grain or bread in warm milk.
 5. Cow's and sheep's milk were freely mixed in the same pot.
-6. A cellar takes the edge off the seasons, cool in summer and above frost in winter: too cold for yogurt to set without help, except at the height of summer.
+6. A cellar takes the edge off the seasons and runs a month or two behind them, cool in summer and above frost in winter.
 
 **Simplifications made for play**
 - One yogurt or starter sets a whole pot, whatever its size (real practice is 3 to 5% of the milk).
 - The copper's heating and the pot's cooling are simple exponential curves; the steam takes no holding time at 85 C.
 - Temperature during setting slows it but never spoils a batch.
-- A room or an open roof is the 10-day mean (22 C while the grid is on); a basement swings a third as far from 10 C; room heating isn't modelled beyond a fire within 2 tiles.
+- A room or an open roof is the 10-day mean (22 C while the grid is on); a basement follows the ground (the 10-day mean's own 30-day mean) two fifths as far from 10 C; room heating isn't modelled beyond a fire within 2 tiles.
 - Milk goes off (TP Core's `FluidAgeing`): raw milk turns to its Soured twin at 36 hours' worth of 20 C and to its Rotten one at
   72; scalded milk (85 C or more) skips souring and goes by its Scalded twin (`SCALDED_MILKS`, "Cow's Milk (Scalded)") until raw milk
   is mixed in; it spoils to its milk's Rotten one. The curve (`MILK_CURVE`) and the hours are at the top of the main Lua file. Its age

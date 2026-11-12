@@ -45,8 +45,8 @@ Load the crock with 20 wheat grains and half a litre of milk at 35 to 45 C. In a
 [h2]Temperature[/h2]
 [list]
 [*][b]By a fire[/b]: a lit fire within 2 tiles (the Hearth, a fireplace, an antique stove or a campfire) holds 28 C. Yogurt sets in about 6 hours all year. A banked Hearth's embers hold 24 C.
-[*][b]Indoors[/b] or [b]under an open roof[/b]: the last 10 days' outdoor average (22 C while the grid is on). Sets from May to October.
-[*][b]In a basement[/b]: about 5 C in January, 14 C in July. Sets only in high summer.
+[*][b]Indoors[/b] or [b]under an open roof[/b]: the last 10 days' outdoor average (22 C while the grid is on). Sets from June to November.
+[*][b]In a basement[/b]: a month behind the season, about 5 C from January to March, 13 C from July to September. Sets from May to December.
 [*][b]Outdoors[/b]: only on warm summer nights.
 [/list]
 If the milk falls under 40 C before a starter is in, it is too cold: pour it out and reheat it in the copper or on a stove. Once the starter is in, milk too cold to set is refused.

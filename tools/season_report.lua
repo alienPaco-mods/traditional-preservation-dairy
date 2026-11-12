@@ -28,8 +28,9 @@ local function readDays(path)
     for line in io.lines(path) do
         local f = {}
         for value in line:gmatch("%S+") do table.insert(f, value) end
-        if #f >= 6 then
-            table.insert(days, { month = tonumber(f[2]), low = tonumber(f[4]), mean = tonumber(f[5]), high = tonumber(f[6]) })
+        -- Each month's forecast also holds the 10 days before it (offset below 0): skipped, so a month is 30 days.
+        if #f >= 6 and tonumber(f[3]) >= 0 then
+            table.insert(days, { world = tonumber(f[1]), offset = tonumber(f[3]), month = tonumber(f[2]), low = tonumber(f[4]), mean = tonumber(f[5]), high = tonumber(f[6]) })
         end
     end
     return days
@@ -41,8 +42,19 @@ local function temperatureAt(day, hour)
     return swing >= 0 and day.mean + (day.high - day.mean) * swing or day.mean + (day.mean - day.low) * swing
 end
 
+-- The first sampled world's calendar year, settled (Weather.settledMeans).
+local function settle(days)
+    local year = {}
+    for _, day in ipairs(days) do
+        if day.world == days[1].world then table.insert(year, day) end
+    end
+    return require("TraditionalPreservationCore/Weather").settledMeans(year)
+end
+
 local days = readDays(arg[1] or "tools/climate_year.csv")
 local ledger, history = M.getLedger(), M.getHistory()
+-- The ledger starts as a long-running save's would on 1 January.
+ledger.seasonTemperature, ledger.groundTemperature = settle(days)(days[1].month, days[1].offset)
 
 -- Per month and place: a full 5 L pot and a 1 L pot with a starter, a 5 L pot with none (how long until
 -- it is too cold for one), and a crock fed as soon as it asks. All start on the first of the month at

@@ -249,7 +249,7 @@ function M.record(ledger, history, now, temperature)
     Weather.advance(ledger, now, temperature, KINDS)
     local hour = math.floor(now)
     history[hour % M.HISTORY_HOURS + 1] = { hour = hour, temperature = ledger.temperature, season = ledger.seasonTemperature,
-        grid = ledger.gridOn }
+        ground = ledger.groundTemperature, grid = ledger.gridOn }
 end
 
 -- The place's temperature in a past hour, or nil when the history has no reading for it.
@@ -257,7 +257,8 @@ function M.pastTemperature(history, hour, place)
     local entry = history[hour % M.HISTORY_HOURS + 1]
     if Hearth.isFirePlace(place) then return Hearth.fireC(place) end
     if not entry or entry.hour ~= hour then return nil end
-    return Weather.placeTemperature({ temperature = entry.temperature, seasonTemperature = entry.season, gridOn = entry.grid }, place)
+    return Weather.placeTemperature({ temperature = entry.temperature, seasonTemperature = entry.season,
+        groundTemperature = entry.ground, gridOn = entry.grid }, place)
 end
 
 -- Incubator

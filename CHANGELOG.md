@@ -1,6 +1,11 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- **The cellar runs a month behind** (2026-11-12, TP Core): a basement follows the ground (the history keeps it,
+  `ground`), about 5 C from January to March and 13 C from July to September. A full pot sets in a basement from May
+  to December, indoors from June to November; the crock's first stage takes 4 to 5 days in a basement July to
+  October. The season report starts from a long-running save's weather and reads 30-day months (each month's forecast
+  also held the 10 days before it). Guide, README, Workshop text.
 - **TP Core's new places** (2026-11-12, consistency sweep step C): a room is the season's mean (22 C while the grid
   is on), Covered counts as its own place (`M.PLACES`), a basement follows the season a third as far. Yogurt in an
   unheated room sets May to October; by a fire as before. The place words are Core's ("12 C (Indoors)"); the crock's

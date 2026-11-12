@@ -315,7 +315,7 @@ The milk's temperature follows where the station stands. There are six kinds of 
 | Open air | the day's weather |
 | Under an open roof (a porch, an open shed) | the last 10 days' outdoor average |
 | Indoors (a room) | the same; 22 C while the power grid is on |
-| In a basement | follows the season a third as far: about 5 C in January, 14 C in July |
+| In a basement | follows the ground, a month behind the season: about 5 C from January to March, 13 C from July to September |
 | **By a fire** (any lit fire within 2 tiles: the Hearth, a fireplace, an antique stove or a campfire, never an electric or gas stove) | 28 C |
 | By banked embers (banked Hearth within 2 tiles) | 24 C |
 
@@ -327,17 +327,20 @@ Hours for 5 L poured at 85 C at 18:00 with the starter in, **cooling + setting**
 |---|---|---|---|---|---|
 | Jan | never | never | never | 2.5 + 6.2 | 2.2 + 6.3 |
 | Mar | never | never | never | 2.5 + 6.2 | 2.2 + 6.3 |
-| May | never | 1.5 + 9.8 | never | 2.5 + 6.2 | 2.2 + 6.3 |
-| Jul | 2.0 + 7.5 | 2.0 + 7.5 | 1.7 + 8.3 | 2.5 + 6.2 | 2.2 + 6.3 |
-| Sep | 2.0 + 7.2 | 1.8 + 7.5 | 1.7 + 9.2 | 2.5 + 6.2 | 2.2 + 6.3 |
-| Nov | 1.7 + 11.5 | 1.5 + 12.7 | never | 2.5 + 6.2 | 2.2 + 6.3 |
+| May | never | never | 1.5 + 13.7 | 2.5 + 6.2 | 2.2 + 6.3 |
+| Jul | 1.8 + 8.8 | 2.0 + 7.7 | 1.7 + 9.5 | 2.5 + 6.2 | 2.2 + 6.3 |
+| Sep | 1.7 + 14.8 | 1.8 + 7.8 | 1.7 + 8.2 | 2.5 + 6.2 | 2.2 + 6.3 |
+| Nov | never | 1.5 + 14.5 | 1.7 + 13.7 | 2.5 + 6.2 | 2.2 + 6.3 |
 
 | The crock's first stage | |
 |---|---|
 | By a fire, any month | 24 hours |
-| Indoors in summer | 2 to 3 days |
-| In a basement in summer | 4 to 6 days |
-| Indoors or in a basement in winter | weeks |
+| Indoors in summer | about 2 days |
+| In a basement, July to October | 4 to 5 days |
+| In a basement in November | about 9 days |
+| Indoors from November, or in a basement from December | weeks |
+
+> ✏ *Margin note:* a cellar runs a month behind the weather. It still holds the summer's warmth in November and December, so a full pot sets in the basement from May to December, indoors only from June to November.
 
 > ✏ *Margin note:* yogurt is a summer job in an unheated house, and a fire's the rest of the year. Farm wives set the crock on the warm side of the hearth, and a Kentucky winter gives no other way.
 
