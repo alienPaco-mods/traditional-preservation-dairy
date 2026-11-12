@@ -22,7 +22,8 @@
 14. Tips
 15. Troubleshooting
 16. Sandbox Settings
-17. Appendix: The Tester's Toolkit
+17. The Yearly Plan
+18. Appendix: The Tester's Toolkit
 
 ---
 
@@ -442,7 +443,29 @@ Under **Traditional Preservation (Dairy)**:
 
 ---
 
-## 17. Appendix: The Tester's Toolkit
+## 17. The Yearly Plan
+
+Each process laid out as the game's planting seasons: the months it works unheated, its best and poor months, and the months it is out of season (then only by a fire, banked embers or in a powered room, below). Yogurt times are 5 L poured at 85 C at 18:00, **cooling + setting**, the grid off (the Dairymaid's Almanac, chapter 11); at its best a pot cools in about 2 hours and sets in 6.
+
+| Process | Season | Best months | Poor months | Out of season | Where, at its best | Takes, at its best |
+|---|---|---|---|---|---|---|
+| **Setting yogurt** | May to December (a basement), June to November (indoors) | July, August, September | May (basement, 1.5 + 13.7 hours), June, October, November (1.5 + 14.5 indoors), December (basement) | January to April: it never sets | A loft (the warm roof), or indoors | 2.0 + 6.5 hours in a July loft; indoors 2.0 + 7.7 |
+| **Starting the crock** | June to November | July, August, September | June, October (a basement 4 to 5 days), November (a basement about 9) | December to May: weeks | Indoors | About 2 days |
+| **Keeping raw milk** | All year | January, February, March | July, August, September (a basement 3½ days, a room 1½ to 2) | None | A basement | Sours in 6 to 7 days, rotten in about 2 weeks. **Scalded milk never sours** |
+
+**Any month by a fire or a powered room:**
+
+| Where | Yogurt | The crock's first stage |
+|---|---|---|
+| By a fire (28 C) | 2.5 + 6.2 hours | 24 hours |
+| By banked embers (24 C) | 2.2 + 6.3 hours | |
+| A powered room (22 C) | 2.2 + 7.0 hours | about 32 hours |
+
+> *Margin note:* a full pot sets in the basement from May to December and indoors only from June to November; the rest of the year it's the hearth's.
+
+---
+
+## 18. Appendix: The Tester's Toolkit
 
 *For testers, modders and the curious. These commands exist only when the game is started in debug mode (Steam launch option `-debug`). Type them into the in-game **Command Console** and press Enter. `TPD.help()` lists them in the game; the Hearth's are TP Core's, `TPC.help()`.*
 

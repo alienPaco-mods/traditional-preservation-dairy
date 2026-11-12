@@ -1,6 +1,7 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- **The Yearly Plan** (guide chapter 17, user 2026-11-13): setting yogurt, starting the crock and keeping raw milk as the game's planting seasons: season, best and poor months, out of season, where and how long at best, from the Dairymaid's Almanac; the fire, embers and powered room for any month. The Tester's Toolkit is now chapter 18.
 - **Docs pass, sweep step G** (2026-11-12): seven kinds of place (guide, README); banked embers are a Hearth's or a Firebox's; README: a Loft column, the grid's hours and the crock in a powered room, milk ages in a loft too; Workshop text names Fish & Meat.
 - Needs Build 42.22 or newer (`versionMin`, was 42.20: everything is checked on 42.22). Workshop text (sweep step F).
 - **A powered room in the numbers** (2026-11-12): the season report has an *Indoors, grid on* column (22 C, its own
