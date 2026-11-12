@@ -13,16 +13,16 @@
 5. The Hearth's Copper
 6. The Yogurt Incubator
 7. Jars and Cups
-7½. When Milk Goes Off
-8. The Starter Culture Crock
-9. Stations Reference
-10. The Dairymaid's Almanac (Seasons & Places)
-11. Secrets & Hidden Features
-11½. The Dairymaid's Notebook
-12. Tips
-13. Troubleshooting
-14. Sandbox Settings
-15. Appendix: The Tester's Toolkit
+8. When Milk Goes Off
+9. The Starter Culture Crock
+10. Stations Reference
+11. The Dairymaid's Almanac (Seasons & Places)
+12. Secrets & Hidden Features
+13. The Dairymaid's Notebook
+14. Tips
+15. Troubleshooting
+16. Sandbox Settings
+17. Appendix: The Tester's Toolkit
 
 ---
 
@@ -46,14 +46,14 @@ This mod lets you **set your own yogurt the old way**: milk brought to the steam
 | **Pour into the Copper** and light the fire | Up to 60 L of cow's or sheep's milk, firewood | Steaming milk in **about 1.5 hours** for 10 L, 2¾ for 60 L |
 | **Pour from the Hearth**, then **Add Starter** | 1 vanilla Yogurt, a portion of a Jar of Yogurt, or 1 Active Yogurt Starter | 5 L cooling in the pot |
 | Wait **about 8 hours** (2 cooling, 6 setting, in a 20 C room) | | 5 L of yogurt |
-| **Collect** | Empty jars or Empty Yogurt Containers | Jars of Yogurt or vanilla Yoghurts |
+| **Collect** | Empty jars or Empty Yogurt Containers | Jars of Yogurt or vanilla Yogurts |
 
 ---
 
 ## 3. The Full Loop
 
 ```
- cow / sheep ──milk──► HEARTH'S COPPER ──85 C──► YOGHURT INCUBATOR ──► jars & cups
+ cow / sheep ──milk──► HEARTH'S COPPER ──85 C──► YOGURT INCUBATOR ──► jars & cups
                         (60 L, lit fire)          (5 L pot)                │
                                                      ▲                     │
                                 1 Yogurt ───────────┘                     │
@@ -70,7 +70,7 @@ This mod lets you **set your own yogurt the old way**: milk brought to the steam
 | 4 | Add Starter | Incubator's menu | 1 Yogurt, a jar's portion, or an Active Yogurt Starter | | a moment |
 | 5 | Cool | Incubator, lid on | | milk at 45 C, the wrap goes on | about 2 hours* |
 | 6 | Set | Incubator, wrapped | | 5 L of yogurt | 6 hours at 40 to 45 C* |
-| 7 | Collect | Incubator's menu | empty jars or Empty Yogurt Containers | Jars of Yogurt or Yoghurts | a moment |
+| 7 | Collect | Incubator's menu | empty jars or Empty Yogurt Containers | Jars of Yogurt or Yogurts | a moment |
 | 8 | Eat a Portion / Fill a Cup | Jar's menu | Jar of Yogurt | 250 ml at a time | as eating |
 
 \* In a 20 C room, or by a fire. Colder places take longer: see the Almanac.
@@ -190,7 +190,7 @@ the old figures until eaten. A Yogurt stirred into oatmeal now brings its fuller
 
 ---
 
-## 7½. When Milk Goes Off
+## 8. When Milk Goes Off
 
 Vanilla milk keeps for ever. With this mod it doesn't, and what you do with a bucket of milk in its first day decides what it's good for.
 
@@ -198,7 +198,7 @@ Vanilla milk keeps for ever. With this mod it doesn't, and what you do with a bu
 |---|---|---|
 | **Cow's Milk (Fresh)** | Raw and young | Everything |
 | **Cow's Milk (Scalded)** | It has been at 85 C or more (the copper, or a pot on a lit stove or fire), or it came out of the incubator or a store carton | Everything. It never sours |
-| **Cow's Milk (Soured)** | Raw milk, a day and a half old in a warm room | Drinking (the same food, a little unhappiness), baking (cake batter, muffins, cereal) and starting the crock without wheat (§8). Not yogurt, butter or mildew cure |
+| **Cow's Milk (Soured)** | Raw milk, a day and a half old in a warm room | Drinking (the same food, a little unhappiness), baking (cake batter, muffins, cereal) and starting the crock without wheat (chapter 9). Not yogurt, butter or mildew cure |
 | **Cow's Milk (Rotten)** | Any milk, twice that old | Nothing. It poisons you: pour it away |
 
 Sheep's milk and the game's plain "animal's milk" go the same way under their own names.
@@ -244,7 +244,7 @@ Soured milk and yogurt are both milk turned by lactic bacteria. They're not the 
 
 ---
 
-## 8. The Starter Culture Crock
+## 9. The Starter Culture Crock
 
 No yogurt left to start from? Grow one.
 
@@ -257,8 +257,8 @@ No yogurt left to start from? Grow one.
 | 4 | Developing | | 12 hours |
 | 5 | **Collect 2 Starters** | | 2 Active Yogurt Starters |
 
-- **The warm milk is the hard part.** It must be 35 to 45 C: from a Hearth within 2 tiles (a copper cooling with the fire out), or carried in a Wrapped Yogurt Pot. Hotter milk kills the grain's culture, and the menu says why it refuses.
-- **Soured milk is the short way.** Half a litre of it, warm or cold, starts the crock with no wheat and goes straight to Feed Fresh Milk. Rotten milk is refused. See *Clabber or yogurt?* in §7½.
+- **The warm milk is the hard part.** It must be 35 to 45 C: from a Hearth within 2 tiles (a copper cooling with the fire out), or carried in any container at that heat (a Wrapped Yogurt Pot holds it there longest). Hotter milk kills the grain's culture, and the menu says why it refuses.
+- **Soured milk is the short way.** Half a litre of it, warm or cold, starts the crock with no wheat and goes straight to Feed Fresh Milk. Rotten milk is refused. See *Clabber or yogurt?* in chapter 8.
 - **An Active Yogurt Starter** is fresh 5 days and rotten at 10. Each sets one batch.
 - **The crock stands on the floor, a kitchen counter or a table**, never on a stove, a fridge or a freezer.
 
@@ -266,7 +266,7 @@ No yogurt left to start from? Grow one.
 
 ---
 
-## 9. Stations Reference
+## 10. Stations Reference
 
 | Station | Build menu | Skill | Materials | XP |
 |---|---|---|---|---|
@@ -306,7 +306,7 @@ You can walk through the incubator and the crock. **Incubator Info** and **Crock
 
 ---
 
-## 10. The Dairymaid's Almanac (Seasons & Places)
+## 11. The Dairymaid's Almanac (Seasons & Places)
 
 The milk's temperature follows where the station stands. There are six kinds of place:
 
@@ -324,14 +324,14 @@ The milk's temperature follows where the station stands. There are six kinds of 
 
 Hours for 5 L poured at 85 C at 18:00 with the starter in, **cooling + setting**, the grid off. "Never" means it hadn't set after 72 hours.
 
-| Month | Open air | Indoors | Basement | By a fire | By banked embers |
-|---|---|---|---|---|---|
-| Jan | never | never | never | 2.5 + 6.2 | 2.2 + 6.3 |
-| Mar | never | never | never | 2.5 + 6.2 | 2.2 + 6.3 |
-| May | never | never | 1.5 + 13.7 | 2.5 + 6.2 | 2.2 + 6.3 |
-| Jul | 1.8 + 8.8 | 2.0 + 7.7 | 1.7 + 9.5 | 2.5 + 6.2 | 2.2 + 6.3 |
-| Sep | 1.7 + 14.8 | 1.8 + 7.8 | 1.7 + 8.2 | 2.5 + 6.2 | 2.2 + 6.3 |
-| Nov | never | 1.5 + 14.5 | 1.7 + 13.7 | 2.5 + 6.2 | 2.2 + 6.3 |
+| Month | Open air | Indoors | Loft | Basement | By a fire | By banked embers |
+|---|---|---|---|---|---|---|
+| Jan | never | never | never | never | 2.5 + 6.2 | 2.2 + 6.3 |
+| Mar | never | never | never | never | 2.5 + 6.2 | 2.2 + 6.3 |
+| May | never | never | never | 1.5 + 13.7 | 2.5 + 6.2 | 2.2 + 6.3 |
+| Jul | 1.8 + 8.8 | 2.0 + 7.7 | 2.0 + 6.5 | 1.7 + 9.5 | 2.5 + 6.2 | 2.2 + 6.3 |
+| Sep | 1.7 + 14.8 | 1.8 + 7.8 | 1.8 + 6.8 | 1.7 + 8.2 | 2.5 + 6.2 | 2.2 + 6.3 |
+| Nov | never | 1.5 + 14.5 | 1.5 + 14.5 | 1.7 + 13.7 | 2.5 + 6.2 | 2.2 + 6.3 |
 
 | The crock's first stage | |
 |---|---|
@@ -347,21 +347,21 @@ Hours for 5 L poured at 85 C at 18:00 with the starter in, **cooling + setting**
 
 ---
 
-## 11. Secrets & Hidden Features
+## 12. Secrets & Hidden Features
 
 - **It works while you're away**, even in unloaded areas. A pot left for a week reads right when you come back.
 - **The fire counts only while it would have burned.** Away from a lit Hearth, the pot is "by a fire" until the fuel would have run out, then the room takes over.
 - **Mixed herds welcome.** Cow's and sheep's milk mix in the copper, a container and the pot, and the blend keeps its shares.
 - **The Wrapped Yogurt Pot carries 5 L of hot milk** and loses only about 15 C an hour. Unwrap it when empty for the pot, sheet and twine back.
 - **Any pot, jar or bucket can be wrapped** the same way and keeps its own size: a wrapped bucket carries 10 L and holds its heat longest, a wrapped jar only a litre and cools sooner.
-- **Never put a wrapped pot on the heat.** The sheet and twine catch within a minute. On a stove or in an oven the kitchen goes up with them; in a fireplace or the Hearth they just burn away.
+- **Never put a wrapped pot on the heat.** The sheet and twine catch within a minute. On a stove, in an oven or on a barbecue the kitchen goes up with them; in a fireplace, a campfire or the Hearth they just burn away.
 - **Your jar comes back** with the last spoonful.
 - **Part portions are kept.** Eat Quarter on a jar, and the next cup you fill has exactly what was left.
 - **It's real vanilla Yogurt** in the cups, so it works in oatmeal and every recipe that wants yogurt.
 
 ---
 
-## 11½. The Dairymaid's Notebook
+## 13. The Dairymaid's Notebook
 
 *Kept on a nail by the dairy door, the pages soft with steam.*
 
@@ -386,14 +386,14 @@ Hours for 5 L poured at 85 C at 18:00 with the starter in, **cooling + setting**
 
 ### Old names, old ways
 
-- **"Yogurt" is Turkish**, from *yoğurt*, related to a verb for thickening or kneading. English has spelled it yogurt, yogurt, yoghourt and yaourt.
+- **"Yogurt" is Turkish**, from *yoğurt*, related to a verb for thickening or kneading. English has spelled it yogurt, yoghurt, yoghourt and yaourt.
 - **Lactobacillus bulgaricus.** In 1905 a young Bulgarian student, Stamen Grigorov, found the bacterium that sets yogurt, and it was named after his country.
 - **The long-lived peasants.** Ilya Metchnikov, a Nobel prizewinner at the Pasteur Institute, put the long lives of Bulgarian villagers down to their yogurt, and made it fashionable in Paris and beyond.
 - **The copper and the dairy.** In the old farmhouse, the copper boiled the wash on Monday and the milk any day, and the dairy was always the coolest room on the north side.
 
 ---
 
-## 12. Tips
+## 14. Tips
 
 - **Fire up a fuller copper.** 20 L takes only half an hour more fire than 10 and fills four pots; a full 60 L fills twelve in about 2¾ hours.
 - **Set it by the fire in winter.** A lit Hearth, fireplace or campfire within 2 tiles holds a pot at 28 C: about 9 hours from pouring to Ready in any month.
@@ -406,7 +406,7 @@ Hours for 5 L poured at 85 C at 18:00 with the starter in, **cooling + setting**
 
 ---
 
-## 13. Troubleshooting
+## 15. Troubleshooting
 
 | Problem | Why |
 |---|---|
@@ -421,11 +421,11 @@ Hours for 5 L poured at 85 C at 18:00 with the starter in, **cooling + setting**
 | Load Soured Milk greyed out | You need half a litre of soured milk in one container. Fresh or scalded milk isn't soured; rotten milk is refused |
 | Crock won't place | It stands on the floor, a counter or a table, never on a stove, a fridge or a freezer |
 | No Empty Yogurt Containers | They come only from eating Yogurt. Use jars instead |
-| Stations or recipes missing | Check `~/Zomboid/console.txt`. TP Core must be enabled, and the tiledef 5172 must be unique among your mods |
+| Stations or recipes missing | TP Core must be enabled. Then check `~/Zomboid/console.txt`: the tile number 5172 must be unique among your mods |
 
 ---
 
-## 14. Sandbox Settings
+## 16. Sandbox Settings
 
 Under **Traditional Preservation (Dairy)**:
 
@@ -439,7 +439,7 @@ Under **Traditional Preservation (Dairy)**:
 
 ---
 
-## 15. Appendix: The Tester's Toolkit
+## 17. Appendix: The Tester's Toolkit
 
 *For testers, modders and the curious. These commands exist only when the game is started in debug mode (Steam launch option `-debug`). Type them into the in-game **Command Console** and press Enter. `TPD.help()` lists them in the game; the Hearth's are TP Core's, `TPC.help()`.*
 
@@ -463,3 +463,13 @@ Copied from `DEVHELP.md`; change both together.
 | `TPD.tiles()` | Every station within 3 tiles: object class, sprite, solid flags. |
 
 **Typical check:** within 2 tiles of a Hearth, `TPC.copper(5)` and `TPC.hot()`, then `TPD.kit()`, Pour from the Hearth and Add Starter. `TPD.age(3)` should show it wrapped and setting, `TPD.age(7)` Ready.
+
+---
+
+## Credits
+
+**Design and code:** alienPaco
+
+**Made for:** Project Zomboid, Build 42. Singleplayer.
+
+*Traditional Preservation is a fan-made modification. It is not made or endorsed by The Indie Stone.*

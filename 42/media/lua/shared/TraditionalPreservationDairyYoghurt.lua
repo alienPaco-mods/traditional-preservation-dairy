@@ -3,9 +3,10 @@
 -- craft takes a Yogurt, so Salt's ISHandcraftAction wrap isn't needed here.
 -- A jar's portions are its food values (a portion each of its milk's, kept in modData `tpdPortion`; vanilla
 -- Yogurt's for a jar from before C23), so vanilla's own Eat, Eat Half and
--- Eat Quarter work on it too; the eat action is wrapped only to relabel the jar and give the empty one back.
+-- Eat Quarter work on it too; the eat action is hooked only to relabel the jar and give the empty one back (TP
+-- Core's Portions, which Fish & Meat's crock uses too).
 require "TraditionalPreservationDairy"
-require "TimedActions/ISEatFoodAction"
+local Portions = require "TraditionalPreservationCore/Portions"
 local M = TraditionalPreservationDairy
 
 local YOGHURT = "Base.Yoghurt"
@@ -29,13 +30,7 @@ Events.OnInitGlobalModData.Add(M.applyYoghurtReplacement)
 -- Sets a food item's values to the given number of portions of p (vanilla Yogurt's if not given); full is the
 -- whole item's, for vanilla's eat shares.
 function M.setPortions(food, portions, full, p)
-    p = p or M.PORTION
-    food:setHungChange(p.hunger * portions)
-    food:setBaseHunger(p.hunger * (full or portions))
-    food:setCalories(p.calories * portions)
-    food:setCarbohydrates(p.carbohydrates * portions)
-    food:setLipids(p.lipids * portions)
-    food:setProteins(p.proteins * portions)
+    Portions.set(food, p or M.PORTION, portions, full)
 end
 
 -- One portion of a Jar of Yogurt's food.
@@ -62,17 +57,8 @@ end
 
 -- A Jar of Yogurt says how many portions are left and weighs the empty jar plus what's still in it.
 function M.labelJar(jar)
-    local left = M.jarPortions(jar)
-    local base = getItemNameFromFullType(M.YOGHURT_JAR)
-    -- By the text: the engine keeps hunger as a 32-bit float, so one portion reads 1.00000001.
-    local text = M.portionsText(left)
-    jar:setName(getText(text == "1" and "IGUI_TraditionalPreservationDairy_JarOnePortion" or "IGUI_TraditionalPreservationDairy_JarPortions", base, text))
-    jar:setCustomName(true)
-    local empty = ScriptManager.instance:getItem(jar:getModData().tpdJar or "Base.ClayJar")
-    jar:setActualWeight((empty and empty:getActualWeight() or 0) + left * M.CUP_KG)
-    -- The engine saves only a custom weight; without this a reloaded jar weighs a full one again (and eating
-    -- would scale it by its own rule).
-    jar:setCustomWeight(true)
+    Portions.label(jar, getItemNameFromFullType(M.YOGHURT_JAR), M.jarPortions(jar), jar:getModData().tpdJar or "Base.ClayJar",
+        M.CUP_KG)
 end
 
 -- A freshly collected jar: ml of yogurt in an empty jar of jarType, aged in days, portion being one portion's food.
@@ -108,30 +94,10 @@ end
 -- After any eat or spoonful: an emptied jar goes back to the container it was in as its own empty jar; one with
 -- yogurt left is relabelled. Returns the empty jar, if any.
 function M.afterJarUse(jar, container)
-    if container and container:contains(jar) and M.jarPortions(jar) >= M.EMPTY_PORTIONS then
-        M.labelJar(jar)
-        return nil
-    end
-    if container and container:contains(jar) then container:DoRemoveItem(jar) end
-    local target = container or jar:getContainer()
-    return target and target:AddItem(jar:getModData().tpdJar or "Base.ClayJar")
+    return Portions.used(jar, container, function() return M.jarPortions(jar) >= M.EMPTY_PORTIONS end,
+        jar:getModData().tpdJar or "Base.ClayJar", M.labelJar)
 end
 
-local function wrapEat(name)
-    local original = ISEatFoodAction[name]
-    ISEatFoodAction[name] = function(self, ...)
-        local jar = self.item and self.item:getFullType() == M.YOGHURT_JAR and self.item
-        if jar then M.jarPortions(jar) end
-        local container = jar and jar:getContainer()
-        local result = original(self, ...)
-        if jar then M.afterJarUse(jar, container) end
-        return result
-    end
-end
-
--- complete eats what was asked; serverStop eats the part done when the action is cut short. Outside the game
--- (tests) there is no eat action unless one is stubbed.
-if ISEatFoodAction then
-    wrapEat("complete")
-    wrapEat("serverStop")
-end
+-- Eaten through vanilla's eat action (TP Core's Portions, the one wrap of it): the jar's portions are read first,
+-- as a jar from before F4 gets its food values then, and afterwards it is relabelled or gives its empty jar back.
+Portions.onEat(M.YOGHURT_JAR, function(jar) M.jarPortions(jar) end, function(jar, container) M.afterJarUse(jar, container) end)

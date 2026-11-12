@@ -7,11 +7,11 @@ if isClient() then return end
 TraditionalPreservationDairyWorld = TraditionalPreservationDairyWorld or {}
 local M = TraditionalPreservationDairy
 local World = TraditionalPreservationDairyWorld
-require "Fluids/ISFluidTransferAction"
 local Station = require "TraditionalPreservationCore/Station"
 local Weather = require "TraditionalPreservationCore/Weather"
 local Tiles = require "TraditionalPreservationDairy/Tiles"
 local log = require "TraditionalPreservationCore/Log"
+local Pour = require "TraditionalPreservationCore/Pour"
 
 -- Each stage has its own look: an empty pot has its lid on the floor, one too cold for a starter has it slid half off.
 local STAGE_SPRITES = { Empty = "Empty", Cooling = "Cooling", TooCold = "TooCold", Incubating = "Incubating",
@@ -182,9 +182,8 @@ local function itemOf(fluidObject)
     return instanceof(owner, "InventoryItem") and owner or nil
 end
 
-local vanillaStart, vanillaStop, vanillaComplete = ISFluidTransferAction.start, ISFluidTransferAction.stop, ISFluidTransferAction.complete
-
-function ISFluidTransferAction:start()
+-- Through TP Core's Pour, the one wrap of vanilla's transfer action (the core's own FluidAgeing rides on it too).
+Pour.before("start", function(self)
     local source, target = itemOf(self.source), itemOf(self.target)
     if source and target and M.milkIn(source:getFluidContainer()) then
         local now, character = getGameTime():getWorldAgeHours(), self.character
@@ -198,8 +197,7 @@ function ISFluidTransferAction:start()
             hadC = hadMl > 0 and M.carriedC(target, now, character) or 0,
         }
     end
-    return vanillaStart(self)
-end
+end)
 
 local function finishPour(self)
     local pour, target = self.tpdPour, itemOf(self.target)
@@ -212,15 +210,7 @@ local function finishPour(self)
     M.pouredInto(target, carry, pour.hadMl, pour.hadC, moved, pour.fromC, pour.scalded, getGameTime():getWorldAgeHours())
 end
 
-function ISFluidTransferAction:stop()
-    finishPour(self)
-    return vanillaStop(self)
-end
-
-function ISFluidTransferAction:complete()
-    local result = vanillaComplete(self)
-    finishPour(self)
-    return result
-end
+Pour.before("stop", finishPour)
+Pour.after("complete", finishPour)
 
 tracker.start()

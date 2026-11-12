@@ -1,6 +1,14 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- **On TP Core's shared modules** (2026-11-12; nothing a player sees): the Jar of Yogurt's portions, name, weight and
+  empty jar go through Core's `Portions` (its `onEat` in place of the mod's own wrap of the eat action; the jar's
+  texts are Core's), the heat record rides a pour through Core's `Pour` (in place of the mod's own wrap of
+  `ISFluidTransferAction`), and `M.mlIn` and `M.isEmptyContainer` are Core's `Container.ml` and
+  `Container.isEmptyVessel`. Save keys are unchanged. In-game step 101 of `TESTING_GUIDE.md`.
+- Guide (2026-11-12): checked line by line against the code. The almanac has a Loft column; warm milk for the crock
+  may come in any container at 35 to 45 C; a wrap also burns on a barbecue; Yogurt is spelled the game's way
+  throughout; whole chapter numbers (When Milk Goes Off is chapter 8, the crock 9), a Credits page.
 - **TP Core's loft** (2026-11-12, consistency sweep step H): `M.PLACES` has Loft. In the top storey a full pot
   sets about an hour sooner from July to September and the crock makes starter a quarter sooner in summer; raw milk
   sours a little faster there (1.2 days in July against 1.4). Season report has a Loft column; golden re-recorded.

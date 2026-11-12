@@ -71,8 +71,6 @@
   "IGUI_TraditionalPreservationDairy_InfoJars": "Jars to fill",
   "IGUI_TraditionalPreservationDairy_InfoJarsCount": "%1 glass (1 L) or %2 clay (2.5 L)",
   "IGUI_TraditionalPreservationDairy_InfoAssumes": "Times assume the temperature here holds.",
-  "IGUI_TraditionalPreservationDairy_JarPortions": "%1 (%2 portions)",
-  "IGUI_TraditionalPreservationDairy_JarOnePortion": "%1 (1 portion)",
   "IGUI_TraditionalPreservationDairy_NoEmptyCup": "You need an Empty Yogurt Container. Every yogurt you eat leaves one.",
   "IGUI_TraditionalPreservationDairy_CrockTooCool": "Too cool for the grain at %1: it needs 35 to 45 C. Warm it in the copper.",
   "IGUI_TraditionalPreservationDairy_CrockTooHot": "Too hot for the grain at %1: it needs 35 to 45 C. Let it cool first.",

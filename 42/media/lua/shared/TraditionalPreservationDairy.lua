@@ -13,6 +13,8 @@ local Hearth = require "TraditionalPreservationCore/Hearth"
 local Station = require "TraditionalPreservationCore/Station"
 local FluidAgeing = require "TraditionalPreservationCore/FluidAgeing"
 local Recipes = require "TraditionalPreservationCore/Recipes"
+local Container = require "TraditionalPreservationCore/Container"
+local Portions = require "TraditionalPreservationCore/Portions"
 local Tiles = require "TraditionalPreservationDairy/Tiles"
 
 -- Save keys: never rename these once the mod is out (DEVGUIDE, "Rules that keep saves and the game happy").
@@ -157,11 +159,8 @@ function M.milkIn(container)
     return name, parts
 end
 
--- Only empty containers take milk or yogurt out, so nothing is ever topped up into a mixture.
-function M.isEmptyContainer(item)
-    local container = item:getFluidContainer()
-    return container ~= nil and container:isEmpty() and container:getCapacity() > 0
-end
+-- Only empty containers take milk or yogurt out, so nothing is ever topped up into a mixture (TP Core's).
+M.isEmptyContainer = Container.isEmptyVessel
 
 -- Which station this is ("incubator" or "crock") and which way it faces, or nil for anything else.
 M.stationKind = Station.kinds(Tiles.PREFIX, M.FACE_COUNT, { incubator = M.INCUBATOR_SPRITE, crock = M.CROCK_SPRITE })
@@ -494,7 +493,7 @@ end
 -- Portions left in a Jar of Yogurt, from the hunger it still holds and one portion's (vanilla Yogurt's if not
 -- given). Vanilla's Eat Half / Quarter may leave a part.
 function M.portionsIn(hunger, portion)
-    return hunger / (portion or M.PORTION).hunger
+    return Portions.left(hunger, (portion or M.PORTION).hunger)
 end
 
 -- A jar counts as empty below a tenth of a portion (the engine's own cut-off is one hunger point).
@@ -507,12 +506,8 @@ function M.portionShare(left, full)
     return math.min(left, 1) / full
 end
 
--- A jar's portions as text: whole numbers plain, a part-portion to one place.
-function M.portionsText(left)
-    local rounded = math.floor(left * 10 + 0.5) / 10
-    if rounded == math.floor(rounded) then return tostring(math.floor(rounded)) end
-    return string.format("%.1f", rounded)
-end
+-- A jar's portions as text: whole numbers plain, a part-portion to one place (TP Core's).
+M.portionsText = Portions.text
 
 -- Hours until the next change (wrap on, or set) if the place's temperature holds; nil if it never comes.
 function M.forecast(batch, placeC)
@@ -757,9 +752,7 @@ function M.burnWrap(item)
     return bare
 end
 
-function M.mlIn(container)
-    return math.floor(container:getAmount() * 1000 + 0.5)
-end
+M.mlIn = Container.ml
 
 -- An item's record, shrunk to the milk it holds now; nil (and dropped) once it holds no plain milk.
 function M.carryOf(item)
