@@ -387,6 +387,7 @@ M.updateCrock(emberCrock, ledger, M.EMBERS)
 check("a crock by banked embers cultivates at their heat, not the frost's",
     near(emberCrock.done, 11 * M.cultureRate(M.placeTemperature(ledger, M.EMBERS)), 0.2))
 check("grain cultures like warm, not hot", M.cultureRate(30) == 1 and M.cultureRate(5) < 0.1)
+check("and pause frozen", M.cultureRate(0) == 0 and M.cultureRate(1) > 0)
 
 -- Save keys
 local modData = {}

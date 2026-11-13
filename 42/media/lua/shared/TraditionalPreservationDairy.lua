@@ -204,7 +204,9 @@ function M.setRate(milkC)
     return Weather.scaled(Weather.curve(SET_CURVE, milkC), M.SENSITIVITY, 0)
 end
 
+-- Frozen the crock's culture pauses (TP Core's Weather.frozen), and goes on once thawed.
 function M.cultureRate(celsius)
+    if Weather.frozen(celsius, M.SENSITIVITY) then return 0 end
     return Weather.scaled(Weather.curve(CULTURE_CURVE, celsius), M.SENSITIVITY, 0)
 end
 
