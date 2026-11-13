@@ -75,7 +75,7 @@ end
 
 -- A Hearth one tile from the pot at 5,5.
 local function hearth(copper)
-    return tile(6, 5, "IsoFireplace", Hearth.sprite("Empty", 0), { [Hearth.KEY] = copper })
+    return tile(6, 5, "IsoFireplace", Hearth.sprite("Empty", 0), { [Hearth.KEY] = { [Hearth.COPPER] = copper } })
 end
 
 -- Opens the menu on the stations and returns each one's submenu, then the whole menu.

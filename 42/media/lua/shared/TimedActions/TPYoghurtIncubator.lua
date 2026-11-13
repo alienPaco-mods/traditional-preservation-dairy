@@ -26,7 +26,7 @@ end
 local function canDo(self)
     local batch = M.stateOf(self.station:getModData().movableData or {}, M.INCUBATOR_KEY)
     if self.mode == "hearth" then
-        return M.copperScalded(Hearth.stateOf(self.hearth:getModData())) and M.milkRoom(batch, 1) > 0
+        return M.copperScalded(Hearth.copperState(self.hearth:getModData())) and M.milkRoom(batch, 1) > 0
     elseif self.mode == "carried" then
         local container = self.item:getFluidContainer()
         local ml = M.mlIn(container)
@@ -151,7 +151,7 @@ function TPYoghurtIncubator:getDuration()
     local container = self.item and self.item:getFluidContainer()
     local litres = 0
     if self.mode == "hearth" then
-        local copper = Hearth.stateOf(self.hearth:getModData())
+        local copper = Hearth.copperState(self.hearth:getModData())
         local batch = M.stateOf(self.station:getModData().movableData or {}, M.INCUBATOR_KEY)
         litres = math.min(copper.ml or 0, M.milkRoom(batch, copper.ml or 0)) / 1000
     end

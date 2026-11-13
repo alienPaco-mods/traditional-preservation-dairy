@@ -60,7 +60,7 @@ function TPStarterCrock:isValid()
         if not self.started and not hasWheat(self) then return false end
         if stage ~= "Empty" then return false end
         if self.item then return inInventory(self, self.item) and itemReady(self) end
-        return self.hearth:getSquare() ~= nil and copperReady(Hearth.stateOf(self.hearth:getModData()))
+        return self.hearth:getSquare() ~= nil and copperReady(Hearth.copperState(self.hearth:getModData()))
     elseif self.mode == "clabber" then
         return stage == "Empty" and inInventory(self, self.item) and M.clabberRefusal(self.item:getFluidContainer()) == nil
     elseif self.mode == "feed" then
