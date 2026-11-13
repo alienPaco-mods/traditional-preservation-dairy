@@ -259,10 +259,12 @@ end
 -- The place's temperature in a past hour, or nil when the history has no reading for it.
 function M.pastTemperature(history, hour, place)
     local entry = history[hour % M.HISTORY_HOURS + 1]
-    if Hearth.isFirePlace(place) then return Hearth.fireC(place) end
-    if not entry or entry.hour ~= hour then return nil end
-    return Weather.placeTemperature({ temperature = entry.temperature, seasonTemperature = entry.season,
-        groundTemperature = entry.ground, gridOn = entry.grid }, place)
+    local reading = entry and entry.hour == hour and { temperature = entry.temperature, seasonTemperature = entry.season,
+        groundTemperature = entry.ground, gridOn = entry.grid } or nil
+    -- A fire indoors needs no reading; one under a roof or in the open does.
+    if Hearth.isFirePlace(place) then return Hearth.fireC(place, reading) end
+    if not reading then return nil end
+    return Weather.placeTemperature(reading, place)
 end
 
 -- Incubator

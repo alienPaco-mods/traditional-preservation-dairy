@@ -1,6 +1,7 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- **The realism pass's Core part** (TP Core, 2026-11-13): an unheated room or loft is 2 C warmer in the cold months; a fire under an open roof or in the open warms the air it stands in instead of holding 28 C (indoors unchanged). `tools/season_report.lua` gains *By a fire, under a roof* and *in the open* columns. A pot's history reads a fire outside by that hour's weather (`M.pastTemperature`). The guide's tables wait for the cultures' frozen stop (ROADMAP, the curve edits). Note: November's 5 L pot indoors now just misses setting (5.8 of 6 hours): the wrap goes on at the first ten-minute reading at or under 45 C, and a slower-cooling pot crosses it just after one.
 - **Wrapped containers look wrapped** (user, 2026-11-13): a wrapped pot, jar or bucket shows its own vanilla icon
   bundled in a striped towel under a twine tie (`towel_wrap` in tools/build_tileset.py; six looks, `M.WRAPPED_LOOKS`),
   and lies on the ground as one towel bundle sized to the container (new `tools/build_model.py`,

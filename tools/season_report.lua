@@ -13,13 +13,19 @@ dofile("42/media/lua/shared/TraditionalPreservationDairy.lua")
 local M = TraditionalPreservationDairy
 
 local MONTHS = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" }
--- An open roof reads as indoors (the season's mean), so it gets no column of its own. Grid is a room while the
--- power grid is on (22 C, Weather.GRID_ROOM_C): it runs on a ledger and history of its own with the grid on.
+-- An open roof reads the season's mean, as indoors does but for a room's winter lift (Weather.roomTemperature), so it
+-- gets no column of its own. Grid is a room while the power grid is on (22 C, Weather.GRID_ROOM_C): it runs on a
+-- ledger and history of its own with the grid on. Last, a lit fire under an open roof and in the open, which follow
+-- the air (Hearth.FIRE_LIFT).
 local PLACES = {}
 for _, place in ipairs(M.PLACES) do
     if place ~= "Covered" then table.insert(PLACES, place) end
     if place == "Sheltered" then table.insert(PLACES, "Grid") end
 end
+table.insert(PLACES, M.HEARTH .. "Covered")
+table.insert(PLACES, M.HEARTH .. "Open")
+local COLUMNS = "Indoors | Indoors, grid on | Loft | Basement | By a fire | By banked embers | By a fire, under a roof | By a fire, in the open |"
+local RULE = "|---|---|---|---|---|---|---|---|---|---|"
 local STEPS_PER_HOUR = 6
 local START_HOUR = 18   -- the evening milking, set overnight as it traditionally was
 local POUR_C = 85
@@ -160,8 +166,8 @@ print(string.format("Yogurt Incubator: 5 L poured at %d C at %02d:00 on the firs
 print(string.format("Hours to cool to %d C (wrap on), then hours to set (%g h at the best temperature), and the", M.SET_C, M.INCUBATE_HOURS))
 print(string.format("milk's temperature when it set. '-' means it hadn't set after %d hours.", GIVE_UP_HOURS))
 print("")
-print("| Month | Outdoors: cool / set / C | Indoors | Indoors, grid on | Loft | Basement | By a fire | By banked embers |")
-print("|---|---|---|---|---|---|---|---|")
+print("| Month | Outdoors: cool / set / C | " .. COLUMNS)
+print(RULE)
 for month = 1, 12 do
     local cells = {}
     for _, place in ipairs(PLACES) do
@@ -175,8 +181,8 @@ end
 
 print("")
 print("Same, 1 L: total hours from pouring to set")
-print("| Month | Outdoors | Indoors | Indoors, grid on | Loft | Basement | By a fire | By banked embers |")
-print("|---|---|---|---|---|---|---|---|")
+print("| Month | Outdoors | " .. COLUMNS)
+print(RULE)
 for month = 1, 12 do
     local cells = {}
     for _, place in ipairs(PLACES) do table.insert(cells, hoursText(get(month, place, "small", "ready"))) end
@@ -185,8 +191,8 @@ end
 
 print("")
 print(string.format("No starter: hours after pouring 5 L until the milk is below %d C and must be reheated", M.STARTER_MIN_C))
-print("| Month | Outdoors | Indoors | Indoors, grid on | Loft | Basement | By a fire | By banked embers |")
-print("|---|---|---|---|---|---|---|---|")
+print("| Month | Outdoors | " .. COLUMNS)
+print(RULE)
 for month = 1, 12 do
     local cells = {}
     for _, place in ipairs(PLACES) do table.insert(cells, hoursText(get(month, place, "bare", "cold"))) end
@@ -195,8 +201,8 @@ end
 
 print("")
 print(string.format("Starter Culture Crock: hours to cultivate (%g at best), then total hours to starter, fed at once", M.CULTIVATE_HOURS))
-print("| Month | Outdoors | Indoors | Indoors, grid on | Loft | Basement | By a fire | By banked embers |")
-print("|---|---|---|---|---|---|---|---|")
+print("| Month | Outdoors | " .. COLUMNS)
+print(RULE)
 for month = 1, 12 do
     local cells = {}
     for _, place in ipairs(PLACES) do
