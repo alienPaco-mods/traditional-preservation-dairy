@@ -52,7 +52,7 @@ Copy this folder to `~/Zomboid/mods/TraditionalPreservationDairy`, as a real cop
 
 | Station | Where | Skill | Materials |
 |---|---|---|---|
-| **Hearth** (TP Core) | Build menu, Masonry | Masonry 2 | 12 Clay Bricks, 4 Clay, 1 Copper Sheet, a trowel (kept) |
+| **Hearth** (TP Core) | Build menu, Masonry | Masonry 2 | 8 Clay Bricks, 2 Clay, 2 Copper Sheets, 3 Iron Bars (or Metal Bars, Metal Pipes, Steel Bars), 1 Large Hook, a trowel (kept) |
 | **Yogurt Incubator** | Build menu, Pottery; floor | Tailoring 1 | 1 Yogurt Pot, 2 Ripped Sheets, 1 Twine |
 | **Starter Culture Crock** | Build menu, Pottery; floor, counter or table | Cooking 4 | 1 Clay Jar, Glazed Clay Jar or Clay Pot, 1 Ripped Sheet, 1 Twine |
 

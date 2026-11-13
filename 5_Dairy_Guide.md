@@ -41,7 +41,7 @@ This mod lets you **set your own yogurt the old way**: milk brought to the steam
 
 | Step | You need | You get |
 |---|---|---|
-| Build a **Hearth** | 12 Clay Bricks, 4 Clay, 1 Copper Sheet, a trowel (kept). Masonry 2 | A fireplace with a 60 L copper |
+| Build a **Hearth** | 8 Clay Bricks, 2 Clay, 2 Copper Sheets, 3 Iron Bars (or Metal Bars, Metal Pipes, Steel Bars), 1 Large Hook, a trowel (kept). Masonry 2 | A fireplace with a 60 L copper |
 | Throw a **Yogurt Pot** and fire it | 6 Clay, a little water. Pottery 2, wheel and kiln | The pot |
 | Build a **Yogurt Incubator** within 2 tiles of the Hearth | 1 Yogurt Pot, 2 Ripped Sheets, 1 Twine. Tailoring 1 | The incubator |
 | **Pour into the Copper** and light the fire | Up to 60 L of cow's or sheep's milk, firewood | Steaming milk in **about 1.5 hours** for 10 L, 2¾ for 60 L |
@@ -99,7 +99,7 @@ That's it. A full copper is twelve pots, 60 L of yogurt from one firing.
 
 ## 5. The Hearth's Copper
 
-The Hearth is TP Core's station: a vanilla fireplace (Add Fuel, Light, a firebox that cooks, room heat) with a 60 L copper set in its top. Right-click it for **Pour into the Copper**, **Fill from the Copper** (into your own containers), **Empty the Copper**, **Bank the Fire** / **Stoke the Fire** and **Hearth Info**.
+The Hearth is TP Core's station: a vanilla fireplace (Add Fuel, Light, a firebox that cooks, room heat) with a 60 L copper kettle hung over it. Right-click it for **Pour into the Copper**, **Fill from the Copper** (into your own containers), **Empty the Copper**, **Bank the Fire** / **Stoke the Fire** and **Hearth Info**.
 
 - **One fluid at a time.** Cow's and sheep's milk count as one: they mix freely, and a blend keeps its shares in the copper, in a container and in the pot. Any other mix is refused, shown in red with the reason.
 - **Heat mixes by volume.** Cold milk poured onto hot cools the lot.
@@ -273,7 +273,7 @@ No yogurt left to start from? Grow one.
 
 | Station | Build menu | Skill | Materials | XP |
 |---|---|---|---|---|
-| **Hearth** (TP Core) | Masonry | Masonry 2 | 12 Clay Bricks, 4 Clay, 1 Copper Sheet, trowel (kept) | Masonry 10 |
+| **Hearth** (TP Core) | Masonry | Masonry 2 | 8 Clay Bricks, 2 Clay, 2 Copper Sheets, 3 Iron Bars (or Metal Bars, Metal Pipes, Steel Bars), 1 Large Hook, trowel (kept) | Masonry 10 |
 | **Yogurt Incubator** | Pottery; floor | Tailoring 1 | 1 Yogurt Pot, 2 Ripped Sheets, 1 Twine | Tailoring 5 |
 | **Starter Culture Crock** | Pottery; floor, counter or table | Cooking 4 | 1 Clay Jar, Glazed Clay Jar or Clay Pot, 1 Ripped Sheet, 1 Twine | Cooking 10 |
 

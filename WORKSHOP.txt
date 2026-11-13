@@ -36,7 +36,7 @@ Traditional Preservation (Dairy) requires [b]Traditional Preservation (Core)[/b]
 [list]
 [*][b]Yogurt Incubator[/b], Tailoring 1: a Yogurt Pot, 2 Ripped Sheets and Twine. Throw the pot on the wheel (Pottery 2, 6 Clay) and fire it in a kiln.
 [*][b]Starter Culture Crock[/b], Cooking 4: a Clay Jar, Glazed Clay Jar or Clay Pot, a Ripped Sheet and Twine.
-[*][b]Hearth[/b] (TP Core), Masonry 2: 12 Clay Bricks, 4 Clay, a Copper Sheet and a trowel. A working fireplace with a copper in its top.
+[*][b]Hearth[/b] (TP Core), Masonry 2: 8 Clay Bricks, 2 Clay, 2 Copper Sheets, 3 iron bars or pipes, a Large Hook and a trowel. A working fireplace with a copper kettle hung over it.
 [/list]
 
 [h2]No yogurt left?[/h2]
