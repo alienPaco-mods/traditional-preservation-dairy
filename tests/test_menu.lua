@@ -131,7 +131,7 @@ sub = open(pot)[1]
 pour = sub.options[3]
 check("steaming milk is offered, with its litres and heat", pour.isDisabled == nil and pour.onSelect ~= nil
     and pour.name:find("4.0", 1, true) ~= nil and pour.name:find("90", 1, true) ~= nil)
-check("pouring from the Hearth shows its copper, full", pour.iconTexture == "media/textures/Item_TPCopperFull.png")
+check("pouring from the Hearth shows its cauldron, full", pour.iconTexture == "media/textures/Item_TPCauldronFull.png")
 local character = { isTimedActionInstant = function() return false end }
 pour.onSelect(character, unpack(pour.args))
 check("choosing it walks over and queues the pour from that Hearth", ui.walks == 1 and #ui.queued == 1

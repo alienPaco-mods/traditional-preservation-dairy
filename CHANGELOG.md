@@ -1,6 +1,7 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- **The Forged Cauldron** (TP Core, 2026-11-13, the Stone Hearth hub's step ii, install 2a): the Hearth's copper is now the Forged Cauldron, fitted on a Stone Hearth; texts say cauldron, and the missing-Hearth refusal says to build a Stone Hearth and fit a Forged Cauldron. The menu icon is Core's `Item_TPCauldronFull`. In-game step 128 of `TESTING_GUIDE.md`, passed.
 - **The copper's state under its own key** (TP Core, 2026-11-13, the Stone Hearth hub's step i): Make Starter Culture and Fill the Pot from the Hearth read the copper with `Hearth.copperState` (`TPStarterCrock`, `TPYoghurtIncubator`); `test_menu.lua` builds the new state. Nothing changes in game.
 - **The Hearth's new look and build** (TP Core, 2026-11-13): README, guide 5 and the Workshop text give the new materials and describe the copper as a kettle hung over the fire.
 - **Docs regenerated** (2026-11-13): the README's and the Dairymaid's Almanac's pot tables (fire under a roof and in the open added), the crock's times, the Yearly Plan and the Workshop text from `tools/season_report.lua`; a pot now sets indoors from May to October (the warmer room), November just misses (5.8 of 6 h); the crock pauses frozen (about 90 days from January in an unheated room).
