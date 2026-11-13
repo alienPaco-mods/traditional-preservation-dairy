@@ -122,7 +122,11 @@ check("a copper of water is refused", pour.isDisabled == true
 hearth({ ml = 4000, fluid = "CowMilk", tempC = 50 })
 pour = named(open(pot)[1], POUR)
 check("and milk that isn't steaming, with its heat", pour.isDisabled == true and pour.toolTip.description:find("50", 1, true) ~= nil)
-local steaming = hearth({ ml = 4000, fluid = "CowMilk", tempC = 90 })
+local unheld = hearth({ ml = 4000, fluid = "CowMilk", tempC = 90, held = 0.1 })
+pour = named(open(pot)[1], POUR)
+check("steaming but not held yet, it says how many minutes to go", pour.isDisabled == true
+    and pour.toolTip.description:find("14 more minutes", 1, true) ~= nil)
+local steaming = hearth({ ml = 4000, fluid = "CowMilk", tempC = 90, held = 0.5 })
 sub = open(pot)[1]
 pour = sub.options[3]
 check("steaming milk is offered, with its litres and heat", pour.isDisabled == nil and pour.onSelect ~= nil
@@ -135,7 +139,7 @@ check("choosing it walks over and queues the pour from that Hearth", ui.walks ==
     and ui.queued[1].station == pot)
 
 -- The other animal's milk
-hearth({ ml = 4000, fluid = "CowMilk", tempC = 90 })
+hearth({ ml = 4000, fluid = "CowMilk", tempC = 90, held = 1 })
 pour = open(incubator(5, { ml = 1000, fluid = "SheepMilk", tempC = 80 }))[1].options[3]
 check("cow's milk is offered to a pot of sheep's: milks mix", pour.isDisabled == nil and pour.onSelect ~= nil)
 

@@ -3,6 +3,7 @@
 if not isDebugEnabled() then return end
 
 local M = TraditionalPreservationDairy
+local FluidAgeing = require "TraditionalPreservationCore/FluidAgeing"
 TPD = {}
 
 local function say(text) print("[TPD] " .. text) end
@@ -85,6 +86,8 @@ function TPD.milk(litres, celsius, fluid)
     container:Empty()
     container:addFluid(fluid or "CowMilk", math.min(litres or 5, container:getCapacity()))
     if celsius then pot:setItemHeat(M.itemHeat(celsius)) end
+    -- A pot given at the steam counts as having had its hold, so it scalds at the next look.
+    if celsius and celsius >= M.HOT_C then pot:getModData()[FluidAgeing.HELD_KEY] = { hours = M.SCALD_HOLD_HOURS } end
     say(string.format("Gave a pot of %.1f L of %s%s.", container:getAmount(), fluid or "CowMilk", celsius and string.format(" at %.0f C", celsius) or ""))
 end
 
@@ -187,7 +190,6 @@ function TPD.age(hours)
 end
 
 -- What makes a station's tile block: the object's class, its sprite's flags and the square's, within 3 tiles.
-local FluidAgeing = require "TraditionalPreservationCore/FluidAgeing"
 
 -- Every milk container in the player's inventory, brought up to now.
 local function carriedMilk()

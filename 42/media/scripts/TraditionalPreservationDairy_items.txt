@@ -1,9 +1,60 @@
-/* Icons are painted by tools/build_tileset.py; the models are still vanilla stand-ins. */
+/* Icons are painted by tools/build_tileset.py; the towel bundle by tools/build_model.py. The other models are vanilla
+   stand-ins. */
 module TraditionalPreservationDairy
 {
     imports
     {
         Base,
+    }
+
+    /* A pot, jar or bucket wrapped in towels lies on the ground as one bundle, sized to the container it holds. The
+       sizes come from vanilla's meshes: each model's bounding box times its scale over its file's unit, with a
+       vanilla bucket taken as 30 cm tall; the bundle stands 1.15 times the container's height below the tie (0.7
+       of the bundle) or 1.1 times its width, whichever is bigger, at 0.54 a metre (the series' glb models). The
+       clay jar is tall and narrow: it has the narrow mesh (0.4 as wide, TowelBundleTall), at the height and width the
+       user picked in game (2026-11-13; by the rule above the bundle came out twice as wide as the jar).
+       Pot 45 x 35 cm, forged pot 46 x 36, glass jar 12 x 16, crafted jar 13 x 17, clay jar 31 x 49, bucket 29 x 30,
+       carved bucket 35 x 38. Lua sets them on the item's modData worldStaticModel (M.WRAPPED_LOOKS). */
+    model TowelBundle_Pot
+    {
+        mesh = TowelBundle,
+        texture = TowelBundleModel,
+        scale = 0.309,
+    }
+
+    model TowelBundle_PotForged
+    {
+        mesh = TowelBundle,
+        texture = TowelBundleModel,
+        scale = 0.318,
+    }
+
+    model TowelBundle_Jar
+    {
+        mesh = TowelBundle,
+        texture = TowelBundleModel,
+        scale = 0.145,
+    }
+
+    model TowelBundle_ClayJar
+    {
+        mesh = TowelBundleTall,
+        texture = TowelBundleModel,
+        scale = 0.42,
+    }
+
+    model TowelBundle_Bucket
+    {
+        mesh = TowelBundle,
+        texture = TowelBundleModel,
+        scale = 0.266,
+    }
+
+    model TowelBundle_BucketCarved
+    {
+        mesh = TowelBundle,
+        texture = TowelBundleModel,
+        scale = 0.336,
     }
 
     /* Thrown like a vanilla clay pot, but lower and wider, with a lid. Pottery 2. */
@@ -37,8 +88,8 @@ module TraditionalPreservationDairy
         ItemType = base:normal,
         Weight = 2.5,
         Icon = WrappedYoghurtPot,
-        StaticModel = ClayJar,
-        WorldStaticModel = ClayJar,
+        StaticModel = TraditionalPreservationDairy.TowelBundle_ClayJar,
+        WorldStaticModel = TraditionalPreservationDairy.TowelBundle_ClayJar,
         Tooltip = Tooltip_TraditionalPreservationDairy_WrappedYoghurtPot,
         component FluidContainer
         {

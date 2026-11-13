@@ -46,6 +46,10 @@ M.EMBERS = Hearth.EMBERS
 
 -- The Hearth's copper (TP Core) holds one fluid at a time, or a blend of milks, and heats while its fire burns.
 M.HOT_C = Hearth.HOT_C        -- milk this hot pours from the copper into a pot
+-- Milk counts as scalded only once it has been at HOT_C or more this long in all (user, 2026-11-13): the hold is what
+-- changes the whey proteins and gives a firm set. The copper counts it (Hearth.heldHours), a pot on a stove or a
+-- fire too (TP Core's FluidAgeing, scaldHold).
+M.SCALD_HOLD_HOURS = 1 / 3
 
 -- Carried milk: a container filled from the copper, taken hot off a stove or a fire, or poured into from one of those
 -- keeps a record of its heat in its item modData (vanilla's item heat drops to the room within seconds of leaving
@@ -230,6 +234,7 @@ end
 FluidAgeing.register({
     kind = M.MILK_KIND,
     scaldHeat = Hearth.itemHeat(M.HOT_C),
+    scaldHold = M.SCALD_HOLD_HOURS,
     rate = M.milkRate,
     turnHours = M.MILK_TURN_HOURS,
     spoilHours = M.MILK_SPOIL_HOURS,
@@ -537,9 +542,24 @@ function M.copperHot(copper)
     return M.MILKS[copper.fluid] == true and (copper.tempC or 0) >= M.HOT_C
 end
 
+-- True once the copper's milk has steamed for the hold: what may go into the pot.
+function M.held(hours)
+    return (hours or 0) >= M.SCALD_HOLD_HOURS - 1e-9
+end
+
+function M.copperScalded(copper)
+    return M.copperHot(copper) and M.held(Hearth.heldHours(copper))
+end
+
+-- Minutes of the hold still to go for the copper's milk (0 once held).
+function M.holdMinutesLeft(copper)
+    return math.max(math.ceil((M.SCALD_HOLD_HOURS - Hearth.heldHours(copper)) * 60 - 1e-6), 0)
+end
+
 -- Fills the pot from the copper with hot milk, as much as fits. Returns the ml (0 with a reason when refused).
 function M.copperToPot(copper, batch, now)
     if not M.copperHot(copper) then return 0, M.MILKS[copper.fluid] and "NotHot" or "NoMilk" end
+    if not M.copperScalded(copper) then return 0, "NotHeld" end
     local room, reason = M.milkRoom(batch, copper.ml)
     if room <= 0 then return 0, reason end
     local ml, _, tempC, parts = Hearth.take(copper, room)
@@ -631,6 +651,20 @@ M.WRAPPABLE = {
     ["Base.Bucket"] = true, ["Base.BucketEmpty"] = true, ["Base.BucketCarved"] = true,
 }
 M.WRAPPED_NAMES = { Pot = "TPDWrappedPot", Jar = "TPDWrappedJar", Bucket = "TPDWrappedBucket" }
+-- What a wrapped one looks like: its own icon bundled in towels (tools/build_tileset.py) and, on the ground, the towel
+-- bundle sized to it (tools/build_model.py, the TowelBundle_* models). Both go on the item's modData, which the engine
+-- reads first and saves: customInventoryIcon and worldStaticModel.
+M.WRAPPED_LOOKS = {
+    ["Base.Pot"] = "Pot", ["Base.PotForged"] = "PotForged",
+    ["Base.EmptyJar"] = "Jar", ["Base.JarCrafted"] = "Jar", ["Base.ClayJar"] = "ClayJar",
+    ["Base.Bucket"] = "Bucket", ["Base.BucketEmpty"] = "Bucket", ["Base.BucketCarved"] = "BucketCarved",
+}
+
+local function setLook(item, look)
+    local modData = item:getModData()
+    modData.customInventoryIcon = look and ("media/textures/Item_Wrapped" .. look .. ".png") or nil
+    modData.worldStaticModel = look and ("TraditionalPreservationDairy.TowelBundle_" .. look) or nil
+end
 
 function M.isWrapped(item)
     return item:getFullType() == M.WRAPPED_POT or item:getModData()[M.WRAP_KEY] ~= nil
@@ -693,6 +727,7 @@ function M.wrap(item)
     if not container or not M.WRAPPABLE[item:getFullType()] or M.isWrapped(item) then return false end
     local name, rain = container:getContainerName(), container:getRainCatcher()
     -- Marked only once renamed, so a rename that fails leaves a plain item.
+    setLook(item, M.WRAPPED_LOOKS[item:getFullType()])
     rename(item, M.WRAPPED_NAMES[name] or "TPDWrappedPot", 0)
     item:getModData()[M.WRAP_KEY] = { name = name, rain = rain }
     return true
@@ -703,6 +738,7 @@ function M.unwrap(item)
     local was = modData[M.WRAP_KEY]
     local container = item:getFluidContainer()
     if not was or not container then return false end
+    setLook(item, nil)
     rename(item, was.name, was.rain or 0)
     modData[M.WRAP_KEY] = nil
     return true
@@ -802,8 +838,8 @@ function M.carriedC(item, now, holder)
     return M.heatCelsius(item:getItemHeat())
 end
 
--- Milk taken off a stove or a fire (from a container that hot) keeps its heat as a record, scalded if it was 85 C or
--- more: read now, while it is still on the heat.
+-- Milk taken off a stove or a fire (from a container that hot) keeps its heat as a record, scalded if it was held at
+-- 85 C or more for the hold (TP Core's FluidAgeing counts it while it sits on the heat): read now, while it is still there.
 function M.stampHeat(item, now)
     local container = item:getFluidContainer()
     local _, parts = M.milkIn(container)
@@ -811,7 +847,7 @@ function M.stampHeat(item, now)
     local tempC = M.heatCelsius(item:getItemHeat())
     if tempC < M.STAMP_C then return end
     local carry, ml = M.carryOf(item), M.mlIn(container)
-    M.recordCarry(item, nil, 0, 0, ml, tempC, now, tempC >= M.HOT_C or M.isScalded(carry, ml))
+    M.recordCarry(item, nil, 0, 0, ml, tempC, now, M.held(FluidAgeing.heldHours(item)) or M.isScalded(carry, ml))
 end
 
 -- After a vanilla pour: moved ml of milk at fromC (scalded or not) went into an item that held hadMl at hadC.
@@ -846,7 +882,8 @@ end)
 
 Hearth.hook("filled", function(item, fill)
     if not M.MILKS[fill.fluid] then return false end
-    M.recordCarry(item, item:getModData()[M.CARRY_KEY], fill.hadMl, fill.hadC, fill.ml, fill.tempC, fill.now, fill.hot)
+    -- Scalded once the copper's milk had its hold, hot or cooled since.
+    M.recordCarry(item, item:getModData()[M.CARRY_KEY], fill.hadMl, fill.hadC, fill.ml, fill.tempC, fill.now, M.held(fill.held))
     return true
 end)
 

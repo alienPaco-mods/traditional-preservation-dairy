@@ -127,10 +127,11 @@ local function hearthFor(station, test)
     return nil, nearest
 end
 
--- Why the nearest copper won't do: none near, no milk in it, or too cold.
+-- Why the nearest copper won't do: none near, no milk in it, too cold, or steaming but not held long enough yet.
 local function hearthRefusal(copper, notHotKey)
     if not copper then return getText("IGUI_TraditionalPreservationDairy_NoHearth") end
     if not M.MILKS[copper.fluid] then return getText("IGUI_TraditionalPreservationDairy_CopperNoMilk") end
+    if M.copperHot(copper) then return say("IGUI_TraditionalPreservationDairy_CopperNotHeld", tostring(M.holdMinutesLeft(copper))) end
     return say(notHotKey, degrees(copper.tempC))
 end
 
@@ -143,7 +144,7 @@ local function addHearthPourMenu(menu, playerObj, station, state)
     local label = getText("ContextMenu_TraditionalPreservationDairy_PourFromHearth")
     local room, reason = M.milkRoom(state, 1)
     local hearth, copper
-    if room > 0 then hearth, copper = hearthFor(station, M.copperHot) end
+    if room > 0 then hearth, copper = hearthFor(station, M.copperScalded) end
     if hearth then label = say("ContextMenu_TraditionalPreservationDairy_MilkItem", label, litresText(copper.ml), degrees(copper.tempC)) end
     local option = menu:addOption(label, playerObj, onHearthPour, station, hearth)
     option.iconTexture = getTexture(COPPER_ICON)

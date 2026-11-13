@@ -87,6 +87,9 @@ local wrapped = find("Base.Pot")
 check("a tick later it is a new pot, so the new name shows at once", wrapped ~= pot and #bag.items == 1
     and shown(wrapped) == "TPDWrappedPot")
 pot = wrapped
+check("it shows as a pot bundled in towels, in the inventory and on the ground, after the swap too",
+    pot.data.customInventoryIcon == "media/textures/Item_WrappedPot.png"
+    and pot.data.worldStaticModel == "TraditionalPreservationDairy.TowelBundle_Pot")
 check("it keeps its capacity and no longer catches rain", pot.fluid.capacity == 1.5 and pot.fluid.rain == 0)
 check("it can't be wrapped twice, and can be unwrapped", not M.canWrap(pot) and M.canUnwrap(pot) and not M.wrap(pot))
 check("a sheet or twine passes either recipe's test", M.canWrap(item("Base.Sheet")) and M.canUnwrap(item("Base.Twine")))
@@ -95,6 +98,8 @@ M.wrap(jar)
 M.wrap(bucket)
 check("jars and buckets wrap under their own names, with their own capacity", jar.fluid.name == "TPDWrappedJar"
     and jar.fluid.capacity == 2.5 and bucket.fluid.name == "TPDWrappedBucket" and bucket.fluid.capacity == 10)
+check("each wraps to its own look", jar.data.customInventoryIcon == "media/textures/Item_WrappedClayJar.png"
+    and bucket.data.worldStaticModel == "TraditionalPreservationDairy.TowelBundle_BucketCarved")
 check("anything else isn't wrapped", not M.wrap(item("Base.WaterBottle")))
 H.fire("OnTick")
 check("an item in no container keeps its own (its new name shows after a load)", jar.fluid.name == "TPDWrappedJar")
@@ -104,7 +109,8 @@ pot.fluid.fluids.ScaldedCowMilk = 1.2
 pot.data.tpdCarry = { ml = 1200, c = 80 }
 pot.heat, pot.favorite = 1.6, true
 check("unwrapped, it is a plain pot again: name and rain back", M.unwrap(pot) and not M.isWrapped(pot)
-    and pot.fluid.name == "Pot" and pot.fluid.rain == 0.8)
+    and pot.fluid.name == "Pot" and pot.fluid.rain == 0.8
+    and pot.data.customInventoryIcon == nil and pot.data.worldStaticModel == nil)
 H.fire("OnTick")
 local plain = find("Base.Pot")
 check("the new pot shows its name and holds the same milk, record, heat and favourite", plain ~= pot
@@ -143,5 +149,25 @@ check("a Wrapped Yogurt Pot burns down to a bare Yogurt Pot", bare.fullType == "
     and not bag:contains(old) and bag:contains(bare))
 check("the Wrapped Yogurt Pot still counts as wrapped", M.isWrapped(item(M.WRAPPED_POT)))
 check("a cold stove doesn't burn a wrap, the lowest setting does", M.BURN_HEAT > 1.0 and M.BURN_HEAT < 1.5)
+
+-- Every wrapped look has its icon and its ground model
+local script = io.open("42/media/scripts/TraditionalPreservationDairy_items.txt"):read("*a")
+local looks = {}
+for _, look in pairs(M.WRAPPED_LOOKS) do looks[look] = true end
+for look in pairs(looks) do
+    local icon = io.open("42/media/textures/Item_Wrapped" .. look .. ".png")
+    check(look .. ": its icon is painted and its model declared", icon ~= nil
+        and script:find("model TowelBundle_" .. look .. "\n", 1, true) ~= nil)
+    if icon then icon:close() end
+end
+check("every wrappable container has a look", (function()
+    for fullType in pairs(M.WRAPPABLE) do
+        if not M.WRAPPED_LOOKS[fullType] then return false end
+    end
+    return true
+end)())
+check("the Wrapped Yogurt Pot lies as the bundle too", script:find("WorldStaticModel = TraditionalPreservationDairy.TowelBundle_ClayJar", 1, true) ~= nil)
+io.open("42/media/Models_X/TowelBundle.glb"):close()
+io.open("42/media/Models_X/TowelBundleTall.glb"):close()
 
 H.done()

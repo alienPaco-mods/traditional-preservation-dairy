@@ -29,8 +29,8 @@ Copy this folder to `~/Zomboid/mods/TraditionalPreservationDairy`, as a real cop
 | # | Step | Where | In | Out | Time |
 |---|---|---|---|---|---|
 | 1 | Pour into the Copper | Hearth's right-click menu | milk, from any container | up to 60 L in the copper | a moment |
-| 2 | Bring to the steam | Lit Hearth | | milk at 85 C | about 1.5 hours for 10 L, 2 for 20 L, 2.75 for 60 L |
-| 3 | Pour from the Hearth | Incubator's menu, Hearth within 2 tiles | steaming milk | up to 5 L in the pot | a moment |
+| 2 | Bring to the steam, and hold it | Lit Hearth | | milk at 85 C, Scalded after 20 minutes there | about 1.5 hours for 10 L, 2 for 20 L, 2.75 for 60 L, then 20 minutes |
+| 3 | Pour from the Hearth | Incubator's menu, Hearth within 2 tiles | scalded, steaming milk | up to 5 L in the pot | a moment |
 | 4 | Add Starter | Incubator's menu | 1 Yogurt, a jar's portion, or an Active Yogurt Starter | | a moment |
 | 5 | Cool | Incubator, lid on | | milk at 45 C, the wrap goes on | about 2 hours* |
 | 6 | Set | Incubator, wrapped | | 5 L of yogurt | 6 hours at 40 to 45 C* |
@@ -58,7 +58,9 @@ Copy this folder to `~/Zomboid/mods/TraditionalPreservationDairy`, as a real cop
 
 The **Yogurt Pot** is thrown on the pottery wheel (Pottery 2, 6 Clay, a little water) and fired in a kiln. Wrapped in a Sheet and tied with Twine (crafting menu, Cooking) it becomes a **Wrapped Yogurt Pot**, which carries 5 L of hot milk and loses only about 15 C an hour. Unwrap it when empty to get the pot, sheet and twine back.
 
-Any **cooking pot, forged pot, jar, clay jar or bucket** wraps the same way (**Wrap a Pot, Jar or Bucket**, crafting menu, Cooking, empty only) and keeps its own capacity: it shows as a "Wrapped Pot", "Wrapped Jar" or "Wrapped Bucket", catches no rain, and keeps milk hot as the Wrapped Yogurt Pot does, a small jar for less long (about 2.3 hours' time constant for 1 L against 4 for 5 L) and a full bucket longer (about 5). **Unwrap a Pot, Jar or Bucket** gives the sheet and twine back. The mark is the item's own fluid-container name (saved by the game) plus `tpdWrapped` in its ModData.
+Any **cooking pot, forged pot, jar, clay jar or bucket** wraps the same way (**Wrap**, crafting menu, Cooking, empty only) and keeps its own capacity: it shows as a "Wrapped Pot", "Wrapped Jar" or "Wrapped Bucket", catches no rain, and keeps milk hot as the Wrapped Yogurt Pot does, a small jar for less long (about 2.3 hours' time constant for 1 L against 4 for 5 L) and a full bucket longer (about 5). **Unwrap** gives the sheet and twine back. The mark is the item's own fluid-container name (saved by the game) plus `tpdWrapped` in its ModData.
+
+A wrapped container **looks bundled in towels**: its icon is its own vanilla icon wrapped in a striped towel, gathered at a twine neck, with a bucket's bail or a pot's ears still showing (one per look: pot, forged pot, glass jar, clay jar, metal bucket, carved bucket; the two glass jars share vanilla's icon, as do the two metal buckets). On the ground every one lies as the same towel bundle, sized to the container inside it, from a small bundle for a jar to a big one for a clay jar. The Wrapped Yogurt Pot looks the same way. Both come from the item's ModData (`customInventoryIcon`, `worldStaticModel`, `M.WRAPPED_LOOKS`), set on wrapping and cleared on unwrapping. In the hand a wrapped vanilla container still shows its own model.
 
 **Keep the cloth off the heat.** A wrapped pot, jar or bucket (or a Wrapped Yogurt Pot) in a hot stove, oven, barbecue, fireplace, Hearth firebox or campfire burns its wrap within a game minute: the sheet and twine are gone. On a stove, oven or barbecue that sets the kitchen alight, as burnt food does; in an open fire it burns away in the flames. A Wrapped Yogurt Pot burns down to a bare Yogurt Pot, which holds no fluid, so its milk is lost.
 
@@ -74,13 +76,13 @@ The Hearth is TP Core's station, documented in full in TP Core's `README.md` and
 - Poured milk mixes its temperature with what's already in the copper, by volume.
 - While the fire burns, the copper heats towards 95 C: 10 L go from 20 C to 85 C in about 1.5 hours, 20 L in about 2, a full 60 L in about 2.75, less milk faster. With the fire out it cools towards the room over a few hours, as the stone holds heat.
 - **Bank the Fire** burns a third of the wood, holds the copper at about 50 C and cooks a third as fast in the firebox. **Stoke the Fire** brings it back.
-- At 85 C the copper steams, in its sprite and in Hearth Info ("Steaming: Yes"), and its milk reads Scalded.
+- At 85 C the copper steams, in its sprite and in Hearth Info ("Steaming: Yes"). **Held at 85 C or more for 20 minutes** in all (`M.SCALD_HOLD_HOURS`; the copper counts it, `Hearth.heldHours`), its milk reads Scalded. Pouring more milk in starts the 20 minutes over.
 
 ### 2. Filling the incubator
 
 Right-click the incubator:
-- **Pour from the Hearth** draws steaming milk from a Hearth within 2 tiles, up to the pot's 5 L.
-- **Pour Scalded Milk** takes scalded milk from any container: milk that has been at 85 C or more in the copper, or in a pot on a lit stove, fireplace, barbecue or campfire (vanilla's lowest stove setting already gets there), or store milk poured out of its carton. It goes in at the heat it has now: off the heat an open pot or bucket cools in minutes (85 to 45 C in about a quarter hour), a Wrapped Yogurt Pot in hours, and a pour between containers carries the heat over. Milk that isn't scalded is refused as "Not scalded".
+- **Pour from the Hearth** draws steaming, scalded milk from a Hearth within 2 tiles, up to the pot's 5 L. Steaming milk that hasn't had its 20 minutes is refused, with the minutes still to go.
+- **Pour Scalded Milk** takes scalded milk from any container: milk that has been held at 85 C or more for 20 minutes in all, in the copper, or in a pot on a lit stove, fireplace, barbecue or campfire (vanilla's lowest stove setting already gets there), or store milk poured out of its carton. It goes in at the heat it has now: off the heat an open pot or bucket cools in minutes (85 to 45 C in about a quarter hour), a Wrapped Yogurt Pot in hours, and a pour between containers carries the heat over. Milk that isn't scalded is refused as "Not scalded".
 - **Add Starter** takes one vanilla Yogurt, one portion (250 ml) of a Jar of Yogurt with a whole portion left (the rest stays; the empty jar comes back with the last), or one Active Yogurt Starter, before or after the milk. None gone off. One per batch.
 
 Once the starter is in, milk that would leave the pot under 40 C is refused as too cold, so a set batch is never spoiled by a cold top-up.
@@ -123,7 +125,7 @@ Vanilla milk keeps for ever. Here it doesn't (TP Core's `FluidAgeing`; sandbox *
 | Milk reads | When | Good for |
 |---|---|---|
 | Cow's Milk (Fresh) | Raw, young | Everything |
-| Cow's Milk (Scalded) | Has been at 85 C or more (the copper, or a pot on a lit stove or fire), poured out of the incubator, or poured out of a store carton | Everything. It never sours |
+| Cow's Milk (Scalded) | Has been held at 85 C or more for 20 minutes in all (the copper, or a pot on a lit stove or fire), poured out of the incubator, or poured out of a store carton | Everything. It never sours |
 | Cow's Milk (Soured) | Raw milk after 36 hours' worth of 20 C | Drinking (its milk's food, a little unhappiness), Make Cake Batter, Prepare Muffins, Make Bowl of Cereal, and Load Soured Milk on an empty crock. The incubator, the crock's feed, Churn Butter and Make Mildew Cure refuse it |
 | Cow's Milk (Rotten) | Any milk after 72 hours' worth of 20 C | Nothing: food poisoning. Pour it away |
 
@@ -141,7 +143,8 @@ Sheep's and the game's generic animal milk go the same way under their own names
 - Milk ages by the place it was last seen in (open air, under an open roof, indoors, a loft, a basement, by a fire, a fridge or freezer), also while you are away.
 - Pouring never makes milk young: the older age wins, and raw milk mixed into scalded makes the whole lot raw again. Milking into a container emptied of its old milk starts afresh.
 - Sealed store milk (carton, bottle, personal size) doesn't age until it is poured out; then it counts as scalded.
-- Milk left in the copper ages there too. A steaming copper scalds what is in it.
+- Milk left in the copper ages there too. A copper that has steamed for 20 minutes scalds what is in it.
+- A pot on a stove or fire counts its own minutes at 85 C (TP Core's `FluidAgeing`, `tpHeldHot` in its ModData): from the last time it was seen hot to the next, so time while you were away counts if it is still hot when seen again (in passing, or taken off the stove). If the fire went out and it cooled first, that stretch is lost. Taken off and put back, the minutes add up. Raw milk poured in starts them over.
 - Any milk bakes: vanilla Make Cake Batter, Prepare Muffins and Make Bowl of Cereal take cow's, sheep's or animal milk, fresh, scalded or soured (vanilla took cow's only, cereal sheep's too). Churn Butter and Make Mildew Cure take their milks scalded as well as fresh.
 
 ## What the stations show
@@ -223,7 +226,7 @@ Under Traditional Preservation (Dairy):
 
 Volumes, temperatures, cooling times, the setting and culture curves, the crock's amounts and XP are at the top of `42/media/lua/shared/TraditionalPreservationDairy.lua`. The pottery and wrapping recipes are in `42/media/scripts/TraditionalPreservationDairy.txt`, the items in `..._items.txt`, the stations' build recipes in `42/media/scripts/entities/`. The Hearth's copper and fire rules are TP Core's (`Hearth.lua`).
 
-`python3 tools/build_tileset.py` (needs Pillow) paints the incubator, the crock and their stage overlays and writes `42/media/traditionalpreservationdairy.tiles`, `42/media/texturepacks/traditionalpreservationdairy.pack`, the icons and the generated `42/media/lua/shared/TraditionalPreservationDairy/Tiles.lua` (don't edit it by hand). `luajit tests/test_tiles.lua` checks the entity scripts against it.
+`python3 tools/build_tileset.py` (needs Pillow) paints the incubator, the crock and their stage overlays and writes `42/media/traditionalpreservationdairy.tiles`, `42/media/texturepacks/traditionalpreservationdairy.pack`, the icons and the generated `42/media/lua/shared/TraditionalPreservationDairy/Tiles.lua` (don't edit it by hand). `luajit tests/test_tiles.lua` checks the entity scripts against it. The wrapped containers' icons are painted there too, from vanilla's own icons (`towel_wrap`). `python3 tools/build_model.py` (needs Pillow and numpy) writes the towel bundle, `42/media/Models_X/TowelBundle.glb`, a narrow copy for the tall clay jar (`TowelBundleTall.glb`) and its texture; each container's size is the scale of its `TowelBundle_*` model in the items script, worked out there from vanilla's meshes.
 
 `luajit tests/test_incubator.lua` checks the rules (cooling, setting, mixing, refusals, the crock, catching up), `tests/test_menu.lua` the right-click menus on stand-ins for the engine, `tests/test_jar.lua` the Jar of Yogurt (portions, food, weight, the empty jar back), `tests/test_baking.lua` the milks added to vanilla's recipes, `tests/test_console.lua` the debug console, and `luajit tools/season_report.lua` prints the season tables (golden-checked by `tp test Dairy`).
 
@@ -239,11 +242,11 @@ Volumes, temperatures, cooling times, the setting and culture curves, the crock'
 
 **Simplifications made for play**
 - One yogurt or starter sets a whole pot, whatever its size (real practice is 3 to 5% of the milk).
-- The copper's heating and the pot's cooling are simple exponential curves; the steam takes no holding time at 85 C.
+- The copper's heating and the pot's cooling are simple exponential curves. The hold at the scald is 20 minutes at 85 C or more in all (real practice: 20 to 30 minutes at 85 C, or a few at 90 to 95), counted whether or not the minutes run together.
 - Temperature during setting slows it but never spoils a batch.
 - A room or an open roof is the 10-day mean (22 C while the grid is on); a basement follows the ground (the 10-day mean's own 30-day mean) two fifths as far from 10 C; room heating isn't modelled beyond a fire within 2 tiles.
 - Milk goes off (TP Core's `FluidAgeing`): raw milk turns to its Soured twin at 36 hours' worth of 20 C and to its Rotten one at
-  72; scalded milk (85 C or more) skips souring and goes by its Scalded twin (`SCALDED_MILKS`, "Cow's Milk (Scalded)") until raw milk
+  72; scalded milk (held 20 minutes at 85 C or more) skips souring and goes by its Scalded twin (`SCALDED_MILKS`, "Cow's Milk (Scalded)") until raw milk
   is mixed in; it spoils to its milk's Rotten one. The curve (`MILK_CURVE`) and the hours are at the top of the main Lua file. Its age
   lives in the container's ModData (`tpFluidAge`, TP Core's key) and on Dairy's weather ledger (`milkOpen` and so on).
 - Any milk bakes, fresh, scalded or soured: vanilla Make Cake Batter, Prepare Muffins and Make Bowl of Cereal take all
@@ -284,4 +287,5 @@ Still to check in the game:
 5. Jars at their real size: a glass jar 4 portions, a clay jar 10; Eat a Portion, vanilla Eat Quarter, a cup from a part-portion, and the empty jar back.
 6. A pot left for weeks catches up and reads right on return.
 7. The incubator's and crock's menus with a controller.
-8. `console.txt` shows no repeating Lua errors after an hour of play, with the other Traditional Preservation mods on.
+8. The hold at the scald: steaming copper milk refused for 20 minutes with the minutes to go, then poured; a pot on a stove reads Scalded only after 20 minutes at the steam (TESTING_GUIDE step 111).
+9. `console.txt` shows no repeating Lua errors after an hour of play, with the other Traditional Preservation mods on.

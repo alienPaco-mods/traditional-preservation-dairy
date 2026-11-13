@@ -451,11 +451,120 @@ def pot_icon(clay, lidded):
 
 
 def wrapped_pot_icon():
-    """The Yoghurt Pot in a plain sheet down to the floor, tied at the neck: it carries hot milk."""
-    layer = new_layer()
-    paint_pot(layer, pot_base(), POT, CLAY, lugs=POT_LUGS)
-    layer.alpha_composite(cloth_layer(SHEET, [], SHEET_HEM))
-    return outlined(shrink(layer))
+    """The Yoghurt Pot bundled in towels, as every wrapped container is: it carries hot milk."""
+    return towel_wrap(pot_icon(CLAY, lidded=True))
+
+
+# --- Wrapped containers: the item's own icon bundled in towels -----------------------------------------------------
+# Vanilla's icon for each wrapped look (Lua's M.WRAPPED_LOOKS: the two glass jars share one, as do the two metal
+# buckets), and the pack each is in.
+WRAPPED_VANILLA = {"Pot": "Item_Pot", "PotForged": "Item_Pot_Forged", "Jar": "Item_GlassJar",
+                   "ClayJar": "Item_ClayJar_Fired", "Bucket": "Item_MetalBucket", "BucketCarved": "Item_Bucket_Crude"}
+VANILLA_ICON_PACKS = ("UI.pack", "UI2.pack")
+TOWEL = (228, 220, 202)
+TOWEL_STRIPE = (168, 60, 52)
+TOWEL_STRIPES = [(0.50, 0.56), (0.62, 0.66)]  # shares of the way down the bundle's body
+BODY_SHARE = 0.8  # the container is drawn this tall, so the knot fits above it
+SHOULDER = 0.3  # the body's top corners are rounded this far, as a share of its width
+NECK = (0.12, 2)  # the gathered neck under the tie: half width as a share of the body's width, rows
+KNOT = (0.27, 5)  # the ends above it: half width at their fullest, rows
+THIN = 2  # pixels: parts thinner than about twice this (a bucket's bail, a pot's ear) aren't wrapped, and show
+
+
+def grow(mask, steps, size):
+    for _ in range(steps):
+        mask = mask | {(x + dx, y + dy) for x, y in mask for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))
+                       if 0 <= x + dx < size and 0 <= y + dy < size}
+    return mask
+
+
+def wear(mask, steps):
+    for _ in range(steps):
+        mask = {(x, y) for x, y in mask
+                if all((x + dx, y + dy) in mask for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)))}
+    return mask
+
+
+def towel_wrap(icon):
+    """icon (a 32 px item icon) bundled in towels: the container drawn a little smaller, its body covered and
+    rounded at the shoulders, gathered at a twine neck with the ends puffed above it. Thin parts stay as drawn."""
+    size = icon.width
+    small = icon.resize((size, round(size * BODY_SHARE)), Image.LANCZOS)
+    base = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    base.alpha_composite(small, (0, size - small.height))
+    alpha = base.getchannel("A").point(lambda v: 255 if v > 110 else 0)
+    base.putalpha(alpha)
+    alpha = alpha.load()
+    solid = {(x, y) for x in range(size) for y in range(size) if alpha[x, y] > 0}
+    towel = grow(grow(wear(solid, THIN), THIN, size), 1, size)
+    top, bottom = min(y for _, y in towel), max(y for _, y in towel)
+    left, right = min(x for x, _ in towel), max(x for x, _ in towel)
+    width = right - left + 1
+    radius = SHOULDER * width
+    shaped = set()
+    for x, y in towel:
+        rise = y - top
+        inset = radius - math.sqrt(max(0.0, radius ** 2 - (radius - rise) ** 2)) if rise < radius else 0
+        row = [xx for xx, yy in towel if yy == y]
+        if min(row) + inset <= x <= max(row) - inset:
+            shaped.add((x, y))
+    top = min(y for _, y in shaped)
+    row = [x for x, y in shaped if y == top]
+    centre = (min(row) + max(row)) / 2
+    neck_half, neck_rows = max(1.5, NECK[0] * width), NECK[1]
+    knot_half, knot_rows = KNOT[0] * width, KNOT[1]
+    neck = {(x, y) for y in range(top - neck_rows, top) for x in range(size) if abs(x - centre) <= neck_half}
+    knot = set()
+    for step in range(knot_rows):
+        y = top - neck_rows - 1 - step
+        share = (step + 0.5) / knot_rows
+        half = neck_half + (knot_half - neck_half) * math.sin(math.pi * min(share * 1.15, 1))
+        for x in range(size):
+            off = abs(x - centre)
+            # Two ears: the top row is split in the middle.
+            if off <= half and not (step == knot_rows - 1 and off < 1):
+                knot.add((x, y))
+    towel = {(x, y) for x, y in shaped | neck | knot if y >= 0}
+    result = base.copy()
+    pixels = result.load()
+    spans = {}
+    for x, y in towel:
+        low, high = spans.get(y, (x, x))
+        spans[y] = (min(low, x), max(high, x))
+    for x, y in towel:
+        low, high = spans[y]
+        across = (x - low) / max(1, high - low)
+        light = 1.12 - 0.32 * across
+        light *= 1 - 0.06 * max(0.0, math.sin((x + 0.5 * y) * 0.9)) ** 6  # the folds, slanting
+        colour = TOWEL
+        down = (y - top) / max(1, bottom - top)
+        if (x, y) in shaped and any(low_share <= down <= high_share for low_share, high_share in TOWEL_STRIPES):
+            colour = TOWEL_STRIPE
+        if (x, y) in neck:
+            colour, light = TWINE, 1.0 - 0.3 * across
+        elif (x, y) in knot:
+            light *= 0.97
+        pixels[x, y] = shade(colour, light)[:3] + (255,)
+    shape = towel | solid
+    for x, y in towel:
+        if any(not (0 <= x + dx < size and 0 <= y + dy < size) or (x + dx, y + dy) not in shape
+               for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))):
+            pixels[x, y] = OUTLINE
+    return result
+
+
+def vanilla_icons(game, names):
+    found = {}
+    for pack in VANILLA_ICON_PACKS:
+        wanted = set(names) - found.keys()
+        path = game / "media/texturepacks" / pack
+        present = {name for name in wanted if name.encode() in path.read_bytes()}
+        if present:
+            found.update(pzart.extract_sprites(path, present))
+    missing = set(names) - found.keys()
+    if missing:
+        raise SystemExit(f"vanilla icons not found: {sorted(missing)}")
+    return found
 
 
 def jar_icon(jar, mask, contents, cap):
@@ -542,6 +651,9 @@ def write_icons(folder, game):
     # The same Jar of Yoghurt item, as it looks in a clay jar: World sets it by the jar it was collected in.
     icons["JarOfYoghurt_Clay"] = clay_jar_icon(jars["Item_ClayJar_Fired"])
     icons["JarOfYoghurt_Glazed"] = clay_jar_icon(jars["Item_ClayJar_Glazed_Fired"])
+    vanilla = vanilla_icons(game, WRAPPED_VANILLA.values())
+    for look, name in WRAPPED_VANILLA.items():
+        icons["Wrapped" + look] = towel_wrap(vanilla[name])
     for name, icon in icons.items():
         icon.save(folder / f"Item_{name}.png")
 

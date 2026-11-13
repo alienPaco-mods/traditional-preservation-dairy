@@ -66,8 +66,8 @@ This mod lets you **set your own yogurt the old way**: milk brought to the steam
 | # | Step | Where | In | Out | Time |
 |---|---|---|---|---|---|
 | 1 | Pour into the Copper | Hearth's right-click menu | milk, from any container | up to 60 L in the copper | a moment |
-| 2 | Bring to the steam | Lit Hearth | | milk at 85 C | about 1.5 hours for 10 L, 2¾ for 60 L |
-| 3 | Pour from the Hearth | Incubator's menu | steaming milk | up to 5 L in the pot | a moment |
+| 2 | Bring to the steam, and hold it | Lit Hearth | | milk at 85 C, **Scalded** after 20 minutes there | about 1.5 hours for 10 L, 2¾ for 60 L, then 20 minutes |
+| 3 | Pour from the Hearth | Incubator's menu | scalded, steaming milk | up to 5 L in the pot | a moment |
 | 4 | Add Starter | Incubator's menu | 1 Yogurt, a jar's portion, or an Active Yogurt Starter | | a moment |
 | 5 | Cool | Incubator, lid on | | milk at 45 C, the wrap goes on | about 2 hours* |
 | 6 | Set | Incubator, wrapped | | 5 L of yogurt | 6 hours at 40 to 45 C* |
@@ -85,7 +85,7 @@ This mod lets you **set your own yogurt the old way**: milk brought to the steam
 3. **Make the Yogurt Pot** on the pottery wheel and fire it in a kiln.
 4. **Build the Yogurt Incubator** from the Build menu, within 2 tiles of the Hearth.
 5. **Pour into the Copper** (right-click the Hearth) from your milk buckets, then **Light** the fire.
-6. Check **Hearth Info**. When it reads "Steaming: Yes", the milk is at 85 C.
+6. Check **Hearth Info**. When it reads "Steaming: Yes", the milk is at 85 C. **Keep it steaming for 20 minutes**: then the copper's milk reads *Scalded* and will pour.
 7. Right-click the incubator: **Pour from the Hearth**, then **Add Starter** with a Yogurt or a Jar of Yogurt you kept back.
 8. Go to bed. The lid stays on while it cools, and at 45 C the cloth wraps itself on.
 9. In the morning the status reads **Ready**. **Collect into a Jar** or **Fill Empty Yogurt Containers**.
@@ -93,7 +93,7 @@ This mod lets you **set your own yogurt the old way**: milk brought to the steam
 
 That's it. A full copper is twelve pots, 60 L of yogurt from one firing.
 
-**No Hearth yet?** Any pot of milk on a lit stove, fireplace, barbecue or campfire scalds at 85 C, as vanilla boils tainted water clean. Take it off and pour it straight into the incubator (**Pour Scalded Milk**) while it's hot: an open pot loses its heat in minutes. Pour it into a **Wrapped Yogurt Pot**, or any pot, jar or bucket you've wrapped in a sheet, first if the walk is long. The Hearth's gifts are the size of its copper, pouring straight into a pot or crock within 2 tiles, and a banked fire's steady low heat.
+**No Hearth yet?** Any pot of milk on a lit stove, fireplace, barbecue or campfire scalds once it has had 20 minutes at 85 C, as vanilla boils tainted water clean. Take it off and pour it straight into the incubator (**Pour Scalded Milk**) while it's hot: an open pot loses its heat in minutes. Pour it into a **Wrapped Yogurt Pot**, or any pot, jar or bucket you've wrapped in a sheet, first if the walk is long. The Hearth's gifts are the size of its copper, pouring straight into a pot or crock within 2 tiles, and a banked fire's steady low heat.
 
 ---
 
@@ -106,7 +106,9 @@ The Hearth is TP Core's station: a vanilla fireplace (Add Fuel, Light, a firebox
 - **The fire heats the copper towards 95 C.** 10 L goes from 20 C to 85 C in about 1.5 hours, 20 L in about 2, a full 60 L in about 2¾; less milk heats faster.
 - **With the fire out it cools slowly**, over a few hours, as the stone holds heat.
 - **Bank the Fire** burns a third of the wood, holds the copper at about 50 C, warms only the 2 tiles round it and cooks a third as fast in the firebox. **Stoke the Fire** brings it back up.
-- **At 85 C the copper steams**, in its sprite and in Hearth Info, and its milk reads **Scalded**.
+- **At 85 C the copper steams**, in its sprite and in Hearth Info. After **20 minutes at the steam** (in all) its milk reads **Scalded**. Pour more milk in and the 20 minutes start over.
+
+> *Margin note:* the old dairywoman's rule was to let the pot "stand at the steam" while she said her prayers, or about as long as it takes to scrub the churn. That quarter of an hour or more is what turns the whey proteins so the yogurt sets firm instead of runny. A thermometer only tells you when to start counting.
 
 | Copper | From 20 C to 85 C |
 |---|---|
@@ -126,8 +128,8 @@ The Hearth has its own guide, **Traditional Preservation: Core** (number 6), wit
 
 A lidded clay pot holding 5 L, wrapped in a striped cloth when it's setting. Right-click it:
 
-- **Pour from the Hearth** draws steaming milk from a Hearth within 2 tiles, up to the pot's 5 L.
-- **Pour Scalded Milk** takes **scalded** milk from any container: milk that has been at 85 C or more, in the copper or in a pot on a stove or a fire, or store milk poured out of its carton (it was pasteurised). It goes in at the heat it has *now*: off the heat, an open pot or bucket cools in minutes (85 to 45 C in about a quarter hour), a **Wrapped Yogurt Pot** in hours. Pouring between containers carries the heat over, so a pot just off the stove poured into a Wrapped Pot stays hot.
+- **Pour from the Hearth** draws steaming, scalded milk from a Hearth within 2 tiles, up to the pot's 5 L. Before its 20 minutes are up the option is greyed and says how many minutes are left.
+- **Pour Scalded Milk** takes **scalded** milk from any container: milk that has been held at 85 C or more for 20 minutes, in the copper or in a pot on a stove or a fire, or store milk poured out of its carton (it was pasteurised). It goes in at the heat it has *now*: off the heat, an open pot or bucket cools in minutes (85 to 45 C in about a quarter hour), a **Wrapped Yogurt Pot** in hours. Pouring between containers carries the heat over, so a pot just off the stove poured into a Wrapped Pot stays hot.
 - **Add Starter** takes one vanilla Yogurt, one portion from a Jar of Yogurt (250 ml, a cup's worth: the rest stays in the jar, and the empty jar comes back with the last), or one Active Yogurt Starter, before or after the milk. None of them gone off. One per batch, whatever the size.
 - **Pour Out Milk** empties the pot into a container.
 
@@ -198,7 +200,7 @@ Vanilla milk keeps for ever. With this mod it doesn't, and what you do with a bu
 | The milk reads | When | Good for |
 |---|---|---|
 | **Cow's Milk (Fresh)** | Raw and young | Everything |
-| **Cow's Milk (Scalded)** | It has been at 85 C or more (the copper, or a pot on a lit stove or fire), or it came out of the incubator or a store carton | Everything. It never sours |
+| **Cow's Milk (Scalded)** | It has been held at 85 C or more for 20 minutes (the copper, or a pot on a lit stove or fire), or it came out of the incubator or a store carton | Everything. It never sours |
 | **Cow's Milk (Soured)** | Raw milk, a day and a half old in a warm room | Drinking (the same food, a little unhappiness), baking (cake batter, muffins, cereal) and starting the crock without wheat (chapter 9). Not yogurt, butter or mildew cure |
 | **Cow's Milk (Rotten)** | Any milk, twice that old | Nothing. It poisons you: pour it away |
 
@@ -217,7 +219,7 @@ Sheep's milk and the game's plain "animal's milk" go the same way under their ow
 - **Pouring never makes milk young.** Mix two lots and the older age wins. Raw milk poured into scalded makes the whole lot raw again.
 - **A fresh milking into an emptied bucket starts afresh.**
 - **Sealed store milk doesn't age** until you pour it out. Then it counts as scalded: it was pasteurised.
-- **Milk in the copper ages too**, and a steaming copper scalds whatever is in it.
+- **Milk in the copper ages too**, and 20 minutes of steaming scald whatever is in it.
 - **Any milk bakes.** Cake batter, muffins and a bowl of cereal take cow's, sheep's or animal's milk, fresh, scalded or soured. Butter and mildew cure take their milk fresh or scalded.
 - It keeps counting while you're away, by the place the milk was left in.
 
@@ -279,7 +281,7 @@ No yogurt left to start from? Grow one.
 |---|---|---|---|
 | **Yogurt Pot** | pottery wheel, 6 Clay + a little water, then the kiln | Pottery 2 | Pottery 20 |
 | **Wrapped Yogurt Pot** | crafting menu (Cooking): Yogurt Pot + Sheet + Twine | | |
-| **Wrapped Pot, Jar or Bucket** | crafting menu (Cooking), **Wrap a Pot, Jar or Bucket**: an empty cooking pot, forged pot, jar, clay jar or bucket + Sheet + Twine. It keeps its own capacity | | |
+| **Wrapped Pot, Jar or Bucket** | crafting menu (Cooking), **Wrap**: an empty cooking pot, forged pot, jar, clay jar or bucket + Sheet + Twine. It keeps its own capacity, and looks bundled in towels: in your bag and on the floor | | |
 
 | Work | XP |
 |---|---|
@@ -414,8 +416,8 @@ Hours for 5 L poured at 85 C at 18:00 with the starter in, **cooling + setting**
 
 | Problem | Why |
 |---|---|
-| Pour from the Hearth greyed out | The Hearth must stand within 2 tiles of the pot, and its copper must steam (85 C). Keep the fire lit; Hearth Info says when it will be ready |
-| Pour Scalded Milk says "Not scalded" | The milk isn't scalded: bring it to 85 C in the copper or on a stove or fire. Raw milk mixed in makes scalded milk plain again |
+| Pour from the Hearth greyed out | The Hearth must stand within 2 tiles of the pot, and its copper must have steamed (85 C) for 20 minutes. Keep the fire lit; Hearth Info says when it will steam, the greyed option how many minutes are left |
+| Pour Scalded Milk says "Not scalded" | The milk isn't scalded: hold it at 85 C for 20 minutes in the copper or on a stove or fire. Raw milk mixed in makes scalded milk plain again |
 | Pour refused as too cold | The starter is in, and the milk would bring the pot under 40 C. Use hotter milk |
 | Pour into the Copper refused, in red | The copper holds one fluid at a time. Only cow's and sheep's milk mix |
 | My milk reads Soured or Rotten | Raw milk sours in a day and a half in a warm room, sooner by the fire. Scald it, or keep it in a basement or a powered fridge. Soured milk still bakes; rotten milk is only fit to pour away (a copper of it: Empty the Copper) |
@@ -480,7 +482,7 @@ Copied from `DEVHELP.md`; change both together.
 | `TPD.pots()` | Every loaded incubator: stage, litres, milk temperature, what's next. |
 | `TPD.age(hours)` | Moves every loaded incubator and crock on by this many hours (1 if left out): an incubator replays the recorded weather, a crock's stage takes them as hours at the best temperature. |
 | `TPD.fast(hours)` | Test timer for setting. `TPD.fast()` goes back to the sandbox time. |
-| `TPD.milk(litres, c, fluid)` | A cooking pot of milk (default 5 L of cow's), at c degrees if given; fluid `"SheepMilk"` or `"AnimalMilk"` for the others. |
+| `TPD.milk(litres, c, fluid)` | A cooking pot of milk (default 5 L of cow's), at c degrees if given; fluid `"SheepMilk"` or `"AnimalMilk"` for the others. At 85 C or more it counts as having had its 20-minute hold. |
 | `TPD.give(name, n, option)` | Spawns `jar` (a full Jar of Yogurt; option `"clay"` or `"glazed"`), `starter` or `cup`; no name lists them. |
 | `TPD.kit(kind)` | What a test needs: yogurt (default), `"crock"` or `"wrap"`; `"?"` lists them. |
 | `TPD.crocks()` | Every loaded crock: stage, progress, place. |

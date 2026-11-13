@@ -210,8 +210,12 @@ check("hot milk is copperHot, hot water isn't", M.copperHot({ ml = 100, fluid = 
     and not M.copperHot({ ml = 100, fluid = "Water", tempC = 90 }))
 
 -- From the copper into the pot
-local hotCopper = { ml = 10000, fluid = "SheepMilk", tempC = 90, last = 0 }
+local hotCopper = { ml = 10000, fluid = "SheepMilk", tempC = 90, last = 0, held = 0.25 }
 local fromHearth = {}
+check("steaming 15 minutes is not scalded: it won't pour yet", select(2, M.copperToPot(hotCopper, fromHearth, 0)) == "NotHeld"
+    and fromHearth.ml == nil and M.holdMinutesLeft(hotCopper) == 5)
+hotCopper.held = 1 / 3
+check("the hold is 20 minutes", M.SCALD_HOLD_HOURS == 1 / 3 and M.copperScalded(hotCopper) and M.holdMinutesLeft(hotCopper) == 0)
 check("hot milk fills the pot up", M.copperToPot(hotCopper, fromHearth, 0) == 5000 and fromHearth.ml == 5000
     and fromHearth.tempC == 90 and fromHearth.fluid == "SheepMilk" and hotCopper.ml == 5000)
 check("a full pot takes no more", select(2, M.copperToPot(hotCopper, fromHearth, 0)) == "Full")
@@ -221,7 +225,7 @@ check("it tops up a cooling pot, mixing the heat", M.copperToPot(hotCopper, topU
 hotCopper.tempC = 80
 check("below 85 C it won't pour", select(2, M.copperToPot(hotCopper, {}, 0)) == "NotHot")
 local sheepPot = { ml = 1000, tempC = 80, fluid = "SheepMilk" }
-check("cow's milk goes in with sheep's", M.copperToPot({ ml = 2000, fluid = "CowMilk", tempC = 90 }, sheepPot, 0) == 2000
+check("cow's milk goes in with sheep's", M.copperToPot({ ml = 2000, fluid = "CowMilk", tempC = 90, held = 1 }, sheepPot, 0) == 2000
     and sheepPot.fluid == "CowMilk" and sheepPot.parts.SheepMilk == 1000)
 local herdCopper = {}
 Hearth.pourInto(herdCopper, "CowMilk", 3000, 90, 0)
@@ -229,8 +233,9 @@ check("and the two share a copper", Hearth.pourInto(herdCopper, "SheepMilk", 100
 local animalPot = { ml = 1000, tempC = 80, fluid = "AnimalMilk" }
 check("the game's generic AnimalMilk is milk and blends with cow's",
     M.copperHot({ ml = 100, fluid = "AnimalMilk", tempC = 90 })
-    and M.copperToPot({ ml = 1000, fluid = "CowMilk", tempC = 90 }, animalPot, 0) == 1000 and animalPot.parts.AnimalMilk == 1000)
+    and M.copperToPot({ ml = 1000, fluid = "CowMilk", tempC = 90, held = 1 }, animalPot, 0) == 1000 and animalPot.parts.AnimalMilk == 1000)
 local herdPot = {}
+herdCopper.held = 1
 M.copperToPot(herdCopper, herdPot, 0)
 local _, _, herdOut = M.pourOut(herdPot, 2000)
 check("a blend keeps its shares into the pot and back out", near(herdOut.CowMilk, 1500) and near(herdOut.SheepMilk, 500)
@@ -249,6 +254,19 @@ check("a top-up that leaves the pot warm enough goes in", M.coldRefusal(warm, 10
 check("with no starter cold milk still goes in, to be reheated", M.addMilk({}, 2000, 20, 0) == 2000)
 
 -- Carried milk
+-- Filled from the copper: scalded only once the copper's milk had its 20 minutes (with ageing off this record is
+-- what the incubator reads).
+local function pail()
+    local o = { md = {} }
+    function o:getModData() return self.md end
+    function o:setItemHeat(heat) self.heat = heat end
+    return o
+end
+local early, late = pail(), pail()
+Hearth.filledFrom(early, { ml = 2000, fluid = "CowMilk", tempC = 90, hot = true, held = 0.1, hadMl = 0, hadC = 0, now = 0 })
+Hearth.filledFrom(late, { ml = 2000, fluid = "CowMilk", tempC = 84, hot = false, held = 0.4, hadMl = 0, hadC = 0, now = 0 })
+check("drawn before the hold, the milk is hot but not scalded", not M.isScalded(early.md[M.CARRY_KEY], 2000))
+check("drawn after it, cooled a little since, it is scalded", M.isScalded(late.md[M.CARRY_KEY], 2000))
 local carry = M.carryIn(nil, 0, 20, 3000, 90, 0, true)
 check("milk drawn hot from the copper is scalded", M.isScalded(carry, 3000) and M.carriedRefusal(carry, 3000) == nil)
 check("milk added some other way voids it", not M.isScalded(carry, 4000) and M.carriedRefusal(carry, 4000) == "NotScalded")

@@ -1,6 +1,24 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- **Wrapped containers look wrapped** (user, 2026-11-13): a wrapped pot, jar or bucket shows its own vanilla icon
+  bundled in a striped towel under a twine tie (`towel_wrap` in tools/build_tileset.py; six looks, `M.WRAPPED_LOOKS`),
+  and lies on the ground as one towel bundle sized to the container (new `tools/build_model.py`,
+  `Models_X/TowelBundle.glb`, the `TowelBundle_*` models: sizes from vanilla's meshes, a bucket taken as 30 cm). Set
+  through the item's ModData (`customInventoryIcon`, `worldStaticModel`) on wrapping, cleared on unwrapping. The
+  Wrapped Yogurt Pot gets the same icon style and the bundle as its model (was the vanilla clay jar). Tests
+  (TESTING_GUIDE step 112).
+- After the first look in game (user, 2026-11-13): the recipes are named **Wrap** and **Unwrap** (were "Wrap a Pot, Jar
+  or Bucket" and "Unwrap a Pot, Jar or Bucket"); the clay jar's bundle is sized by the jar's width (scale 0.28, was
+  0.433: twice as wide as the jar), then on a narrow copy of the bundle (`TowelBundleTall.glb`, 0.4 as wide) at
+  scale 0.42: as narrow as the jar and about as tall (user, in game).
+- **A hold at the scald** (user, 2026-11-13; from the realism pass, pick A with 20 minutes): milk reads Scalded only after
+  20 minutes at 85 C or more in all (`M.SCALD_HOLD_HOURS`), in the copper (TP Core's `Hearth.heldHours`) or in a pot on
+  a stove or fire (TP Core's `FluidAgeing`, `scaldHold`). Pour from the Hearth refuses steaming milk until then and
+  says how many minutes are left (`M.copperScalded`, `M.holdMinutesLeft`); carried milk drawn from the copper or taken
+  off the heat is scalded only once held (the `tpdCarry` record, for milk ageing off too). Everything that reads
+  Scalded follows: the incubator, never souring, Churn Butter. `TPD.milk` at 85 C or more gives a pot that has had
+  its hold. Texts, tests, README, guide (TESTING_GUIDE step 111).
 - **The Yearly Plan** (guide chapter 17, user 2026-11-13): setting yogurt, starting the crock and keeping raw milk as the game's planting seasons: season, best and poor months, out of season, where and how long at best, from the Dairymaid's Almanac; the fire, embers and powered room for any month. The Tester's Toolkit is now chapter 18.
 - **Docs pass, sweep step G** (2026-11-12): seven kinds of place (guide, README); banked embers are a Hearth's or a Firebox's; README: a Loft column, the grid's hours and the crock in a powered room, milk ages in a loft too; Workshop text names Fish & Meat.
 - Needs Build 42.22 or newer (`versionMin`, was 42.20: everything is checked on 42.22). Workshop text (sweep step F).

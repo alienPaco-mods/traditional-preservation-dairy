@@ -23,7 +23,7 @@ Traditional Preservation (Dairy) requires [b]Traditional Preservation (Core)[/b]
 [h2]The loop[/h2]
 [olist]
 [*][b]Pour into the Copper[/b] (the Hearth's right-click menu): up to 60 L of milk from any container.
-[*][b]Light the fire[/b]: 10 L steams (85 C) in about 1.5 hours, 20 L in about 2, a full 60 L in about 2.75. Hearth Info shows when.
+[*][b]Light the fire[/b]: 10 L steams (85 C) in about 1.5 hours, 20 L in about 2, a full 60 L in about 2.75. Hearth Info shows when. Keep it steaming 20 minutes: then the milk is scalded.
 [*][b]Pour from the Hearth[/b] into a Yogurt Incubator within 2 tiles, up to 5 L. No Hearth yet? Scald a pot of milk on any lit stove or fire and use [b]Pour Scalded Milk[/b] while it's hot.
 [*][b]Add Starter[/b]: one vanilla Yogurt, one portion of a Jar of Yogurt, or one Active Yogurt Starter.
 [*][b]Wait[/b]: the milk cools to 45 C in about 2 hours, the incubator wraps itself, and the milk sets in about 6 hours at 40 to 45 C.
@@ -54,7 +54,7 @@ If the milk falls under 40 C before a starter is in, it is too cold: pour it out
 
 [h2]Good to know[/h2]
 [list]
-[*]Only scalded milk goes into an incubator: milk that has been at 85 C in the copper or on a stove or fire, or store milk poured out of its carton. A Wrapped Yogurt Pot carries 5 L and keeps it hot for hours; an open pot cools in minutes.
+[*]Only scalded milk goes into an incubator: milk held at 85 C for 20 minutes in the copper or on a stove or fire, or store milk poured out of its carton. A Wrapped Yogurt Pot carries 5 L and keeps it hot for hours; an open pot cools in minutes.
 [*]Raw milk sours in about a day and a half at 20 C (3 days in a basement, 8 in a powered fridge, never frozen) and is rotten as long again after. Scalded milk never sours and rots at the same age. Sealed store milk keeps until it is poured out.
 [*]Soured milk still bakes: vanilla cake batter, muffins and cereal now take cow's, sheep's or animal milk, fresh, scalded or soured.
 [*]A Jar of Yogurt stays fresh 10 days; the cups keep its age.

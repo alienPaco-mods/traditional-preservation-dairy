@@ -26,7 +26,7 @@ end
 local function canDo(self)
     local batch = M.stateOf(self.station:getModData().movableData or {}, M.INCUBATOR_KEY)
     if self.mode == "hearth" then
-        return M.copperHot(Hearth.stateOf(self.hearth:getModData())) and M.milkRoom(batch, 1) > 0
+        return M.copperScalded(Hearth.stateOf(self.hearth:getModData())) and M.milkRoom(batch, 1) > 0
     elseif self.mode == "carried" then
         local container = self.item:getFluidContainer()
         local ml = M.mlIn(container)
