@@ -21,7 +21,7 @@ Copy this folder to `~/Zomboid/mods/TraditionalPreservationDairy`, as a real cop
 3. **Throw a Yogurt Pot** on the wheel and fire it, then build it into a Yogurt Incubator within 2 tiles of the Hearth.
 4. **Keep one yogurt back.** Each batch takes one vanilla Yogurt, one portion of a Jar of Yogurt, or one Active Yogurt Starter. With none left, build a Starter Culture Crock.
 5. **Save your Empty Yogurt Containers and jars.** Each cup of yogurt needs a container; a glass jar holds a litre, a clay jar 2.5 L, and you eat from the jar itself.
-6. **Set it by the fire in winter.** A lit fire within 2 tiles (the Hearth, a fireplace, an antique stove or a campfire) keeps the pot at 28 C: it sets in about 6 hours in any month.
+6. **Set it by the fire in winter.** A lit fire within 2 tiles indoors (the Hearth, a fireplace, an antique stove) keeps the pot at 28 C: it sets in about 6 hours in any month. A porch fire or a campfire outside gives less in the cold months.
 7. **Mind the milk.** Raw milk sours in about a day and a half in a warm room; scald it or keep it cold (see Milk goes off).
 
 ## The loop at a glance
@@ -173,7 +173,9 @@ Time counts by the game clock, at any Day Length, and keeps counting while the a
 | | Stalls | Slow | Best | Slowing again |
 |---|---|---|---|---|
 | Setting (incubator) | below 18 C | 18–40 C | 40–45 C | above 45 C, stops at 55 C |
-| Culture (crock) | | below 25 C | 25–35 C | above 35 C, 10% at 45 C |
+| Culture (crock) | stops at 0 C | below 25 C | 25–35 C | above 35 C, 10% at 45 C |
+
+A frozen crock pauses (Crock Info says *Paused here (frozen)*) and goes on once it thaws; nothing is lost. The incubator's milk stalls long before it could freeze.
 
 Seven kinds of place (TP Core's):
 
@@ -181,23 +183,27 @@ Seven kinds of place (TP Core's):
 - **Under an open roof** (a porch, an open shed) or **indoors** (a room): the average outdoor temperature of the last 10 days or so. A room is 22 C while the power grid is on.
 - **In a loft** (the top storey: a room upstairs with no room over it): as indoors, plus three tenths of whatever the 10-day average is above 10 C: the sun on the roof (about 24 C in a 21 C July, no warmer than a room from October to April); 22 C while the power grid is on.
 - **In a basement**: the ground, a month behind the season, two fifths as far from 10 C: about 5 C from January to March, 13 C from July to September.
-- **By a fire**: any lit fire within 2 tiles (the Hearth, a fireplace, an antique stove or a campfire; never an electric or gas stove) holds a station at 28 C. While you're away it counts only until its fuel would have run out, then the room counts.
-- **By banked embers**: a banked Hearth or Firebox within 2 tiles, 24 C.
+- **By a fire**: any lit fire within 2 tiles (the Hearth, a fireplace, an antique stove or a campfire; never an electric or gas stove) holds an indoor station at 28 C. While you're away it counts only until its fuel would have run out, then the room counts.
+- **By banked embers**: a banked Hearth or Firebox within 2 tiles, 24 C indoors.
 
-Hours for 5 L poured at 85 C at 18:00 with the starter in, cooling then setting, the grid off (`tools/season_report.lua`); "never" means it hadn't set after 72 hours:
+Outside, the air carries the heat off: under an open roof a fire gives the 10-day average +15 C, in the open the day's weather +10 C, never past 28 C (banked embers +10 and +5, up to 24 C).
 
-| Month | Open air | Indoors | Loft | Basement | By a fire | By banked embers |
-|---|---|---|---|---|---|---|
-| Jan | never | never | never | never | 2.5 + 6.2 | 2.2 + 6.3 |
-| Mar | never | never | never | never | 2.5 + 6.2 | 2.2 + 6.3 |
-| May | never | never | never | 1.5 + 13.7 | 2.5 + 6.2 | 2.2 + 6.3 |
-| Jul | 1.8 + 8.8 | 2.0 + 7.7 | 2.0 + 6.5 | 1.7 + 9.5 | 2.5 + 6.2 | 2.2 + 6.3 |
-| Sep | 1.7 + 14.8 | 1.8 + 7.8 | 1.8 + 6.8 | 1.7 + 8.2 | 2.5 + 6.2 | 2.2 + 6.3 |
-| Nov | never | 1.5 + 14.5 | 1.5 + 14.5 | 1.7 + 13.7 | 2.5 + 6.2 | 2.2 + 6.3 |
+Hours for 5 L poured at 85 C at 18:00 with the starter in, cooling then setting, the grid off (`tools/season_report.lua`); "never" means it hadn't set after 72 hours. The fire columns are indoors, and under a roof or in the open outside:
+
+| Month | Open air | Indoors | Loft | Basement | By a fire | By banked embers | By a fire, under a roof | By a fire, in the open |
+|---|---|---|---|---|---|---|---|---|
+| Jan | never | never | never | never | 2.5 + 6.2 | 2.2 + 6.3 | 1.7 + 10.7 | never |
+| Mar | never | never | never | never | 2.5 + 6.2 | 2.2 + 6.3 | 1.7 + 9.0 | never |
+| May | never | 1.7 + 11.3 | 1.7 + 11.3 | 1.5 + 13.7 | 2.5 + 6.2 | 2.2 + 6.3 | 2.2 + 6.3 | 2.0 + 7.2 |
+| Jul | 1.8 + 8.8 | 2.0 + 7.7 | 2.0 + 6.5 | 1.7 + 9.5 | 2.5 + 6.2 | 2.2 + 6.3 | 2.5 + 6.2 | 2.3 + 6.5 |
+| Sep | 1.7 + 14.8 | 1.8 + 7.7 | 2.0 + 7.8 | 1.7 + 8.2 | 2.5 + 6.2 | 2.2 + 6.3 | 2.5 + 6.2 | 2.2 + 8.0 |
+| Nov | never | never | never | 1.7 + 13.7 | 2.5 + 6.2 | 2.2 + 6.3 | 2.2 + 6.8 | 2.0 + 10.5 |
+
+A November pot indoors only just misses: it reaches 5.8 of its 6 hours before the wrapped milk is too cold. In the full report (every month) a pot sets indoors from May to October, in a basement from May to December.
 
 While the grid is on a room or a loft is 22 C in every month: 2.2 + 7.0 hours.
 
-The crock's first stage takes 24 hours by a fire in any month, about 32 hours in a powered room, about 2 days indoors in summer, 4 to 5 in a basement from July to October (9 in November), and weeks anywhere else in winter.
+The crock's first stage takes 24 hours by an indoor fire in any month, about 32 hours in a powered room, about 2 days indoors in summer, 4 to 5 in a basement from July to October (9 in November). A January crock takes about 7 days by a porch fire, 17 by a campfire, a month in a basement, and about 90 days in an unheated room, most of them paused below freezing.
 
 ## Skills
 
