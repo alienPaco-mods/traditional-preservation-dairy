@@ -264,7 +264,7 @@ Volumes, temperatures, cooling times, the setting and culture curves, the crock'
 
 ## Engineering notes
 
-- The pot's milk, temperature, starter, stage and set hours live in the station's ModData (`tpdIncubator`), the crock's in `tpdCrock`, and hot milk carried in a container in `tpdCarry` (`ml`, `c`, `hour`, `scalded`; `steamed` from test builds is still read). Never rename them once the mod is out.
+- The pot's milk, temperature, starter, stage and set hours live in the station's ModData (`tpdIncubator`), the crock's in `tpdCrock`, and hot milk carried in a container in `tpdCarry` (`ml`, `c`, `hour`, `scalded`). Never rename them once the mod is out.
 - Weather is TP Core's shared ledger; a pot catches up hour by hour over the two weeks of kept weather, and the hours before that as one spell.
 - A Jar of Yogurt keeps its jar type and litres in its ModData (`tpdJar`, `tpdMl`); its portions are its own food values (hunger, calories and so on, which the engine saves), and `tpdFood` marks a jar that has them. `tpdPortion` holds one portion's food, a quarter litre of the batch's milk by its shares (C23); a jar without it is in old vanilla Yogurt's portions (30 kcal). Vanilla Yogurt's script food is set to a cow's milk portion at load, beside its `ReplaceOnUse`. A jar from before that (only `tpdCups`) gets its cups' worth the first time it is touched. Its weight is a custom weight the engine saves. Vanilla's eat action is wrapped (`complete`, `serverStop`) to relabel the jar and give the empty jar back.
 - Every vanilla Yogurt gets `ReplaceOnUse` = Empty Yogurt Container at load, so eating or oatmeal leaves the cup.
