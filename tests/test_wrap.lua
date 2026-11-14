@@ -64,7 +64,7 @@ function bag:contains(thing)
     for _, it in ipairs(self.items) do if it == thing then return true end end
     return false
 end
-function bag:DoRemoveItem(thing)
+function bag:Remove(thing)
     for i, it in ipairs(self.items) do if it == thing then table.remove(self.items, i) thing.container = nil return end end
 end
 -- The item of a type in the bag now (a swap replaces it).

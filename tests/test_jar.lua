@@ -53,9 +53,11 @@ local function container()
     local self = { items = {} }
     function self:contains(item) for _, held in ipairs(self.items) do if held == item then return true end end return false end
     self.containsRecursive = self.contains
-    function self:DoRemoveItem(item)
+    -- Vanilla's Remove also takes the item out of the hands; none here.
+    function self:Remove(item)
         for index, held in ipairs(self.items) do if held == item then table.remove(self.items, index) item.container = nil return end end
     end
+    self.Remove = self.Remove
     function self:AddItem(item)
         if type(item) == "string" then item = food(item) end
         item.container = self
@@ -76,7 +78,7 @@ function ISEatFoodAction:complete()
     local item, pct = self.item, self.percentage
     local used = math.min(math.abs(item:getBaseHunger() * pct) / math.abs(item:getHungChange()), 1)
     if item:getHungChange() * (1 - used) > -0.01 then used = 1 end
-    if used >= 1 then item:getContainer():DoRemoveItem(item) else item:multiplyFoodValues(1 - used) end
+    if used >= 1 then item:getContainer():Remove(item) else item:multiplyFoodValues(1 - used) end
     return true
 end
 function ISEatFoodAction:serverStop() end

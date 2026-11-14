@@ -1,6 +1,7 @@
 -- Traditional Preservation (Dairy): wrapping. A vanilla pot, jar or bucket wrapped in a Sheet and Twine keeps milk hot
 -- as the Wrapped Yogurt Pot does; this file renames, marks and dresses it, and burns the wrap in a hot cooking
 -- container. Required by TraditionalPreservationDairy.lua, whose M it adds to.
+local Action = require "TraditionalPreservationCore/Action"
 TraditionalPreservationDairy = TraditionalPreservationDairy or {}
 local M = TraditionalPreservationDairy
 
@@ -66,7 +67,7 @@ function M.swapForFresh(item)
     new:setItemHeat(item:getItemHeat())
     new:setCondition(item:getCondition())
     new:setFavorite(item:isFavorite())
-    container:DoRemoveItem(item)
+    Action.removeItem(item)
     container:AddItem(new)
     return new
 end
@@ -147,6 +148,6 @@ function M.burnWrap(item)
     local container = item:getContainer()
     if not container then return item end
     local bare = container:AddItem("TraditionalPreservationDairy.YoghurtPot")
-    container:DoRemoveItem(item)
+    Action.removeItem(item)
     return bare
 end
