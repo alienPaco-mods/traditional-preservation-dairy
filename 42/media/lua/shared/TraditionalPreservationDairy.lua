@@ -808,8 +808,6 @@ function M.carryOf(item)
     local modData = item:getModData()
     local carry = modData[M.CARRY_KEY]
     if not carry then return nil end
-    -- Records from test builds before the rename say steamed.
-    if carry.steamed ~= nil then carry.scalded, carry.steamed = carry.scalded or carry.steamed, nil end
     local container = item:getFluidContainer()
     carry = container and M.milkIn(container) and M.noteCarry(carry, M.mlIn(container)) or nil
     modData[M.CARRY_KEY] = carry
