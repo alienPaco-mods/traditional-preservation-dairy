@@ -94,6 +94,8 @@ M.MILK_SPEED = 1              -- sandbox: how fast, 1 as above
 M.SOUR_MILKS = { CowMilk = "SourCowMilk", SheepMilk = "SourSheepMilk", AnimalMilk = "SourAnimalMilk" }
 M.ROTTEN_MILKS = { CowMilk = "RottenCowMilk", SheepMilk = "RottenSheepMilk", AnimalMilk = "RottenAnimalMilk" }
 M.SCALDED_MILKS = { CowMilk = "ScaldedCowMilk", SheepMilk = "ScaldedSheepMilk", AnimalMilk = "ScaldedAnimalMilk" }
+-- The name of scalded milk's state in TP Core's FluidAgeing record.
+M.SCALDED_STATE = "Scalded"
 M.SCALDED = {}
 for _, scalded in pairs(M.SCALDED_MILKS) do M.SCALDED[scalded] = true end
 M.STORE_MILK = { ["Base.Milk"] = true, ["Base.MilkBottle"] = true, ["Base.Milk_Personalsized"] = true }
@@ -242,7 +244,8 @@ FluidAgeing.register({
     spoilHours = M.MILK_SPOIL_HOURS,
     fresh = M.SOUR_MILKS,
     spoiled = M.ROTTEN_MILKS,
-    scalded = M.SCALDED_MILKS,
+    -- Scalded milk is milk in a state made by heat: it never sours and keeps the plain milk's spoilHours.
+    states = { [M.SCALDED_STATE] = { fluids = M.SCALDED_MILKS, heat = true } },
     sealed = M.STORE_MILK,
     getLedger = function() return M.getLedger() end,
     enabled = function() return M.MILK_SPOILS end,
