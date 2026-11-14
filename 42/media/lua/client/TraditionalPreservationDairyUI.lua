@@ -3,14 +3,14 @@
 -- collect the set yogurt into jars. The crock: load wheat and warm milk from the cauldron, or soured milk alone, feed it
 -- fresh milk, collect the starters. The status line at the top says what the station is doing, and its hover says more. Both also have
 -- info windows (TP Core's InfoWindow), opened from their menus or by clicking them. A Jar of Yogurt's own menu spoons
--- it into cups. The Hearth's own menu and Hearth Info are TP Core's (HearthUI); Dairy adds its milk notes there.
+-- it into cups. The Hearth's own menu and Hearth Info are TP Core's (HearthUI); Dairy adds its milk notes there (CauldronUI.addNotes).
 require "TimedActions/TPYoghurtIncubator"
 require "TimedActions/TPStarterCrock"
 require "TimedActions/TPFillYoghurtCup"
 local UI = require "TraditionalPreservationCore/UI"
 local Hearth = require "TraditionalPreservationCore/Hearth"
 local InfoWindow = require "TraditionalPreservationCore/InfoWindow"
-local HearthUI = require "TraditionalPreservationCore/HearthUI"
+local CauldronUI = require "TraditionalPreservationCore/CauldronUI"
 local Transfer = require "TraditionalPreservationCore/Transfer"
 
 local M = TraditionalPreservationDairy
@@ -547,11 +547,11 @@ function PotWindow:render()
 end
 
 -- Hearth Info (TP Core's) says what the cauldron's milk is for.
-HearthUI.addNotes(function(info, notes)
-    local ml = info.cauldron.ml or 0
+CauldronUI.addNotes(function(info, notes)
+    local ml = info.part.ml or 0
     if ml <= 0 then
         table.insert(notes, getText("IGUI_TraditionalPreservationDairy_HearthHelpEmpty"))
-    elseif not M.MILKS[info.cauldron.fluid] then
+    elseif not M.MILKS[info.part.fluid] then
         table.insert(notes, getText("IGUI_TraditionalPreservationDairy_HearthHelpWater"))
     end
 end)

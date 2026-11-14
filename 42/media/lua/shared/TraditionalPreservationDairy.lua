@@ -186,8 +186,9 @@ M.PLACES = { "Open", "Covered", "Sheltered", "Loft", "Basement", M.HEARTH, M.EMB
 M.placeTemperature = Weather.placeTemperature
 M.placeOf = Hearth.placeOf
 M.noteFire = Hearth.noteFire
-M.hearthsNear = Hearth.hearthsNear
-M.isHearth = Hearth.isHearth
+-- A Stone Hearth with the cauldron fitted, and those near a square.
+function M.hearthsNear(square) return Hearth.fittedNear(square, Hearth.CAULDRON) end
+function M.isHearth(object) return Hearth.isFitted(object, Hearth.CAULDRON) end
 
 -- Temperatures: vanilla's item heat, for milk poured between our stores and the player's containers. Vanilla
 -- cools a container in the player's hands to room heat within seconds, so only the cauldron and the pot keep heat.
