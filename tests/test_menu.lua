@@ -74,8 +74,8 @@ local function crock(x, state)
 end
 
 -- A Hearth one tile from the pot at 5,5.
-local function hearth(copper)
-    return tile(6, 5, "IsoFireplace", Hearth.sprite("Empty", 0), { [Hearth.KEY] = { [Hearth.COPPER] = copper } })
+local function hearth(cauldron)
+    return tile(6, 5, "IsoFireplace", Hearth.sprite("Empty", 0), { [Hearth.KEY] = { [Hearth.CAULDRON] = cauldron } })
 end
 
 -- Opens the menu on the stations and returns each one's submenu, then the whole menu.
@@ -114,11 +114,11 @@ check("with none carried, it shows an empty bucket", carried.iconTexture == "Ite
 check("an empty pot has nothing to pour out or collect", named(sub, "ContextMenu_TraditionalPreservationDairy_PourOut") == nil
     and named(sub, "ContextMenu_TraditionalPreservationDairy_Collect") == nil)
 
--- The copper
+-- The cauldron
 hearth({ ml = 4000, fluid = "Water", tempC = 95 })
 pour = named(open(pot)[1], POUR)
-check("a copper of water is refused", pour.isDisabled == true
-    and pour.toolTip.description == getText("IGUI_TraditionalPreservationDairy_CopperNoMilk"))
+check("a cauldron of water is refused", pour.isDisabled == true
+    and pour.toolTip.description == getText("IGUI_TraditionalPreservationDairy_CauldronNoMilk"))
 hearth({ ml = 4000, fluid = "CowMilk", tempC = 50 })
 pour = named(open(pot)[1], POUR)
 check("and milk that isn't steaming, with its heat", pour.isDisabled == true and pour.toolTip.description:find("50", 1, true) ~= nil)

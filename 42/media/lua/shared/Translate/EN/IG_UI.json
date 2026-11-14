@@ -80,8 +80,8 @@
   "IGUI_TraditionalPreservationDairy_ClabberNoMilk": "You need half a litre of soured milk in one container. Raw milk sours in about a day and a half in a warm room; scalded milk never does.",
   "IGUI_TraditionalPreservationDairy_ClabberRotten": "Rotten milk would only spoil the crock. Pour it out.",
   "IGUI_TraditionalPreservationDairy_NoHearth": "No cauldron within 2 tiles. Build a Stone Hearth (Masonry), fit a Forged Cauldron on it and bring the milk to the steam in that.",
-  "IGUI_TraditionalPreservationDairy_CopperNoMilk": "The cauldron holds no milk.",
-  "IGUI_TraditionalPreservationDairy_CopperNotHot": "The milk in the cauldron is at %1 C: it must steam (85 C). Keep the fire lit.",
+  "IGUI_TraditionalPreservationDairy_CauldronNoMilk": "The cauldron holds no milk.",
+  "IGUI_TraditionalPreservationDairy_CauldronNotHot": "The milk in the cauldron is at %1 C: it must steam (85 C). Keep the fire lit.",
   "IGUI_TraditionalPreservationDairy_HearthHelpEmpty": "For yogurt: milk held at 85 C for 20 minutes pours into a Yogurt Incubator within 2 tiles, or carry it in a Wrapped Yogurt Pot, which keeps it hot. Milk at 35 to 45 C loads a Starter Culture Crock.",
   "IGUI_TraditionalPreservationDairy_HearthHelpWater": "Only milk pours into an incubator or a crock. Fill your own containers from it.",
   "IGUI_TraditionalPreservationDairy_NotScalded": "Not scalded: hold the milk at 85 C for 20 minutes first, in a Stone Hearth's cauldron or on a stove or fire.",
@@ -95,5 +95,5 @@
   "IGUI_TraditionalPreservationDairy_InfoStarters": "Starters",
   "IGUI_TraditionalPreservationDairy_ScaldedHelp": "Scalded milk (20 minutes at 85 C or more: a Stone Hearth's cauldron, a stove or a fire) in any container. It goes in at the heat it has now: an open pot cools in minutes, a Wrapped Yogurt Pot in hours.",
   "IGUI_TraditionalPreservationDairy_WrappedName": "Wrapped %1",
-  "IGUI_TraditionalPreservationDairy_CopperNotHeld": "The milk is steaming, but not scalded yet: hold it at 85 C for %1 more minutes. Keep the fire lit."
+  "IGUI_TraditionalPreservationDairy_CauldronNotHeld": "The milk is steaming, but not scalded yet: hold it at 85 C for %1 more minutes. Keep the fire lit."
 }

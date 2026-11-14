@@ -11,7 +11,7 @@ local Hearth = require "TraditionalPreservationCore/Hearth"
 
 -- Heat
 check("room heat is room temperature", M.heatCelsius(1.0) == Hearth.ROOM_C)
-check("an item never reads hotter than the copper gets", M.heatCelsius(3.0) == Hearth.MAX_C)
+check("an item never reads hotter than the cauldron gets", M.heatCelsius(3.0) == Hearth.MAX_C)
 check("heat goes back to the item it came from", near(M.heatCelsius(M.itemHeat(60)), 60))
 check("a wrapped pot holds heat far longer", M.tau(5000, true) > 4 * M.tau(5000, false))
 check("less milk cools faster", M.tau(3000, false) < M.tau(5000, false))
@@ -200,43 +200,43 @@ M.advanceBatch(emberHand, 5, 30, 15)
 M.advanceBatch(emberHand, 10, 0, 20)
 check("by embers only while they last, then the place under them", near(emberOut.tempC, emberHand.tempC, 1e-6))
 
--- Hearth copper: TP Core's rules (its tests/test_hearth.lua); milk's own here
-check("the copper's numbers are the core's", Hearth.COPPER_ML == 60000 and M.HOT_C == 85 and Hearth.MAX_C == 95)
-check("water is never poured into a pot", M.copperToPot({ ml = 4000, fluid = "Water", tempC = 90 }, {}, 0) == 0
-    and select(2, M.copperToPot({ ml = 4000, fluid = "Water", tempC = 90 }, {}, 0)) == "NoMilk")
+-- Hearth cauldron: TP Core's rules (its tests/test_hearth.lua); milk's own here
+check("the cauldron's numbers are the core's", Hearth.CAULDRON_ML == 60000 and M.HOT_C == 85 and Hearth.MAX_C == 95)
+check("water is never poured into a pot", M.cauldronToPot({ ml = 4000, fluid = "Water", tempC = 90 }, {}, 0) == 0
+    and select(2, M.cauldronToPot({ ml = 4000, fluid = "Water", tempC = 90 }, {}, 0)) == "NoMilk")
 check("the time to hot means nothing for water", M.hoursToHot({ ml = 100, fluid = "Water", tempC = 20 }) == nil
     and M.hoursToHot({ ml = 10000, fluid = "CowMilk", tempC = 20 }) > 1.3)
-check("hot milk is copperHot, hot water isn't", M.copperHot({ ml = 100, fluid = "CowMilk", tempC = 90 })
-    and not M.copperHot({ ml = 100, fluid = "Water", tempC = 90 }))
+check("hot milk is cauldronHot, hot water isn't", M.cauldronHot({ ml = 100, fluid = "CowMilk", tempC = 90 })
+    and not M.cauldronHot({ ml = 100, fluid = "Water", tempC = 90 }))
 
--- From the copper into the pot
-local hotCopper = { ml = 10000, fluid = "SheepMilk", tempC = 90, last = 0, held = 0.25 }
+-- From the cauldron into the pot
+local hotCauldron = { ml = 10000, fluid = "SheepMilk", tempC = 90, last = 0, held = 0.25 }
 local fromHearth = {}
-check("steaming 15 minutes is not scalded: it won't pour yet", select(2, M.copperToPot(hotCopper, fromHearth, 0)) == "NotHeld"
-    and fromHearth.ml == nil and M.holdMinutesLeft(hotCopper) == 5)
-hotCopper.held = 1 / 3
-check("the hold is 20 minutes", M.SCALD_HOLD_HOURS == 1 / 3 and M.copperScalded(hotCopper) and M.holdMinutesLeft(hotCopper) == 0)
-check("hot milk fills the pot up", M.copperToPot(hotCopper, fromHearth, 0) == 5000 and fromHearth.ml == 5000
-    and fromHearth.tempC == 90 and fromHearth.fluid == "SheepMilk" and hotCopper.ml == 5000)
-check("a full pot takes no more", select(2, M.copperToPot(hotCopper, fromHearth, 0)) == "Full")
+check("steaming 15 minutes is not scalded: it won't pour yet", select(2, M.cauldronToPot(hotCauldron, fromHearth, 0)) == "NotHeld"
+    and fromHearth.ml == nil and M.holdMinutesLeft(hotCauldron) == 5)
+hotCauldron.held = 1 / 3
+check("the hold is 20 minutes", M.SCALD_HOLD_HOURS == 1 / 3 and M.cauldronScalded(hotCauldron) and M.holdMinutesLeft(hotCauldron) == 0)
+check("hot milk fills the pot up", M.cauldronToPot(hotCauldron, fromHearth, 0) == 5000 and fromHearth.ml == 5000
+    and fromHearth.tempC == 90 and fromHearth.fluid == "SheepMilk" and hotCauldron.ml == 5000)
+check("a full pot takes no more", select(2, M.cauldronToPot(hotCauldron, fromHearth, 0)) == "Full")
 local topUp = { ml = 3000, tempC = 50, fluid = "SheepMilk", last = 0 }
-check("it tops up a cooling pot, mixing the heat", M.copperToPot(hotCopper, topUp, 0) == 2000 and near(topUp.tempC, 66)
+check("it tops up a cooling pot, mixing the heat", M.cauldronToPot(hotCauldron, topUp, 0) == 2000 and near(topUp.tempC, 66)
     and topUp.fluid == "SheepMilk")
-hotCopper.tempC = 80
-check("below 85 C it won't pour", select(2, M.copperToPot(hotCopper, {}, 0)) == "NotHot")
+hotCauldron.tempC = 80
+check("below 85 C it won't pour", select(2, M.cauldronToPot(hotCauldron, {}, 0)) == "NotHot")
 local sheepPot = { ml = 1000, tempC = 80, fluid = "SheepMilk" }
-check("cow's milk goes in with sheep's", M.copperToPot({ ml = 2000, fluid = "CowMilk", tempC = 90, held = 1 }, sheepPot, 0) == 2000
+check("cow's milk goes in with sheep's", M.cauldronToPot({ ml = 2000, fluid = "CowMilk", tempC = 90, held = 1 }, sheepPot, 0) == 2000
     and sheepPot.fluid == "CowMilk" and sheepPot.parts.SheepMilk == 1000)
-local herdCopper = {}
-Hearth.pourInto(herdCopper, "CowMilk", 3000, 90, 0)
-check("and the two share a copper", Hearth.pourInto(herdCopper, "SheepMilk", 1000, 90, 0) == 1000 and M.copperHot(herdCopper))
+local herdCauldron = {}
+Hearth.pourInto(herdCauldron, "CowMilk", 3000, 90, 0)
+check("and the two share a cauldron", Hearth.pourInto(herdCauldron, "SheepMilk", 1000, 90, 0) == 1000 and M.cauldronHot(herdCauldron))
 local animalPot = { ml = 1000, tempC = 80, fluid = "AnimalMilk" }
 check("the game's generic AnimalMilk is milk and blends with cow's",
-    M.copperHot({ ml = 100, fluid = "AnimalMilk", tempC = 90 })
-    and M.copperToPot({ ml = 1000, fluid = "CowMilk", tempC = 90, held = 1 }, animalPot, 0) == 1000 and animalPot.parts.AnimalMilk == 1000)
+    M.cauldronHot({ ml = 100, fluid = "AnimalMilk", tempC = 90 })
+    and M.cauldronToPot({ ml = 1000, fluid = "CowMilk", tempC = 90, held = 1 }, animalPot, 0) == 1000 and animalPot.parts.AnimalMilk == 1000)
 local herdPot = {}
-herdCopper.held = 1
-M.copperToPot(herdCopper, herdPot, 0)
+herdCauldron.held = 1
+M.cauldronToPot(herdCauldron, herdPot, 0)
 local _, _, herdOut = M.pourOut(herdPot, 2000)
 check("a blend keeps its shares into the pot and back out", near(herdOut.CowMilk, 1500) and near(herdOut.SheepMilk, 500)
     and herdPot.ml == 2000)
@@ -254,7 +254,7 @@ check("a top-up that leaves the pot warm enough goes in", M.coldRefusal(warm, 10
 check("with no starter cold milk still goes in, to be reheated", M.addMilk({}, 2000, 20, 0) == 2000)
 
 -- Carried milk
--- Filled from the copper: scalded only once the copper's milk had its 20 minutes (with ageing off this record is
+-- Filled from the cauldron: scalded only once the cauldron's milk had its 20 minutes (with ageing off this record is
 -- what the incubator reads).
 local function pail()
     local o = { md = {} }
@@ -268,7 +268,7 @@ Hearth.filledFrom(late, { ml = 2000, fluid = "CowMilk", tempC = 84, hot = false,
 check("drawn before the hold, the milk is hot but not scalded", not M.isScalded(early.md[M.CARRY_KEY], 2000))
 check("drawn after it, cooled a little since, it is scalded", M.isScalded(late.md[M.CARRY_KEY], 2000))
 local carry = M.carryIn(nil, 0, 20, 3000, 90, 0, true)
-check("milk drawn hot from the copper is scalded", M.isScalded(carry, 3000) and M.carriedRefusal(carry, 3000) == nil)
+check("milk drawn hot from the cauldron is scalded", M.isScalded(carry, 3000) and M.carriedRefusal(carry, 3000) == nil)
 check("milk added some other way voids it", not M.isScalded(carry, 4000) and M.carriedRefusal(carry, 4000) == "NotScalded")
 check("milk taken out by vanilla is harmless", M.isScalded(carry, 2000))
 local drunk = M.carryIn(nil, 0, 20, 3000, 90, 0, true)
@@ -349,7 +349,7 @@ check("fresh, scalded or no milk isn't soured", M.clabberRefusal(jug("CowMilk", 
     and M.clabberRefusal(jug("ScaldedCowMilk", 1)) == "NoSour" and M.clabberRefusal(jug("Water", 1)) == "NoSour"
     and M.clabberIn(jug("SourCowMilk", 0)) == nil)
 check("it needs half a litre", M.clabberRefusal(jug("SourCowMilk", 0.4)) == "TooLittle")
-check("soured milk may share the copper, as fresh milk does", Hearth.blends("SourCowMilk", "SourSheepMilk")
+check("soured milk may share the cauldron, as fresh milk does", Hearth.blends("SourCowMilk", "SourSheepMilk")
     and not Hearth.blends("SourCowMilk", "CowMilk"))
 local clabber = {}
 check("a clabber skips Cultivating: the crock waits for fresh milk at once", M.clabberCrock(clabber)

@@ -1,6 +1,6 @@
 -- Traditional Preservation (Dairy) B42: the Yogurt Incubator and the Starter Culture Crock are worked from their
--- right-click menus. The pot: pour milk steaming from a Hearth's copper in, add a starter, pour the milk back out, and
--- collect the set yogurt into jars. The crock: load wheat and warm milk from the copper, or soured milk alone, feed it
+-- right-click menus. The pot: pour milk steaming from a Hearth's cauldron in, add a starter, pour the milk back out, and
+-- collect the set yogurt into jars. The crock: load wheat and warm milk from the cauldron, or soured milk alone, feed it
 -- fresh milk, collect the starters. The status line at the top says what the station is doing, and its hover says more. Both also have
 -- info windows (TP Core's InfoWindow), opened from their menus or by clicking them. A Jar of Yogurt's own menu spoons
 -- it into cups. The Hearth's own menu and Hearth Info are TP Core's (HearthUI); Dairy adds its milk notes there.
@@ -17,7 +17,7 @@ local M = TraditionalPreservationDairy
 local say = UI.say
 local STATION_ICON = "media/textures/Item_YoghurtIncubator.png"
 local CROCK_ICON = "media/textures/Item_StarterCultureCrock.png"
-local COPPER_ICON = "media/textures/Item_TPCauldronFull.png" -- TP Core's
+local CAULDRON_ICON = "media/textures/Item_TPCauldronFull.png" -- TP Core's
 local STARTER_ICON = "media/textures/Item_ActiveYoghurtStarter.png"
 local JAR_ICON = "media/textures/Item_JarOfYoghurt.png"
 local WHEAT_ICON = "Item_WheatGrains"
@@ -113,26 +113,26 @@ local function addItemMenu(menu, option, playerObj, station, items, mode, label)
     end
 end
 
--- The copper's state, brought up to now when the World runs here.
-local copperOf = Hearth.copperOf
+-- The cauldron's state, brought up to now when the World runs here.
+local cauldronOf = Hearth.cauldronOf
 
--- The first hearth near the station whose copper passes test, else nil and the nearest one's copper.
+-- The first hearth near the station whose cauldron passes test, else nil and the nearest one's cauldron.
 local function hearthFor(station, test)
     local nearest
     for _, hearth in ipairs(M.hearthsNear(station:getSquare())) do
-        local copper = copperOf(hearth)
-        if test(copper) then return hearth, copper end
-        nearest = nearest or copper
+        local cauldron = cauldronOf(hearth)
+        if test(cauldron) then return hearth, cauldron end
+        nearest = nearest or cauldron
     end
     return nil, nearest
 end
 
--- Why the nearest copper won't do: none near, no milk in it, too cold, or steaming but not held long enough yet.
-local function hearthRefusal(copper, notHotKey)
-    if not copper then return getText("IGUI_TraditionalPreservationDairy_NoHearth") end
-    if not M.MILKS[copper.fluid] then return getText("IGUI_TraditionalPreservationDairy_CopperNoMilk") end
-    if M.copperHot(copper) then return say("IGUI_TraditionalPreservationDairy_CopperNotHeld", tostring(M.holdMinutesLeft(copper))) end
-    return say(notHotKey, degrees(copper.tempC))
+-- Why the nearest cauldron won't do: none near, no milk in it, too cold, or steaming but not held long enough yet.
+local function hearthRefusal(cauldron, notHotKey)
+    if not cauldron then return getText("IGUI_TraditionalPreservationDairy_NoHearth") end
+    if not M.MILKS[cauldron.fluid] then return getText("IGUI_TraditionalPreservationDairy_CauldronNoMilk") end
+    if M.cauldronHot(cauldron) then return say("IGUI_TraditionalPreservationDairy_CauldronNotHeld", tostring(M.holdMinutesLeft(cauldron))) end
+    return say(notHotKey, degrees(cauldron.tempC))
 end
 
 local function onHearthPour(playerObj, station, hearth)
@@ -143,13 +143,13 @@ end
 local function addHearthPourMenu(menu, playerObj, station, state)
     local label = getText("ContextMenu_TraditionalPreservationDairy_PourFromHearth")
     local room, reason = M.milkRoom(state, 1)
-    local hearth, copper
-    if room > 0 then hearth, copper = hearthFor(station, M.copperScalded) end
-    if hearth then label = say("ContextMenu_TraditionalPreservationDairy_MilkItem", label, litresText(copper.ml), degrees(copper.tempC)) end
+    local hearth, cauldron
+    if room > 0 then hearth, cauldron = hearthFor(station, M.cauldronScalded) end
+    if hearth then label = say("ContextMenu_TraditionalPreservationDairy_MilkItem", label, litresText(cauldron.ml), degrees(cauldron.tempC)) end
     local option = menu:addOption(label, playerObj, onHearthPour, station, hearth)
-    option.iconTexture = getTexture(COPPER_ICON)
+    option.iconTexture = getTexture(CAULDRON_ICON)
     if room <= 0 then return disableWith(option, getText(REFUSALS[reason])) end
-    if not hearth then return disableWith(option, hearthRefusal(copper, "IGUI_TraditionalPreservationDairy_CopperNotHot")) end
+    if not hearth then return disableWith(option, hearthRefusal(cauldron, "IGUI_TraditionalPreservationDairy_CauldronNotHot")) end
 end
 
 -- A submenu's icon: the first item it lists, drawn as the inventory draws it (a bucket of milk shows milk), or
@@ -162,7 +162,7 @@ local function showFirst(option, items, fallback)
     end
 end
 
--- Every container of plain milk, wherever it was carried from. Milk that isn't scalded (never at 85 C: copper, stove
+-- Every container of plain milk, wherever it was carried from. Milk that isn't scalded (never at 85 C: cauldron, stove
 -- or fire), or is too cold for the starter already in the pot, shows in red with the reason. An open pot loses its
 -- heat in minutes, a Wrapped Yogurt Pot in hours.
 local function addCarriedPourMenu(menu, playerObj, station, state)
@@ -341,25 +341,25 @@ local function addLoadMenu(menu, playerObj, station)
     if #wheat < M.CROCK_WHEAT then
         return disableWith(option, say("IGUI_TraditionalPreservationDairy_NeedWheat", tostring(M.CROCK_WHEAT), tostring(#wheat)))
     end
-    local hearth, copper = hearthFor(station, TPStarterCrock.copperReady)
+    local hearth, cauldron = hearthFor(station, TPStarterCrock.cauldronReady)
     local milks = findItems(playerObj, function(item) return M.milkIn(item:getFluidContainer()) ~= nil end)
-    if not copper and #milks == 0 then return disableWith(option, getText("IGUI_TraditionalPreservationDairy_CrockNoWarmMilk")) end
+    if not cauldron and #milks == 0 then return disableWith(option, getText("IGUI_TraditionalPreservationDairy_CrockNoWarmMilk")) end
     tooltipFor(option, getText("IGUI_TraditionalPreservationDairy_LoadHelp"))
     local picked = {}
     for index = 1, M.CROCK_WHEAT do picked[index] = wheat[index] end
     local sub = menu:getNew(menu)
     menu:addSubMenu(option, sub)
-    if copper then
+    if cauldron then
         local label = getText("ContextMenu_TraditionalPreservationDairy_LoadFromHearth")
-        if M.MILKS[copper.fluid] then label = say("ContextMenu_TraditionalPreservationDairy_MilkItem", label, litresText(copper.ml), degrees(copper.tempC)) end
+        if M.MILKS[cauldron.fluid] then label = say("ContextMenu_TraditionalPreservationDairy_MilkItem", label, litresText(cauldron.ml), degrees(cauldron.tempC)) end
         local entry = sub:addOption(label, playerObj, onCrockAction, station, "load", nil, picked, hearth)
-        entry.iconTexture = getTexture(COPPER_ICON)
+        entry.iconTexture = getTexture(CAULDRON_ICON)
         if not hearth then
-            if M.MILKS[copper.fluid] then
-                refuseLoad(entry, copper.ml or 0, copper.tempC or 0)
+            if M.MILKS[cauldron.fluid] then
+                refuseLoad(entry, cauldron.ml or 0, cauldron.tempC or 0)
             else
                 entry.notAvailable = true
-                tooltipFor(entry, getText("IGUI_TraditionalPreservationDairy_CopperNoMilk"))
+                tooltipFor(entry, getText("IGUI_TraditionalPreservationDairy_CauldronNoMilk"))
             end
         end
     end
@@ -546,12 +546,12 @@ function PotWindow:render()
     self:drawNotes(y, notes)
 end
 
--- Hearth Info (TP Core's) says what the copper's milk is for.
+-- Hearth Info (TP Core's) says what the cauldron's milk is for.
 HearthUI.addNotes(function(info, notes)
-    local ml = info.copper.ml or 0
+    local ml = info.cauldron.ml or 0
     if ml <= 0 then
         table.insert(notes, getText("IGUI_TraditionalPreservationDairy_HearthHelpEmpty"))
-    elseif not M.MILKS[info.copper.fluid] then
+    elseif not M.MILKS[info.cauldron.fluid] then
         table.insert(notes, getText("IGUI_TraditionalPreservationDairy_HearthHelpWater"))
     end
 end)

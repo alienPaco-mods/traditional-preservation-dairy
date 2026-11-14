@@ -25,6 +25,6 @@ check("butter: each milk takes its scalded twin, and no other",
     Recipes.widenLine("fluid 5.0 [CowMilk;SheepMilk] mode:mixture", scalded) == "fluid 5.0 [CowMilk;SheepMilk;ScaldedCowMilk;ScaldedSheepMilk] mode:mixture")
 check("mildew cure: all three scalded, never soured",
     Recipes.widenLine("fluid 1.0 [CowMilk;SheepMilk;AnimalMilk]", scalded) == "fluid 1.0 [CowMilk;SheepMilk;AnimalMilk;ScaldedCowMilk;ScaldedSheepMilk;ScaldedAnimalMilk]")
-check("scalded milk is milk to the copper and the pot", M.MILKS.ScaldedSheepMilk and M.MILK_FOOD.ScaldedSheepMilk == M.MILK_FOOD.SheepMilk)
+check("scalded milk is milk to the cauldron and the pot", M.MILKS.ScaldedSheepMilk and M.MILK_FOOD.ScaldedSheepMilk == M.MILK_FOOD.SheepMilk)
 
 H.done()

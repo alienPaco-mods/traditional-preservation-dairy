@@ -86,7 +86,7 @@ module Base
         }
     }
 
-    /* Milk brought to steaming (85 C, in a Hearth's copper) or poured out of a store carton: the milk's own food. The
+    /* Milk brought to steaming (85 C, in a Hearth's cauldron) or poured out of a store carton: the milk's own food. The
        heat killed the lactic bacteria, so TP Core's FluidAgeing never sours it; it spoils to its milk's rotten one.
        Raw milk mixed in makes it plain milk again. */
     fluid ScaldedCowMilk

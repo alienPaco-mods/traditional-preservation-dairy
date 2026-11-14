@@ -55,7 +55,7 @@ This mod lets you **set your own yogurt the old way**: milk brought to the steam
 ## 3. The Full Loop
 
 ```
- cow / sheep ──milk──► HEARTH'S COPPER ──85 C──► YOGURT INCUBATOR ──► jars & cups
+ cow / sheep ──milk──► FORGED CAULDRON ──85 C──► YOGURT INCUBATOR ──► jars & cups
                         (60 L, lit fire)          (5 L pot)                │
                                                      ▲                     │
                                 1 Yogurt ───────────┘                     │

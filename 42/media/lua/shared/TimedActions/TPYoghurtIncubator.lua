@@ -1,5 +1,5 @@
 -- Traditional Preservation (Dairy): the hand jobs at a Yogurt Incubator. "hearth" pours milk steaming from a
--- Hearth's copper (within 2 tiles) in, "carried" pours scalded milk in from a container, "starter" stirs in a yogurt or an Active Yogurt Starter, "pourOut" takes the milk back out into an empty
+-- Hearth's cauldron (within 2 tiles) in, "carried" pours scalded milk in from a container, "starter" stirs in a yogurt or an Active Yogurt Starter, "pourOut" takes the milk back out into an empty
 -- container (still scalded) to reheat it, "collect" fills an empty jar (glass 1 L, clay 2.5 L) with set yogurt,
 -- and "cup" fills an Empty Yogurt Container with a quarter litre.
 require "TimedActions/ISBaseTimedAction"
@@ -26,7 +26,7 @@ end
 local function canDo(self)
     local batch = M.stateOf(self.station:getModData().movableData or {}, M.INCUBATOR_KEY)
     if self.mode == "hearth" then
-        return M.copperScalded(Hearth.copperState(self.hearth:getModData())) and M.milkRoom(batch, 1) > 0
+        return M.cauldronScalded(Hearth.cauldronState(self.hearth:getModData())) and M.milkRoom(batch, 1) > 0
     elseif self.mode == "carried" then
         local container = self.item:getFluidContainer()
         local ml = M.mlIn(container)
@@ -75,7 +75,7 @@ end
 local COMPLETE = {}
 
 function COMPLETE.hearth(self, batch, now)
-    M.copperToPot(Hearth.copperOf(self.hearth), batch, now)
+    M.cauldronToPot(Hearth.cauldronOf(self.hearth), batch, now)
     if Hearth.World then Hearth.World.refresh(self.hearth) end
 end
 
@@ -151,9 +151,9 @@ function TPYoghurtIncubator:getDuration()
     local container = self.item and self.item:getFluidContainer()
     local litres = 0
     if self.mode == "hearth" then
-        local copper = Hearth.copperState(self.hearth:getModData())
+        local cauldron = Hearth.cauldronState(self.hearth:getModData())
         local batch = M.stateOf(self.station:getModData().movableData or {}, M.INCUBATOR_KEY)
-        litres = math.min(copper.ml or 0, M.milkRoom(batch, copper.ml or 0)) / 1000
+        litres = math.min(cauldron.ml or 0, M.milkRoom(batch, cauldron.ml or 0)) / 1000
     end
     if self.mode == "pourOut" and container then litres = container:getCapacity() end
     if self.mode == "carried" and container then litres = container:getAmount() end

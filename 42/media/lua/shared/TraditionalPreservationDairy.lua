@@ -1,5 +1,5 @@
 -- Traditional Preservation (Dairy) B42: the rules for the Yogurt Incubator and the Starter Culture Crock.
--- The incubator is a lidded clay pot: milk brought to the boil in the hearth's copper cools in it by Newton's law towards the temperature where
+-- The incubator is a lidded clay pot: milk brought to the boil in the hearth's cauldron cools in it by Newton's law towards the temperature where
 -- it stands, and once it is down to setting heat with a starter in, the pot is wrapped in cloth and the milk
 -- sets at a speed that follows its own temperature. Cooling depends on what the milk was, not only on the
 -- weather now, so the core ledger's running totals can't replay it: an hourly history of the weather in
@@ -21,7 +21,7 @@ local Tiles = require "TraditionalPreservationDairy/Tiles"
 M.MOD_DATA_KEY = "TraditionalPreservationDairy"
 -- Each station keeps its state as one table under one key, so nothing else on the object can clash with it.
 -- Inside the incubator's: ml, tempC, starter, incubating, wrapHour, done, last, readyHour, fluid, parts, place, at,
--- fireUntil, under. Inside the crock's: stage, done, marks, fireUntil, under. The Hearth and its copper are TP
+-- fireUntil, under. Inside the crock's: stage, done, marks, fireUntil, under. The Hearth and its cauldron are TP
 -- Core's (TraditionalPreservationCore/Hearth).
 M.INCUBATOR_KEY = "tpdIncubator"
 M.CROCK_KEY = "tpdCrock"
@@ -44,14 +44,14 @@ local SETTLED_C = 0.05        -- milk this near its place's temperature has stop
 M.HEARTH = Hearth.PLACE
 M.EMBERS = Hearth.EMBERS
 
--- The Hearth's copper (TP Core) holds one fluid at a time, or a blend of milks, and heats while its fire burns.
-M.HOT_C = Hearth.HOT_C        -- milk this hot pours from the copper into a pot
+-- The Hearth's cauldron (TP Core) holds one fluid at a time, or a blend of milks, and heats while its fire burns.
+M.HOT_C = Hearth.HOT_C        -- milk this hot pours from the cauldron into a pot
 -- Milk counts as scalded only once it has been at HOT_C or more this long in all (user, 2026-11-13): the hold is what
--- changes the whey proteins and gives a firm set. The copper counts it (Hearth.heldHours), a pot on a stove or a
+-- changes the whey proteins and gives a firm set. The cauldron counts it (Hearth.heldHours), a pot on a stove or a
 -- fire too (TP Core's FluidAgeing, scaldHold).
 M.SCALD_HOLD_HOURS = 1 / 3
 
--- Carried milk: a container filled from the copper, taken hot off a stove or a fire, or poured into from one of those
+-- Carried milk: a container filled from the cauldron, taken hot off a stove or a fire, or poured into from one of those
 -- keeps a record of its heat in its item modData (vanilla's item heat drops to the room within seconds of leaving
 -- the heat). An open pot or bucket cools in minutes; the Wrapped Yogurt Pot (a clay pot in its cloth) in hours.
 M.CARRY_KEY = "tpdCarry"      -- { ml, c, hour, scalded }
@@ -124,7 +124,7 @@ for milk, scalded in pairs(M.SCALDED_MILKS) do M.MILK_FOOD[scalded] = M.MILK_FOO
 
 -- Items and fluids. Only animal milk sets: a cow's, a sheep's, or the game's generic AnimalMilk (debug spawns and
 -- some loot, which vanilla's own milking and cheese accept as milk). Yogurt is yogurt, so they may share a
--- copper, a container and a pot, as a mixed herd's milk always did. Scalded milk is milk too.
+-- cauldron, a container and a pot, as a mixed herd's milk always did. Scalded milk is milk too.
 M.MILKS = { CowMilk = true, SheepMilk = true, AnimalMilk = true }
 for milk, scalded in pairs(M.SCALDED_MILKS) do M.MILKS[scalded] = true end
 Hearth.blend("CowMilk", "SheepMilk", "AnimalMilk", "ScaldedCowMilk", "ScaldedSheepMilk", "ScaldedAnimalMilk")
@@ -188,7 +188,7 @@ M.hearthsNear = Hearth.hearthsNear
 M.isHearth = Hearth.isHearth
 
 -- Temperatures: vanilla's item heat, for milk poured between our stores and the player's containers. Vanilla
--- cools a container in the player's hands to room heat within seconds, so only the copper and the pot keep heat.
+-- cools a container in the player's hands to room heat within seconds, so only the cauldron and the pot keep heat.
 M.heatCelsius = Hearth.heatCelsius
 M.itemHeat = Hearth.itemHeat
 
@@ -543,39 +543,39 @@ function M.forecast(batch, placeC)
     return nil
 end
 
--- Hearth copper: the rules are TP Core's; these are milk's.
+-- Hearth cauldron: the rules are TP Core's; these are milk's.
 
--- Hours until the copper is hot if the fire burns on; 0 if it is already, nil if it holds no milk.
-function M.hoursToHot(copper)
-    if not M.MILKS[copper.fluid] then return nil end
-    return Hearth.hoursToHot(copper)
+-- Hours until the cauldron is hot if the fire burns on; 0 if it is already, nil if it holds no milk.
+function M.hoursToHot(cauldron)
+    if not M.MILKS[cauldron.fluid] then return nil end
+    return Hearth.hoursToHot(cauldron)
 end
 
-function M.copperHot(copper)
-    return M.MILKS[copper.fluid] == true and (copper.tempC or 0) >= M.HOT_C
+function M.cauldronHot(cauldron)
+    return M.MILKS[cauldron.fluid] == true and (cauldron.tempC or 0) >= M.HOT_C
 end
 
--- True once the copper's milk has steamed for the hold: what may go into the pot.
+-- True once the cauldron's milk has steamed for the hold: what may go into the pot.
 function M.held(hours)
     return (hours or 0) >= M.SCALD_HOLD_HOURS - 1e-9
 end
 
-function M.copperScalded(copper)
-    return M.copperHot(copper) and M.held(Hearth.heldHours(copper))
+function M.cauldronScalded(cauldron)
+    return M.cauldronHot(cauldron) and M.held(Hearth.heldHours(cauldron))
 end
 
--- Minutes of the hold still to go for the copper's milk (0 once held).
-function M.holdMinutesLeft(copper)
-    return math.max(math.ceil((M.SCALD_HOLD_HOURS - Hearth.heldHours(copper)) * 60 - 1e-6), 0)
+-- Minutes of the hold still to go for the cauldron's milk (0 once held).
+function M.holdMinutesLeft(cauldron)
+    return math.max(math.ceil((M.SCALD_HOLD_HOURS - Hearth.heldHours(cauldron)) * 60 - 1e-6), 0)
 end
 
--- Fills the pot from the copper with hot milk, as much as fits. Returns the ml (0 with a reason when refused).
-function M.copperToPot(copper, batch, now)
-    if not M.copperHot(copper) then return 0, M.MILKS[copper.fluid] and "NotHot" or "NoMilk" end
-    if not M.copperScalded(copper) then return 0, "NotHeld" end
-    local room, reason = M.milkRoom(batch, copper.ml)
+-- Fills the pot from the cauldron with hot milk, as much as fits. Returns the ml (0 with a reason when refused).
+function M.cauldronToPot(cauldron, batch, now)
+    if not M.cauldronHot(cauldron) then return 0, M.MILKS[cauldron.fluid] and "NotHot" or "NoMilk" end
+    if not M.cauldronScalded(cauldron) then return 0, "NotHeld" end
+    local room, reason = M.milkRoom(batch, cauldron.ml)
     if room <= 0 then return 0, reason end
-    local ml, _, tempC, parts = Hearth.take(copper, room)
+    local ml, _, tempC, parts = Hearth.take(cauldron, room)
     M.addMilk(batch, ml, tempC, now, parts)
     return ml
 end
@@ -615,7 +615,7 @@ function M.isScalded(carry, ml)
 end
 
 -- True if parts ({ name = ml }) is all scalded milk (TP Core's FluidAgeing names it so once it has been at 85 C, in
--- the copper, on a stove or a fire, or poured out of a store carton).
+-- the cauldron, on a stove or a fire, or poured out of a store carton).
 function M.allScalded(parts)
     local any = false
     for name in pairs(parts or {}) do
@@ -880,7 +880,7 @@ function M.recordTaken(item, carry, ml)
     item:getModData()[M.CARRY_KEY] = M.carryOut(carry, ml)
 end
 
--- The copper's hooks: a Wrapped Pot pours in at its own heat; milk drawn steaming is marked so the incubator takes
+-- The cauldron's hooks: a Wrapped Pot pours in at its own heat; milk drawn steaming is marked so the incubator takes
 -- it. Milk that left an item is already gone from the container, so reading the record shrinks it to match.
 Hearth.hook("heatOf", function(item, now, character)
     local carry = M.carryOf(item)
@@ -893,7 +893,7 @@ end)
 
 Hearth.hook("filled", function(item, fill)
     if not M.MILKS[fill.fluid] then return false end
-    -- Scalded once the copper's milk had its hold, hot or cooled since.
+    -- Scalded once the cauldron's milk had its hold, hot or cooled since.
     M.recordCarry(item, item:getModData()[M.CARRY_KEY], fill.hadMl, fill.hadC, fill.ml, fill.tempC, fill.now, M.held(fill.held))
     return true
 end)
@@ -927,7 +927,7 @@ function M.crockMilkRefusal(celsius)
     if celsius > M.CROCK_HOT_C then return "TooHot" end
 end
 
--- Why ml of milk at celsius, from the copper or a container, can't load the crock, or nil if it can.
+-- Why ml of milk at celsius, from the cauldron or a container, can't load the crock, or nil if it can.
 function M.crockLoadRefusal(ml, celsius)
     if ml < M.CROCK_LOAD_ML - 0.5 then return "TooLittle" end
     return M.crockMilkRefusal(celsius)
