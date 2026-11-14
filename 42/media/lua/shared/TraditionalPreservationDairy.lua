@@ -183,7 +183,7 @@ M.SENSITIVITY = 1
 
 M.PLACES = { "Open", "Covered", "Sheltered", "Loft", "Basement", M.HEARTH, M.EMBERS }
 
-M.placeTemperature = Hearth.placeTemperature
+M.placeTemperature = Weather.placeTemperature
 M.placeOf = Hearth.placeOf
 M.noteFire = Hearth.noteFire
 M.hearthsNear = Hearth.hearthsNear
@@ -548,10 +548,11 @@ end
 
 -- Hearth cauldron: the rules are TP Core's; these are milk's.
 
--- Hours until the cauldron is hot if the fire burns on; 0 if it is already, nil if it holds no milk.
-function M.hoursToHot(cauldron)
+-- Hours until the cauldron is hot if the fire burns on; 0 if it is already, nil if it holds no milk or the fire is
+-- banked.
+function M.hoursToHot(cauldron, banked)
     if not M.MILKS[cauldron.fluid] then return nil end
-    return Hearth.hoursToHot(cauldron)
+    return Hearth.hoursToHot(cauldron, banked)
 end
 
 function M.cauldronHot(cauldron)
@@ -906,7 +907,7 @@ end)
 
 -- The ledger keeps totals for the weather's places only, so time by a fire counts by the clock (Hearth.catchUp).
 local function markCrock(crock, ledger)
-    crock.marks = Hearth.mark({}, ledger, CROCK_KIND)
+    crock.marks = Weather.mark({}, ledger, CROCK_KIND)
 end
 
 function M.startCrock(crock, ledger)

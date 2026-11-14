@@ -1,6 +1,7 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- **Refactor** (2026-11-14, with TP Core's Hearth.lua split): the place temperature and the crock's marks come from `Weather` (TP Core dropped the `Hearth.placeTemperature` and `Hearth.mark` aliases); `M.hoursToHot(cauldron, banked)` passes banked on to `Hearth.hoursToHot`. Nothing changes in game; tests and golden results unchanged.
 - **Refactor** (2026-11-14, with TP Core's scalded-into-states fold): milk's spec names scalded milk as a state made by heat (`states = { Scalded = { fluids = M.SCALDED_MILKS, heat = true } }`, `M.SCALDED_STATE`) in place of its `scalded` field; `TPD.ages()` asks `FluidAgeing.inState`. The carried-milk record (`tpdCarry`) is unchanged. Nothing changes in game; tests and golden results unchanged.
 - **Refactor** (2026-11-14, with TP Core's copper-to-cauldron rename): the code reads TP Core's new names (`Hearth.CAULDRON`, `Hearth.cauldronState`, `CAULDRON_ML`), its own say cauldron (`M.cauldronHot`, `M.cauldronScalded`, `M.cauldronToPot`, `TPStarterCrock.cauldronReady`, the `CauldronNoMilk`, `CauldronNotHot`, `CauldronNotHeld` keys). Nothing changes in game; tests and golden results unchanged. The mod list's description and guide 5's loop diagram say the Forged Cauldron (were "a Hearth's copper", "HEARTH'S COPPER").
 - **Refactor** (2026-11-14, with TP Core's FluidAgeing refactor): the carried-milk record's `steamed` field from test builds is no longer read (nothing released wrote it). Nothing else changes.
