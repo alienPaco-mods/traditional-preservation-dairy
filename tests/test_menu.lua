@@ -39,6 +39,10 @@ end
 require "TraditionalPreservationDairy"
 local M = TraditionalPreservationDairy
 local Hearth = require "TraditionalPreservationCore/Hearth"
+-- The World runs here, as in single player: the menus bring each station up to now through it.
+function isClient() return false end
+MapObjects = { OnLoadWithSprite = function() end }
+dofile("42/media/lua/server/TraditionalPreservationDairyWorld.lua")
 dofile("42/media/lua/client/TraditionalPreservationDairyUI.lua")
 -- The core's Hearth menu listens too; Dairy's is the last one added.
 local handlers = H.handlers.OnFillWorldObjectContextMenu
@@ -60,6 +64,11 @@ local function tile(x, y, class, sprite, modData)
         isLit = function() return false end,
         getFuelAmount = function() return 0 end,
         getName = function() return nil end,
+        -- What the World's redraw asks of a built station.
+        isBlockAllTheSquare = function() return false end,
+        isCanPassThrough = function() return true end,
+        clearAttachedAnimSprite = function() end,
+        addAttachedAnimSpriteByName = function() end,
     }
     ground[x .. "," .. y] = { object }
     return object
@@ -223,10 +232,39 @@ ui.queued = {}
 rows[1].onSelect(character, unpack(rows[1].args))
 check("choosing it queues the clabber with that container", #ui.queued == 1 and ui.queued[1].Type == "TPStarterCrock"
     and ui.queued[1].mode == "clabber" and ui.queued[1].item == ui.carried[1])
-check("a crock already started offers no clabber", named(open(crock(5, { stage = "Cultivating", done = 0 }))[1], CLABBER) == nil)
+local started = {}
+M.startCrock(started, M.getLedger())
+check("a crock already started offers no clabber", named(open(crock(5, started))[1], CLABBER) == nil)
 ui.carried = {}
 
 check("no text would make the game's formatter warn" .. (H.textWarnings[1] and " (" .. table.concat(H.textWarnings, "; ") .. ")" or ""),
     #H.textWarnings == 0)
+
+-- Fixed 2026-11-14: a feed that empties its container forgets the milk's age (FluidAgeing's record), as a clabber does
+local FluidAgeing = require "TraditionalPreservationCore/FluidAgeing"
+local function feedJug(litres)
+    local container = { litres = litres }
+    function container:isEmpty() return self.litres <= 0 end
+    function container:getAmount() return self.litres end
+    function container:removeFluid(l) self.litres = self.litres - l end
+    function container:getSpecificFluidAmount(fluid) return fluid == "CowMilk" and self.litres or 0 end
+    local modData = { [FluidAgeing.KEY] = { kind = M.MILK_KIND, age = 30 } }
+    return { getFluidContainer = function() return container end, getModData = function() return modData end }, modData
+end
+local function feed(litres)
+    local station = crock(5)
+    M.clabberCrock(M.crockOf(station))
+    local jug, modData = feedJug(litres)
+    TPStarterCrock:new(character, station, "feed", jug):complete()
+    return M.crockStage(M.crockOf(station)), modData[FluidAgeing.KEY]
+end
+-- Fluids by name, so FluidAgeing sees the jug's milk.
+local realGet = Fluid.Get
+Fluid.Get = function(name) return name end
+local stage, record = feed(M.CROCK_FEED_ML / 1000)
+check("a feed that empties the jug starts the crock and forgets the milk's age", stage == "Developing" and record == nil)
+stage, record = feed(1)
+check("a jug with milk left keeps its age", stage == "Developing" and record ~= nil)
+Fluid.Get = realGet
 
 H.done()

@@ -13,18 +13,14 @@ local Hearth = require "TraditionalPreservationCore/Hearth"
 local Action = require "TraditionalPreservationCore/Action"
 local FluidAgeing = require "TraditionalPreservationCore/FluidAgeing"
 
+-- Brought up to the minute first, so hot milk mixes with the pot as it is now.
 local function state(self)
-    local World = TraditionalPreservationDairyWorld
-    -- Brought up to the minute first, so hot milk mixes with the pot as it is now.
-    if World then
-        World.refresh(self.station)
-        return World.incubatorState(self.station)
-    end
-    return M.stateOf(self.station:getModData().movableData or {}, M.INCUBATOR_KEY)
+    TraditionalPreservationDairyWorld.refresh(self.station)
+    return TraditionalPreservationDairyWorld.incubatorState(self.station)
 end
 
 local function canDo(self)
-    local batch = M.stateOf(self.station:getModData().movableData or {}, M.INCUBATOR_KEY)
+    local batch = M.incubatorOf(self.station)
     if self.mode == "hearth" then
         return M.cauldronScalded(Hearth.cauldronState(self.hearth:getModData())) and M.milkRoom(batch, 1) > 0
     elseif self.mode == "carried" then
@@ -62,11 +58,6 @@ function TPYoghurtIncubator:start()
     self:setActionAnim("Loot")
 end
 
-local function removeItem(item)
-    local container = item:getContainer()
-    if container then container:DoRemoveItem(item) end
-end
-
 local function give(self, fullType)
     return self.character:getInventory():AddItem(fullType)
 end
@@ -76,7 +67,7 @@ local COMPLETE = {}
 
 function COMPLETE.hearth(self, batch, now)
     M.cauldronToPot(Hearth.cauldronOf(self.hearth), batch, now)
-    if Hearth.World then Hearth.World.refresh(self.hearth) end
+    Hearth.redraw(self.hearth)
 end
 
 function COMPLETE.carried(self, batch, now)
@@ -95,8 +86,8 @@ function COMPLETE.starter(self, batch)
     local fullType = self.item:getFullType()
     if M.addStarter(batch, M.STARTERS[fullType]) then
         if fullType == M.YOGHURT_JAR then return M.takeJarPortion(self.item) end
-        removeItem(self.item)
-        if fullType == "Base.Yoghurt" then give(self, M.EMPTY_CUP) end
+        Action.removeItem(self.item)
+        if fullType == M.YOGHURT then give(self, M.EMPTY_CUP) end
     end
 end
 
@@ -104,8 +95,6 @@ function COMPLETE.pourOut(self, batch, now)
     local container = self.item:getFluidContainer()
     local ml, tempC, parts = M.pourOut(batch, math.floor(container:getCapacity() * 1000))
     if ml > 0 then
-        -- A pot from before the milk's kind was kept gives cow's milk.
-        if not M.hasAny(parts) then parts = { CowMilk = ml } end
         FluidAgeing.clearIfEmpty(self.item)
         for name, part in pairs(parts) do container:addFluid(name, part / 1000) end
         -- Everything in the pot came in scalded, so it goes out scalded.
@@ -117,9 +106,9 @@ end
 function COMPLETE.cup(self, batch, now)
     local ml, age, portion = M.collectCup(batch, now)
     if ml > 0 then
-        removeItem(self.item)
+        Action.removeItem(self.item)
         -- The milk's food; the pot's last cup may be short, and holds only what it took.
-        local yogurt = give(self, "Base.Yoghurt")
+        local yogurt = give(self, M.YOGHURT)
         yogurt:setAge(age)
         M.setPortions(yogurt, ml / M.CUP_ML, 1, portion)
         self.character:getXp():AddXP(Perks.Cooking, M.COLLECT_XP * ml / 1000)
@@ -131,7 +120,7 @@ function COMPLETE.collect(self, batch, now)
     local ml, age, portion = M.collectJar(batch, now, jarType)
     if ml > 0 then
         local jar = give(self, M.YOGHURT_JAR)
-        removeItem(self.item)
+        Action.removeItem(self.item)
         M.fillJar(jar, jarType, ml, age, portion)
         self.character:getXp():AddXP(Perks.Cooking, M.COLLECT_XP * ml / 1000)
     end
@@ -139,7 +128,7 @@ end
 
 function TPYoghurtIncubator:complete()
     COMPLETE[self.mode](self, state(self), getGameTime():getWorldAgeHours())
-    if TraditionalPreservationDairyWorld then TraditionalPreservationDairyWorld.refresh(self.station) end
+    TraditionalPreservationDairyWorld.refresh(self.station)
     return true
 end
 
@@ -152,12 +141,12 @@ function TPYoghurtIncubator:getDuration()
     local litres = 0
     if self.mode == "hearth" then
         local cauldron = Hearth.cauldronState(self.hearth:getModData())
-        local batch = M.stateOf(self.station:getModData().movableData or {}, M.INCUBATOR_KEY)
+        local batch = M.incubatorOf(self.station)
         litres = math.min(cauldron.ml or 0, M.milkRoom(batch, cauldron.ml or 0)) / 1000
     end
     if self.mode == "pourOut" and container then litres = container:getCapacity() end
     if self.mode == "carried" and container then litres = container:getAmount() end
-    if self.mode == "collect" then litres = (M.JAR_ML[self.item:getFullType()] or M.OLD_JAR_ML) / 1000 end
+    if self.mode == "collect" then litres = M.JAR_ML[self.item:getFullType()] / 1000 end
     if self.mode == "cup" then litres = M.CUP_ML / 1000 end
     return Action.pourDuration(self.character, litres, 5)
 end

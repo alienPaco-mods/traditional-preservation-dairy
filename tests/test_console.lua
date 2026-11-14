@@ -11,13 +11,16 @@ function getClimateManager()
     return { getTemperature = function() return 18 end, getHumidity = function() return 50 end }
 end
 SandboxVars = { TraditionalPreservationDairy = { IncubationHours = 6 } }
--- Nothing is built near the player, and no station is tracked (the World isn't loaded).
+-- Nothing is built near the player, and no station is tracked.
 function getCell() return { getGridSquare = function() return nil end } end
 local player = H.player({ z = -1 })
 function getPlayer() return player end
 
 dofile("42/media/lua/shared/TraditionalPreservationDairy.lua")
 local M = TraditionalPreservationDairy
+function isClient() return false end
+MapObjects = { OnLoadWithSprite = function() end }
+dofile("42/media/lua/server/TraditionalPreservationDairyWorld.lua")
 local TPD, run = H.checkConsole("42/media/lua/client/TraditionalPreservationDairyDev.lua", "TPD")
 
 check("weather names every place", (function()

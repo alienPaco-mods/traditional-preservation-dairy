@@ -2,19 +2,17 @@
 -- is eaten from in portions. ReplaceOnUse covers eating and the evolved Oatmeal (both go through Use()); no vanilla
 -- craft takes a Yogurt, so Salt's ISHandcraftAction wrap isn't needed here.
 -- A jar's portions are its food values (a portion each of its milk's, kept in modData `tpdPortion`; vanilla
--- Yogurt's for a jar from before C23), so vanilla's own Eat, Eat Half and
+-- Yogurt's for a jar never filled at a pot), so vanilla's own Eat, Eat Half and
 -- Eat Quarter work on it too; the eat action is hooked only to relabel the jar and give the empty one back (TP
 -- Core's Portions, which Fish & Meat's crock uses too).
 require "TraditionalPreservationDairy"
 local Portions = require "TraditionalPreservationCore/Portions"
 local M = TraditionalPreservationDairy
 
-local YOGHURT = "Base.Yoghurt"
-
 -- Shop yogurt is cow's milk yogurt too (C23): new Yoghurts get a cow's milk portion's food, as script units
 -- (hunger x100). Ones already in a save keep what they were made with; the engine saves each item's values.
 function M.applyYoghurtReplacement()
-    local yogurt = ScriptManager.instance:getItem(YOGHURT)
+    local yogurt = ScriptManager.instance:getItem(M.YOGHURT)
     if not yogurt then return end
     yogurt:DoParam("ReplaceOnUse = " .. M.EMPTY_CUP)
     local cow = M.portionFood({ fluid = "CowMilk", ml = M.CUP_ML })
@@ -38,13 +36,13 @@ function M.jarPortion(jar)
     return jar:getModData().tpdPortion or M.PORTION
 end
 
--- Portions left in a Jar of Yogurt. A jar from before F4 (no tpdFood) holds no food values yet: it gets its
--- cups' worth, once. A clay jar filled before the icon fix gets its look here too.
+-- Portions left in a Jar of Yogurt. A jar never filled at a pot (a debug spawn: its script holds no food) gets a
+-- glass jar's worth (SPAWNED_JAR_ML) once.
 function M.jarPortions(jar)
     local data = jar:getModData()
-    if not data.customInventoryIcon then data.customInventoryIcon = M.JAR_ICONS[data.tpdJar] end
     if not data.tpdFood then
-        M.setPortions(jar, M.cupsLeft(data), M.cupsFor(data.tpdMl or M.OLD_JAR_ML))
+        local portions = M.SPAWNED_JAR_ML / M.CUP_ML
+        M.setPortions(jar, portions, portions)
         data.tpdFood = true
     end
     return M.portionsIn(jar:getHungChange(), M.jarPortion(jar))
@@ -66,12 +64,11 @@ function M.fillJar(jar, jarType, ml, age, portion)
     jar:setAge(age)
     local data = jar:getModData()
     data.tpdJar = jarType
-    data.tpdMl = ml
     data.tpdFood = true
     data.tpdPortion = portion
     data.customInventoryIcon = M.JAR_ICONS[jarType]
     -- The last jar from a pot may be part-full: it is a full jar for eating shares, short of portions.
-    M.setPortions(jar, ml / M.CUP_ML, (M.JAR_ML[jarType] or M.OLD_JAR_ML) / M.CUP_ML, portion)
+    M.setPortions(jar, ml / M.CUP_ML, M.JAR_ML[jarType] / M.CUP_ML, portion)
     M.labelJar(jar)
 end
 
@@ -99,5 +96,5 @@ function M.afterJarUse(jar, container)
 end
 
 -- Eaten through vanilla's eat action (TP Core's Portions, the one wrap of it): the jar's portions are read first,
--- as a jar from before F4 gets its food values then, and afterwards it is relabelled or gives its empty jar back.
+-- as a spawned jar gets its food values then, and afterwards it is relabelled or gives its empty jar back.
 Portions.onEat(M.YOGHURT_JAR, function(jar) M.jarPortions(jar) end, function(jar, container) M.afterJarUse(jar, container) end)

@@ -75,6 +75,10 @@ M.SENSITIVITY = 0
 M.advanceBatch(shed, 6, 2, 48)
 check("unless temperature sensitivity is off", M.stage(shed) == "Ready")
 M.SENSITIVITY = 1
+-- Fixed 2026-11-14: frozen milk doesn't set on Forgiving either (TP Core's Weather.frozen); above freezing as before
+M.SENSITIVITY = 0.5
+check("frozen milk doesn't set on Forgiving", M.setRate(0) == 0 and M.setRate(-5) == 0 and near(M.setRate(2), 0.5))
+M.SENSITIVITY = 1
 
 -- Collecting
 local now = pot.readyHour + 24
@@ -87,8 +91,6 @@ check("a pot fills the jars it can, in order", M.jarsFor(5000, { "Base.ClayJar",
     and M.jarsFor(5000, { "Base.EmptyJar", "Base.EmptyJar", "Base.ClayJar", "Base.EmptyJar", "Base.EmptyJar" }) == 4
     and M.jarsFor(600, { "Base.EmptyJar", "Base.EmptyJar" }) == 1 and M.jarsFor(0, { "Base.EmptyJar" }) == 0)
 check("a litre fills four cups", M.cupsFor(1000) == 4 and M.cupsFor(250) == 1 and M.cupsFor(600) == 2)
-check("an old jar goes by its cups, older still by its litres", M.cupsLeft({ tpdCups = 3, tpdMl = 1000 }) == 3
-    and M.cupsLeft({ tpdMl = 1000 }) == 4 and M.cupsLeft({ tpdMl = 500 }) == 2 and M.cupsLeft({}) == 4)
 check("a portion is vanilla Yogurt's hunger", near(M.portionsIn(-0.4), 4) and near(M.portionsIn(-0.25), 2.5))
 check("a portion is a share of the full jar", near(M.portionShare(4, 4), 0.25) and near(M.portionShare(10, 10), 0.1)
     and near(M.portionShare(0.5, 10), 0.05) and M.portionShare(1, 0) == 1)
@@ -110,7 +112,6 @@ check("a cow's milk portion is a quarter litre of the milk", near(cow.calories, 
 check("a sheep's milk portion is richer", near(M.portionFood({ fluid = "SheepMilk", ml = 1000 }).calories, 205.75))
 local mixed = M.portionFood({ fluid = "SheepMilk", ml = 4000, parts = { CowMilk = 1000, SheepMilk = 3000 } })
 check("a mixed pot goes by its shares", near(mixed.calories, (615 + 3 * 823) / 16) and near(mixed.hunger, -0.125))
-check("a pot from before the milk's kind was kept is cow's", near(M.portionFood({ ml = 1000 }).calories, 153.75))
 local milkPot = { ml = 5000, readyHour = 10, starter = "Yogurt", incubating = true, fluid = "CowMilk" }
 local total = 0
 while M.stage(milkPot) == "Ready" do

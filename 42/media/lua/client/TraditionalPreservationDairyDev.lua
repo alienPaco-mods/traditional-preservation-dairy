@@ -4,6 +4,7 @@ if not isDebugEnabled() then return end
 
 local M = TraditionalPreservationDairy
 local FluidAgeing = require "TraditionalPreservationCore/FluidAgeing"
+local Station = require "TraditionalPreservationCore/Station"
 TPD = {}
 
 local function say(text) print("[TPD] " .. text) end
@@ -39,8 +40,7 @@ function TPD.here()
 end
 
 local function pots()
-    local World = TraditionalPreservationDairyWorld
-    return World and World.stations() or {}
+    return TraditionalPreservationDairyWorld.stations()
 end
 
 function TPD.pots()
@@ -97,7 +97,8 @@ local JAR_TYPES = { clay = "Base.ClayJar", glazed = "Base.ClayJarGlazed" }
 local GIVES = {
     jar = function(inventory, option)
         local jarType = JAR_TYPES[option] or "Base.EmptyJar"
-        M.fillJar(inventory:AddItem(M.YOGHURT_JAR), jarType, M.JAR_ML[jarType], 0, M.portionFood({}))
+        M.fillJar(inventory:AddItem(M.YOGHURT_JAR), jarType, M.JAR_ML[jarType], 0,
+            M.portionFood({ fluid = "CowMilk", ml = M.CUP_ML }))
     end,
     starter = function(inventory) inventory:AddItem(M.STARTER) end,
     cup = function(inventory) inventory:AddItem(M.EMPTY_CUP) end,
@@ -115,7 +116,7 @@ local KITS = {
     yogurt = {
         about = "a yogurt for a starter, a Clay Jar, a glass jar and four empty yogurt containers",
         give = function(inventory)
-            inventory:AddItem("Base.Yoghurt")
+            inventory:AddItem(M.YOGHURT)
             inventory:AddItem("Base.ClayJar")
             inventory:AddItem("Base.EmptyJar")
             for _ = 1, 4 do inventory:AddItem(M.EMPTY_CUP) end
@@ -151,8 +152,7 @@ function TPD.kit(kind)
 end
 
 local function crocks()
-    local World = TraditionalPreservationDairyWorld
-    return World and World.stations(true) or {}
+    return TraditionalPreservationDairyWorld.stations(true)
 end
 
 function TPD.crocks()
@@ -188,8 +188,6 @@ function TPD.age(hours)
     TPD.pots()
     TPD.crocks()
 end
-
--- What makes a station's tile block: the object's class, its sprite's flags and the square's, within 3 tiles.
 
 -- Every milk container in the player's inventory, brought up to now.
 local function carriedMilk()
@@ -234,27 +232,24 @@ function TPD.sour(hours)
     say(string.format("Aged %d container(s) of milk by %.1f hours. TPD.ages() to see them.", count, hours))
 end
 
+-- What makes a station's tile block: the object's class, its sprite's flags and the square's, within 3 tiles.
+local TILES_RADIUS = 3
+
 function TPD.tiles()
-    local here = getPlayer():getSquare()
-    for dx = -3, 3 do
-        for dy = -3, 3 do
-            local square = getCell():getGridSquare(here:getX() + dx, here:getY() + dy, here:getZ())
-            local objects = square and square:getObjects()
-            for i = 0, (objects and objects:size() or 0) - 1 do
-                local object = objects:get(i)
-                if M.isIncubator(object) or M.isCrock(object) or M.isHearth(object) then
-                    local props, squareProps = object:getSprite():getProperties(), square:getProperties()
-                    local attached = object:getAttachedAnimSprite()
-                    local blocks = instanceof(object, "IsoThumpable") and string.format(" blockAll %s passThrough %s",
-                        tostring(object:isBlockAllTheSquare()), tostring(object:isCanPassThrough())) or ""
-                    say(string.format("%d,%d %s%s %s: sprite solid %s solidtrans %s; square solid %s solidtrans %s; attached %d",
-                        square:getX(), square:getY(), object:getClass():getSimpleName(), blocks, object:getSprite():getName(),
-                        tostring(props:has(IsoFlagType.solid)), tostring(props:has(IsoFlagType.solidtrans)),
-                        tostring(squareProps:has(IsoFlagType.solid)), tostring(squareProps:has(IsoFlagType.solidtrans)),
-                        attached and attached:size() or 0))
-                end
-            end
-        end
+    local stations = Station.near(getPlayer():getSquare(), TILES_RADIUS, function(object)
+        return M.isIncubator(object) or M.isCrock(object) or M.isHearth(object)
+    end)
+    for _, object in ipairs(stations) do
+        local square = object:getSquare()
+        local props, squareProps = object:getSprite():getProperties(), square:getProperties()
+        local attached = object:getAttachedAnimSprite()
+        local blocks = instanceof(object, "IsoThumpable") and string.format(" blockAll %s passThrough %s",
+            tostring(object:isBlockAllTheSquare()), tostring(object:isCanPassThrough())) or ""
+        say(string.format("%d,%d %s%s %s: sprite solid %s solidtrans %s; square solid %s solidtrans %s; attached %d",
+            square:getX(), square:getY(), object:getClass():getSimpleName(), blocks, object:getSprite():getName(),
+            tostring(props:has(IsoFlagType.solid)), tostring(props:has(IsoFlagType.solidtrans)),
+            tostring(squareProps:has(IsoFlagType.solid)), tostring(squareProps:has(IsoFlagType.solidtrans)),
+            attached and attached:size() or 0))
     end
 end
 

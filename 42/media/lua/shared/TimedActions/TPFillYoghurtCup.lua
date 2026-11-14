@@ -21,17 +21,12 @@ function TPFillYoghurtCup:start()
     self:setActionAnim("Loot")
 end
 
-local function removeItem(item)
-    local container = item:getContainer()
-    if container then container:DoRemoveItem(item) end
-end
-
 function TPFillYoghurtCup:complete()
     local inventory = self.character:getInventory()
     local left = M.jarPortions(self.jar)
     local take = math.min(left, 1)
-    removeItem(self.cup)
-    local yogurt = inventory:AddItem("Base.Yoghurt")
+    Action.removeItem(self.cup)
+    local yogurt = inventory:AddItem(M.YOGHURT)
     yogurt:setAge(self.jar:getAge())
     M.setPortions(yogurt, take, 1, M.jarPortion(self.jar))
     self.jar:multiplyFoodValues((left - take) / left)

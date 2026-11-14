@@ -16,6 +16,8 @@ local Recipes = require "TraditionalPreservationCore/Recipes"
 local Container = require "TraditionalPreservationCore/Container"
 local Portions = require "TraditionalPreservationCore/Portions"
 local Tiles = require "TraditionalPreservationDairy/Tiles"
+-- Carried milk (Carry) and wrapped pots, jars and buckets (Wrap) are in their own files, required at the end; their
+-- functions are on M as well, so callers name M only.
 
 -- Save keys: never rename these once the mod is out (DEVGUIDE, "Rules that keep saves and the game happy").
 M.MOD_DATA_KEY = "TraditionalPreservationDairy"
@@ -25,6 +27,14 @@ M.MOD_DATA_KEY = "TraditionalPreservationDairy"
 -- Core's (TraditionalPreservationCore/Hearth).
 M.INCUBATOR_KEY = "tpdIncubator"
 M.CROCK_KEY = "tpdCrock"
+-- What an emptied pot or crock forgets (place, at, fireUntil and under stay: where it stands).
+local MILK_FIELDS = { "ml", "tempC", "last", "fluid", "parts" }
+local BATCH_FIELDS = { "ml", "tempC", "starter", "incubating", "wrapHour", "done", "last", "readyHour", "fluid", "parts" }
+local CROCK_FIELDS = { "stage", "done", "marks" }
+
+local function clear(state, fields)
+    for _, key in ipairs(fields) do state[key] = nil end
+end
 
 -- Incubator
 M.CAPACITY_ML = 5000
@@ -50,14 +60,6 @@ M.HOT_C = Hearth.HOT_C        -- milk this hot pours from the cauldron into a po
 -- changes the whey proteins and gives a firm set. The cauldron counts it (Hearth.heldHours), a pot on a stove or a
 -- fire too (TP Core's FluidAgeing, scaldHold).
 M.SCALD_HOLD_HOURS = 1 / 3
-
--- Carried milk: a container filled from the cauldron, taken hot off a stove or a fire, or poured into from one of those
--- keeps a record of its heat in its item modData (vanilla's item heat drops to the room within seconds of leaving
--- the heat). An open pot or bucket cools in minutes; the Wrapped Yogurt Pot (a clay pot in its cloth) in hours.
-M.CARRY_KEY = "tpdCarry"      -- { ml, c, hour, scalded }
-M.WRAPPED_POT_TAU = 4.0       -- hours, for 5 L: 85 to 70 C in about an hour at 20 C
-M.OPEN_TAU = 0.25             -- hours, for 5 L: 85 to 45 C in about 15 minutes at 20 C, to 35 C in about 8 more
-M.STAMP_C = 30                -- milk taken off the heat warmer than this keeps a record of it
 
 -- Share of full setting speed at the milk's own temperature. Thermophilic cultures: best at 40 to 45 C,
 -- slow below 35, stalled below about 18; past 50 the heat starts to kill them.
@@ -112,8 +114,8 @@ local MILK_CURVE = { { 0, 0 }, { 2, 0.12 }, { 4, 0.19 }, { 10, 0.33 }, { 15, 0.5
 M.CUPS_PER_LITRE = 4          -- 8 oz cups
 M.CUP_ML = 1000 / M.CUPS_PER_LITRE   -- an Empty Yogurt Container, and one portion from a jar
 M.CUP_KG = 0.25               -- a portion's weight
--- One portion's food: vanilla Yogurt's (hunger as the engine keeps it, -10 in the script). Jars and cups from
--- before C23 keep it; new yogurt keeps its milk's food instead (MILK_FOOD).
+-- One portion's food: vanilla Yogurt's (hunger as the engine keeps it, -10 in the script), for a jar never filled at a
+-- pot (a debug spawn: M.jarPortions); yogurt from a pot keeps its milk's food instead (MILK_FOOD).
 M.PORTION = { hunger = -0.1, calories = 30, carbohydrates = 1, lipids = 1, proteins = 5 }
 -- A litre of each milk's food, as vanilla's fluid scripts state it (hunger as the engine keeps it, -50 there).
 -- Yogurt is the milk set, so a portion is a quarter of this: eating it is worth drinking the milk.
@@ -131,13 +133,14 @@ M.MILKS = { CowMilk = true, SheepMilk = true, AnimalMilk = true }
 for milk, scalded in pairs(M.SCALDED_MILKS) do M.MILKS[scalded] = true end
 Hearth.blend("CowMilk", "SheepMilk", "AnimalMilk", "ScaldedCowMilk", "ScaldedSheepMilk", "ScaldedAnimalMilk")
 M.STARTER = "TraditionalPreservationDairy.ActiveYoghurtStarter"
+M.YOGHURT = "Base.Yoghurt"    -- vanilla's cup of Yogurt
 -- A Jar of Yogurt gives one portion, as much as a Yogurt cup holds, and keeps the rest (M.isStarter).
-M.STARTERS = { ["Base.Yoghurt"] = "Yogurt", [M.STARTER] = "Starter", ["TraditionalPreservationDairy.JarOfYoghurt"] = "Yogurt" }
+M.STARTERS = { [M.YOGHURT] = "Yogurt", [M.STARTER] = "Starter", ["TraditionalPreservationDairy.JarOfYoghurt"] = "Yogurt" }
 M.EMPTY_CUP = "TraditionalPreservationDairy.EmptyYoghurtContainer"
 -- The jars yogurt is collected into, with the ml each holds (vanilla capacities). Clay Jars need Pottery 5 and
 -- are rare loot; the glass canning jar is common.
 M.JAR_ML = { ["Base.EmptyJar"] = 1000, ["Base.ClayJar"] = 2500, ["Base.ClayJarGlazed"] = 2500 }
-M.OLD_JAR_ML = 1000           -- every jar took a litre before F4
+M.SPAWNED_JAR_ML = 1000       -- a Jar of Yogurt never filled at a pot holds a glass jar's worth
 M.YOGHURT_JAR = "TraditionalPreservationDairy.JarOfYoghurt"
 -- One item whatever the jar; a clay one changes only its icon, through modData `customInventoryIcon` (read by
 -- InventoryItem.getTexture, saved with the item). Full paths: a bare "Item_X" name finds a mod texture only
@@ -165,6 +168,12 @@ function M.milkIn(container)
     return name, parts
 end
 
+-- True if the item holds at least ml of plain milk.
+function M.hasMilk(item, ml)
+    local container = item and item:getFluidContainer()
+    return M.milkIn(container) ~= nil and M.mlIn(container) >= ml - 0.5
+end
+
 -- Only empty containers take milk or yogurt out, so nothing is ever topped up into a mixture (TP Core's).
 M.isEmptyContainer = Container.isEmptyVessel
 
@@ -181,7 +190,11 @@ end
 
 M.SENSITIVITY = 1
 
-M.PLACES = { "Open", "Covered", "Sheltered", "Loft", "Basement", M.HEARTH, M.EMBERS }
+-- Core's places, then by a fire and by banked embers.
+M.PLACES = {}
+for _, place in ipairs(Weather.PLACES) do table.insert(M.PLACES, place) end
+table.insert(M.PLACES, M.HEARTH)
+table.insert(M.PLACES, M.EMBERS)
 
 M.placeTemperature = Weather.placeTemperature
 M.placeOf = Hearth.placeOf
@@ -203,8 +216,9 @@ end
 
 M.cool = Hearth.cool
 
+-- Frozen milk doesn't set (TP Core's Weather.frozen), whatever the sensitivity.
 function M.setRate(milkC)
-    return Weather.scaled(Weather.curve(SET_CURVE, milkC), M.SENSITIVITY, 0)
+    return Weather.rate(SET_CURVE, milkC, M.SENSITIVITY)
 end
 
 -- Frozen the crock's culture pauses (TP Core's Weather.frozen), and goes on once thawed.
@@ -343,9 +357,7 @@ function M.pourOut(batch, maxMl)
     local ml, tempC = math.min(batch.ml, maxMl or batch.ml), batch.tempC
     local parts = Hearth.partsOf(batch, ml)
     batch.ml = batch.ml - ml
-    if batch.ml <= 0 then
-        for _, key in ipairs({ "ml", "tempC", "last", "fluid", "parts" }) do batch[key] = nil end
-    end
+    if batch.ml <= 0 then clear(batch, MILK_FIELDS) end
     return ml, tempC, parts
 end
 
@@ -381,8 +393,27 @@ end
 
 -- By a fire until it burns out (fireUntil), then the place under it.
 local function placeAt(state, place, hour)
-    if Hearth.isFirePlace(place) and state.fireUntil and hour >= state.fireUntil then return state.under or "Sheltered" end
+    if Hearth.isFirePlace(place) and state.fireUntil and hour >= state.fireUntil then return state.under or Weather.DEFAULT_PLACE end
     return place
+end
+
+-- Where a stretch from t that would end at stop ends instead: when the fire it stands by burns out, if that is sooner.
+local function fireStop(state, place, t, stop)
+    if Hearth.isFirePlace(place) and state.fireUntil and t < state.fireUntil then return math.min(stop, state.fireUntil) end
+    return stop
+end
+
+-- Walks a pot or carried milk (state, with its fireUntil and under) from hour t to now, at place: one stretch an hour,
+-- broken where the fire burns out, each at the history's reading for that hour (the ledger's now where it has none).
+-- step(from, to, placeC) runs each stretch.
+function M.walkHours(state, place, t, now, history, ledger, step)
+    while t < now do
+        local hour = math.floor(t)
+        local stop = fireStop(state, place, t, math.min(hour + 1, now))
+        local here = placeAt(state, place, t)
+        step(t, stop, M.pastTemperature(history, hour, here) or M.placeTemperature(ledger, here))
+        t = stop
+    end
 end
 
 -- Runs the pot for a long spell at one place temperature. Ten-minute steps only while a started pot is still
@@ -420,19 +451,13 @@ function M.catchUp(batch, now, place, history, ledger)
     local t = batch.last or now
     local kept = math.floor(now) - M.HISTORY_HOURS + 1
     while t < kept do
-        local stop = kept
-        if Hearth.isFirePlace(place) and batch.fireUntil and t < batch.fireUntil then stop = math.min(stop, batch.fireUntil) end
+        local stop = fireStop(batch, place, t, kept)
         M.advanceSpell(batch, stop - t, M.placeTemperature(ledger, placeAt(batch, place, t)), t)
         t = stop
     end
-    while t < now do
-        local hour = math.floor(t)
-        local stop = math.min(hour + 1, now)
-        if Hearth.isFirePlace(place) and batch.fireUntil and t < batch.fireUntil then stop = math.min(stop, batch.fireUntil) end
-        local here = placeAt(batch, place, t)
-        M.advanceBatch(batch, stop - t, M.pastTemperature(history, hour, here) or M.placeTemperature(ledger, here), t)
-        t = stop
-    end
+    M.walkHours(batch, place, t, now, history, ledger, function(from, to, placeC)
+        M.advanceBatch(batch, to - from, placeC, from)
+    end)
     batch.last = now
 end
 
@@ -441,17 +466,9 @@ function M.ageDays(batch, now)
     return batch.readyHour and math.max(now - batch.readyHour, 0) / 24 or 0
 end
 
--- One portion's food from the pot's milk, by its shares of each kind. A pot from before the milk's kind was kept
--- is cow's milk, as Pour Out treats it.
--- True if a table has anything in it (the game's Lua has no next()).
-function M.hasAny(t)
-    for _ in pairs(t) do return true end
-    return false
-end
-
+-- One portion's food from the pot's milk, by its shares of each kind.
 function M.portionFood(batch)
     local parts = Hearth.partsOf(batch, 1)
-    if not M.hasAny(parts) then parts = { CowMilk = 1 } end
     local food = {}
     for key in pairs(M.PORTION) do food[key] = 0 end
     for name, share in pairs(parts) do
@@ -468,17 +485,13 @@ local function collect(batch, now, want)
     local ml = math.min(want, batch.ml)
     local age, food = M.ageDays(batch, now), M.portionFood(batch)
     batch.ml = batch.ml - ml
-    if batch.ml <= 0 then
-        for _, key in ipairs({ "ml", "tempC", "starter", "incubating", "wrapHour", "done", "last", "readyHour", "fluid", "parts" }) do
-            batch[key] = nil
-        end
-    end
+    if batch.ml <= 0 then clear(batch, BATCH_FIELDS) end
     return ml, age, food
 end
 
 -- Fills one jar of the given type to its size.
 function M.collectJar(batch, now, jarType)
-    return collect(batch, now, M.JAR_ML[jarType] or M.OLD_JAR_ML)
+    return collect(batch, now, M.JAR_ML[jarType])
 end
 
 -- How many of the given jars (types, in order) the ml fill: the last may be part-full.
@@ -486,7 +499,7 @@ function M.jarsFor(ml, jarTypes)
     local count = 0
     for _, jarType in ipairs(jarTypes) do
         if ml <= 0 then break end
-        ml = ml - (M.JAR_ML[jarType] or M.OLD_JAR_ML)
+        ml = ml - M.JAR_ML[jarType]
         count = count + 1
     end
     return count
@@ -505,11 +518,6 @@ end
 
 function M.cupsFor(ml)
     return math.max(math.floor(ml / 1000 * M.CUPS_PER_LITRE + 0.5), 1)
-end
-
--- Cups in a Jar of Yogurt from before F4 (eaten by the cup only), from its modData; older still, by its litres.
-function M.cupsLeft(jarData)
-    return jarData.tpdCups or M.cupsFor(jarData.tpdMl or M.OLD_JAR_ML)
 end
 
 -- Portions left in a Jar of Yogurt, from the hunger it still holds and one portion's (vanilla Yogurt's if not
@@ -585,323 +593,7 @@ function M.cauldronToPot(cauldron, batch, now)
     return ml
 end
 
--- Carried milk
-
-function M.carryTau(ml, open)
-    return (open and M.OPEN_TAU or M.WRAPPED_POT_TAU) * (math.max(ml, Hearth.FLOOR_ML) / M.CAPACITY_ML) ^ (1 / 3)
-end
-
--- Records ml of milk at tempC going into a container that already holds hadMl at hadC. The milk stays scalded
--- only if the new milk is and everything already in it was recorded as scalded. Returns the new record.
-function M.carryIn(carry, hadMl, hadC, ml, tempC, now, scalded)
-    local kept = hadMl <= 0 or M.isScalded(carry, hadMl)
-    local record = {
-        ml = hadMl + ml,
-        c = hadMl > 0 and (hadC * hadMl + tempC * ml) / (hadMl + ml) or tempC,
-        hour = now,
-        scalded = (scalded and kept) or nil,
-    }
-    if carry and hadMl > 0 then record.place, record.fireUntil, record.under = carry.place, carry.fireUntil, carry.under end
-    return record
-end
-
--- Takes ml out of the record; nil once it is empty.
-function M.carryOut(carry, ml)
-    if not carry then return nil end
-    carry.ml = carry.ml - ml
-    if carry.ml <= 0.5 then return nil end
-    return carry
-end
-
--- True if the container's ml is all recorded, scalded milk. Taking milk out (vanilla's pour or drink too) is
--- harmless; holding more than the record means milk was added some other way, which voids it.
-function M.isScalded(carry, ml)
-    return carry ~= nil and carry.scalded == true and ml <= (carry.ml or 0) + 0.5
-end
-
--- True if parts ({ name = ml }) is all scalded milk (TP Core's FluidAgeing names it so once it has been at 85 C, in
--- the cauldron, on a stove or a fire, or poured out of a store carton).
-function M.allScalded(parts)
-    local any = false
-    for name in pairs(parts or {}) do
-        if not M.SCALDED[name] then return false end
-        any = true
-    end
-    return any
-end
-
--- Shrinks the record to ml once milk has left by vanilla's menus, so milk added later can't hide in the gap.
--- Call it whenever a container is looked at (menus, tooltips). Returns the record, nil once the container is empty.
-function M.noteCarry(carry, ml)
-    if not carry then return nil end
-    if ml <= 0.5 then return nil end
-    if ml < carry.ml then carry.ml = ml end
-    return carry
-end
-
--- The heat of carried milk, brought up to now at placeC (the record is updated); open for anything but a Wrapped Pot.
-function M.wrappedC(carry, now, placeC, open)
-    if now > carry.hour then
-        carry.c = M.cool(carry.c, placeC, now - carry.hour, M.carryTau(carry.ml, open))
-        carry.hour = now
-    end
-    return carry.c
-end
-
--- Why ml of carried milk can't go into the pot, or nil if it can: it must be scalded (parts, by name) or recorded as
--- scalded (when the sandbox has milk never going off, nothing is renamed).
-function M.carriedRefusal(carry, ml, parts)
-    if not M.allScalded(parts) and not M.isScalded(carry, ml) then return "NotScalded" end
-end
-
--- The record on a carried item
-
-M.WRAPPED_POT = "TraditionalPreservationDairy.WrappedYoghurtPot"
-
--- Wrapping: a vanilla pot, jar or bucket, empty, wrapped in a Sheet tied with Twine, keeps milk hot as the Wrapped
--- Yogurt Pot does, and keeps its own capacity. The mark is the fluid container's own name, which the game saves and
--- the inventory shows ("Pot" becomes "TPDWrappedPot", "Wrapped Pot"); the old name and rain factor are kept in
--- modData WRAP_KEY. A wrapped item seen in a hot cooking container burns its wrap (World).
-M.WRAP_KEY = "tpdWrapped"     -- { name, rain }
-M.WRAPPABLE = {
-    ["Base.Pot"] = true, ["Base.PotForged"] = true,
-    ["Base.EmptyJar"] = true, ["Base.JarCrafted"] = true, ["Base.ClayJar"] = true,
-    ["Base.Bucket"] = true, ["Base.BucketEmpty"] = true, ["Base.BucketCarved"] = true,
-}
-M.WRAPPED_NAMES = { Pot = "TPDWrappedPot", Jar = "TPDWrappedJar", Bucket = "TPDWrappedBucket" }
--- What a wrapped one looks like: its own icon bundled in towels (tools/build_tileset.py) and, on the ground, the towel
--- bundle sized to it (tools/build_model.py, the TowelBundle_* models). Both go on the item's modData, which the engine
--- reads first and saves: customInventoryIcon and worldStaticModel.
-M.WRAPPED_LOOKS = {
-    ["Base.Pot"] = "Pot", ["Base.PotForged"] = "PotForged",
-    ["Base.EmptyJar"] = "Jar", ["Base.JarCrafted"] = "Jar", ["Base.ClayJar"] = "ClayJar",
-    ["Base.Bucket"] = "Bucket", ["Base.BucketEmpty"] = "Bucket", ["Base.BucketCarved"] = "BucketCarved",
-}
-
-local function setLook(item, look)
-    local modData = item:getModData()
-    modData.customInventoryIcon = look and ("media/textures/Item_Wrapped" .. look .. ".png") or nil
-    modData.worldStaticModel = look and ("TraditionalPreservationDairy.TowelBundle_" .. look) or nil
-end
-
-function M.isWrapped(item)
-    return item:getFullType() == M.WRAPPED_POT or item:getModData()[M.WRAP_KEY] ~= nil
-end
-
--- Kept for the callers that knew only the Wrapped Yogurt Pot.
-M.isWrappedPot = M.isWrapped
-
--- Gives an item's fluid container another name, in place: the game saves it, so it shows from the next load. Vanilla
--- caches the shown name and nothing Lua can call clears it (reset() is protected, add/removeComponent package-private:
--- ENGINE_NOTES), so to show it now the item is swapped a tick later for a new one of its type (M.refreshName). The
--- wait matters: a recipe still holds its kept item while OnCreate runs.
-local function rename(item, name, rain)
-    local container = item:getFluidContainer()
-    container:setContainerName(name)
-    container:setRainCatcher(rain)
-    M.refreshName(item)
-end
-
-local renamed = {}
-
--- A new item of the same type, given the old one's fluid container name, fluids, rain, ModData, heat, condition and
--- favourite before its name is ever shown, in the old one's place. Items on the floor keep theirs (shown after a
--- load). Returns the new item, or nil.
-function M.swapForFresh(item)
-    local container = item:getContainer()
-    if not container or item:getWorldItem() or not container:contains(item) then return nil end
-    local new = instanceItem(item:getFullType())
-    local old, fresh = item:getFluidContainer(), new and new:getFluidContainer()
-    if not old or not fresh then return nil end
-    fresh:setContainerName(old:getContainerName())
-    fresh:setRainCatcher(old:getRainCatcher())
-    fresh:copyFluidsFrom(old)
-    local modData = new:getModData()
-    for key, value in pairs(item:getModData()) do modData[key] = value end
-    new:setItemHeat(item:getItemHeat())
-    new:setCondition(item:getCondition())
-    new:setFavorite(item:isFavorite())
-    container:DoRemoveItem(item)
-    container:AddItem(new)
-    return new
-end
-
-function M.refreshName(item)
-    table.insert(renamed, item)
-end
-
-local function onTick()
-    if #renamed == 0 then return end
-    local list = renamed
-    renamed = {}
-    for _, item in ipairs(list) do M.swapForFresh(item) end
-end
-
-Events.OnTick.Add(onTick)
-
--- Wraps a pot, jar or bucket: it no longer catches rain under its cloth.
-function M.wrap(item)
-    local container = item:getFluidContainer()
-    if not container or not M.WRAPPABLE[item:getFullType()] or M.isWrapped(item) then return false end
-    local name, rain = container:getContainerName(), container:getRainCatcher()
-    -- Marked only once renamed, so a rename that fails leaves a plain item.
-    setLook(item, M.WRAPPED_LOOKS[item:getFullType()])
-    rename(item, M.WRAPPED_NAMES[name] or "TPDWrappedPot", 0)
-    item:getModData()[M.WRAP_KEY] = { name = name, rain = rain }
-    return true
-end
-
-function M.unwrap(item)
-    local modData = item:getModData()
-    local was = modData[M.WRAP_KEY]
-    local container = item:getFluidContainer()
-    if not was or not container then return false end
-    setLook(item, nil)
-    rename(item, was.name, was.rain or 0)
-    modData[M.WRAP_KEY] = nil
-    return true
-end
-
--- Recipes: the wrap goes on a pot, jar or bucket not yet wrapped, and comes off a wrapped one (both only when empty,
--- by the recipe's flag). Other inputs (the Sheet, the Twine) pass.
-function M.canWrap(item)
-    return not M.WRAPPABLE[item:getFullType()] or not M.isWrapped(item)
-end
-
-function M.canUnwrap(item)
-    return not M.WRAPPABLE[item:getFullType()] or M.isWrapped(item)
-end
-
-local function keptCarrier(craftRecipeData)
-    local items = craftRecipeData:getAllKeepInputItems()
-    for i = 0, items:size() - 1 do
-        local item = items:get(i)
-        if M.WRAPPABLE[item:getFullType()] then return item end
-    end
-end
-
-function M.onWrapped(craftRecipeData)
-    local item = keptCarrier(craftRecipeData)
-    if item then M.wrap(item) end
-end
-
-function M.onUnwrapped(craftRecipeData)
-    local item = keptCarrier(craftRecipeData)
-    if item then M.unwrap(item) end
-end
-
--- Burnt in a hot cooking container: the Sheet and the Twine are gone. A wrapped pot, jar or bucket is itself again;
--- the Wrapped Yogurt Pot is a bare Yogurt Pot, which holds no fluid (its milk is lost). Returns the item now there.
-M.BURN_HEAT = 1.3             -- a container this hot burns a wrap (vanilla: 1.0 cold; the lowest stove setting about 1.5)
-
-function M.burnWrap(item)
-    if item:getFullType() ~= M.WRAPPED_POT then
-        M.unwrap(item)
-        return item
-    end
-    local container = item:getContainer()
-    if not container then return item end
-    local bare = container:AddItem("TraditionalPreservationDairy.YoghurtPot")
-    container:DoRemoveItem(item)
-    return bare
-end
-
 M.mlIn = Container.ml
-
--- An item's record, shrunk to the milk it holds now; nil (and dropped) once it holds no plain milk.
-function M.carryOf(item)
-    local modData = item:getModData()
-    local carry = modData[M.CARRY_KEY]
-    if not carry then return nil end
-    local container = item:getFluidContainer()
-    carry = container and M.milkIn(container) and M.noteCarry(carry, M.mlIn(container)) or nil
-    modData[M.CARRY_KEY] = carry
-    return carry
-end
-
--- Brings carried milk up to now at the place it was last carried in (herePlace if it has none yet), hour by hour
--- through the history as the incubator catches up: by a fire until the fuel ran out (fireUntil), then the place
--- under the fire. open: not in a Wrapped Pot, so it cools fast. Returns the heat.
-function M.advanceCarry(carry, now, ledger, herePlace, history, open)
-    local place = carry.place or herePlace
-    history = history or M.getHistory()
-    local t = carry.hour
-    while t < now do
-        local hour = math.floor(t)
-        local stop = math.min(hour + 1, now)
-        if Hearth.isFirePlace(place) and carry.fireUntil and t < carry.fireUntil then stop = math.min(stop, carry.fireUntil) end
-        local here = placeAt(carry, place, t)
-        M.wrappedC(carry, stop, M.pastTemperature(history, hour, here) or M.placeTemperature(ledger, here), open)
-        t = stop
-    end
-    return carry.c
-end
-
--- While a player carries warm milk, the World brings it up to now every game minute and notes where it is. Set
--- down, it keeps the last place it was carried in, so the time until it is next looked at counts there.
-function M.carryTick(carry, now, ledger, place, fireUntil, under, open)
-    M.advanceCarry(carry, now, ledger, place, nil, open)
-    carry.place, carry.fireUntil, carry.under = place, fireUntil, under
-end
-
--- The heat of an item's milk: its record's if it has one (cooling slowly in a Wrapped Pot, fast in anything else),
--- else vanilla's item heat. holder is whoever is looking at it, whose place counts if it was never carried.
-function M.carriedC(item, now, holder)
-    local carry = M.carryOf(item)
-    if carry then
-        return M.advanceCarry(carry, now, M.getLedger(), (M.placeOf(holder)), nil, not M.isWrappedPot(item))
-    end
-    return M.heatCelsius(item:getItemHeat())
-end
-
--- Milk taken off a stove or a fire (from a container that hot) keeps its heat as a record, scalded if it was held at
--- 85 C or more for the hold (TP Core's FluidAgeing counts it while it sits on the heat): read now, while it is still there.
-function M.stampHeat(item, now)
-    local container = item:getFluidContainer()
-    local _, parts = M.milkIn(container)
-    if not parts then return end
-    local tempC = M.heatCelsius(item:getItemHeat())
-    if tempC < M.STAMP_C then return end
-    local carry, ml = M.carryOf(item), M.mlIn(container)
-    M.recordCarry(item, nil, 0, 0, ml, tempC, now, M.held(FluidAgeing.heldHours(item)) or M.isScalded(carry, ml))
-end
-
--- After a vanilla pour: moved ml of milk at fromC (scalded or not) went into an item that held hadMl at hadC.
-function M.pouredInto(item, carry, hadMl, hadC, moved, fromC, scalded, now)
-    if moved <= 0.5 or not M.milkIn(item:getFluidContainer()) then return end
-    M.recordCarry(item, carry, hadMl, hadC, moved, fromC, now, scalded)
-end
-
--- Writes the record after ml of milk at tempC went into an item that held hadMl at hadC (carry: its record from
--- before), and sets vanilla's item heat to match.
-function M.recordCarry(item, carry, hadMl, hadC, ml, tempC, now, scalded)
-    local record = M.carryIn(carry, hadMl, hadC, ml, tempC, now, scalded)
-    item:getModData()[M.CARRY_KEY] = record
-    item:setItemHeat(M.itemHeat(record.c))
-end
-
--- Writes the record after ml left the item.
-function M.recordTaken(item, carry, ml)
-    item:getModData()[M.CARRY_KEY] = M.carryOut(carry, ml)
-end
-
--- The cauldron's hooks: a Wrapped Pot pours in at its own heat; milk drawn steaming is marked so the incubator takes
--- it. Milk that left an item is already gone from the container, so reading the record shrinks it to match.
-Hearth.hook("heatOf", function(item, now, character)
-    local carry = M.carryOf(item)
-    return carry and M.advanceCarry(carry, now, M.getLedger(), (M.placeOf(character)), nil, not M.isWrappedPot(item)) or nil
-end)
-
-Hearth.hook("taken", function(item)
-    M.carryOf(item)
-end)
-
-Hearth.hook("filled", function(item, fill)
-    if not M.MILKS[fill.fluid] then return false end
-    -- Scalded once the cauldron's milk had its hold, hot or cooled since.
-    M.recordCarry(item, item:getModData()[M.CARRY_KEY], fill.hadMl, fill.hadC, fill.ml, fill.tempC, fill.now, M.held(fill.held))
-    return true
-end)
 
 
 -- Crock: Cultivating, then Waiting for fresh milk, then Developing, then Ready.
@@ -973,7 +665,7 @@ end
 -- Empties a ready crock. Returns how many starters it gives, 0 if it isn't ready.
 function M.collectStarters(crock)
     if M.crockStage(crock) ~= "Ready" then return 0 end
-    for _, key in ipairs({ "stage", "done", "marks" }) do crock[key] = nil end
+    clear(crock, CROCK_FIELDS)
     return M.CROCK_STARTERS
 end
 
@@ -981,6 +673,16 @@ end
 function M.stateOf(modData, key)
     modData[key] = modData[key] or {}
     return modData[key]
+end
+
+-- A pot's or crock's state as saved, not brought up to now (the World's updateIncubator / updateCrock do that): for
+-- checks that run every tick of an action.
+function M.incubatorOf(station)
+    return M.stateOf(Station.movableData(station), M.INCUBATOR_KEY)
+end
+
+function M.crockOf(station)
+    return M.stateOf(Station.movableData(station), M.CROCK_KEY)
 end
 
 function M.feedCrock(crock, ledger)
@@ -1071,3 +773,7 @@ end
 
 -- Before the game builds each recipe's fluid filter (Recipes).
 Events.OnInitWorld.Add(M.applyBaking)
+
+-- The parts in their own files: wrapping first, as carried milk asks whether its pot is wrapped.
+require "TraditionalPreservationDairyWrap"
+require "TraditionalPreservationDairyCarry"

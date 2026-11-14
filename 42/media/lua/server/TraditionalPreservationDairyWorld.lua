@@ -13,10 +13,8 @@ local Tiles = require "TraditionalPreservationDairy/Tiles"
 local log = require "TraditionalPreservationCore/Log"
 local Pour = require "TraditionalPreservationCore/Pour"
 
--- Each stage has its own look: an empty pot has its lid on the floor, one too cold for a starter has it slid half off.
-local STAGE_SPRITES = { Empty = "Empty", Cooling = "Cooling", TooCold = "TooCold", Incubating = "Incubating",
-    Ready = "Ready" }
--- A crock waiting for its feed still shows the cloth.
+-- Each pot stage has its own look, by its name (M.INCUBATOR_OVERLAYS): an empty pot has its lid on the floor, one too
+-- cold for a starter has it slid half off. A crock waiting for its feed still shows the cloth.
 local CROCK_SPRITES = { Cultivating = "Cultivating", Waiting = "Cultivating", Developing = "Developing", Ready = "Ready" }
 
 local function squareKey(object)
@@ -24,44 +22,40 @@ local function squareKey(object)
     return square and (square:getX() .. "," .. square:getY() .. "," .. square:getZ())
 end
 
--- The pot's state, made on first use.
-function World.incubatorState(station)
-    return M.stateOf(Station.movableData(station), M.INCUBATOR_KEY)
-end
+-- The pot's and the crock's state, made on first use.
+World.incubatorState = M.incubatorOf
+World.crockState = M.crockOf
 
--- Brings the pot up to now. The time since the last look counts at the place it was seen in then: by a fire,
--- while the fuel it had then lasts. A pot that has been moved counts its time where it stands now.
-function World.updateIncubator(station, now)
-    local state = World.incubatorState(station)
+-- Brings a station's state up to now: run(state, place) counts the time since the last look at the place it was seen
+-- in then (by a fire, while the fuel it had then lasts; a station that has been moved, where it stands now). Then
+-- notes where it is and its fire, and logs a change of stage (stageOf; label and describe(state, place) for the line).
+local function bringUp(station, state, now, stageOf, run, label, describe)
     local place, fire = M.placeOf(station)
     local here = squareKey(station)
-    local before = M.stage(state)
-    M.catchUp(state, now, state.at == here and state.place or place, M.getHistory(), M.getLedger())
+    local before = stageOf(state)
+    run(state, state.at == here and state.place or place)
     state.place, state.at = place, here
     M.noteFire(state, station, fire, now)
-    local after = M.stage(state)
-    if after ~= before then
-        log("TPD", "incubator %s -> %s: %.1f L at %.1f C, %s", before, after, (state.ml or 0) / 1000, state.tempC or 0, place)
-    end
+    local after = stageOf(state)
+    if after ~= before then log("TPD", "%s %s -> %s%s", label, before, after, describe(state, place)) end
     return state
 end
 
-function World.crockState(station)
-    return M.stateOf(Station.movableData(station), M.CROCK_KEY)
+function World.updateIncubator(station, now)
+    return bringUp(station, World.incubatorState(station), now, M.stage, function(state, place)
+        M.catchUp(state, now, place, M.getHistory(), M.getLedger())
+    end, "incubator", function(state, place)
+        return string.format(": %.1f L at %.1f C, %s", (state.ml or 0) / 1000, state.tempC or 0, place)
+    end)
 end
 
--- Brings the crock up to now on the ledger, at the place it was seen in last, as for the pot.
+-- On the ledger, as for the pot.
 function World.updateCrock(station)
-    local state = World.crockState(station)
-    local place, fire = M.placeOf(station)
-    local here = squareKey(station)
-    local before = M.crockStage(state)
-    M.updateCrock(state, M.getLedger(), state.at == here and state.place or place)
-    state.place, state.at = place, here
-    M.noteFire(state, station, fire, getGameTime():getWorldAgeHours())
-    local after = M.crockStage(state)
-    if after ~= before then log("TPD", "crock %s -> %s, %s", before, after, place) end
-    return state
+    return bringUp(station, World.crockState(station), getGameTime():getWorldAgeHours(), M.crockStage, function(state, place)
+        M.updateCrock(state, M.getLedger(), place)
+    end, "crock", function(_, place)
+        return ", " .. place
+    end)
 end
 
 -- A built station is a thumpable that blocks its whole square, whatever its tile says. The pot and the crock are
@@ -79,7 +73,7 @@ local function refresh(station, entry)
         overlay = M.CROCK_OVERLAYS[CROCK_SPRITES[M.crockStage(World.updateCrock(station))]]
     else
         local state = World.updateIncubator(station, getGameTime():getWorldAgeHours())
-        overlay = M.INCUBATOR_OVERLAYS[STAGE_SPRITES[M.stage(state)]]
+        overlay = M.INCUBATOR_OVERLAYS[M.stage(state)]
     end
     walkThrough(station)
     local names = {}
@@ -132,7 +126,7 @@ local function tickWrappedPots(player, now, ledger)
         local pot = pots:get(i)
         local carry = M.carryOf(pot)
         if carry then
-            M.carryTick(carry, now, ledger, place, notes.fireUntil, notes.under, not M.isWrappedPot(pot))
+            M.carryTick(carry, now, ledger, place, notes.fireUntil, notes.under, not M.isWrapped(pot))
             pot:setItemHeat(M.itemHeat(carry.c))
         elseif pot:getItemHeat() ~= 1 then
             pot:setItemHeat(1)
@@ -142,33 +136,27 @@ end
 
 -- A wrap in a hot stove, oven, barbecue or fire burns: the Sheet and Twine are gone (M.burnWrap). On a stove, oven or
 -- barbecue it sets the kitchen alight, as vanilla's burnt food does; in an open fire (a fireplace, the Hearth's
--- firebox, a campfire) it burns away in the fire, as burnt food there never spreads (ENGINE_NOTES).
-World.BURN_RADIUS = 8
-
+-- firebox, a campfire) it burns away in the fire, as burnt food there never spreads (ENGINE_NOTES). TP Core's minute
+-- look at the heat round each player (Station.onHeatNear, within Station.HEAT_NEAR) finds the hot containers.
 local function isOpenFire(object)
     return instanceof(object, "IsoFireplace") or object:getName() == "Campfire"
 end
 
-local function burnWraps(square)
-    Station.hotContainers(square, World.BURN_RADIUS, M.BURN_HEAT, function(container, object)
-        local wrapped = container:getAllEvalRecurse(M.isWrapped)
-        for i = 0, wrapped:size() - 1 do
-            local item = wrapped:get(i)
-            log("TPD", "a wrap burnt on %s at %d,%d,%d", item:getFullType(), object:getX(), object:getY(), object:getZ())
-            M.burnWrap(item)
-            if not isOpenFire(object) and object:getSquare() then
-                IsoFireManager.StartFire(getCell(), object:getSquare(), true, 500000)
-            end
+Station.onHeatNear(M.BURN_HEAT, function(container, _, object)
+    local wrapped = container:getAllEvalRecurse(M.isWrapped)
+    for i = 0, wrapped:size() - 1 do
+        local item = wrapped:get(i)
+        log("TPD", "a wrap burnt on %s at %d,%d,%d", item:getFullType(), object:getX(), object:getY(), object:getZ())
+        M.burnWrap(item)
+        if not isOpenFire(object) and object:getSquare() then
+            IsoFireManager.StartFire(getCell(), object:getSquare(), true, 500000)
         end
-    end)
-end
+    end
+end)
 
 Events.EveryOneMinute.Add(function()
     local now, ledger, list = getGameTime():getWorldAgeHours(), M.getLedger(), Station.players()
-    for i = 0, list:size() - 1 do
-        tickWrappedPots(list:get(i), now, ledger)
-        burnWraps(list:get(i):getSquare())
-    end
+    for i = 0, list:size() - 1 do tickWrappedPots(list:get(i), now, ledger) end
 end)
 
 Weather.record(function(now, climate)

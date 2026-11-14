@@ -192,14 +192,11 @@ ScriptManager = realManager
 check("vanilla Yogurt: its empty cup and a cow's milk portion", table.concat(params, "; ") == "ReplaceOnUse = " .. M.EMPTY_CUP
     .. "; HungerChange = -12.5; Calories = 153.75; Carbohydrates = 11.5; Lipids = 5.5; Proteins = 8.25")
 
--- A jar from a save before F4: no food values, its cups in modData
-local old = bag:AddItem(M.YOGHURT_JAR)
-old.data.tpdJar, old.data.tpdMl, old.data.tpdCups = "Base.ClayJar", 1000, 3
-check("an old jar gets its cups' worth of food once", near(M.jarPortions(old), 3) and near(M.jarFull(old), 4)
-    and old.data.tpdFood == true and old.data.customInventoryIcon == M.JAR_ICONS["Base.ClayJar"])
-eat(old, M.portionShare(M.jarPortions(old), M.jarFull(old)))
-eat(old, M.portionShare(M.jarPortions(old), M.jarFull(old)))
-eat(old, M.portionShare(M.jarPortions(old), M.jarFull(old)))
-check("and empties back into its clay jar", not bag:contains(old) and bag:count("Base.ClayJar") == 3)
+-- A jar never filled at a pot (a debug spawn): no food values, nothing in its modData
+local spawned = bag:AddItem(M.YOGHURT_JAR)
+check("a spawned jar gets a glass jar's four portions once", near(M.jarPortions(spawned), 4) and near(M.jarFull(spawned), 4)
+    and spawned.data.tpdFood == true)
+for _ = 1, 4 do eat(spawned, M.portionShare(M.jarPortions(spawned), M.jarFull(spawned))) end
+check("and empties back into a clay jar, as its model is one", not bag:contains(spawned) and bag:count("Base.ClayJar") == 3)
 
 H.done()
