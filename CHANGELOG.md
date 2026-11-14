@@ -1,6 +1,7 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- **Docs pass after TP Core's Stone Hearth hub** (user, 2026-11-14): guide 5, README, DEVHELP and Workshop text: build a Stone Hearth and fit the Forged Cauldron (materials, skills and XP), Pour into / Fill from / Empty the Cauldron, Stone Hearth Info; `TPC.copper` is TP Core's `TPC.cauldron` now (the crock kit's hint and the help line too).
 - **The Forged Cauldron** (TP Core, 2026-11-13, the Stone Hearth hub's step ii, install 2a): the Hearth's copper is now the Forged Cauldron, fitted on a Stone Hearth; texts say cauldron, and the missing-Hearth refusal says to build a Stone Hearth and fit a Forged Cauldron. The menu icon is Core's `Item_TPCauldronFull`. In-game step 128 of `TESTING_GUIDE.md`, passed.
 - **The copper's state under its own key** (TP Core, 2026-11-13, the Stone Hearth hub's step i): Make Starter Culture and Fill the Pot from the Hearth read the copper with `Hearth.copperState` (`TPStarterCrock`, `TPYoghurtIncubator`); `test_menu.lua` builds the new state. Nothing changes in game.
 - **The Hearth's new look and build** (TP Core, 2026-11-13): README, guide 5 and the Workshop text give the new materials and describe the copper as a kettle hung over the fire.

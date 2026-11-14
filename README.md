@@ -1,8 +1,8 @@
 # Traditional Preservation (Dairy) — Build 42 prototype (v0.0.1)
 
-**Status: experimental.** The yogurt loop, from the Hearth's copper to a cup of yogurt, and the starter crock have been played in the game with test timers. The latest changes (mixed milks, the cold-milk refusal, the jar weight after a reload) have only been checked offline so far (see the test plan). Back up your save before enabling.
+**Status: experimental.** The yogurt loop, from the Stone Hearth's cauldron to a cup of yogurt, and the starter crock have been played in the game with test timers. The latest changes (mixed milks, the cold-milk refusal, the jar weight after a reload) have only been checked offline so far (see the test plan). Back up your save before enabling.
 
-Set your own yogurt the old way: milk brought to the steam in a Hearth's copper, cooled in a lidded clay pot, then wrapped in cloth to set overnight. It ends in the same vanilla Yogurt you find in fridges, and every Yogurt eaten leaves its cup behind to fill again. When the last yogurt is gone, a crock of wheat and warm milk grows a new starter.
+Set your own yogurt the old way: milk brought to the steam in a Stone Hearth's cauldron, cooled in a lidded clay pot, then wrapped in cloth to set overnight. It ends in the same vanilla Yogurt you find in fridges, and every Yogurt eaten leaves its cup behind to fill again. When the last yogurt is gone, a crock of wheat and warm milk grows a new starter.
 
 ## History
 
@@ -12,25 +12,25 @@ A household that lost its starter borrowed one from a neighbour, or grew a new o
 
 ## Install
 
-Copy this folder to `~/Zomboid/mods/TraditionalPreservationDairy`, as a real copy rather than a symlink. It needs the **TP Core** mod (`TraditionalPreservationCore`, the series' shared mod) installed and enabled the same way, and no other mods. The Hearth is part of TP Core.
+Copy this folder to `~/Zomboid/mods/TraditionalPreservationDairy`, as a real copy rather than a symlink. It needs the **TP Core** mod (`TraditionalPreservationCore`, the series' shared mod) installed and enabled the same way, and no other mods. The Stone Hearth is part of TP Core.
 
 ## Getting started
 
 1. **Keep a cow or sheep in milk.** Cow's and sheep's milk both work, and mix.
-2. **Build a Hearth** (TP Core) and keep wood for it. 10 L take about 1.5 hours to steam, 20 L about 2, a full 60 L about 2.75. (No Hearth yet: a pot of milk on any lit stove or fire scalds too; see Filling the incubator.)
+2. **Build a Stone Hearth** (TP Core), fit TP Core's **Forged Cauldron** on it, and keep wood for it. 10 L take about 1.5 hours to steam, 20 L about 2, a full 60 L about 2.75. (No Stone Hearth yet: a pot of milk on any lit stove or fire scalds too; see Filling the incubator.)
 3. **Throw a Yogurt Pot** on the wheel and fire it, then build it into a Yogurt Incubator within 2 tiles of the Hearth.
 4. **Keep one yogurt back.** Each batch takes one vanilla Yogurt, one portion of a Jar of Yogurt, or one Active Yogurt Starter. With none left, build a Starter Culture Crock.
 5. **Save your Empty Yogurt Containers and jars.** Each cup of yogurt needs a container; a glass jar holds a litre, a clay jar 2.5 L, and you eat from the jar itself.
-6. **Set it by the fire in winter.** A lit fire within 2 tiles indoors (the Hearth, a fireplace, an antique stove) keeps the pot at 28 C: it sets in about 6 hours in any month. A porch fire or a campfire outside gives less in the cold months.
+6. **Set it by the fire in winter.** A lit fire within 2 tiles indoors (the Stone Hearth, a fireplace, an antique stove) keeps the pot at 28 C: it sets in about 6 hours in any month. A porch fire or a campfire outside gives less in the cold months.
 7. **Mind the milk.** Raw milk sours in about a day and a half in a warm room; scald it or keep it cold (see Milk goes off).
 
 ## The loop at a glance
 
 | # | Step | Where | In | Out | Time |
 |---|---|---|---|---|---|
-| 1 | Pour into the Copper | Hearth's right-click menu | milk, from any container | up to 60 L in the copper | a moment |
-| 2 | Bring to the steam, and hold it | Lit Hearth | | milk at 85 C, Scalded after 20 minutes there | about 1.5 hours for 10 L, 2 for 20 L, 2.75 for 60 L, then 20 minutes |
-| 3 | Pour from the Hearth | Incubator's menu, Hearth within 2 tiles | scalded, steaming milk | up to 5 L in the pot | a moment |
+| 1 | Pour into the Cauldron | Stone Hearth's right-click menu | milk, from any container | up to 60 L in the cauldron | a moment |
+| 2 | Bring to the steam, and hold it | Lit Stone Hearth | | milk at 85 C, Scalded after 20 minutes there | about 1.5 hours for 10 L, 2 for 20 L, 2.75 for 60 L, then 20 minutes |
+| 3 | Pour from the Hearth | Incubator's menu, Stone Hearth within 2 tiles | scalded, steaming milk | up to 5 L in the pot | a moment |
 | 4 | Add Starter | Incubator's menu | 1 Yogurt, a jar's portion, or an Active Yogurt Starter | | a moment |
 | 5 | Cool | Incubator, lid on | | milk at 45 C, the wrap goes on | about 2 hours* |
 | 6 | Set | Incubator, wrapped | | 5 L of yogurt | 6 hours at 40 to 45 C* |
@@ -52,7 +52,8 @@ Copy this folder to `~/Zomboid/mods/TraditionalPreservationDairy`, as a real cop
 
 | Station | Where | Skill | Materials |
 |---|---|---|---|
-| **Hearth** (TP Core) | Build menu, Masonry | Masonry 2 | 8 Clay Bricks, 2 Clay, 2 Copper Sheets, 3 Iron Bars (or Metal Bars, Metal Pipes, Steel Bars), 1 Large Hook, a trowel (kept) |
+| **Stone Hearth** (TP Core) | Build menu, Masonry | Masonry 2 | 8 Clay Bricks, 2 Clay, a trowel (kept) |
+| **Forged Cauldron** (TP Core), fitted on the Stone Hearth | Forge Cauldron at a forge, then Fit Cauldron on the Stone Hearth's menu | Blacksmith 4 | 2 Steel Sheets, 3 Charcoal, 1 Wire; to fit, 2 Iron Pipes, 1 Heavy Chain, 1 Large Hook, pliers (kept) |
 | **Yogurt Incubator** | Build menu, Pottery; floor | Tailoring 1 | 1 Yogurt Pot, 2 Ripped Sheets, 1 Twine |
 | **Starter Culture Crock** | Build menu, Pottery; floor, counter or table | Cooking 4 | 1 Clay Jar, Glazed Clay Jar or Clay Pot, 1 Ripped Sheet, 1 Twine |
 
@@ -62,27 +63,27 @@ Any **cooking pot, forged pot, jar, clay jar or bucket** wraps the same way (**W
 
 A wrapped container **looks bundled in towels**: its icon is its own vanilla icon wrapped in a striped towel, gathered at a twine neck, with a bucket's bail or a pot's ears still showing (one per look: pot, forged pot, glass jar, clay jar, metal bucket, carved bucket; the two glass jars share vanilla's icon, as do the two metal buckets). On the ground every one lies as the same towel bundle, sized to the container inside it, from a small bundle for a jar to a big one for a clay jar. The Wrapped Yogurt Pot looks the same way. Both come from the item's ModData (`customInventoryIcon`, `worldStaticModel`, `M.WRAPPED_LOOKS`), set on wrapping and cleared on unwrapping. In the hand a wrapped vanilla container still shows its own model.
 
-**Keep the cloth off the heat.** A wrapped pot, jar or bucket (or a Wrapped Yogurt Pot) in a hot stove, oven, barbecue, fireplace, Hearth firebox or campfire burns its wrap within a game minute: the sheet and twine are gone. On a stove, oven or barbecue that sets the kitchen alight, as burnt food does; in an open fire it burns away in the flames. A Wrapped Yogurt Pot burns down to a bare Yogurt Pot, which holds no fluid, so its milk is lost.
+**Keep the cloth off the heat.** A wrapped pot, jar or bucket (or a Wrapped Yogurt Pot) in a hot stove, oven, barbecue, fireplace, Stone Hearth or campfire burns its wrap within a game minute: the sheet and twine are gone. On a stove, oven or barbecue that sets the kitchen alight, as burnt food does; in an open fire it burns away in the flames. A Wrapped Yogurt Pot burns down to a bare Yogurt Pot, which holds no fluid, so its milk is lost.
 
-You can walk through the incubator and the crock. Both work anywhere, but pouring straight from the copper needs the Hearth within 2 tiles.
+You can walk through the incubator and the crock. Both work anywhere, but pouring straight from the cauldron needs the Stone Hearth within 2 tiles.
 
 ## How it works
 
-### 1. The Hearth's copper
+### 1. The Stone Hearth's cauldron
 
-The Hearth is TP Core's station, documented in full in TP Core's `README.md` and guide (`6_Core_Guide.md`): a vanilla fireplace (Add Fuel, Light, a firebox that cooks, room heat) with a 60 L copper set in its top. Right-click it for **Pour into the Copper**, **Fill from the Copper** (into your own containers), **Empty the Copper**, **Bank the Fire** / **Stoke the Fire** and **Hearth Info**.
+The Stone Hearth is TP Core's station, documented in full in TP Core's `README.md` and guide (`6_Core_Guide.md`): a vanilla fireplace (Add Fuel, Light, cooking, room heat), here with TP Core's 60 L Forged Cauldron fitted over its hole. Right-click it for **Pour into the Cauldron**, **Fill from the Cauldron** (into your own containers), **Empty the Cauldron**, **Bank the Fire** / **Stoke the Fire** and **Stone Hearth Info**.
 
-- The copper holds one fluid at a time. Cow's and sheep's milk count as one: they mix freely, and a blend keeps its shares in the copper, a container and the pot. Any other mix is refused, shown in red with the reason.
-- Poured milk mixes its temperature with what's already in the copper, by volume.
-- While the fire burns, the copper heats towards 95 C: 10 L go from 20 C to 85 C in about 1.5 hours, 20 L in about 2, a full 60 L in about 2.75, less milk faster. With the fire out it cools towards the room over a few hours, as the stone holds heat.
-- **Bank the Fire** burns a third of the wood, holds the copper at about 50 C and cooks a third as fast in the firebox. **Stoke the Fire** brings it back.
-- At 85 C the copper steams, in its sprite and in Hearth Info ("Steaming: Yes"). **Held at 85 C or more for 20 minutes** in all (`M.SCALD_HOLD_HOURS`; the copper counts it, `Hearth.heldHours`), its milk reads Scalded. Pouring more milk in starts the 20 minutes over.
+- The cauldron holds one fluid at a time. Cow's and sheep's milk count as one: they mix freely, and a blend keeps its shares in the cauldron, a container and the pot. Any other mix is refused, shown in red with the reason.
+- Poured milk mixes its temperature with what's already in the cauldron, by volume.
+- While the fire burns, the cauldron heats towards 95 C: 10 L go from 20 C to 85 C in about 1.5 hours, 20 L in about 2, a full 60 L in about 2.75, less milk faster. With the fire out it cools towards the room over a few hours, as the stone holds heat.
+- **Bank the Fire** burns a third of the wood, holds the cauldron at about 50 C and cooks a third as fast. **Stoke the Fire** brings it back.
+- At 85 C the cauldron steams, in its sprite and in Stone Hearth Info ("Steaming: Yes"). **Held at 85 C or more for 20 minutes** in all (`M.SCALD_HOLD_HOURS`; the cauldron counts it, `Hearth.heldHours`), its milk reads Scalded. Pouring more milk in starts the 20 minutes over.
 
 ### 2. Filling the incubator
 
 Right-click the incubator:
-- **Pour from the Hearth** draws steaming, scalded milk from a Hearth within 2 tiles, up to the pot's 5 L. Steaming milk that hasn't had its 20 minutes is refused, with the minutes still to go.
-- **Pour Scalded Milk** takes scalded milk from any container: milk that has been held at 85 C or more for 20 minutes in all, in the copper, or in a pot on a lit stove, fireplace, barbecue or campfire (vanilla's lowest stove setting already gets there), or store milk poured out of its carton. It goes in at the heat it has now: off the heat an open pot or bucket cools in minutes (85 to 45 C in about a quarter hour), a Wrapped Yogurt Pot in hours, and a pour between containers carries the heat over. Milk that isn't scalded is refused as "Not scalded".
+- **Pour from the Hearth** draws steaming, scalded milk from a Stone Hearth within 2 tiles, up to the pot's 5 L. Steaming milk that hasn't had its 20 minutes is refused, with the minutes still to go.
+- **Pour Scalded Milk** takes scalded milk from any container: milk that has been held at 85 C or more for 20 minutes in all, in the cauldron, or in a pot on a lit stove, fireplace, barbecue or campfire (vanilla's lowest stove setting already gets there), or store milk poured out of its carton. It goes in at the heat it has now: off the heat an open pot or bucket cools in minutes (85 to 45 C in about a quarter hour), a Wrapped Yogurt Pot in hours, and a pour between containers carries the heat over. Milk that isn't scalded is refused as "Not scalded".
 - **Add Starter** takes one vanilla Yogurt, one portion (250 ml) of a Jar of Yogurt with a whole portion left (the rest stays; the empty jar comes back with the last), or one Active Yogurt Starter, before or after the milk. None gone off. One per batch.
 
 Once the starter is in, milk that would leave the pot under 40 C is refused as too cold, so a set batch is never spoiled by a cold top-up.
@@ -93,7 +94,7 @@ Once the starter is in, milk that would leave the pot under 40 C is refused as t
 2. **The wrap goes on by itself** at 45 C if a starter is in.
 3. **Setting** (striped cloth on): wrapped, it loses only about 10 C overnight in a 20 C room. It sets in 6 hours at 40 to 45 C, slower when cooler, and stalls below about 18 C. Above 45 C it slows again, and stops at 55 C.
 
-If the milk falls under 40 C with no starter in, it is **Too cold** (the lid slides half off). **Pour Out Milk** into a container and reheat it, in the copper or on a stove or fire, or top the pot up with steaming milk.
+If the milk falls under 40 C with no starter in, it is **Too cold** (the lid slides half off). **Pour Out Milk** into a container and reheat it, in the cauldron or on a stove or fire, or top the pot up with steaming milk.
 
 ### 4. Collecting
 
@@ -109,7 +110,7 @@ Every vanilla Yogurt eaten, or stirred into oatmeal, leaves an **Empty Yogurt Co
 
 No yogurt left to start from? Grow a starter.
 
-1. **Load Wheat and Warm Milk**: 20 wheat grains and 0.5 L of milk at 35 to 45 C, from a Hearth within 2 tiles or a carried container (in practice a Wrapped Yogurt Pot, or a copper cooling with the fire out). Hotter milk kills the grain's culture; the menu says why it refuses.
+1. **Load Wheat and Warm Milk**: 20 wheat grains and 0.5 L of milk at 35 to 45 C, from a Stone Hearth within 2 tiles or a carried container (in practice a Wrapped Yogurt Pot, or a cauldron cooling with the fire out). Hotter milk kills the grain's culture; the menu says why it refuses.
 2. **Cultivating**: 24 hours at its best (25 to 35 C), slower outside that. Keep it by the fire in winter.
    *Or* **Load Soured Milk** instead of steps 1 and 2: 0.5 L of soured milk, any warmth, no wheat (a clabber). It already holds lactic bacteria, so the crock goes straight to step 3. Rotten milk is refused.
 3. **Feed Fresh Milk**: 0.5 L of any milk, fresh or scalded, warm or cold, from any container. Soured and rotten milk are refused.
@@ -125,7 +126,7 @@ Vanilla milk keeps for ever. Here it doesn't (TP Core's `FluidAgeing`; sandbox *
 | Milk reads | When | Good for |
 |---|---|---|
 | Cow's Milk (Fresh) | Raw, young | Everything |
-| Cow's Milk (Scalded) | Has been held at 85 C or more for 20 minutes in all (the copper, or a pot on a lit stove or fire), poured out of the incubator, or poured out of a store carton | Everything. It never sours |
+| Cow's Milk (Scalded) | Has been held at 85 C or more for 20 minutes in all (the cauldron, or a pot on a lit stove or fire), poured out of the incubator, or poured out of a store carton | Everything. It never sours |
 | Cow's Milk (Soured) | Raw milk after 36 hours' worth of 20 C | Drinking (its milk's food, a little unhappiness), Make Cake Batter, Prepare Muffins, Make Bowl of Cereal, and Load Soured Milk on an empty crock. The incubator, the crock's feed, Churn Butter and Make Mildew Cure refuse it |
 | Cow's Milk (Rotten) | Any milk after 72 hours' worth of 20 C | Nothing: food poisoning. Pour it away |
 
@@ -143,7 +144,7 @@ Sheep's and the game's generic animal milk go the same way under their own names
 - Milk ages by the place it was last seen in (open air, under an open roof, indoors, a loft, a basement, by a fire, a fridge or freezer), also while you are away.
 - Pouring never makes milk young: the older age wins, and raw milk mixed into scalded makes the whole lot raw again. Milking into a container emptied of its old milk starts afresh.
 - Sealed store milk (carton, bottle, personal size) doesn't age until it is poured out; then it counts as scalded.
-- Milk left in the copper ages there too. A copper that has steamed for 20 minutes scalds what is in it.
+- Milk left in the cauldron ages there too. A cauldron that has steamed for 20 minutes scalds what is in it.
 - A pot on a stove or fire counts its own minutes at 85 C (TP Core's `FluidAgeing`, `tpHeldHot` in its ModData): from the last time it was seen hot to the next, so time while you were away counts if it is still hot when seen again (in passing, or taken off the stove). If the fire went out and it cooled first, that stretch is lost. Taken off and put back, the minutes add up. Raw milk poured in starts them over.
 - Any milk bakes: vanilla Make Cake Batter, Prepare Muffins and Make Bowl of Cereal take cow's, sheep's or animal milk, fresh, scalded or soured (vanilla took cow's only, cereal sheep's too). Churn Butter and Make Mildew Cure take their milks scalded as well as fresh.
 
@@ -183,8 +184,8 @@ Seven kinds of place (TP Core's):
 - **Under an open roof** (a porch, an open shed) or **indoors** (a room): the average outdoor temperature of the last 10 days or so. A room is 22 C while the power grid is on.
 - **In a loft** (the top storey: a room upstairs with no room over it): as indoors, plus three tenths of whatever the 10-day average is above 10 C: the sun on the roof (about 24 C in a 21 C July, no warmer than a room from October to April); 22 C while the power grid is on.
 - **In a basement**: the ground, a month behind the season, two fifths as far from 10 C: about 5 C from January to March, 13 C from July to September.
-- **By a fire**: any lit fire within 2 tiles (the Hearth, a fireplace, an antique stove or a campfire; never an electric or gas stove) holds an indoor station at 28 C. While you're away it counts only until its fuel would have run out, then the room counts.
-- **By banked embers**: a banked Hearth or Firebox within 2 tiles, 24 C indoors.
+- **By a fire**: any lit fire within 2 tiles (the Stone Hearth, a fireplace, an antique stove or a campfire; never an electric or gas stove) holds an indoor station at 28 C. While you're away it counts only until its fuel would have run out, then the room counts.
+- **By banked embers**: a banked Stone Hearth within 2 tiles, 24 C indoors.
 
 Outside, the air carries the heat off: under an open roof a fire gives the 10-day average +15 C, in the open the day's weather +10 C, never past 28 C (banked embers +10 and +5, up to 24 C).
 
@@ -209,7 +210,8 @@ The crock's first stage takes 24 hours by an indoor fire in any month, about 32 
 
 | Step | XP |
 |---|---|
-| Build a Hearth (TP Core) | Masonry 10 |
+| Build a Stone Hearth (TP Core) | Masonry 8 |
+| Forge the Forged Cauldron, fit it (TP Core) | Blacksmithing 35, 5 |
 | Throw a Yogurt Pot | Pottery 20 |
 | Build a Yogurt Incubator | Tailoring 5 |
 | Build a Starter Culture Crock | Cooking 10 |
@@ -230,7 +232,7 @@ Under Traditional Preservation (Dairy):
 
 ## Tuning
 
-Volumes, temperatures, cooling times, the setting and culture curves, the crock's amounts and XP are at the top of `42/media/lua/shared/TraditionalPreservationDairy.lua`. The pottery and wrapping recipes are in `42/media/scripts/TraditionalPreservationDairy.txt`, the items in `..._items.txt`, the stations' build recipes in `42/media/scripts/entities/`. The Hearth's copper and fire rules are TP Core's (`Hearth.lua`).
+Volumes, temperatures, cooling times, the setting and culture curves, the crock's amounts and XP are at the top of `42/media/lua/shared/TraditionalPreservationDairy.lua`. The pottery and wrapping recipes are in `42/media/scripts/TraditionalPreservationDairy.txt`, the items in `..._items.txt`, the stations' build recipes in `42/media/scripts/entities/`. The Stone Hearth's cauldron and fire rules are TP Core's (`Hearth.lua`).
 
 `python3 tools/build_tileset.py` (needs Pillow) paints the incubator, the crock and their stage overlays and writes `42/media/traditionalpreservationdairy.tiles`, `42/media/texturepacks/traditionalpreservationdairy.pack`, the icons and the generated `42/media/lua/shared/TraditionalPreservationDairy/Tiles.lua` (don't edit it by hand). `luajit tests/test_tiles.lua` checks the entity scripts against it. The wrapped containers' icons are painted there too, from vanilla's own icons (`towel_wrap`). `python3 tools/build_model.py` (needs Pillow and numpy) writes the towel bundle, `42/media/Models_X/TowelBundle.glb`, a narrow copy for the tall clay jar (`TowelBundleTall.glb`) and its texture; each container's size is the scale of its `TowelBundle_*` model in the items script, worked out there from vanilla's meshes.
 
@@ -248,7 +250,7 @@ Volumes, temperatures, cooling times, the setting and culture curves, the crock'
 
 **Simplifications made for play**
 - One yogurt or starter sets a whole pot, whatever its size (real practice is 3 to 5% of the milk).
-- The copper's heating and the pot's cooling are simple exponential curves. The hold at the scald is 20 minutes at 85 C or more in all (real practice: 20 to 30 minutes at 85 C, or a few at 90 to 95), counted whether or not the minutes run together.
+- The cauldron's heating and the pot's cooling are simple exponential curves. The hold at the scald is 20 minutes at 85 C or more in all (real practice: 20 to 30 minutes at 85 C, or a few at 90 to 95), counted whether or not the minutes run together.
 - Temperature during setting slows it but never spoils a batch.
 - A room or an open roof is the 10-day mean (22 C while the grid is on); a basement follows the ground (the 10-day mean's own 30-day mean) two fifths as far from 10 C; room heating isn't modelled beyond a fire within 2 tiles.
 - Milk goes off (TP Core's `FluidAgeing`): raw milk turns to its Soured twin at 36 hours' worth of 20 C and to its Rotten one at
@@ -266,11 +268,11 @@ Volumes, temperatures, cooling times, the setting and culture curves, the crock'
 - Weather is TP Core's shared ledger; a pot catches up hour by hour over the two weeks of kept weather, and the hours before that as one spell.
 - A Jar of Yogurt keeps its jar type and litres in its ModData (`tpdJar`, `tpdMl`); its portions are its own food values (hunger, calories and so on, which the engine saves), and `tpdFood` marks a jar that has them. `tpdPortion` holds one portion's food, a quarter litre of the batch's milk by its shares (C23); a jar without it is in old vanilla Yogurt's portions (30 kcal). Vanilla Yogurt's script food is set to a cow's milk portion at load, beside its `ReplaceOnUse`. A jar from before that (only `tpdCups`) gets its cups' worth the first time it is touched. Its weight is a custom weight the engine saves. Vanilla's eat action is wrapped (`complete`, `serverStop`) to relabel the jar and give the empty jar back.
 - Every vanilla Yogurt gets `ReplaceOnUse` = Empty Yogurt Container at load, so eating or oatmeal leaves the cup.
-- The shared core (Weather, Station, UI, Hearth) is the required TP Core mod (`~/MODS/TraditionalPreservationCore`), loaded as `require "TraditionalPreservationCore/Weather"`. Edit it there. Dairy names cow's and sheep's milk as a blend with `Hearth.blend`.
+- The shared core (Weather, Station, UI, Stone Hearth) is the required TP Core mod (`~/MODS/TraditionalPreservationCore`), loaded as `require "TraditionalPreservationCore/Weather"`. Edit it there. Dairy names cow's and sheep's milk as a blend with `Hearth.blend`.
 
 ## Debug commands
 
-In debug mode, `TPD.help()` in the Lua console lists commands for testing this mod, and `TPC.help()` the Hearth's. See `DEVHELP.md`.
+In debug mode, `TPD.help()` in the Lua console lists commands for testing this mod, and `TPC.help()` the Stone Hearth's. See `DEVHELP.md`.
 
 ## Known prototype caveats
 
@@ -282,16 +284,16 @@ In debug mode, `TPD.help()` in the Lua console lists commands for testing this m
 
 ## Test plan
 
-Already passed in the game: building the Hearth, incubator and crock; the copper heating and cooling, Hearth Info; pouring from the Hearth, the starter, cooling, wrapping, setting and collecting into jars and cups; Incubator Info and Crock Info; the crock's load, feed and starters; banked and lit fire.
+Already passed in the game: building the Stone Hearth, incubator and crock; the cauldron heating and cooling, Stone Hearth Info; pouring from the Hearth, the starter, cooling, wrapping, setting and collecting into jars and cups; Incubator Info and Crock Info; the crock's load, feed and starters; banked and lit fire.
 
 Still to check in the game:
 
 1. The crock on a kitchen counter and a table: built, put down, saved and reloaded, refused on a fridge or stove (test C).
-2. Cow's and sheep's milk mixing in the copper, a container and the pot; the Hearth's menu and Hearth Info naming both.
+2. Cow's and sheep's milk mixing in the cauldron, a container and the pot; the Stone Hearth's menu and Stone Hearth Info naming both.
 3. Milk that would leave a started pot under 40 C refused, in red.
 4. A part-empty Jar of Yogurt keeps its weight and portions after a reload.
 5. Jars at their real size: a glass jar 4 portions, a clay jar 10; Eat a Portion, vanilla Eat Quarter, a cup from a part-portion, and the empty jar back.
 6. A pot left for weeks catches up and reads right on return.
 7. The incubator's and crock's menus with a controller.
-8. The hold at the scald: steaming copper milk refused for 20 minutes with the minutes to go, then poured; a pot on a stove reads Scalded only after 20 minutes at the steam (TESTING_GUIDE step 111).
+8. The hold at the scald: steaming cauldron milk refused for 20 minutes with the minutes to go, then poured; a pot on a stove reads Scalded only after 20 minutes at the steam (TESTING_GUIDE step 111).
 9. `console.txt` shows no repeating Lua errors after an hour of play, with the other Traditional Preservation mods on.

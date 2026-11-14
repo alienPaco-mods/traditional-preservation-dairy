@@ -1,15 +1,15 @@
 [h1]Traditional Preservation (Dairy)[/h1]
 
-Set your own yogurt the old way. Bring milk to the steam in a Hearth's copper, let it cool in a lidded clay pot, add a spoonful of the last batch and wrap it in cloth overnight. It ends in the real vanilla Yogurt, and every cup eaten comes back to be filled again. Lost your last yogurt? Grow a new starter from wheat and warm milk.
+Set your own yogurt the old way. Bring milk to the steam in a Stone Hearth's cauldron, let it cool in a lidded clay pot, add a spoonful of the last batch and wrap it in cloth overnight. It ends in the real vanilla Yogurt, and every cup eaten comes back to be filled again. Lost your last yogurt? Grow a new starter from wheat and warm milk.
 
 [b]Build 42 only (42.22 or newer). This is an early release, so back up your save before enabling it. Singleplayer only: multiplayer is not supported.[/b]
 
-Traditional Preservation (Dairy) requires [b]Traditional Preservation (Core)[/b] (TP Core for short): subscribe to it too. The Hearth comes with TP Core.
+Traditional Preservation (Dairy) requires [b]Traditional Preservation (Core)[/b] (TP Core for short): subscribe to it too. The Stone Hearth comes with TP Core.
 
 [h2]Features[/h2]
 [list]
 [*]A Yogurt Incubator thrown on the pottery wheel and wrapped in cloth, with its own art for every stage
-[*]Milk scalded in the 60 L copper of TP Core's Hearth and poured straight in, or scalded in a pot on any lit stove or fire and carried over, hot for hours in a Wrapped Yogurt Pot, or any pot, jar or bucket you wrap in a sheet (keep the cloth off the heat: it burns)
+[*]Milk scalded in TP Core's 60 L Forged Cauldron on a Stone Hearth and poured straight in, or scalded in a pot on any lit stove or fire and carried over, hot for hours in a Wrapped Yogurt Pot, or any pot, jar or bucket you wrap in a sheet (keep the cloth off the heat: it burns)
 [*]Milk goes off: raw milk sours and then rots, scalded milk never sours, a fridge slows both, and soured milk still bakes
 [*]Real temperatures: the milk cools, the wrap goes on at 45 C, and it sets in about 6 hours when kept warm
 [*]Cow's and sheep's milk, alone or mixed, as a mixed herd's always was
@@ -22,9 +22,9 @@ Traditional Preservation (Dairy) requires [b]Traditional Preservation (Core)[/b]
 
 [h2]The loop[/h2]
 [olist]
-[*][b]Pour into the Copper[/b] (the Hearth's right-click menu): up to 60 L of milk from any container.
-[*][b]Light the fire[/b]: 10 L steams (85 C) in about 1.5 hours, 20 L in about 2, a full 60 L in about 2.75. Hearth Info shows when. Keep it steaming 20 minutes: then the milk is scalded.
-[*][b]Pour from the Hearth[/b] into a Yogurt Incubator within 2 tiles, up to 5 L. No Hearth yet? Scald a pot of milk on any lit stove or fire and use [b]Pour Scalded Milk[/b] while it's hot.
+[*][b]Pour into the Cauldron[/b] (the Stone Hearth's right-click menu): up to 60 L of milk from any container.
+[*][b]Light the fire[/b]: 10 L steams (85 C) in about 1.5 hours, 20 L in about 2, a full 60 L in about 2.75. Stone Hearth Info shows when. Keep it steaming 20 minutes: then the milk is scalded.
+[*][b]Pour from the Hearth[/b] into a Yogurt Incubator within 2 tiles, up to 5 L. No cauldron yet? Scald a pot of milk on any lit stove or fire and use [b]Pour Scalded Milk[/b] while it's hot.
 [*][b]Add Starter[/b]: one vanilla Yogurt, one portion of a Jar of Yogurt, or one Active Yogurt Starter.
 [*][b]Wait[/b]: the milk cools to 45 C in about 2 hours, the incubator wraps itself, and the milk sets in about 6 hours at 40 to 45 C.
 [*][b]Collect[/b] into empty jars, glass 1 L or clay 2.5 L, or straight into Empty Yogurt Containers.
@@ -36,7 +36,7 @@ Traditional Preservation (Dairy) requires [b]Traditional Preservation (Core)[/b]
 [list]
 [*][b]Yogurt Incubator[/b], Tailoring 1: a Yogurt Pot, 2 Ripped Sheets and Twine. Throw the pot on the wheel (Pottery 2, 6 Clay) and fire it in a kiln.
 [*][b]Starter Culture Crock[/b], Cooking 4: a Clay Jar, Glazed Clay Jar or Clay Pot, a Ripped Sheet and Twine.
-[*][b]Hearth[/b] (TP Core), Masonry 2: 8 Clay Bricks, 2 Clay, 2 Copper Sheets, 3 iron bars or pipes, a Large Hook and a trowel. A working fireplace with a copper kettle hung over it.
+[*][b]Stone Hearth[/b] (TP Core), Masonry 2: 8 Clay Bricks, 2 Clay and a trowel. A working fireplace; fit TP Core's [b]Forged Cauldron[/b] on it (forged from 2 Steel Sheets at a forge, Blacksmith 4; hung with 2 Iron Pipes, a Heavy Chain and a Large Hook) for a 60 L kettle over the fire.
 [/list]
 
 [h2]No yogurt left?[/h2]
@@ -44,17 +44,17 @@ Load the crock with 20 wheat grains and half a litre of milk at 35 to 45 C. In a
 
 [h2]Temperature[/h2]
 [list]
-[*][b]By a fire[/b]: a lit fire within 2 tiles indoors (the Hearth, a fireplace, an antique stove) holds 28 C. Yogurt sets in about 6 hours all year. A banked Hearth's or Firebox's embers hold 24 C. Outside, the air takes the heat: a porch fire gives the 10-day average +15 C, a campfire in the open the day's weather +10 C, up to 28 C. A porch fire still sets a January pot, in about 12 hours.
+[*][b]By a fire[/b]: a lit fire within 2 tiles indoors (the Stone Hearth, a fireplace, an antique stove) holds 28 C. Yogurt sets in about 6 hours all year. A banked Stone Hearth's embers hold 24 C. Outside, the air takes the heat: a porch fire gives the 10-day average +15 C, a campfire in the open the day's weather +10 C, up to 28 C. A porch fire still sets a January pot, in about 12 hours.
 [*][b]Indoors[/b] or [b]under an open roof[/b]: the last 10 days' outdoor average, a room 2 C warmer in the cold months (22 C while the grid is on). Sets from May to October.
 [*][b]In a loft[/b] (the top storey: a room upstairs with no room over it): as indoors, plus three tenths of whatever the 10-day average is above 10 C: the sun on the roof (about 24 C in a 21 C July, no warmer than a room from October to April); 22 C while the power grid is on.
 [*][b]In a basement[/b]: a month behind the season, about 5 C from January to March, 13 C from July to September. Sets from May to December.
 [*][b]Outdoors[/b]: only on warm summer nights.
 [/list]
-If the milk falls under 40 C before a starter is in, it is too cold: pour it out and reheat it in the copper or on a stove. Once the starter is in, milk too cold to set is refused.
+If the milk falls under 40 C before a starter is in, it is too cold: pour it out and reheat it in the cauldron or on a stove. Once the starter is in, milk too cold to set is refused.
 
 [h2]Good to know[/h2]
 [list]
-[*]Only scalded milk goes into an incubator: milk held at 85 C for 20 minutes in the copper or on a stove or fire, or store milk poured out of its carton. A Wrapped Yogurt Pot carries 5 L and keeps it hot for hours; an open pot cools in minutes.
+[*]Only scalded milk goes into an incubator: milk held at 85 C for 20 minutes in the cauldron or on a stove or fire, or store milk poured out of its carton. A Wrapped Yogurt Pot carries 5 L and keeps it hot for hours; an open pot cools in minutes.
 [*]Raw milk sours in about a day and a half at 20 C (3 days in a basement, 8 in a powered fridge, never frozen) and is rotten as long again after. Scalded milk never sours and rots at the same age. Sealed store milk keeps until it is poured out.
 [*]Soured milk still bakes: vanilla cake batter, muffins and cereal now take cow's, sheep's or animal milk, fresh, scalded or soured.
 [*]A Jar of Yogurt stays fresh 10 days; the cups keep its age.

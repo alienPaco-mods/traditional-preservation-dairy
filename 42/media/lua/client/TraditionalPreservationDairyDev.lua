@@ -21,7 +21,7 @@ function TPD.help()
     say("TPD.ages()           every container of milk you carry: fluid, stage, age, hours to the next stage, place")
     say("TPD.sour(hours)      age the milk you carry by this many hours at 20 C (sours at 36, spoils at 72)")
     say("TPD.tiles()          every station within 3 tiles: object class, sprite and square solid flags")
-    say("The Hearth's commands (hearth, copper, fuel, hot, a Hearth kit) are TP Core's: TPC.help()")
+    say("The Stone Hearth's commands (hearth, cauldron, fuel, hot, its kit) are TP Core's: TPC.help()")
 end
 
 function TPD.weather()
@@ -122,7 +122,7 @@ local KITS = {
         end,
     },
     crock = {
-        about = string.format("%d wheat grains; warm the copper with TPC.copper(1, 40) by a Hearth", M.CROCK_WHEAT),
+        about = string.format("%d wheat grains; warm the cauldron with TPC.cauldron(1, 40) by a Stone Hearth (Cauldron)", M.CROCK_WHEAT),
         give = function(inventory)
             for _ = 1, M.CROCK_WHEAT do inventory:AddItem(M.WHEAT) end
         end,
