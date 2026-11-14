@@ -21,7 +21,7 @@ function TPD.help()
     say("TPD.ages()           every container of milk you carry: fluid, stage, age, hours to the next stage, place")
     say("TPD.sour(hours)      age the milk you carry by this many hours at 20 C (sours at 36, spoils at 72)")
     say("TPD.tiles()          every station within 3 tiles: object class, sprite and square solid flags")
-    say("The Stone Hearth's commands (hearth, cauldron, fuel, hot, its kit) are TP Core's: TPC.help()")
+    say("The Stone Hearth's commands (cauldronInfo, stone, cauldron, fuel, hot, its kit) are TP Core's: TPC.help()")
 end
 
 function TPD.weather()
