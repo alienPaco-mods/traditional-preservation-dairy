@@ -228,7 +228,7 @@ Under Traditional Preservation (Dairy):
 | Starter culture time (hours) | 24 | The crock's first stage at its best; the second takes half as long |
 | Temperature sensitivity | Normal | Off, Forgiving, Normal or Harsh. Off runs at full speed in any weather; the milk still has to cool before the wrap goes on |
 | Milk goes off | On | Raw milk sours, then spoils; scalded milk spoils without souring |
-| Milk spoiling speed | 1 | 2 goes off twice as fast, 0.5 keeps twice as long |
+| Milk spoiling speed | 1 | 2 goes off twice as fast, 0.5 keeps twice as long; multiplies vanilla's Food Spoilage (`FluidAgeing.foodRotSpeed`) |
 
 ## Tuning
 

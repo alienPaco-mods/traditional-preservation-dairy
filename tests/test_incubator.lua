@@ -399,4 +399,13 @@ check("state lives under one prefixed key", modData.tpdIncubator.ml == 1000 and 
 SandboxVars = { TraditionalPreservationDairy = { IncubationHours = 8, CultureHours = 36, TemperatureSensitivity = 1 } }
 H.fire("OnInitGlobalModData")
 check("the sandbox sets the times and sensitivity", M.INCUBATE_HOURS == 8 and M.CULTIVATE_HOURS == 36 and M.DEVELOP_HOURS == 18 and M.SENSITIVITY == 0)
+-- Milk goes off at vanilla's Food Spoilage speed times Dairy's own (pick A, 2026-11-14)
+local milkSpec = require("TraditionalPreservationCore/FluidAgeing").spec(M.MILK_KIND)
+local sandbox, milkSpeed = SandboxVars, M.MILK_SPEED
+SandboxVars, M.MILK_SPEED = nil, 1
+check("milk: Normal with no sandbox", milkSpec.speed() == 1)
+SandboxVars, M.MILK_SPEED = { FoodRotSpeed = 5 }, 2
+check("milk: Very Slow food spoilage times the milk's own speed", math.abs(milkSpec.speed() - 0.8) < 1e-9)
+SandboxVars, M.MILK_SPEED = sandbox, milkSpeed
+
 H.done()

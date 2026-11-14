@@ -226,7 +226,7 @@ Sheep's milk and the game's plain "animal's milk" go the same way under their ow
 
 > *Margin note:* raw milk carries its own lactic bacteria, which is why it sours on the shelf: that's clabber, the old baker's buttermilk. Scalding kills them, so scalded milk has nothing to sour it and simply goes bad in the end.
 
-Both can be changed in the sandbox: **Milk goes off** and **Milk spoiling speed**.
+Both can be changed in the sandbox: **Milk goes off** and **Milk spoiling speed**. Milk also follows the game's own **Food Spoilage** setting, as every food does: on Very Slow it keeps 2.5 times as long, and Milk spoiling speed multiplies on top.
 
 ### Clabber or yogurt?
 
@@ -460,7 +460,7 @@ Under **Traditional Preservation (Dairy)**:
 | Starter culture time (hours) | 24 | The crock's first stage at its best (1 to 240); the second takes half as long |
 | Temperature sensitivity | Normal | Off / Forgiving / Normal / Harsh. Off runs at full speed in any weather; the milk still has to cool before the wrap goes on |
 | Milk goes off | On | Raw milk sours, then rots; scalded milk rots without souring. Off, milk keeps for ever as in vanilla |
-| Milk spoiling speed | 1 | 2 goes off twice as fast, 0.5 keeps twice as long (0.1 to 10) |
+| Milk spoiling speed | 1 | 2 goes off twice as fast, 0.5 keeps twice as long (0.1 to 10); on top of the game's Food Spoilage |
 
 ---
 

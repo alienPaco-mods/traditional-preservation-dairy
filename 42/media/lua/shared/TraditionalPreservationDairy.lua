@@ -90,7 +90,7 @@ M.MILK_KIND = "milk"
 M.MILK_TURN_HOURS = 36
 M.MILK_SPOIL_HOURS = 72
 M.MILK_SPOILS = true          -- sandbox: Milk goes off
-M.MILK_SPEED = 1              -- sandbox: how fast, 1 as above
+M.MILK_SPEED = 1              -- sandbox: how fast, 1 as above, on top of vanilla's Food Spoilage
 M.SOUR_MILKS = { CowMilk = "SourCowMilk", SheepMilk = "SourSheepMilk", AnimalMilk = "SourAnimalMilk" }
 M.ROTTEN_MILKS = { CowMilk = "RottenCowMilk", SheepMilk = "RottenSheepMilk", AnimalMilk = "RottenAnimalMilk" }
 M.SCALDED_MILKS = { CowMilk = "ScaldedCowMilk", SheepMilk = "ScaldedSheepMilk", AnimalMilk = "ScaldedAnimalMilk" }
@@ -209,8 +209,7 @@ end
 
 -- Frozen the crock's culture pauses (TP Core's Weather.frozen), and goes on once thawed.
 function M.cultureRate(celsius)
-    if Weather.frozen(celsius, M.SENSITIVITY) then return 0 end
-    return Weather.scaled(Weather.curve(CULTURE_CURVE, celsius), M.SENSITIVITY, 0)
+    return Weather.rate(CULTURE_CURVE, celsius, M.SENSITIVITY)
 end
 
 -- Weather ledger and history
@@ -250,7 +249,8 @@ FluidAgeing.register({
     sealed = M.STORE_MILK,
     getLedger = function() return M.getLedger() end,
     enabled = function() return M.MILK_SPOILS end,
-    speed = function() return M.MILK_SPEED end,
+    -- Vanilla's Food Spoilage setting, then Dairy's own (user's pick A, 2026-11-14).
+    speed = function() return M.MILK_SPEED * FluidAgeing.foodRotSpeed() end,
 })
 
 -- One ten-minute reading: the ledger for the crock, and the hour's slot in the history for the incubator.
