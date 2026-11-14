@@ -11,6 +11,7 @@ module TraditionalPreservationDairy
         }
         component SpriteConfig
         {
+            OnIsValid = TraditionalPreservationCore.doorFits,
             isThumpable = false,
             face S
             {

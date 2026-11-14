@@ -620,6 +620,8 @@ end)
 local crockFaces = {}
 for face = 0, M.FACE_COUNT - 1 do crockFaces[M.spriteName(M.CROCK_SPRITE + face)] = true end
 UI.offAppliances(crockFaces)
+-- No station, the incubator or the crock, is put down in front of a door (TP Core's Doors).
+UI.keepDoorsFree(require("TraditionalPreservationDairy/Tiles").STATIONS)
 
 -- Every pot and crock the click took in gets its own menu. With more than one, each is named with its status
 -- ("Yogurt Incubator (Cooling: 2.0 L at 60 C)"), so the player picks the right one.
