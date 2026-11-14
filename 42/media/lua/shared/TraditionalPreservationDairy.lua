@@ -346,14 +346,23 @@ function M.pourOut(batch, maxMl)
 end
 
 -- Runs the pot for hours at one place temperature, from hour now. Each step cools exactly; the wrap goes on
--- and the yogurt is done within a step's resolution.
+-- the moment the milk crosses SET_C (user, 2026-11-14: on the step's reading it went on a degree or two cold, and
+-- November's pots indoors never set), and the yogurt is done within a step's resolution.
 function M.advanceBatch(batch, hours, placeC, now)
     if (batch.ml or 0) <= 0 then return end
     local t = 0
     while t < hours - 1e-9 do
         local step = math.min(M.STEP_HOURS, hours - t)
         local wrapped = batch.incubating and not batch.readyHour
-        batch.tempC = M.cool(batch.tempC, placeC, step, M.tau(batch.ml, wrapped))
+        local before = batch.tempC
+        batch.tempC = M.cool(before, placeC, step, M.tau(batch.ml, wrapped))
+        if not batch.incubating and batch.starter and before > M.SET_C and batch.tempC < M.SET_C then
+            -- Cooling is exponential, so the crossing is exact: lidded to SET_C, wrapped for the rest of the step.
+            local cross = M.tau(batch.ml, false) * math.log((before - placeC) / (M.SET_C - placeC))
+            batch.tempC = M.cool(M.SET_C, placeC, step - cross, M.tau(batch.ml, true))
+            batch.incubating, batch.wrapHour = true, now + t + cross   -- read by tools/season_report.lua
+            batch.done = M.setRate(batch.tempC) * (step - cross)
+        end
         t = t + step
         if not batch.incubating and batch.starter and batch.tempC <= M.SET_C then
             batch.incubating = true

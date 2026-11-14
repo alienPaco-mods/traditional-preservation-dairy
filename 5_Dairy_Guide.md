@@ -331,27 +331,27 @@ Hours for 5 L poured at 85 C at 18:00 with the starter in, **cooling + setting**
 
 | Month | Open air | Indoors | Loft | Basement | By a fire | By banked embers |
 |---|---|---|---|---|---|---|
-| Jan | never | never | never | never | 2.5 + 6.2 | 2.2 + 6.3 |
-| Mar | never | never | never | never | 2.5 + 6.2 | 2.2 + 6.3 |
-| May | never | 1.7 + 11.3 | 1.7 + 11.3 | 1.5 + 13.7 | 2.5 + 6.2 | 2.2 + 6.3 |
-| Jul | 1.8 + 8.8 | 2.0 + 7.7 | 2.0 + 6.5 | 1.7 + 9.5 | 2.5 + 6.2 | 2.2 + 6.3 |
-| Sep | 1.7 + 14.8 | 1.8 + 7.7 | 2.0 + 7.8 | 1.7 + 8.2 | 2.5 + 6.2 | 2.2 + 6.3 |
-| Nov | never | never | never | 1.7 + 13.7 | 2.5 + 6.2 | 2.2 + 6.3 |
+| Jan | never | never | never | 1.4 + 13.6 | 2.4 + 6.1 | 2.1 + 6.2 |
+| Mar | never | never | never | never | 2.4 + 6.1 | 2.1 + 6.2 |
+| May | 1.6 + 11.3 | 1.6 + 8.4 | 1.6 + 8.4 | 1.5 + 10.5 | 2.4 + 6.1 | 2.1 + 6.2 |
+| Jul | 1.8 + 7.9 | 1.9 + 6.8 | 2.0 + 6.5 | 1.6 + 8.1 | 2.4 + 6.1 | 2.1 + 6.2 |
+| Sep | 1.6 + 10.1 | 1.8 + 7.1 | 1.8 + 6.8 | 1.6 + 7.9 | 2.4 + 6.1 | 2.1 + 6.2 |
+| Nov | never | 1.5 + 9.3 | 1.5 + 9.3 | 1.5 + 8.8 | 2.4 + 6.1 | 2.1 + 6.2 |
 
 The fire columns are a fire indoors. **A fire outside** warms the pot less in the cold months:
 
 | Month | By a fire, under a roof (a porch) | By a fire, in the open (a campfire) |
 |---|---|---|
-| Jan | 1.7 + 10.7 | never |
-| Mar | 1.7 + 9.0 | never |
-| May | 2.2 + 6.3 | 2.0 + 7.2 |
-| Jul | 2.5 + 6.2 | 2.3 + 6.5 |
-| Sep | 2.5 + 6.2 | 2.2 + 8.0 |
-| Nov | 2.2 + 6.8 | 2.0 + 10.5 |
+| Jan | 1.6 + 8.4 | never |
+| Mar | 1.6 + 8.1 | 1.6 + 11.8 |
+| May | 2.1 + 6.2 | 2.0 + 7.0 |
+| Jul | 2.4 + 6.1 | 2.3 + 6.4 |
+| Sep | 2.4 + 6.1 | 2.0 + 6.8 |
+| Nov | 2.0 + 6.5 | 1.8 + 7.7 |
 
-> *Margin note:* a November pot indoors only just misses. It gets 5.8 of its 6 hours before the wrapped milk has cooled too far. Give it a banked fire, or the basement.
+> *Margin note:* a November pot indoors still sets, slowly: 9 hours under the cloth. December's doesn't. Give it a banked fire, or the basement.
 
-**While the grid is on** a room is 22 C in every month: 2.2 + 7.0 hours, and a 1 L pot about 9 hours from pouring. The crock's first stage takes about 32 hours there, and its starter is ready in two days.
+**While the grid is on** a room is 22 C in every month: 2.0 + 6.5 hours, and a 1 L pot about 9 hours from pouring. The crock's first stage takes about 32 hours there, and its starter is ready in two days.
 
 | The crock's first stage | |
 |---|---|
@@ -366,7 +366,7 @@ The fire columns are a fire indoors. **A fire outside** warms the pot less in th
 
 At 0 C and below the crock stops and waits: Crock Info says *Paused here (frozen)*. Nothing is lost, and it goes on once it thaws.
 
-> *Margin note:* a cellar runs a month behind the weather. It still holds the summer's warmth in November and December, so a full pot sets in the basement from May to December, indoors only from May to October.
+> *Margin note:* a cellar runs a month behind the weather. It still holds the autumn's warmth in December and January, so a full pot sets in the basement from April to January, indoors only from April to November.
 
 > *Margin note:* yogurt is a summer job in an unheated house, and a fire's the rest of the year. Farm wives set the crock on the warm side of the hearth, and a Kentucky winter gives no other way.
 
@@ -421,7 +421,7 @@ At 0 C and below the crock stops and waits: Crock Info says *Paused here (frozen
 ## 14. Tips
 
 - **Fire up a fuller cauldron.** 20 L takes only half an hour more fire than 10 and fills four pots; a full 60 L fills twelve in about 2¾ hours.
-- **Set it by the fire in winter.** A lit Stone Hearth, fireplace or antique stove within 2 tiles indoors holds a pot at 28 C: about 9 hours from pouring to Ready in any month. A porch fire still sets a January pot in about 12 hours; a campfire in the open doesn't.
+- **Set it by the fire in winter.** A lit Stone Hearth, fireplace or antique stove within 2 tiles indoors holds a pot at 28 C: about 8 and a half hours from pouring to Ready in any month. A porch fire still sets a January pot in about 10 hours; a campfire in the open doesn't.
 - **Bank the fire overnight.** It holds the cauldron at 50 C on a third of the wood, and banked embers still keep a pot at 24 C.
 - **Keep one yogurt back. Always.** A portion of a jar will do. Otherwise it's a day and a half with the crock, or half a day if you have soured milk.
 - **Soured milk isn't waste.** Bake with it, or start the crock with it.
@@ -470,7 +470,7 @@ Each process laid out as the game's planting seasons: the months it works unheat
 
 | Process | Season | Best months | Poor months | Out of season | Where, at its best | Takes, at its best |
 |---|---|---|---|---|---|---|
-| **Setting yogurt** | May to December (a basement), May to October (indoors) | June, July, August, September, October | May (indoors 1.7 + 11.3 hours, a basement 1.5 + 13.7), November and December (a basement, 1.7 + 13.7 and 1.5 + 11.7) | January to April: it never sets | A loft (the warm roof), or indoors | 2.0 + 6.5 hours in a July loft; indoors 2.0 + 7.7 |
+| **Setting yogurt** | April to January (a basement), April to November (indoors) | June, July, August, September, October | April (indoors 1.4 + 11.6 hours, a basement 1.4 + 12.9), May (indoors 1.6 + 8.4, a basement 1.5 + 10.5), November (indoors 1.5 + 9.3, a basement 1.5 + 8.8), December and January (a basement, 1.5 + 10.2 and 1.4 + 13.6) | February and March: it never sets | A loft (the warm roof), or indoors | 2.0 + 6.5 hours in a July loft; indoors 1.9 + 6.8 |
 | **Starting the crock** | June to November | July, August, September | June, October (a basement 4 to 5 days), November (a basement about 9) | December to May: weeks (indoors in January about 90 days, most of them paused frozen) | Indoors | About 2 days |
 | **Keeping raw milk** | All year | January, February, March | July, August, September (a basement 3½ days, a room 1½ to 2) | None | A basement | Sours in 6 to 7 days, rotten in about 2 weeks. **Scalded milk never sours** |
 
@@ -478,11 +478,11 @@ Each process laid out as the game's planting seasons: the months it works unheat
 
 | Where | Yogurt | The crock's first stage |
 |---|---|---|
-| By a fire indoors (28 C) | 2.5 + 6.2 hours | 24 hours |
-| By banked embers indoors (24 C) | 2.2 + 6.3 hours | |
-| A powered room (22 C) | 2.2 + 7.0 hours | about 32 hours |
+| By a fire indoors (28 C) | 2.4 + 6.1 hours | 24 hours |
+| By banked embers indoors (24 C) | 2.1 + 6.2 hours | |
+| A powered room (22 C) | 2.0 + 6.5 hours | about 32 hours |
 
-> *Margin note:* a full pot sets in the basement from May to December and indoors only from May to October; the rest of the year it's the hearth's.
+> *Margin note:* a full pot sets in the basement from April to January and indoors only from April to November; the rest of the year it's the hearth's.
 
 ---
 

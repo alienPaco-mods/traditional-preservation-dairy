@@ -193,16 +193,16 @@ Hours for 5 L poured at 85 C at 18:00 with the starter in, cooling then setting,
 
 | Month | Open air | Indoors | Loft | Basement | By a fire | By banked embers | By a fire, under a roof | By a fire, in the open |
 |---|---|---|---|---|---|---|---|---|
-| Jan | never | never | never | never | 2.5 + 6.2 | 2.2 + 6.3 | 1.7 + 10.7 | never |
-| Mar | never | never | never | never | 2.5 + 6.2 | 2.2 + 6.3 | 1.7 + 9.0 | never |
-| May | never | 1.7 + 11.3 | 1.7 + 11.3 | 1.5 + 13.7 | 2.5 + 6.2 | 2.2 + 6.3 | 2.2 + 6.3 | 2.0 + 7.2 |
-| Jul | 1.8 + 8.8 | 2.0 + 7.7 | 2.0 + 6.5 | 1.7 + 9.5 | 2.5 + 6.2 | 2.2 + 6.3 | 2.5 + 6.2 | 2.3 + 6.5 |
-| Sep | 1.7 + 14.8 | 1.8 + 7.7 | 2.0 + 7.8 | 1.7 + 8.2 | 2.5 + 6.2 | 2.2 + 6.3 | 2.5 + 6.2 | 2.2 + 8.0 |
-| Nov | never | never | never | 1.7 + 13.7 | 2.5 + 6.2 | 2.2 + 6.3 | 2.2 + 6.8 | 2.0 + 10.5 |
+| Jan | never | never | never | 1.4 + 13.6 | 2.4 + 6.1 | 2.1 + 6.2 | 1.6 + 8.4 | never |
+| Mar | never | never | never | never | 2.4 + 6.1 | 2.1 + 6.2 | 1.6 + 8.1 | 1.6 + 11.8 |
+| May | 1.6 + 11.3 | 1.6 + 8.4 | 1.6 + 8.4 | 1.5 + 10.5 | 2.4 + 6.1 | 2.1 + 6.2 | 2.1 + 6.2 | 2.0 + 7.0 |
+| Jul | 1.8 + 7.9 | 1.9 + 6.8 | 2.0 + 6.5 | 1.6 + 8.1 | 2.4 + 6.1 | 2.1 + 6.2 | 2.4 + 6.1 | 2.3 + 6.4 |
+| Sep | 1.6 + 10.1 | 1.8 + 7.1 | 1.8 + 6.8 | 1.6 + 7.9 | 2.4 + 6.1 | 2.1 + 6.2 | 2.4 + 6.1 | 2.0 + 6.8 |
+| Nov | never | 1.5 + 9.3 | 1.5 + 9.3 | 1.5 + 8.8 | 2.4 + 6.1 | 2.1 + 6.2 | 2.0 + 6.5 | 1.8 + 7.7 |
 
-A November pot indoors only just misses: it reaches 5.8 of its 6 hours before the wrapped milk is too cold. In the full report (every month) a pot sets indoors from May to October, in a basement from May to December.
+The wrap goes on the moment the milk crosses 45 C, not at the next ten-minute reading. In the full report (every month) a pot sets indoors from April to November, in a basement from April to January, by a campfire in the open from February to November.
 
-While the grid is on a room or a loft is 22 C in every month: 2.2 + 7.0 hours.
+While the grid is on a room or a loft is 22 C in every month: 2.0 + 6.5 hours.
 
 The crock's first stage takes 24 hours by an indoor fire in any month, about 32 hours in a powered room, about 2 days indoors in summer, 4 to 5 in a basement from July to October (9 in November). A January crock takes about 7 days by a porch fire, 17 by a campfire, a month in a basement, and about 90 days in an unheated room, most of them paused below freezing.
 
