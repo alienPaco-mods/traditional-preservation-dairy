@@ -46,7 +46,7 @@ This mod lets you **set your own yogurt the old way**: milk brought to the steam
 | Throw a **Yogurt Pot** and fire it | 6 Clay, a little water. Pottery 2, wheel and kiln | The pot |
 | Build a **Yogurt Incubator** within 2 tiles of the Stone Hearth | 1 Yogurt Pot, 2 Ripped Sheets, 1 Twine. Tailoring 1 | The incubator |
 | **Pour into the Cauldron** and light the fire | Up to 60 L of cow's or sheep's milk, firewood | Steaming milk in **about 1.5 hours** for 10 L, 2¾ for 60 L |
-| **Pour from the Hearth**, then **Add Starter** | 1 vanilla Yogurt, a portion of a Jar of Yogurt, or 1 Active Yogurt Starter | 5 L cooling in the pot |
+| **Pour from the Cauldron**, then **Add Starter** | 1 vanilla Yogurt, a portion of a Jar of Yogurt, or 1 Active Yogurt Starter | 5 L cooling in the pot |
 | Wait **about 8 hours** (2 cooling, 6 setting, in a 20 C room) | | 5 L of yogurt |
 | **Collect** | Empty jars or Empty Yogurt Containers | Jars of Yogurt or vanilla Yogurts |
 
@@ -68,7 +68,7 @@ This mod lets you **set your own yogurt the old way**: milk brought to the steam
 |---|---|---|---|---|---|
 | 1 | Pour into the Cauldron | Stone Hearth's right-click menu | milk, from any container | up to 60 L in the cauldron | a moment |
 | 2 | Bring to the steam, and hold it | Lit Stone Hearth | | milk at 85 C, **Scalded** after 20 minutes there | about 1.5 hours for 10 L, 2¾ for 60 L, then 20 minutes |
-| 3 | Pour from the Hearth | Incubator's menu | scalded, steaming milk | up to 5 L in the pot | a moment |
+| 3 | Pour from the Cauldron | Incubator's menu | scalded, steaming milk | up to 5 L in the pot | a moment |
 | 4 | Add Starter | Incubator's menu | 1 Yogurt, a jar's portion, or an Active Yogurt Starter | | a moment |
 | 5 | Cool | Incubator, lid on | | milk at 45 C, the wrap goes on | about 2 hours* |
 | 6 | Set | Incubator, wrapped | | 5 L of yogurt | 6 hours at 40 to 45 C* |
@@ -87,7 +87,7 @@ This mod lets you **set your own yogurt the old way**: milk brought to the steam
 4. **Build the Yogurt Incubator** from the Build menu, within 2 tiles of the Stone Hearth.
 5. **Pour into the Cauldron** (right-click the Stone Hearth) from your milk buckets, then **Light** the fire.
 6. Check **Stone Hearth Info**. When it reads "Steaming: Yes", the milk is at 85 C. **Keep it steaming for 20 minutes**: then the cauldron's milk reads *Scalded* and will pour.
-7. Right-click the incubator: **Pour from the Hearth**, then **Add Starter** with a Yogurt or a Jar of Yogurt you kept back.
+7. Right-click the incubator: **Pour from the Cauldron**, then **Add Starter** with a Yogurt or a Jar of Yogurt you kept back.
 8. Go to bed. The lid stays on while it cools, and at 45 C the cloth wraps itself on.
 9. In the morning the status reads **Ready**. **Collect into a Jar** or **Fill Empty Yogurt Containers**.
 10. Keep one Yogurt back for the next batch.
@@ -100,7 +100,7 @@ That's it. A full cauldron is twelve pots, 60 L of yogurt from one firing.
 
 ## 5. The Forged Cauldron
 
-The Stone Hearth is TP Core's station: a vanilla fireplace (Add Fuel, Light, cooking, room heat). With TP Core's **Forged Cauldron** fitted, a 60 L iron kettle hangs over its hole on a chain. Right-click it for **Pour into the Cauldron**, **Fill from the Cauldron** (into your own containers), **Empty the Cauldron**, **Bank the Fire** / **Stoke the Fire** and **Stone Hearth Info**. The menus below call it *the Stone Hearth* for short (Pour from the Hearth).
+The Stone Hearth is TP Core's station: a vanilla fireplace (Add Fuel, Light, cooking, room heat). With TP Core's **Forged Cauldron** fitted, a 60 L iron kettle hangs over its hole on a chain. Right-click it for **Pour into the Cauldron**, **Fill from the Cauldron** (into your own containers), **Empty the Cauldron**, **Bank the Fire** / **Stoke the Fire** and **Stone Hearth Info**.
 
 - **One fluid at a time.** Cow's and sheep's milk count as one: they mix freely, and a blend keeps its shares in the cauldron, in a container and in the pot. Any other mix is refused, shown in red with the reason.
 - **Heat mixes by volume.** Cold milk poured onto hot cools the lot.
@@ -129,7 +129,7 @@ The Stone Hearth and its cauldron have their own guide, **Traditional Preservati
 
 A lidded clay pot holding 5 L, wrapped in a striped cloth when it's setting. Right-click it:
 
-- **Pour from the Hearth** draws steaming, scalded milk from a Stone Hearth within 2 tiles, up to the pot's 5 L. Before its 20 minutes are up the option is greyed and says how many minutes are left.
+- **Pour from the Cauldron** draws steaming, scalded milk from a Stone Hearth within 2 tiles, up to the pot's 5 L. Before its 20 minutes are up the option is greyed and says how many minutes are left.
 - **Pour Scalded Milk** takes **scalded** milk from any container: milk that has been held at 85 C or more for 20 minutes, in the cauldron or in a pot on a stove or a fire, or store milk poured out of its carton (it was pasteurised). It goes in at the heat it has *now*: off the heat, an open pot or bucket cools in minutes (85 to 45 C in about a quarter hour), a **Wrapped Yogurt Pot** in hours. Pouring between containers carries the heat over, so a pot just off the stove poured into a Wrapped Pot stays hot.
 - **Add Starter** takes one vanilla Yogurt, one portion from a Jar of Yogurt (250 ml, a cup's worth: the rest stays in the jar, and the empty jar comes back with the last), or one Active Yogurt Starter, before or after the milk. None of them gone off. One per batch, whatever the size.
 - **Pour Out Milk** empties the pot into a container.
@@ -435,7 +435,7 @@ At 0 C and below the crock stops and waits: Crock Info says *Paused here (frozen
 
 | Problem | Why |
 |---|---|
-| Pour from the Hearth greyed out | The Stone Hearth must stand within 2 tiles of the pot, and its cauldron must have steamed (85 C) for 20 minutes. Keep the fire lit; Stone Hearth Info says when it will steam, the greyed option how many minutes are left |
+| Pour from the Cauldron greyed out | The Stone Hearth must stand within 2 tiles of the pot, and its cauldron must have steamed (85 C) for 20 minutes. Keep the fire lit; Stone Hearth Info says when it will steam, the greyed option how many minutes are left |
 | Pour Scalded Milk says "Not scalded" | The milk isn't scalded: hold it at 85 C for 20 minutes in the cauldron or on a stove or fire. Raw milk mixed in makes scalded milk plain again |
 | Pour refused as too cold | The starter is in, and the milk would bring the pot under 40 C. Use hotter milk |
 | Pour into the Cauldron refused, in red | The cauldron holds one fluid at a time. Only cow's and sheep's milk mix |
@@ -509,7 +509,7 @@ Copied from `DEVHELP.md`; change both together.
 | `TPD.sour(hours)` | Ages the milk you carry by this many hours at 20 C (36 if left out: one souring). |
 | `TPD.tiles()` | Every station within 3 tiles: object class, sprite, solid flags. |
 
-**Typical check:** within 2 tiles of a Stone Hearth with the cauldron fitted (`TPC.kit()`, `TPC.fit()`), `TPC.cauldron(5)` and `TPC.hot()`, then `TPD.kit()`, Pour from the Hearth and Add Starter. `TPD.age(3)` should show it wrapped and setting, `TPD.age(7)` Ready.
+**Typical check:** within 2 tiles of a Stone Hearth with the cauldron fitted (`TPC.kit()`, `TPC.fit()`), `TPC.cauldron(5)` and `TPC.hot()`, then `TPD.kit()`, Pour from the Cauldron and Add Starter. `TPD.age(3)` should show it wrapped and setting, `TPD.age(7)` Ready.
 
 ---
 

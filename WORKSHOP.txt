@@ -24,7 +24,7 @@ Traditional Preservation (Dairy) requires [b]Traditional Preservation (Core)[/b]
 [olist]
 [*][b]Pour into the Cauldron[/b] (the Stone Hearth's right-click menu): up to 60 L of milk from any container.
 [*][b]Light the fire[/b]: 10 L steams (85 C) in about 1.5 hours, 20 L in about 2, a full 60 L in about 2.75. Stone Hearth Info shows when. Keep it steaming 20 minutes: then the milk is scalded.
-[*][b]Pour from the Hearth[/b] into a Yogurt Incubator within 2 tiles, up to 5 L. No cauldron yet? Scald a pot of milk on any lit stove or fire and use [b]Pour Scalded Milk[/b] while it's hot.
+[*][b]Pour from the Cauldron[/b] into a Yogurt Incubator within 2 tiles, up to 5 L. No cauldron yet? Scald a pot of milk on any lit stove or fire and use [b]Pour Scalded Milk[/b] while it's hot.
 [*][b]Add Starter[/b]: one vanilla Yogurt, one portion of a Jar of Yogurt, or one Active Yogurt Starter.
 [*][b]Wait[/b]: the milk cools to 45 C in about 2 hours, the incubator wraps itself, and the milk sets in about 6 hours at 40 to 45 C.
 [*][b]Collect[/b] into empty jars, glass 1 L or clay 2.5 L, or straight into Empty Yogurt Containers.

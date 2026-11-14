@@ -21,6 +21,6 @@ These console commands load only when the game runs in **debug mode** (launch op
 
 Right-click a station once to start tracking it if `TPD.pots()` or `TPD.crocks()` finds none.
 
-**Typical check of a batch:** within 2 tiles of a Stone Hearth with the cauldron fitted (`TPC.kit()`, `TPC.fit()`), `TPC.cauldron(5)` and `TPC.hot()` for 5 L of steaming milk (`TPC.cauldron(5, 20, "SheepMilk")` for sheep's), `TPD.kit()`, then Pour from the Hearth and Add Starter on the incubator. `TPD.age(3)` should show it wrapped and setting, `TPD.age(7)` Ready.
+**Typical check of a batch:** within 2 tiles of a Stone Hearth with the cauldron fitted (`TPC.kit()`, `TPC.fit()`), `TPC.cauldron(5)` and `TPC.hot()` for 5 L of steaming milk (`TPC.cauldron(5, 20, "SheepMilk")` for sheep's), `TPD.kit()`, then Pour from the Cauldron and Add Starter on the incubator. `TPD.age(3)` should show it wrapped and setting, `TPD.age(7)` Ready.
 
 **Typical check of the crock:** `TPD.kit("crock")`, `TPC.cauldron(1, 40)` by a Stone Hearth within 2 tiles, Load Wheat and Warm Milk, `TPD.age(24)`, Feed Fresh Milk from `TPD.milk(1)`, `TPD.age(12)`, then Collect 2 Starters. **The clabber:** `TPD.milk(1)`, `TPD.sour()` (it reads Soured), Load Soured Milk on an empty crock (Cultured at once), feed, `TPD.age(12)`, collect.

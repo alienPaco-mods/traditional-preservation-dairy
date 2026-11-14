@@ -16,8 +16,8 @@
   "ContextMenu_TraditionalPreservationDairy_EatPortion": "Eat a Portion",
   "ContextMenu_TraditionalPreservationDairy_FillCup": "Fill a Yogurt Cup",
   "ContextMenu_TraditionalPreservationDairy_FillAllCups": "Fill All Cups (%1)",
-  "ContextMenu_TraditionalPreservationDairy_PourFromHearth": "Pour from the Hearth",
-  "ContextMenu_TraditionalPreservationDairy_LoadFromHearth": "From the Hearth",
+  "ContextMenu_TraditionalPreservationDairy_PourFromHearth": "Pour from the Cauldron",
+  "ContextMenu_TraditionalPreservationDairy_LoadFromHearth": "From the Cauldron",
   "ContextMenu_TraditionalPreservationDairy_CrockInfo": "Crock Info",
   "ContextMenu_TraditionalPreservationDairy_FluidItem": "%1 (%2 L)",
   "ContextMenu_TraditionalPreservationDairy_PourScalded": "Pour Scalded Milk"

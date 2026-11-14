@@ -18,7 +18,7 @@ Copy this folder to `~/Zomboid/mods/TraditionalPreservationDairy`, as a real cop
 
 1. **Keep a cow or sheep in milk.** Cow's and sheep's milk both work, and mix.
 2. **Build a Stone Hearth** (TP Core), fit TP Core's **Forged Cauldron** on it, and keep wood for it. 10 L take about 1.5 hours to steam, 20 L about 2, a full 60 L about 2.75. (No Stone Hearth yet: a pot of milk on any lit stove or fire scalds too; see Filling the incubator.)
-3. **Throw a Yogurt Pot** on the wheel and fire it, then build it into a Yogurt Incubator within 2 tiles of the Hearth.
+3. **Throw a Yogurt Pot** on the wheel and fire it, then build it into a Yogurt Incubator within 2 tiles of the Stone Hearth.
 4. **Keep one yogurt back.** Each batch takes one vanilla Yogurt, one portion of a Jar of Yogurt, or one Active Yogurt Starter. With none left, build a Starter Culture Crock.
 5. **Save your Empty Yogurt Containers and jars.** Each cup of yogurt needs a container; a glass jar holds a litre, a clay jar 2.5 L, and you eat from the jar itself.
 6. **Set it by the fire in winter.** A lit fire within 2 tiles indoors (the Stone Hearth, a fireplace, an antique stove) keeps the pot at 28 C: it sets in about 6 hours in any month. A porch fire or a campfire outside gives less in the cold months.
@@ -30,7 +30,7 @@ Copy this folder to `~/Zomboid/mods/TraditionalPreservationDairy`, as a real cop
 |---|---|---|---|---|---|
 | 1 | Pour into the Cauldron | Stone Hearth's right-click menu | milk, from any container | up to 60 L in the cauldron | a moment |
 | 2 | Bring to the steam, and hold it | Lit Stone Hearth | | milk at 85 C, Scalded after 20 minutes there | about 1.5 hours for 10 L, 2 for 20 L, 2.75 for 60 L, then 20 minutes |
-| 3 | Pour from the Hearth | Incubator's menu, Stone Hearth within 2 tiles | scalded, steaming milk | up to 5 L in the pot | a moment |
+| 3 | Pour from the Cauldron | Incubator's menu, Stone Hearth within 2 tiles | scalded, steaming milk | up to 5 L in the pot | a moment |
 | 4 | Add Starter | Incubator's menu | 1 Yogurt, a jar's portion, or an Active Yogurt Starter | | a moment |
 | 5 | Cool | Incubator, lid on | | milk at 45 C, the wrap goes on | about 2 hours* |
 | 6 | Set | Incubator, wrapped | | 5 L of yogurt | 6 hours at 40 to 45 C* |
@@ -82,7 +82,7 @@ The Stone Hearth is TP Core's station, documented in full in TP Core's `README.m
 ### 2. Filling the incubator
 
 Right-click the incubator:
-- **Pour from the Hearth** draws steaming, scalded milk from a Stone Hearth within 2 tiles, up to the pot's 5 L. Steaming milk that hasn't had its 20 minutes is refused, with the minutes still to go.
+- **Pour from the Cauldron** draws steaming, scalded milk from a Stone Hearth within 2 tiles, up to the pot's 5 L. Steaming milk that hasn't had its 20 minutes is refused, with the minutes still to go.
 - **Pour Scalded Milk** takes scalded milk from any container: milk that has been held at 85 C or more for 20 minutes in all, in the cauldron, or in a pot on a lit stove, fireplace, barbecue or campfire (vanilla's lowest stove setting already gets there), or store milk poured out of its carton. It goes in at the heat it has now: off the heat an open pot or bucket cools in minutes (85 to 45 C in about a quarter hour), a Wrapped Yogurt Pot in hours, and a pour between containers carries the heat over. Milk that isn't scalded is refused as "Not scalded".
 - **Add Starter** takes one vanilla Yogurt, one portion (250 ml) of a Jar of Yogurt with a whole portion left (the rest stays; the empty jar comes back with the last), or one Active Yogurt Starter, before or after the milk. None gone off. One per batch.
 
@@ -284,7 +284,7 @@ In debug mode, `TPD.help()` in the Lua console lists commands for testing this m
 
 ## Test plan
 
-Already passed in the game: building the Stone Hearth, incubator and crock; the cauldron heating and cooling, Stone Hearth Info; pouring from the Hearth, the starter, cooling, wrapping, setting and collecting into jars and cups; Incubator Info and Crock Info; the crock's load, feed and starters; banked and lit fire.
+Already passed in the game: building the Stone Hearth, incubator and crock; the cauldron heating and cooling, Stone Hearth Info; pouring from the cauldron, the starter, cooling, wrapping, setting and collecting into jars and cups; Incubator Info and Crock Info; the crock's load, feed and starters; banked and lit fire.
 
 Still to check in the game:
 
