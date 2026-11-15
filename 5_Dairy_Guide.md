@@ -103,10 +103,7 @@ That's it. A full cauldron is twelve pots, 60 L of yogurt from one firing.
 The Stone Hearth is TP Core's station: a vanilla fireplace (Add Fuel, Light, cooking, room heat). With TP Core's **Forged Cauldron** fitted, a 60 L iron kettle hangs over its hole on a chain. Right-click it for **Pour into the Cauldron**, **Fill from the Cauldron** (into your own containers), **Empty the Cauldron**, **Bank the Fire** / **Stoke the Fire** and **Stone Hearth Info**.
 
 - **One fluid at a time.** Cow's and sheep's milk count as one: they mix freely, and a blend keeps its shares in the cauldron, in a container and in the pot. Any other mix is refused, shown in red with the reason.
-- **Heat mixes by volume.** Cold milk poured onto hot cools the lot.
-- **The fire heats the cauldron towards 95 C.** 10 L goes from 20 C to 85 C in about 1.5 hours, 20 L in about 2, a full 60 L in about 2¾; less milk heats faster.
-- **With the fire out it cools slowly**, over a few hours, as the stone holds heat.
-- **Bank the Fire** burns a third of the wood, holds the cauldron at about 50 C, warms only the 2 tiles round it and cooks a third as fast. **Stoke the Fire** brings it back up.
+- **The fire heats the cauldron towards 95 C**, and milk is kept off the boil. Cold milk poured onto hot cools the lot.
 - **At 85 C the cauldron steams**, in its look and in Stone Hearth Info, and you hear it simmer. After **20 minutes at the steam** (in all) its milk reads **Scalded**. Pour more milk in and the 20 minutes start over.
 
 > *Margin note:* the old dairywoman's rule was to let the pot "stand at the steam" while she said her prayers, or about as long as it takes to scrub the churn. That quarter of an hour or more is what turns the whey proteins so the yogurt sets firm instead of runny. A thermometer only tells you when to start counting.
@@ -120,8 +117,6 @@ The Stone Hearth is TP Core's station: a vanilla fireplace (Add Fuel, Light, coo
 | Banked | holds 50 C, never steams |
 
 The Stone Hearth and its cauldron have their own guide, **Traditional Preservation: Core** (number 6), with forging and fitting the cauldron, banking, the places by a fire and the full tables.
-
-> *Margin note:* a "copper" was the big boiling pot built into a farmhouse's brickwork over its own firebox, whatever it was made of. Washday, brewing, the pig's mash and the dairy all shared it, which is why so many old kitchens had only the one.
 
 ---
 
@@ -187,8 +182,8 @@ and a cup filled from the pot or the jar has the same. A mixed pot goes by its s
 | Sheep's milk yogurt | -12.5 | 206 | 5.75 g | 4.25 g | 5.75 g |
 
 **Shop yogurt is cow's milk yogurt too**, so a vanilla Yogurt found from now on has the cow's figures (vanilla's
-were 30 calories and -10 hunger). Yogurt already in your world, and jars and cups made before this change, keep
-the old figures until eaten. A Yogurt stirred into oatmeal now brings its fuller food with it.
+are 30 calories and -10 hunger). Yogurt already in your world when you add the mod keeps vanilla's figures until
+eaten. A Yogurt stirred into oatmeal now brings its fuller food with it.
 
 **The cups go round.** Every vanilla Yogurt eaten, or stirred into oatmeal, leaves an **Empty Yogurt Container**.
 
@@ -274,10 +269,10 @@ No yogurt left to start from? Grow one.
 
 | Station | Build menu | Skill | Materials | XP |
 |---|---|---|---|---|
-| **Stone Hearth** (TP Core) | Masonry | Masonry 2 | 8 Clay Bricks, 2 Clay, trowel (kept) | Masonry 8 |
-| **Forged Cauldron** (TP Core), fitted on it | a forge; then the Stone Hearth's menu | Blacksmith 4 | 2 Steel Sheets, 3 Charcoal, 1 Wire; to fit, 2 Iron Pipes, 1 Heavy Chain, 1 Large Hook, pliers (kept) | Blacksmithing 35, 5 to fit |
 | **Yogurt Incubator** | Pottery; floor | Tailoring 1 | 1 Yogurt Pot, 2 Ripped Sheets, 1 Twine | Tailoring 5 |
 | **Starter Culture Crock** | Pottery; floor, counter or table | Cooking 4 | 1 Clay Jar, Glazed Clay Jar or Clay Pot, 1 Ripped Sheet, 1 Twine | Cooking 10 |
+
+The Stone Hearth and the Forged Cauldron are in the Quick Start and TP Core's guide.
 
 | Item | Made | Skill | XP |
 |---|---|---|---|
@@ -320,12 +315,10 @@ The milk's temperature follows where the station stands. There are seven kinds o
 | Open air | the day's weather |
 | Under an open roof (a porch, an open shed) | the last 10 days' outdoor average |
 | Indoors (a room) | the same, 2 C warmer in the cold months; 22 C while the power grid is on |
-| In a loft (the top storey: a room upstairs with no room over it) | as indoors, plus three tenths of whatever the 10-day average is above 10 C: the sun on the roof (about 24 C in a 21 C July, no warmer than a room from October to April); 22 C while the power grid is on |
+| In a loft (the top storey: a room upstairs with no room over it) | the sun on the roof: about 24 C in a 21 C July, as a room from October to April (TP Core's guide, chapter 8) |
 | In a basement | follows the ground, a month behind the season: about 5 C from January to March, 13 C from July to September |
 | **By a fire** (any lit fire within 2 tiles: the Stone Hearth, a fireplace, an antique stove or a campfire, never an electric or gas stove) | 28 C indoors. Under an open roof, the 10-day average +15 C; in the open, the day's weather +10 C; never past 28 C (TP Core's guide, chapter 7) |
 | By banked embers (a banked Stone Hearth within 2 tiles) | 24 C indoors; outside, +10 C under a roof and +5 C in the open, up to 24 C |
-
-> *Margin note:* four walls with no roof are still open air. A shed you build with walls and a whole roof is a room.
 
 Hours for 5 L poured at 85 C at 18:00 with the starter in, **cooling + setting**, the grid off. "Never" means it hadn't set after 72 hours.
 
@@ -375,14 +368,10 @@ At 0 C and below the crock stops and waits: Crock Info says *Paused here (frozen
 ## 12. Secrets & Hidden Features
 
 - **It works while you're away**, even in unloaded areas. A pot left for a week reads right when you come back.
-- **The fire counts only while it would have burned.** Away from a lit Stone Hearth, the pot is "by a fire" until the fuel would have run out, then the room takes over.
-- **Mixed herds welcome.** Cow's and sheep's milk mix in the cauldron, a container and the pot, and the blend keeps its shares.
 - **The Wrapped Yogurt Pot carries 5 L of hot milk** and loses only about 15 C an hour. Unwrap it when empty for the pot, sheet and twine back.
 - **Any pot, jar or bucket can be wrapped** the same way and keeps its own size: a wrapped bucket carries 10 L and holds its heat longest, a wrapped jar only a litre and cools sooner.
 - **Never put a wrapped pot on the heat.** The sheet and twine catch within a minute. On a stove, in an oven or on a barbecue the kitchen goes up with them; in a fireplace, a campfire or the Stone Hearth they just burn away.
-- **Your jar comes back** with the last spoonful.
 - **Part portions are kept.** Eat Quarter on a jar, and the next cup you fill has exactly what was left.
-- **It's real vanilla Yogurt** in the cups, so it works in oatmeal and every recipe that wants yogurt.
 
 ---
 
@@ -397,7 +386,6 @@ At 0 C and below the crock stops and waits: Crock Info says *Paused here (frozen
 | One pot | 5 L of milk + 1 Yogurt or starter |
 | Makes | 5 L of yogurt |
 | Fills | 5 glass jars, 2 clay jars, or 20 cups |
-| Firewood | about 1.5 hours of fire for 10 L (two pots), about 2 for 20 L (four), 2¾ for a full 60 L cauldron (twelve) |
 | Cooking XP | 10 a pot |
 
 > *Margin note:* one Yogurt starts a whole pot here. Real dairies use 3 to 5 spoonfuls in a hundred of milk, about a cup for 5 L. The game is kinder.
@@ -414,15 +402,13 @@ At 0 C and below the crock stops and waits: Crock Info says *Paused here (frozen
 - **"Yogurt" is Turkish**, from *yoğurt*, related to a verb for thickening or kneading. English has spelled it yogurt, yoghurt, yoghourt and yaourt.
 - **Lactobacillus bulgaricus.** In 1905 a young Bulgarian student, Stamen Grigorov, found the bacterium that sets yogurt, and it was named after his country.
 - **The long-lived peasants.** Ilya Metchnikov, a Nobel prizewinner at the Pasteur Institute, put the long lives of Bulgarian villagers down to their yogurt, and made it fashionable in Paris and beyond.
-- **The copper and the dairy.** In the old farmhouse, the copper (the pan, whatever its metal) boiled the wash on Monday and the milk any day, and the dairy was always the coolest room on the north side.
+- **The dairy** was always the coolest room on the north side of the old farmhouse; the milk was boiled in the copper (TP Core's guide has its story).
 
 ---
 
 ## 14. Tips
 
-- **Fire up a fuller cauldron.** 20 L takes only half an hour more fire than 10 and fills four pots; a full 60 L fills twelve in about 2¾ hours.
 - **Set it by the fire in winter.** A lit Stone Hearth, fireplace or antique stove within 2 tiles indoors holds a pot at 28 C: about 8 and a half hours from pouring to Ready in any month. A porch fire still sets a January pot in about 10 hours; a campfire in the open doesn't.
-- **Bank the fire overnight.** It holds the cauldron at 50 C on a third of the wood, and banked embers still keep a pot at 24 C.
 - **Keep one yogurt back. Always.** A portion of a jar will do. Otherwise it's a day and a half with the crock, or half a day if you have soured milk.
 - **Soured milk isn't waste.** Bake with it, or start the crock with it.
 - **Use the clay jars.** 2.5 L each, 10 portions, and you eat from the jar itself.
@@ -482,8 +468,6 @@ Each process laid out as the game's planting seasons: the months it works unheat
 | By banked embers indoors (24 C) | 2.1 + 6.2 hours | |
 | A powered room (22 C) | 2.0 + 6.5 hours | about 32 hours |
 
-> *Margin note:* a full pot sets in the basement from April to January and indoors only from April to November; the rest of the year it's the hearth's.
-
 ---
 
 ## 18. Appendix: The Tester's Toolkit
@@ -491,8 +475,6 @@ Each process laid out as the game's planting seasons: the months it works unheat
 *For testers, modders and the curious. These commands exist only when the game is started in debug mode (Steam launch option `-debug`). Type them into the in-game **Command Console** and press Enter. `TPD.help()` lists them in the game; the Stone Hearth's are TP Core's, `TPC.help()`.*
 
 > **Warning:** They change your save directly, so try them on a test save, not a playthrough you care about.
-
-Copied from `DEVHELP.md`; change both together.
 
 | Command | What it does |
 |---|---|

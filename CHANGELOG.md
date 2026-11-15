@@ -1,6 +1,7 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- **Guide shortened** (2026-11-15): what TP Core's guide has in full (the cauldron's general rules, the loft, the copper) points there; repeated secrets, tips and a margin note cut; no dev note or "before this change" history. Nothing changes in game.
 - **README** (2026-11-15): no dev-machine path. Nothing changes in game.
 - **Docs and comments** (2026-11-15): decisions are stated plainly, without attributions (CHANGELOG, comments, the items script). Nothing changes in game.
 - **README** (2026-11-15): the opening says milk goes off, soured milk bakes and starts a crock, scalded milk doesn't sour, and milk carriers can be wrapped.
