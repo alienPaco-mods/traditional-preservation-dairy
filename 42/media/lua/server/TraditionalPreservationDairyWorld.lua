@@ -59,7 +59,7 @@ function World.updateCrock(station)
 end
 
 -- A built station is a thumpable that blocks its whole square, whatever its tile says. The pot and the crock are
--- small enough to walk past (user, 2026-11-09), so that is switched off on each one the World looks at.
+-- small enough to walk past, so that is switched off on each one the World looks at.
 local function walkThrough(station)
     if instanceof(station, "IsoThumpable") and (station:isBlockAllTheSquare() or not station:isCanPassThrough()) then
         station:setBlockAllTheSquare(false)

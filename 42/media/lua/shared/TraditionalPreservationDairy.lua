@@ -58,7 +58,7 @@ M.EMBERS = Fire.EMBERS
 
 -- The Stone Hearth's cauldron (TP Core) holds one fluid at a time, or a blend of milks, and heats while its fire burns.
 M.HOT_C = CauldronFluid.HOT_C        -- milk this hot pours from the cauldron into a pot
--- Milk counts as scalded only once it has been at HOT_C or more this long in all (user, 2026-11-13): the hold is what
+-- Milk counts as scalded only once it has been at HOT_C or more this long in all: the hold is what
 -- changes the whey proteins and gives a firm set. The cauldron counts it (CauldronFluid.heldHours), a pot on a stove or a
 -- fire too (TP Core's FluidAgeing, scaldHold).
 M.SCALD_HOLD_HOURS = 1 / 3
@@ -265,7 +265,7 @@ FluidAgeing.register({
     sealed = M.STORE_MILK,
     getLedger = function() return M.getLedger() end,
     enabled = function() return M.MILK_SPOILS end,
-    -- Vanilla's Food Spoilage setting, then Dairy's own (user's pick A, 2026-11-14).
+    -- Vanilla's Food Spoilage setting, then Dairy's own.
     speed = function() return M.MILK_SPEED * FluidAgeing.foodRotSpeed() end,
 })
 
@@ -364,7 +364,7 @@ function M.pourOut(batch, maxMl)
 end
 
 -- Runs the pot for hours at one place temperature, from hour now. Each step cools exactly; the wrap goes on
--- the moment the milk crosses SET_C (user, 2026-11-14: on the step's reading it went on a degree or two cold, and
+-- the moment the milk crosses SET_C (on the step's reading it went on a degree or two cold, and
 -- November's pots indoors never set), and the yogurt is done within a step's resolution.
 function M.advanceBatch(batch, hours, placeC, now)
     if (batch.ml or 0) <= 0 then return end
