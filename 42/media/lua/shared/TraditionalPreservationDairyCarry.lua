@@ -2,7 +2,7 @@
 -- hooks that write it. Required by TraditionalPreservationDairy.lua, whose M it adds to.
 TraditionalPreservationDairy = TraditionalPreservationDairy or {}
 local M = TraditionalPreservationDairy
-local Hearth = require "TraditionalPreservationCore/Hearth"
+local Fire = require "TraditionalPreservationCore/Fire"
 local FluidAgeing = require "TraditionalPreservationCore/FluidAgeing"
 
 -- Carried milk: a container filled from the cauldron, taken hot off a stove or a fire, or poured into from one of those
@@ -14,7 +14,7 @@ M.OPEN_TAU = 0.25             -- hours, for 5 L: 85 to 45 C in about 15 minutes 
 M.STAMP_C = 30                -- milk taken off the heat warmer than this keeps a record of it
 
 function M.carryTau(ml, open)
-    return (open and M.OPEN_TAU or M.WRAPPED_POT_TAU) * (math.max(ml, Hearth.FLOOR_ML) / M.CAPACITY_ML) ^ (1 / 3)
+    return (open and M.OPEN_TAU or M.WRAPPED_POT_TAU) * (math.max(ml, Fire.FLOOR_ML) / M.CAPACITY_ML) ^ (1 / 3)
 end
 
 -- Records ml of milk at tempC going into a container that already holds hadMl at hadC. The milk stays scalded
@@ -153,16 +153,16 @@ end
 
 -- The cauldron's hooks: a Wrapped Pot pours in at its own heat; milk drawn steaming is marked so the incubator takes
 -- it. Milk that left an item is already gone from the container, so reading the record shrinks it to match.
-Hearth.hook("heatOf", function(item, now, character)
+Fire.hook("heatOf", function(item, now, character)
     local carry = M.carryOf(item)
     return carry and M.advanceCarry(carry, now, M.getLedger(), (M.placeOf(character)), nil, not M.isWrapped(item)) or nil
 end)
 
-Hearth.hook("taken", function(item)
+Fire.hook("taken", function(item)
     M.carryOf(item)
 end)
 
-Hearth.hook("filled", function(item, fill)
+Fire.hook("filled", function(item, fill)
     if not M.MILKS[fill.fluid] then return false end
     -- Scalded once the cauldron's milk had its hold, hot or cooled since.
     M.recordCarry(item, item:getModData()[M.CARRY_KEY], fill.hadMl, fill.hadC, fill.ml, fill.tempC, fill.now, M.held(fill.held))

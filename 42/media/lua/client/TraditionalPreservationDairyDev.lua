@@ -237,7 +237,7 @@ local TILES_RADIUS = 3
 
 function TPD.tiles()
     local stations = Station.near(getPlayer():getSquare(), TILES_RADIUS, function(object)
-        return M.isIncubator(object) or M.isCrock(object) or M.isHearth(object)
+        return M.isIncubator(object) or M.isCrock(object) or M.hasCauldron(object)
     end)
     for _, object in ipairs(stations) do
         local square = object:getSquare()

@@ -1,14 +1,14 @@
 -- Traditional Preservation (Dairy) B42: the Yogurt Incubator and the Starter Culture Crock are worked from their
--- right-click menus. The pot: pour milk steaming from a Hearth's cauldron in, add a starter, pour the milk back out, and
+-- right-click menus. The pot: pour milk steaming from a Stone Hearth's cauldron in, add a starter, pour the milk back out, and
 -- collect the set yogurt into jars. The crock: load wheat and warm milk from the cauldron, or soured milk alone, feed it
 -- fresh milk, collect the starters. The status line at the top says what the station is doing, and its hover says more. Both also have
 -- info windows (TP Core's InfoWindow), opened from their menus or by clicking them. A Jar of Yogurt's own menu spoons
--- it into cups. The Hearth's own menu and Hearth Info are TP Core's (HearthUI); Dairy adds its milk notes there (CauldronUI.addNotes).
+-- it into cups. The Stone Hearth's own menu and Stone Hearth Info are TP Core's (FireUI); Dairy adds its milk notes there (CauldronUI.addNotes).
 require "TimedActions/TPYoghurtIncubator"
 require "TimedActions/TPStarterCrock"
 require "TimedActions/TPFillYoghurtCup"
 local UI = require "TraditionalPreservationCore/UI"
-local Hearth = require "TraditionalPreservationCore/Hearth"
+local Fire = require "TraditionalPreservationCore/Fire"
 local InfoWindow = require "TraditionalPreservationCore/InfoWindow"
 local CauldronUI = require "TraditionalPreservationCore/CauldronUI"
 local Transfer = require "TraditionalPreservationCore/Transfer"
@@ -124,12 +124,12 @@ local function addItemMenu(menu, option, playerObj, station, items, mode, label)
 end
 
 -- The cauldron's state, brought up to now when the World runs here.
-local cauldronOf = Hearth.cauldronOf
+local cauldronOf = Fire.cauldronOf
 
 -- The first hearth near the station whose cauldron passes test, else nil and the nearest one's cauldron.
-local function hearthFor(station, test)
+local function cauldronFor(station, test)
     local nearest
-    for _, hearth in ipairs(M.hearthsNear(station:getSquare())) do
+    for _, hearth in ipairs(M.cauldronsNear(station:getSquare())) do
         local cauldron = cauldronOf(hearth)
         if test(cauldron) then return hearth, cauldron end
         nearest = nearest or cauldron
@@ -138,28 +138,28 @@ local function hearthFor(station, test)
 end
 
 -- Why the nearest cauldron won't do: none near, no milk in it, too cold, or steaming but not held long enough yet.
-local function hearthRefusal(cauldron, notHotKey)
-    if not cauldron then return getText("IGUI_TraditionalPreservationDairy_NoHearth") end
+local function cauldronRefusal(cauldron, notHotKey)
+    if not cauldron then return getText("IGUI_TraditionalPreservationDairy_NoCauldron") end
     if not M.MILKS[cauldron.fluid] then return getText("IGUI_TraditionalPreservationDairy_CauldronNoMilk") end
     if M.cauldronHot(cauldron) then return say("IGUI_TraditionalPreservationDairy_CauldronNotHeld", tostring(M.holdMinutesLeft(cauldron))) end
     return say(notHotKey, degrees(cauldron.tempC))
 end
 
-local function onHearthPour(playerObj, station, hearth)
+local function onCauldronPour(playerObj, station, hearth)
     if not ISEntityUI.WalkToEntity(playerObj, station) then return end
     ISTimedActionQueue.add(TPYoghurtIncubator:new(playerObj, station, nil, "hearth", hearth))
 end
 
-local function addHearthPourMenu(menu, playerObj, station, state)
-    local label = getText("ContextMenu_TraditionalPreservationDairy_PourFromHearth")
+local function addCauldronPourMenu(menu, playerObj, station, state)
+    local label = getText("ContextMenu_TraditionalPreservationDairy_PourFromCauldron")
     local room, reason = M.milkRoom(state, 1)
     local hearth, cauldron
-    if room > 0 then hearth, cauldron = hearthFor(station, M.cauldronScalded) end
+    if room > 0 then hearth, cauldron = cauldronFor(station, M.cauldronScalded) end
     if hearth then label = say("ContextMenu_TraditionalPreservationDairy_MilkItem", label, litresText(cauldron.ml), degrees(cauldron.tempC)) end
-    local option = menu:addOption(label, playerObj, onHearthPour, station, hearth)
+    local option = menu:addOption(label, playerObj, onCauldronPour, station, hearth)
     option.iconTexture = getTexture(CAULDRON_ICON)
     if room <= 0 then return disableWith(option, getText(REFUSALS[reason])) end
-    if not hearth then return disableWith(option, hearthRefusal(cauldron, "IGUI_TraditionalPreservationDairy_CauldronNotHot")) end
+    if not hearth then return disableWith(option, cauldronRefusal(cauldron, "IGUI_TraditionalPreservationDairy_CauldronNotHot")) end
 end
 
 -- A submenu's icon: the first item it lists, drawn as the inventory draws it (a bucket of milk shows milk), or
@@ -300,7 +300,7 @@ local function addIncubatorMenu(context, playerObj, station, summary)
         addCollectMenu(menu, playerObj, station, state)
         return addCupMenu(menu, playerObj, station, state)
     end
-    addHearthPourMenu(menu, playerObj, station, state)
+    addCauldronPourMenu(menu, playerObj, station, state)
     addCarriedPourMenu(menu, playerObj, station, state)
     if stage ~= "Incubating" then addStarterMenu(menu, playerObj, station, state) end
     if stage == "Cooling" or stage == "TooCold" then addPourOutMenu(menu, playerObj, station, state) end
@@ -331,7 +331,7 @@ local function refuseLoad(entry, ml, celsius)
     if refusal then refuse(entry, say(LOAD_REFUSALS[refusal], degrees(celsius))) end
 end
 
--- Wheat and half a litre of milk at 35 to 45 C: one entry for the nearest Hearth within 2 tiles, one per milk
+-- Wheat and half a litre of milk at 35 to 45 C: one entry for the nearest Stone Hearth within 2 tiles, one per milk
 -- container carried. Each shows its litres and heat, in red with the reason when it can't load.
 local function addLoadMenu(menu, playerObj, station)
     local option = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_LoadCrock"))
@@ -340,7 +340,7 @@ local function addLoadMenu(menu, playerObj, station)
     if #wheat < M.CROCK_WHEAT then
         return disableWith(option, say("IGUI_TraditionalPreservationDairy_NeedWheat", tostring(M.CROCK_WHEAT), tostring(#wheat)))
     end
-    local hearth, cauldron = hearthFor(station, TPStarterCrock.cauldronReady)
+    local hearth, cauldron = cauldronFor(station, TPStarterCrock.cauldronReady)
     local milks = findItems(playerObj, function(item) return M.milkIn(item:getFluidContainer()) ~= nil end)
     if not cauldron and #milks == 0 then return disableWith(option, getText("IGUI_TraditionalPreservationDairy_CrockNoWarmMilk")) end
     tooltipFor(option, getText("IGUI_TraditionalPreservationDairy_LoadHelp"))
@@ -348,7 +348,7 @@ local function addLoadMenu(menu, playerObj, station)
     local sub = menu:getNew(menu)
     menu:addSubMenu(option, sub)
     if cauldron then
-        local label = getText("ContextMenu_TraditionalPreservationDairy_LoadFromHearth")
+        local label = getText("ContextMenu_TraditionalPreservationDairy_LoadFromCauldron")
         if M.MILKS[cauldron.fluid] then label = say("ContextMenu_TraditionalPreservationDairy_MilkItem", label, litresText(cauldron.ml), degrees(cauldron.tempC)) end
         local entry = sub:addOption(label, playerObj, onCrockAction, station, "load", nil, picked, hearth)
         entry.iconTexture = getTexture(CAULDRON_ICON)
@@ -542,13 +542,13 @@ function PotWindow:render()
     self:drawNotes(y, notes)
 end
 
--- Hearth Info (TP Core's) says what the cauldron's milk is for.
+-- Stone Hearth Info (TP Core's) says what the cauldron's milk is for.
 CauldronUI.addNotes(function(info, notes)
     local ml = info.part.ml or 0
     if ml <= 0 then
-        table.insert(notes, getText("IGUI_TraditionalPreservationDairy_HearthHelpEmpty"))
+        table.insert(notes, getText("IGUI_TraditionalPreservationDairy_CauldronHelpEmpty"))
     elseif not M.MILKS[info.part.fluid] then
-        table.insert(notes, getText("IGUI_TraditionalPreservationDairy_HearthHelpWater"))
+        table.insert(notes, getText("IGUI_TraditionalPreservationDairy_CauldronHelpWater"))
     end
 end)
 
@@ -602,7 +602,7 @@ function CrockWindow:render()
     self:drawNotes(y, notes)
 end
 
--- Clicking a pot opens Incubator Info, and clicking a crock Crock Info, as clicking a door opens it (a Hearth's click
+-- Clicking a pot opens Incubator Info, and clicking a crock Crock Info, as clicking a door opens it (a Stone Hearth's click
 -- is TP Core's).
 InfoWindow.clickOpens(function(object) return M.stationKind(object) ~= nil end, function(playerObj, object)
     TraditionalPreservationDairyWorld.track(object)

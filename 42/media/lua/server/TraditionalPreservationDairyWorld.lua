@@ -1,7 +1,7 @@
 -- Traditional Preservation (Dairy) B42: keeps track of every Yogurt Incubator and Starter Culture Crock, records
 -- the weather and its hourly history, brings each pot's milk and each crock's culture up to the hour and layers the
 -- sprite for its stage. A station's state sits in movableData, so it goes with it when it is picked up full and
--- carried to the fire. The Hearth is TP Core's, which keeps its cauldron up to date (TraditionalPreservationCore/HearthWorld).
+-- carried to the fire. The Stone Hearth is TP Core's, which keeps its cauldron up to date (TraditionalPreservationCore/FireWorld).
 if isClient() then return end
 
 TraditionalPreservationDairyWorld = TraditionalPreservationDairyWorld or {}
@@ -135,7 +135,7 @@ local function tickWrappedPots(player, now, ledger)
 end
 
 -- A wrap in a hot stove, oven, barbecue or fire burns: the Sheet and Twine are gone (M.burnWrap). On a stove, oven or
--- barbecue it sets the kitchen alight, as vanilla's burnt food does; in an open fire (a fireplace, the Hearth's
+-- barbecue it sets the kitchen alight, as vanilla's burnt food does; in an open fire (a fireplace, the Stone Hearth's
 -- firebox, a campfire) it burns away in the fire, as burnt food there never spreads (ENGINE_NOTES). TP Core's minute
 -- look at the heat round each player (Station.onHeatNear, within Station.HEAT_NEAR) finds the hot containers.
 local function isOpenFire(object)

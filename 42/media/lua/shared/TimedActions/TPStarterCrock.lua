@@ -1,5 +1,5 @@
 -- Traditional Preservation (Dairy): the hand jobs at a Starter Culture Crock. "load" puts in wheat and half a litre
--- of milk at 35 to 45 C from a Hearth's cauldron (within 2 tiles) or a carried container, "clabber" puts in half a litre
+-- of milk at 35 to 45 C from a Stone Hearth's cauldron (within 2 tiles) or a carried container, "clabber" puts in half a litre
 -- of soured milk instead (no wheat, any warmth), "feed" adds half a litre of fresh milk once the culture has taken, and
 -- "collect" takes out the Active Yogurt Starters.
 require "TimedActions/ISBaseTimedAction"
@@ -9,7 +9,7 @@ TPStarterCrock = ISBaseTimedAction:derive("TPStarterCrock")
 
 local M = TraditionalPreservationDairy
 local Action = require "TraditionalPreservationCore/Action"
-local Hearth = require "TraditionalPreservationCore/Hearth"
+local Fire = require "TraditionalPreservationCore/Fire"
 local FluidAgeing = require "TraditionalPreservationCore/FluidAgeing"
 local DURATIONS = { load = 120, clabber = 60, feed = 60, collect = 60 }
 
@@ -51,7 +51,7 @@ function TPStarterCrock:isValid()
         if not self.started and not hasWheat(self) then return false end
         if stage ~= "Empty" then return false end
         if self.item then return inInventory(self, self.item) and itemReady(self) end
-        return self.hearth:getSquare() ~= nil and cauldronReady(Hearth.cauldronState(self.hearth:getModData()))
+        return self.hearth:getSquare() ~= nil and cauldronReady(Fire.cauldronState(self.hearth:getModData()))
     elseif self.mode == "clabber" then
         return stage == "Empty" and inInventory(self, self.item) and M.clabberRefusal(self.item:getFluidContainer()) == nil
     elseif self.mode == "feed" then
@@ -74,7 +74,7 @@ function TPStarterCrock:complete()
     local crock = state(self)
     local ledger = M.getLedger()
     if self.mode == "load" then
-        local cauldron = not self.item and Hearth.cauldronOf(self.hearth)
+        local cauldron = not self.item and Fire.cauldronOf(self.hearth)
         local ready = self.item and itemReady(self) or cauldron and cauldronReady(cauldron)
         if ready and hasWheat(self) and M.loadCrock(crock, ledger) then
             for _, seed in ipairs(self.wheat) do Action.removeItem(seed) end
@@ -84,8 +84,8 @@ function TPStarterCrock:complete()
                 M.recordTaken(self.item, carry, M.CROCK_LOAD_ML)
                 FluidAgeing.clearIfEmpty(self.item)
             else
-                Hearth.take(cauldron, M.CROCK_LOAD_ML)
-                Hearth.redraw(self.hearth)
+                Fire.take(cauldron, M.CROCK_LOAD_ML)
+                Fire.redraw(self.hearth)
             end
         end
     elseif self.mode == "clabber" then
@@ -118,7 +118,7 @@ function TPStarterCrock:getDuration()
 end
 
 -- item is the milk's container for "clabber" and "feed", and for "load" from a carried container; wheat is the list of seeds
--- for "load", and hearth the cauldron's when it loads from the Hearth.
+-- for "load", and hearth the cauldron's when it loads from the Stone Hearth.
 function TPStarterCrock:new(character, station, mode, item, wheat, hearth)
     local o = ISBaseTimedAction.new(self, character)
     o.station = station

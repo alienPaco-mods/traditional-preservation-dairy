@@ -9,7 +9,7 @@
 TraditionalPreservationDairy = TraditionalPreservationDairy or {}
 local M = TraditionalPreservationDairy
 local Weather = require "TraditionalPreservationCore/Weather"
-local Hearth = require "TraditionalPreservationCore/Hearth"
+local Fire = require "TraditionalPreservationCore/Fire"
 local Station = require "TraditionalPreservationCore/Station"
 local FluidAgeing = require "TraditionalPreservationCore/FluidAgeing"
 local Recipes = require "TraditionalPreservationCore/Recipes"
@@ -23,8 +23,8 @@ local Tiles = require "TraditionalPreservationDairy/Tiles"
 M.MOD_DATA_KEY = "TraditionalPreservationDairy"
 -- Each station keeps its state as one table under one key, so nothing else on the object can clash with it.
 -- Inside the incubator's: ml, tempC, starter, incubating, wrapHour, done, last, readyHour, fluid, parts, place, at,
--- fireUntil, under. Inside the crock's: stage, done, marks, fireUntil, under. The Hearth and its cauldron are TP
--- Core's (TraditionalPreservationCore/Hearth).
+-- fireUntil, under. Inside the crock's: stage, done, marks, fireUntil, under. The Stone Hearth and its cauldron are TP
+-- Core's (TraditionalPreservationCore/Fire).
 M.INCUBATOR_KEY = "tpdIncubator"
 M.CROCK_KEY = "tpdCrock"
 -- What an emptied pot or crock forgets (place, at, fireUntil and under stay: where it stands).
@@ -50,14 +50,14 @@ local SETTLED_C = 0.05        -- milk this near its place's temperature has stop
 -- By a lit fire, TP Core's opt-in place: a fireplace, an antique stove or a campfire, never an electric or gas
 -- stove. The wrapped pot sat by the hearth in winter. Seen by a lit fire, a station notes fireUntil (now plus the
 -- fuel left): while unloaded, the fire counts until then, and after it the place under the fire (under) does.
--- By a banked Hearth (EMBERS) it is cooler, and the embers last three times as long.
-M.HEARTH = Hearth.PLACE
-M.EMBERS = Hearth.EMBERS
+-- By a banked Stone Hearth (EMBERS) it is cooler, and the embers last three times as long.
+M.CAULDRON_PLAIN = Fire.PLACE
+M.EMBERS = Fire.EMBERS
 
--- The Hearth's cauldron (TP Core) holds one fluid at a time, or a blend of milks, and heats while its fire burns.
-M.HOT_C = Hearth.HOT_C        -- milk this hot pours from the cauldron into a pot
+-- The Stone Hearth's cauldron (TP Core) holds one fluid at a time, or a blend of milks, and heats while its fire burns.
+M.HOT_C = Fire.HOT_C        -- milk this hot pours from the cauldron into a pot
 -- Milk counts as scalded only once it has been at HOT_C or more this long in all (user, 2026-11-13): the hold is what
--- changes the whey proteins and gives a firm set. The cauldron counts it (Hearth.heldHours), a pot on a stove or a
+-- changes the whey proteins and gives a firm set. The cauldron counts it (Fire.heldHours), a pot on a stove or a
 -- fire too (TP Core's FluidAgeing, scaldHold).
 M.SCALD_HOLD_HOURS = 1 / 3
 
@@ -103,7 +103,7 @@ for _, scalded in pairs(M.SCALDED_MILKS) do M.SCALDED[scalded] = true end
 M.STORE_MILK = { ["Base.Milk"] = true, ["Base.MilkBottle"] = true, ["Base.Milk_Personalsized"] = true }
 M.SOURED, M.ROTTEN = {}, {}
 for milk, sour in pairs(M.SOUR_MILKS) do M.SOURED[sour], M.ROTTEN[M.ROTTEN_MILKS[milk]] = true, true end
-Hearth.blend("SourCowMilk", "SourSheepMilk", "SourAnimalMilk")
+Fire.blend("SourCowMilk", "SourSheepMilk", "SourAnimalMilk")
 -- Souring speed against 20 C. Mesophilic bacteria: frozen milk stops, a fridge crawls, best near blood heat; past
 -- 50 C the heat starts to kill them.
 local MILK_CURVE = { { 0, 0 }, { 2, 0.12 }, { 4, 0.19 }, { 10, 0.33 }, { 15, 0.5 }, { 20, 1 }, { 25, 1.25 }, { 30, 1.5 },
@@ -131,7 +131,7 @@ for milk, scalded in pairs(M.SCALDED_MILKS) do M.MILK_FOOD[scalded] = M.MILK_FOO
 -- cauldron, a container and a pot, as a mixed herd's milk always did. Scalded milk is milk too.
 M.MILKS = { CowMilk = true, SheepMilk = true, AnimalMilk = true }
 for milk, scalded in pairs(M.SCALDED_MILKS) do M.MILKS[scalded] = true end
-Hearth.blend("CowMilk", "SheepMilk", "AnimalMilk", "ScaldedCowMilk", "ScaldedSheepMilk", "ScaldedAnimalMilk")
+Fire.blend("CowMilk", "SheepMilk", "AnimalMilk", "ScaldedCowMilk", "ScaldedSheepMilk", "ScaldedAnimalMilk")
 M.STARTER = "TraditionalPreservationDairy.ActiveYoghurtStarter"
 M.YOGHURT = "Base.Yoghurt"    -- vanilla's cup of Yogurt
 -- A Jar of Yogurt gives one portion, as much as a Yogurt cup holds, and keeps the rest (M.isStarter).
@@ -163,7 +163,7 @@ end
 
 -- The main fluid in a container if it is all milk (one kind, or a blend), and its ml by fluid; else nil.
 function M.milkIn(container)
-    local parts, name = Hearth.partsIn(container)
+    local parts, name = Fire.partsIn(container)
     if not M.MILKS[name] then return nil end
     return name, parts
 end
@@ -193,20 +193,20 @@ M.SENSITIVITY = 1
 -- Core's places, then by a fire and by banked embers.
 M.PLACES = {}
 for _, place in ipairs(Weather.PLACES) do table.insert(M.PLACES, place) end
-table.insert(M.PLACES, M.HEARTH)
+table.insert(M.PLACES, M.CAULDRON_PLAIN)
 table.insert(M.PLACES, M.EMBERS)
 
 M.placeTemperature = Weather.placeTemperature
-M.placeOf = Hearth.placeOf
-M.noteFire = Hearth.noteFire
+M.placeOf = Fire.placeOf
+M.noteFire = Fire.noteFire
 -- A Stone Hearth with the cauldron fitted, and those near a square.
-function M.hearthsNear(square) return Hearth.fittedNear(square, Hearth.CAULDRON) end
-function M.isHearth(object) return Hearth.isFitted(object, Hearth.CAULDRON) end
+function M.cauldronsNear(square) return Fire.fittedNear(square, Fire.CAULDRON) end
+function M.hasCauldron(object) return Fire.isFitted(object, Fire.CAULDRON) end
 
 -- Temperatures: vanilla's item heat, for milk poured between our stores and the player's containers. Vanilla
 -- cools a container in the player's hands to room heat within seconds, so only the cauldron and the pot keep heat.
-M.heatCelsius = Hearth.heatCelsius
-M.itemHeat = Hearth.itemHeat
+M.heatCelsius = Fire.heatCelsius
+M.itemHeat = Fire.itemHeat
 
 -- More milk holds its heat longer: the time constant grows with the pot's size, so with the cube root of litres.
 function M.tau(ml, wrapped)
@@ -214,7 +214,7 @@ function M.tau(ml, wrapped)
     return base * (math.max(ml, M.TAU_FLOOR_ML) / M.CAPACITY_ML) ^ (1 / 3)
 end
 
-M.cool = Hearth.cool
+M.cool = Fire.cool
 
 -- Frozen milk doesn't set (TP Core's Weather.frozen), whatever the sensitivity.
 function M.setRate(milkC)
@@ -251,7 +251,7 @@ end
 
 FluidAgeing.register({
     kind = M.MILK_KIND,
-    scaldHeat = Hearth.itemHeat(M.HOT_C),
+    scaldHeat = Fire.itemHeat(M.HOT_C),
     scaldHold = M.SCALD_HOLD_HOURS,
     rate = M.milkRate,
     turnHours = M.MILK_TURN_HOURS,
@@ -282,7 +282,7 @@ function M.pastTemperature(history, hour, place)
     local reading = entry and entry.hour == hour and { temperature = entry.temperature, seasonTemperature = entry.season,
         groundTemperature = entry.ground, gridOn = entry.grid } or nil
     -- A fire indoors needs no reading; one under a roof or in the open does.
-    if Hearth.isFirePlace(place) then return Hearth.fireC(place, reading) end
+    if Fire.isFirePlace(place) then return Fire.fireC(place, reading) end
     if not reading then return nil end
     return Weather.placeTemperature(reading, place)
 end
@@ -327,7 +327,7 @@ function M.addMilk(batch, ml, milkC, now, fluid)
     if reason then return 0, reason end
     local had = batch.ml or 0
     batch.tempC = had > 0 and (batch.tempC * had + milkC * taken) / (had + taken) or milkC
-    if fluid then Hearth.addParts(batch, fluid, taken) end
+    if fluid then Fire.addParts(batch, fluid, taken) end
     batch.ml = had + taken
     batch.last = batch.last or now
     return taken
@@ -355,7 +355,7 @@ function M.pourOut(batch, maxMl)
     local stage = M.stage(batch)
     if stage ~= "Cooling" and stage ~= "TooCold" then return 0 end
     local ml, tempC = math.min(batch.ml, maxMl or batch.ml), batch.tempC
-    local parts = Hearth.partsOf(batch, ml)
+    local parts = Fire.partsOf(batch, ml)
     batch.ml = batch.ml - ml
     if batch.ml <= 0 then clear(batch, MILK_FIELDS) end
     return ml, tempC, parts
@@ -393,13 +393,13 @@ end
 
 -- By a fire until it burns out (fireUntil), then the place under it.
 local function placeAt(state, place, hour)
-    if Hearth.isFirePlace(place) and state.fireUntil and hour >= state.fireUntil then return state.under or Weather.DEFAULT_PLACE end
+    if Fire.isFirePlace(place) and state.fireUntil and hour >= state.fireUntil then return state.under or Weather.DEFAULT_PLACE end
     return place
 end
 
 -- Where a stretch from t that would end at stop ends instead: when the fire it stands by burns out, if that is sooner.
 local function fireStop(state, place, t, stop)
-    if Hearth.isFirePlace(place) and state.fireUntil and t < state.fireUntil then return math.min(stop, state.fireUntil) end
+    if Fire.isFirePlace(place) and state.fireUntil and t < state.fireUntil then return math.min(stop, state.fireUntil) end
     return stop
 end
 
@@ -468,7 +468,7 @@ end
 
 -- One portion's food from the pot's milk, by its shares of each kind.
 function M.portionFood(batch)
-    local parts = Hearth.partsOf(batch, 1)
+    local parts = Fire.partsOf(batch, 1)
     local food = {}
     for key in pairs(M.PORTION) do food[key] = 0 end
     for name, share in pairs(parts) do
@@ -555,13 +555,13 @@ function M.forecast(batch, placeC)
     return nil
 end
 
--- Hearth cauldron: the rules are TP Core's; these are milk's.
+-- Stone Hearth cauldron: the rules are TP Core's; these are milk's.
 
 -- Hours until the cauldron is hot if the fire burns on; 0 if it is already, nil if it holds no milk or the fire is
 -- banked.
 function M.hoursToHot(cauldron, banked)
     if not M.MILKS[cauldron.fluid] then return nil end
-    return Hearth.hoursToHot(cauldron, banked)
+    return Fire.hoursToHot(cauldron, banked)
 end
 
 function M.cauldronHot(cauldron)
@@ -574,12 +574,12 @@ function M.held(hours)
 end
 
 function M.cauldronScalded(cauldron)
-    return M.cauldronHot(cauldron) and M.held(Hearth.heldHours(cauldron))
+    return M.cauldronHot(cauldron) and M.held(Fire.heldHours(cauldron))
 end
 
 -- Minutes of the hold still to go for the cauldron's milk (0 once held).
 function M.holdMinutesLeft(cauldron)
-    return math.max(math.ceil((M.SCALD_HOLD_HOURS - Hearth.heldHours(cauldron)) * 60 - 1e-6), 0)
+    return math.max(math.ceil((M.SCALD_HOLD_HOURS - Fire.heldHours(cauldron)) * 60 - 1e-6), 0)
 end
 
 -- Fills the pot from the cauldron with hot milk, as much as fits. Returns the ml (0 with a reason when refused).
@@ -588,7 +588,7 @@ function M.cauldronToPot(cauldron, batch, now)
     if not M.cauldronScalded(cauldron) then return 0, "NotHeld" end
     local room, reason = M.milkRoom(batch, cauldron.ml)
     if room <= 0 then return 0, reason end
-    local ml, _, tempC, parts = Hearth.take(cauldron, room)
+    local ml, _, tempC, parts = Fire.take(cauldron, room)
     M.addMilk(batch, ml, tempC, now, parts)
     return ml
 end
@@ -598,7 +598,7 @@ M.mlIn = Container.ml
 
 -- Crock: Cultivating, then Waiting for fresh milk, then Developing, then Ready.
 
--- The ledger keeps totals for the weather's places only, so time by a fire counts by the clock (Hearth.catchUp).
+-- The ledger keeps totals for the weather's places only, so time by a fire counts by the clock (Fire.catchUp).
 local function markCrock(crock, ledger)
     crock.marks = Weather.mark({}, ledger, CROCK_KIND)
 end
@@ -640,7 +640,7 @@ end
 -- What a container holds for a clabber: "Soured" if it is all soured milk (one kind or a blend), "Rotten" if its
 -- main fluid is rotten milk, else nil.
 function M.clabberIn(container)
-    local parts, name = Hearth.partsIn(container)
+    local parts, name = Fire.partsIn(container)
     if parts and M.SOURED[name] then return "Soured" end
     local primary = container and not container:isEmpty() and container:getPrimaryFluid()
     if primary and M.ROTTEN[primary:getFluidTypeString()] then return "Rotten" end
@@ -700,7 +700,7 @@ end
 function M.updateCrock(crock, ledger, place)
     local stage = crock.stage
     if stage ~= "Cultivating" and stage ~= "Developing" then return end
-    crock.done = crock.done + Hearth.catchUp(crock, crock.marks, ledger, CROCK_KIND, place, M.cultureRate)
+    crock.done = crock.done + Fire.catchUp(crock, crock.marks, ledger, CROCK_KIND, place, M.cultureRate)
     if crock.done >= M.crockHours(crock) then
         crock.stage = stage == "Cultivating" and "Waiting" or "Ready"
     end

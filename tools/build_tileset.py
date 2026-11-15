@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Builds the Traditional Preservation (Dairy) art: the tileset (42/media/*.tiles and texturepacks/*.pack), its depth
 shapes (common/media/tileGeometry.txt), the item icons, the build and mod icons, and the generated Tiles.lua.
-The Hearth began here; it is TP Core's now (TraditionalPreservationCore/tools/build_tileset.py).
+The Stone Hearth began here; it is TP Core's now (TraditionalPreservationCore/tools/build_tileset.py).
 
 Each station is a pair of tiles, south facing then east facing. Both are round pots, standing on the floor with no
 stool so they can be carried to a fire and set down by it; the facing shows only in where the incubator's lid lies

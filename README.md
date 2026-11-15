@@ -77,7 +77,7 @@ The Stone Hearth is TP Core's station, documented in full in TP Core's `README.m
 - Poured milk mixes its temperature with what's already in the cauldron, by volume.
 - While the fire burns, the cauldron heats towards 95 C: 10 L go from 20 C to 85 C in about 1.5 hours, 20 L in about 2, a full 60 L in about 2.75, less milk faster. With the fire out it cools towards the room over a few hours, as the stone holds heat.
 - **Bank the Fire** burns a third of the wood, holds the cauldron at about 50 C and cooks a third as fast. **Stoke the Fire** brings it back.
-- At 85 C the cauldron steams, in its sprite and in Stone Hearth Info ("Steaming: Yes"). **Held at 85 C or more for 20 minutes** in all (`M.SCALD_HOLD_HOURS`; the cauldron counts it, `Hearth.heldHours`), its milk reads Scalded. Pouring more milk in starts the 20 minutes over.
+- At 85 C the cauldron steams, in its sprite and in Stone Hearth Info ("Steaming: Yes"). **Held at 85 C or more for 20 minutes** in all (`M.SCALD_HOLD_HOURS`; the cauldron counts it, `Fire.heldHours`), its milk reads Scalded. Pouring more milk in starts the 20 minutes over.
 
 ### 2. Filling the incubator
 
@@ -232,7 +232,7 @@ Under Traditional Preservation (Dairy):
 
 ## Tuning
 
-Volumes, temperatures, cooling times, the setting and culture curves, the crock's amounts and XP are at the top of `42/media/lua/shared/TraditionalPreservationDairy.lua`; carried milk's heat record is in `TraditionalPreservationDairyCarry.lua` beside it, wrapping in `TraditionalPreservationDairyWrap.lua`. The pottery and wrapping recipes are in `42/media/scripts/TraditionalPreservationDairy.txt`, the items in `..._items.txt`, the stations' build recipes in `42/media/scripts/entities/`. The Stone Hearth's cauldron and fire rules are TP Core's (`CauldronFluid.lua`, `Hearth.lua`).
+Volumes, temperatures, cooling times, the setting and culture curves, the crock's amounts and XP are at the top of `42/media/lua/shared/TraditionalPreservationDairy.lua`; carried milk's heat record is in `TraditionalPreservationDairyCarry.lua` beside it, wrapping in `TraditionalPreservationDairyWrap.lua`. The pottery and wrapping recipes are in `42/media/scripts/TraditionalPreservationDairy.txt`, the items in `..._items.txt`, the stations' build recipes in `42/media/scripts/entities/`. The Stone Hearth's cauldron and fire rules are TP Core's (`CauldronFluid.lua`, `Fire.lua`).
 
 `python3 tools/build_tileset.py` (needs Pillow) paints the incubator, the crock and their stage overlays and writes `42/media/traditionalpreservationdairy.tiles`, `42/media/texturepacks/traditionalpreservationdairy.pack`, the icons and the generated `42/media/lua/shared/TraditionalPreservationDairy/Tiles.lua` (don't edit it by hand). `luajit tests/test_tiles.lua` checks the entity scripts against it. The wrapped containers' icons are painted there too, from vanilla's own icons (`towel_wrap`). `python3 tools/build_model.py` (needs Pillow and numpy) writes the towel bundle, `42/media/Models_X/TowelBundle.glb`, a narrow copy for the tall clay jar (`TowelBundleTall.glb`) and its texture; each container's size is the scale of its `TowelBundle_*` model in the items script, worked out there from vanilla's meshes.
 
@@ -268,7 +268,7 @@ Volumes, temperatures, cooling times, the setting and culture curves, the crock'
 - Weather is TP Core's shared ledger; a pot catches up hour by hour over the two weeks of kept weather, and the hours before that as one spell.
 - A Jar of Yogurt keeps its jar type in its ModData (`tpdJar`); its portions are its own food values (hunger, calories and so on, which the engine saves), and `tpdFood` marks a jar that has them. `tpdPortion` holds one portion's food, a quarter litre of the batch's milk by its shares (C23). Vanilla Yogurt's script food is set to a cow's milk portion at load, beside its `ReplaceOnUse`. A jar never filled at a pot (a debug spawn) gets a glass jar's four portions of vanilla Yogurt's food (30 kcal each) the first time it is touched. Its weight is a custom weight the engine saves. Vanilla's eat action is wrapped (`complete`, `serverStop`) to relabel the jar and give the empty jar back.
 - Every vanilla Yogurt gets `ReplaceOnUse` = Empty Yogurt Container at load, so eating or oatmeal leaves the cup.
-- The shared core (Weather, Station, UI, Stone Hearth) is the required TP Core mod (`~/MODS/TraditionalPreservationCore`), loaded as `require "TraditionalPreservationCore/Weather"`. Edit it there. Dairy names cow's and sheep's milk as a blend with `Hearth.blend`.
+- The shared core (Weather, Station, UI, Stone Hearth) is the required TP Core mod (`~/MODS/TraditionalPreservationCore`), loaded as `require "TraditionalPreservationCore/Weather"`. Edit it there. Dairy names cow's and sheep's milk as a blend with `Fire.blend`.
 
 ## Debug commands
 

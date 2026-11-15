@@ -16,14 +16,14 @@ local MONTHS = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", 
 -- An open roof reads the season's mean, as indoors does but for a room's winter lift (Weather.roomTemperature), so it
 -- gets no column of its own. Grid is a room while the power grid is on (22 C, Weather.GRID_ROOM_C): it runs on a
 -- ledger and history of its own with the grid on. Last, a lit fire under an open roof and in the open, which follow
--- the air (Hearth.FIRE_LIFT).
+-- the air (Fire.FIRE_LIFT).
 local PLACES = {}
 for _, place in ipairs(M.PLACES) do
     if place ~= "Covered" then table.insert(PLACES, place) end
     if place == "Sheltered" then table.insert(PLACES, "Grid") end
 end
-table.insert(PLACES, M.HEARTH .. "Covered")
-table.insert(PLACES, M.HEARTH .. "Open")
+table.insert(PLACES, M.CAULDRON_PLAIN .. "Covered")
+table.insert(PLACES, M.CAULDRON_PLAIN .. "Open")
 local COLUMNS = "Indoors | Indoors, grid on | Loft | Basement | By a fire | By banked embers | By a fire, under a roof | By a fire, in the open |"
 local RULE = "|---|---|---|---|---|---|---|---|---|---|"
 local STEPS_PER_HOUR = 6

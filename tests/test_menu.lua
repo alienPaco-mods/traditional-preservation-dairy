@@ -38,13 +38,13 @@ end
 
 require "TraditionalPreservationDairy"
 local M = TraditionalPreservationDairy
-local Hearth = require "TraditionalPreservationCore/Hearth"
+local Fire = require "TraditionalPreservationCore/Fire"
 -- The World runs here, as in single player: the menus bring each station up to now through it.
 function isClient() return false end
 MapObjects = { OnLoadWithSprite = function() end }
 dofile("42/media/lua/server/TraditionalPreservationDairyWorld.lua")
 dofile("42/media/lua/client/TraditionalPreservationDairyUI.lua")
--- The core's Hearth menu listens too; Dairy's is the last one added.
+-- The core's Stone Hearth menu listens too; Dairy's is the last one added.
 local handlers = H.handlers.OnFillWorldObjectContextMenu
 local onFillMenu = handlers[#handlers]
 
@@ -82,9 +82,9 @@ local function crock(x, state)
     return tile(x, 5, "IsoThumpable", M.spriteName(M.CROCK_SPRITE), { movableData = { [M.CROCK_KEY] = state or {} } })
 end
 
--- A Hearth one tile from the pot at 5,5.
+-- A Stone Hearth one tile from the pot at 5,5.
 local function hearth(cauldron)
-    return tile(6, 5, "IsoFireplace", Hearth.sprite("Empty", 0), { [Hearth.KEY] = { [Hearth.CAULDRON] = cauldron } })
+    return tile(6, 5, "IsoFireplace", Fire.cauldronSprite("Empty", 0), { [Fire.KEY] = { [Fire.CAULDRON] = cauldron } })
 end
 
 -- Opens the menu on the stations and returns each one's submenu, then the whole menu.
@@ -96,7 +96,7 @@ local function open(...)
     return subs, context
 end
 
-local POUR = "ContextMenu_TraditionalPreservationDairy_PourFromHearth"
+local POUR = "ContextMenu_TraditionalPreservationDairy_PourFromCauldron"
 
 -- The controller's probe
 local pot = incubator(5)
@@ -104,7 +104,7 @@ local context = H.menu()
 onFillMenu(0, context, { pot }, true)
 check("the controller's probe is told there is a menu, and nothing is built", ui.probes == 1 and #context.options == 0)
 
--- An empty pot with no Hearth near
+-- An empty pot with no Stone Hearth near
 local subs
 subs, context = open(pot)
 local sub = subs[1]
@@ -114,8 +114,8 @@ check("the first line is the pot's status, greyed, with a hover", sub.options[1]
     and sub.options[1].isDisabled == true and sub.options[1].toolTip.description ~= nil)
 check("Incubator Info is on it", named(sub, "ContextMenu_TraditionalPreservationDairy_PotInfo") ~= nil)
 local pour = named(sub, POUR)
-check("pouring from a Hearth is greyed when none is near", pour.isDisabled == true
-    and pour.toolTip.description == getText("IGUI_TraditionalPreservationDairy_NoHearth"))
+check("pouring from a Stone Hearth is greyed when none is near", pour.isDisabled == true
+    and pour.toolTip.description == getText("IGUI_TraditionalPreservationDairy_NoCauldron"))
 local carried = named(sub, "ContextMenu_TraditionalPreservationDairy_PourScalded")
 check("and carried milk when none is carried", carried.isDisabled == true
     and carried.toolTip.description == getText("IGUI_TraditionalPreservationDairy_NoMilkItem"))
@@ -140,10 +140,10 @@ sub = open(pot)[1]
 pour = sub.options[3]
 check("steaming milk is offered, with its litres and heat", pour.isDisabled == nil and pour.onSelect ~= nil
     and pour.name:find("4.0", 1, true) ~= nil and pour.name:find("90", 1, true) ~= nil)
-check("pouring from the Hearth shows its cauldron, full", pour.iconTexture == "media/textures/Item_TPCauldronFull.png")
+check("pouring from the Stone Hearth shows its cauldron, full", pour.iconTexture == "media/textures/Item_TPCauldronFull.png")
 local character = { isTimedActionInstant = function() return false end }
 pour.onSelect(character, unpack(pour.args))
-check("choosing it walks over and queues the pour from that Hearth", ui.walks == 1 and #ui.queued == 1
+check("choosing it walks over and queues the pour from that Stone Hearth", ui.walks == 1 and #ui.queued == 1
     and ui.queued[1].Type == "TPYoghurtIncubator" and ui.queued[1].mode == "hearth" and ui.queued[1].hearth == steaming
     and ui.queued[1].station == pot)
 
@@ -156,7 +156,7 @@ check("cow's milk is offered to a pot of sheep's: milks mix", pour.isDisabled ==
 local function scaldedMilk(name, celsius)
     local modData = { [M.CARRY_KEY] = { ml = 2000, c = celsius, hour = 100, scalded = true } }
     return H.vessel(name, "CowMilk", 2, 5, { getFullType = function() return "Base.Bucket" end,
-        getModData = function() return modData end, getItemHeat = function() return Hearth.itemHeat(celsius) end })
+        getModData = function() return modData end, getItemHeat = function() return Fire.itemHeat(celsius) end })
 end
 ui.carried = { scaldedMilk("Hot Bucket", 80), scaldedMilk("Cold Bucket", 25) }
 carried = named(open(incubator(5, { starter = "Yogurt" }))[1], "ContextMenu_TraditionalPreservationDairy_PourScalded")

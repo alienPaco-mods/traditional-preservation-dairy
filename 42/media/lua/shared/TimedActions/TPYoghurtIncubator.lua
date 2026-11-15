@@ -1,5 +1,5 @@
 -- Traditional Preservation (Dairy): the hand jobs at a Yogurt Incubator. "hearth" pours milk steaming from a
--- Hearth's cauldron (within 2 tiles) in, "carried" pours scalded milk in from a container, "starter" stirs in a yogurt or an Active Yogurt Starter, "pourOut" takes the milk back out into an empty
+-- Stone Hearth's cauldron (within 2 tiles) in, "carried" pours scalded milk in from a container, "starter" stirs in a yogurt or an Active Yogurt Starter, "pourOut" takes the milk back out into an empty
 -- container (still scalded) to reheat it, "collect" fills an empty jar (glass 1 L, clay 2.5 L) with set yogurt,
 -- and "cup" fills an Empty Yogurt Container with a quarter litre.
 require "TimedActions/ISBaseTimedAction"
@@ -9,7 +9,7 @@ require "TraditionalPreservationDairyYoghurt"
 TPYoghurtIncubator = ISBaseTimedAction:derive("TPYoghurtIncubator")
 
 local M = TraditionalPreservationDairy
-local Hearth = require "TraditionalPreservationCore/Hearth"
+local Fire = require "TraditionalPreservationCore/Fire"
 local Action = require "TraditionalPreservationCore/Action"
 local FluidAgeing = require "TraditionalPreservationCore/FluidAgeing"
 
@@ -22,7 +22,7 @@ end
 local function canDo(self)
     local batch = M.incubatorOf(self.station)
     if self.mode == "hearth" then
-        return M.cauldronScalded(Hearth.cauldronState(self.hearth:getModData())) and M.milkRoom(batch, 1) > 0
+        return M.cauldronScalded(Fire.cauldronState(self.hearth:getModData())) and M.milkRoom(batch, 1) > 0
     elseif self.mode == "carried" then
         local container = self.item:getFluidContainer()
         local ml = M.mlIn(container)
@@ -66,8 +66,8 @@ end
 local COMPLETE = {}
 
 function COMPLETE.hearth(self, batch, now)
-    M.cauldronToPot(Hearth.cauldronOf(self.hearth), batch, now)
-    Hearth.redraw(self.hearth)
+    M.cauldronToPot(Fire.cauldronOf(self.hearth), batch, now)
+    Fire.redraw(self.hearth)
 end
 
 function COMPLETE.carried(self, batch, now)
@@ -140,7 +140,7 @@ function TPYoghurtIncubator:getDuration()
     local container = self.item and self.item:getFluidContainer()
     local litres = 0
     if self.mode == "hearth" then
-        local cauldron = Hearth.cauldronState(self.hearth:getModData())
+        local cauldron = Fire.cauldronState(self.hearth:getModData())
         local batch = M.incubatorOf(self.station)
         litres = math.min(cauldron.ml or 0, M.milkRoom(batch, cauldron.ml or 0)) / 1000
     end
