@@ -1,6 +1,7 @@
 # Changelog: Traditional Preservation (Dairy)
 
 ## 0.0.1 (in development, not released)
+- **README** (2026-11-15): the opening says milk goes off, soured milk bakes and starts a crock, scalded milk doesn't sour, and milk carriers can be wrapped.
 - **Refactor with TP Core's Stone Hearth split** (2026-11-15): the cauldron's fluid rules are TP Core's `CauldronFluid.*`, the cauldron itself `Cauldron.ID` and `Cauldron.of` (were reached through `Fire`); the cauldron actions' and menu's fire is `fire` (`action.fire`). test_incubator stands in for the script manager, as TP Core's Cauldron teaches its recipe on the same event. Nothing changes in game.
 - **Refactor with TP Core's names** (2026-11-15): TP Core's `Hearth` is `Fire`; `M.isHearth` is `M.hasCauldron`, `M.hearthsNear` `M.cauldronsNear`, `M.HEARTH` `M.FIRESIDE`; text keys `PourFromCauldron`, `LoadFromCauldron`, `NoCauldron`, `CauldronHelp*`. Nothing changes in game.
 - **A held cup, crock seed or incubator item leaves the hands** (TP Core's `Action.removeItem` now uses vanilla's `Remove`; Fish & Meat refactor B3, user's yes, 2026-11-14), and so does a pot swapped or burnt by the wrap (`swapForFresh`, `burnWrap`; were `DoRemoveItem`). test_jar's and test_wrap's stand-in containers have `Remove`. In-game step 158f of TP Core's `TESTING_GUIDE.md`.

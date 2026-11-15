@@ -2,7 +2,9 @@
 
 **Status: experimental.** The yogurt loop, from the Stone Hearth's cauldron to a cup of yogurt, and the starter crock have been played in the game with test timers. The latest changes (mixed milks, the cold-milk refusal, the jar weight after a reload) have only been checked offline so far (see the test plan). Back up your save before enabling.
 
-Set your own yogurt the old way: milk brought to the steam in a Stone Hearth's cauldron, cooled in a lidded clay pot, then wrapped in cloth to set overnight. It ends in the same vanilla Yogurt you find in fridges, and every Yogurt eaten leaves its cup behind to fill again. When the last yogurt is gone, a crock of wheat and warm milk grows a new starter.
+Set your own yogurt the old way: milk brought to the steam in a Stone Hearth's cauldron, cooled in a lidded clay pot, then wrapped in cloth to set overnight. It ends in the same vanilla Yogurt you find in fridges, and every Yogurt eaten leaves its cup behind to fill again. When the last yogurt is gone, a crock of wheat and warm milk, or of soured milk, grows a new starter.
+
+Milk goes off now, by the temperature of where it is kept: fresh milk sours, then rots. Soured milk still bakes cakes, muffins and cereal. Milk held at the steam is Scalded, which doesn't sour, and any pot, jar or bucket can be wrapped in cloth to carry its milk warm.
 
 ## History
 
