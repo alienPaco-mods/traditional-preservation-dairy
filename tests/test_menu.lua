@@ -39,6 +39,9 @@ end
 require "TraditionalPreservationDairy"
 local M = TraditionalPreservationDairy
 local Fire = require "TraditionalPreservationCore/Fire"
+local StoneHearth = require "TraditionalPreservationCore/StoneHearth"
+local Cauldron = require "TraditionalPreservationCore/Cauldron"
+local CauldronFluid = require "TraditionalPreservationCore/CauldronFluid"
 -- The World runs here, as in single player: the menus bring each station up to now through it.
 function isClient() return false end
 MapObjects = { OnLoadWithSprite = function() end }
@@ -83,8 +86,8 @@ local function crock(x, state)
 end
 
 -- A Stone Hearth one tile from the pot at 5,5.
-local function hearth(cauldron)
-    return tile(6, 5, "IsoFireplace", Fire.cauldronSprite("Empty", 0), { [Fire.KEY] = { [Fire.CAULDRON] = cauldron } })
+local function withCauldron(cauldron)
+    return tile(6, 5, "IsoFireplace", StoneHearth.cauldronSprite("Empty", 0), { [Fire.KEY] = { [Cauldron.ID] = cauldron } })
 end
 
 -- Opens the menu on the stations and returns each one's submenu, then the whole menu.
@@ -124,18 +127,18 @@ check("an empty pot has nothing to pour out or collect", named(sub, "ContextMenu
     and named(sub, "ContextMenu_TraditionalPreservationDairy_Collect") == nil)
 
 -- The cauldron
-hearth({ ml = 4000, fluid = "Water", tempC = 95 })
+withCauldron({ ml = 4000, fluid = "Water", tempC = 95 })
 pour = named(open(pot)[1], POUR)
 check("a cauldron of water is refused", pour.isDisabled == true
     and pour.toolTip.description == getText("IGUI_TraditionalPreservationDairy_CauldronNoMilk"))
-hearth({ ml = 4000, fluid = "CowMilk", tempC = 50 })
+withCauldron({ ml = 4000, fluid = "CowMilk", tempC = 50 })
 pour = named(open(pot)[1], POUR)
 check("and milk that isn't steaming, with its heat", pour.isDisabled == true and pour.toolTip.description:find("50", 1, true) ~= nil)
-local unheld = hearth({ ml = 4000, fluid = "CowMilk", tempC = 90, held = 0.1 })
+local unheld = withCauldron({ ml = 4000, fluid = "CowMilk", tempC = 90, held = 0.1 })
 pour = named(open(pot)[1], POUR)
 check("steaming but not held yet, it says how many minutes to go", pour.isDisabled == true
     and pour.toolTip.description:find("14 more minutes", 1, true) ~= nil)
-local steaming = hearth({ ml = 4000, fluid = "CowMilk", tempC = 90, held = 0.5 })
+local steaming = withCauldron({ ml = 4000, fluid = "CowMilk", tempC = 90, held = 0.5 })
 sub = open(pot)[1]
 pour = sub.options[3]
 check("steaming milk is offered, with its litres and heat", pour.isDisabled == nil and pour.onSelect ~= nil
@@ -144,11 +147,11 @@ check("pouring from the Stone Hearth shows its cauldron, full", pour.iconTexture
 local character = { isTimedActionInstant = function() return false end }
 pour.onSelect(character, unpack(pour.args))
 check("choosing it walks over and queues the pour from that Stone Hearth", ui.walks == 1 and #ui.queued == 1
-    and ui.queued[1].Type == "TPYoghurtIncubator" and ui.queued[1].mode == "hearth" and ui.queued[1].hearth == steaming
+    and ui.queued[1].Type == "TPYoghurtIncubator" and ui.queued[1].mode == "fire" and ui.queued[1].fire == steaming
     and ui.queued[1].station == pot)
 
 -- The other animal's milk
-hearth({ ml = 4000, fluid = "CowMilk", tempC = 90, held = 1 })
+withCauldron({ ml = 4000, fluid = "CowMilk", tempC = 90, held = 1 })
 pour = open(incubator(5, { ml = 1000, fluid = "SheepMilk", tempC = 80 }))[1].options[3]
 check("cow's milk is offered to a pot of sheep's: milks mix", pour.isDisabled == nil and pour.onSelect ~= nil)
 
@@ -156,7 +159,7 @@ check("cow's milk is offered to a pot of sheep's: milks mix", pour.isDisabled ==
 local function scaldedMilk(name, celsius)
     local modData = { [M.CARRY_KEY] = { ml = 2000, c = celsius, hour = 100, scalded = true } }
     return H.vessel(name, "CowMilk", 2, 5, { getFullType = function() return "Base.Bucket" end,
-        getModData = function() return modData end, getItemHeat = function() return Fire.itemHeat(celsius) end })
+        getModData = function() return modData end, getItemHeat = function() return CauldronFluid.itemHeat(celsius) end })
 end
 ui.carried = { scaldedMilk("Hot Bucket", 80), scaldedMilk("Cold Bucket", 25) }
 carried = named(open(incubator(5, { starter = "Yogurt" }))[1], "ContextMenu_TraditionalPreservationDairy_PourScalded")

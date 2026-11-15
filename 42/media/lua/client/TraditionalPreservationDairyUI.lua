@@ -8,7 +8,7 @@ require "TimedActions/TPYoghurtIncubator"
 require "TimedActions/TPStarterCrock"
 require "TimedActions/TPFillYoghurtCup"
 local UI = require "TraditionalPreservationCore/UI"
-local Fire = require "TraditionalPreservationCore/Fire"
+local Cauldron = require "TraditionalPreservationCore/Cauldron"
 local InfoWindow = require "TraditionalPreservationCore/InfoWindow"
 local CauldronUI = require "TraditionalPreservationCore/CauldronUI"
 local Transfer = require "TraditionalPreservationCore/Transfer"
@@ -124,14 +124,14 @@ local function addItemMenu(menu, option, playerObj, station, items, mode, label)
 end
 
 -- The cauldron's state, brought up to now when the World runs here.
-local cauldronOf = Fire.cauldronOf
+local cauldronOf = Cauldron.of
 
--- The first hearth near the station whose cauldron passes test, else nil and the nearest one's cauldron.
+-- The first fire near the station whose cauldron passes test, else nil and the nearest one's cauldron.
 local function cauldronFor(station, test)
     local nearest
-    for _, hearth in ipairs(M.cauldronsNear(station:getSquare())) do
-        local cauldron = cauldronOf(hearth)
-        if test(cauldron) then return hearth, cauldron end
+    for _, fire in ipairs(M.cauldronsNear(station:getSquare())) do
+        local cauldron = cauldronOf(fire)
+        if test(cauldron) then return fire, cauldron end
         nearest = nearest or cauldron
     end
     return nil, nearest
@@ -145,21 +145,21 @@ local function cauldronRefusal(cauldron, notHotKey)
     return say(notHotKey, degrees(cauldron.tempC))
 end
 
-local function onCauldronPour(playerObj, station, hearth)
+local function onCauldronPour(playerObj, station, fire)
     if not ISEntityUI.WalkToEntity(playerObj, station) then return end
-    ISTimedActionQueue.add(TPYoghurtIncubator:new(playerObj, station, nil, "hearth", hearth))
+    ISTimedActionQueue.add(TPYoghurtIncubator:new(playerObj, station, nil, "fire", fire))
 end
 
 local function addCauldronPourMenu(menu, playerObj, station, state)
     local label = getText("ContextMenu_TraditionalPreservationDairy_PourFromCauldron")
     local room, reason = M.milkRoom(state, 1)
-    local hearth, cauldron
-    if room > 0 then hearth, cauldron = cauldronFor(station, M.cauldronScalded) end
-    if hearth then label = say("ContextMenu_TraditionalPreservationDairy_MilkItem", label, litresText(cauldron.ml), degrees(cauldron.tempC)) end
-    local option = menu:addOption(label, playerObj, onCauldronPour, station, hearth)
+    local fire, cauldron
+    if room > 0 then fire, cauldron = cauldronFor(station, M.cauldronScalded) end
+    if fire then label = say("ContextMenu_TraditionalPreservationDairy_MilkItem", label, litresText(cauldron.ml), degrees(cauldron.tempC)) end
+    local option = menu:addOption(label, playerObj, onCauldronPour, station, fire)
     option.iconTexture = getTexture(CAULDRON_ICON)
     if room <= 0 then return disableWith(option, getText(REFUSALS[reason])) end
-    if not hearth then return disableWith(option, cauldronRefusal(cauldron, "IGUI_TraditionalPreservationDairy_CauldronNotHot")) end
+    if not fire then return disableWith(option, cauldronRefusal(cauldron, "IGUI_TraditionalPreservationDairy_CauldronNotHot")) end
 end
 
 -- A submenu's icon: the first item it lists, drawn as the inventory draws it (a bucket of milk shows milk), or
@@ -308,11 +308,11 @@ end
 
 -- Crock
 
-local function onCrockAction(playerObj, station, mode, item, wheat, hearth)
+local function onCrockAction(playerObj, station, mode, item, wheat, fire)
     if not ISEntityUI.WalkToEntity(playerObj, station) then return end
     for _, seed in ipairs(wheat or {}) do ISInventoryPaneContextMenu.transferIfNeeded(playerObj, seed) end
     if item then ISInventoryPaneContextMenu.transferIfNeeded(playerObj, item) end
-    ISTimedActionQueue.add(TPStarterCrock:new(playerObj, station, mode, item, wheat, hearth))
+    ISTimedActionQueue.add(TPStarterCrock:new(playerObj, station, mode, item, wheat, fire))
 end
 
 -- Containers holding at least ml of plain milk.
@@ -340,7 +340,7 @@ local function addLoadMenu(menu, playerObj, station)
     if #wheat < M.CROCK_WHEAT then
         return disableWith(option, say("IGUI_TraditionalPreservationDairy_NeedWheat", tostring(M.CROCK_WHEAT), tostring(#wheat)))
     end
-    local hearth, cauldron = cauldronFor(station, TPStarterCrock.cauldronReady)
+    local fire, cauldron = cauldronFor(station, TPStarterCrock.cauldronReady)
     local milks = findItems(playerObj, function(item) return M.milkIn(item:getFluidContainer()) ~= nil end)
     if not cauldron and #milks == 0 then return disableWith(option, getText("IGUI_TraditionalPreservationDairy_CrockNoWarmMilk")) end
     tooltipFor(option, getText("IGUI_TraditionalPreservationDairy_LoadHelp"))
@@ -350,9 +350,9 @@ local function addLoadMenu(menu, playerObj, station)
     if cauldron then
         local label = getText("ContextMenu_TraditionalPreservationDairy_LoadFromCauldron")
         if M.MILKS[cauldron.fluid] then label = say("ContextMenu_TraditionalPreservationDairy_MilkItem", label, litresText(cauldron.ml), degrees(cauldron.tempC)) end
-        local entry = sub:addOption(label, playerObj, onCrockAction, station, "load", nil, picked, hearth)
+        local entry = sub:addOption(label, playerObj, onCrockAction, station, "load", nil, picked, fire)
         entry.iconTexture = getTexture(CAULDRON_ICON)
-        if not hearth then
+        if not fire then
             if M.MILKS[cauldron.fluid] then
                 refuseLoad(entry, cauldron.ml or 0, cauldron.tempC or 0)
             else

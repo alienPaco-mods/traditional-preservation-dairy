@@ -1,4 +1,4 @@
--- Traditional Preservation (Dairy): the hand jobs at a Yogurt Incubator. "hearth" pours milk steaming from a
+-- Traditional Preservation (Dairy): the hand jobs at a Yogurt Incubator. "fire" pours milk steaming from a
 -- Stone Hearth's cauldron (within 2 tiles) in, "carried" pours scalded milk in from a container, "starter" stirs in a yogurt or an Active Yogurt Starter, "pourOut" takes the milk back out into an empty
 -- container (still scalded) to reheat it, "collect" fills an empty jar (glass 1 L, clay 2.5 L) with set yogurt,
 -- and "cup" fills an Empty Yogurt Container with a quarter litre.
@@ -10,6 +10,7 @@ TPYoghurtIncubator = ISBaseTimedAction:derive("TPYoghurtIncubator")
 
 local M = TraditionalPreservationDairy
 local Fire = require "TraditionalPreservationCore/Fire"
+local Cauldron = require "TraditionalPreservationCore/Cauldron"
 local Action = require "TraditionalPreservationCore/Action"
 local FluidAgeing = require "TraditionalPreservationCore/FluidAgeing"
 
@@ -21,8 +22,8 @@ end
 
 local function canDo(self)
     local batch = M.incubatorOf(self.station)
-    if self.mode == "hearth" then
-        return M.cauldronScalded(Fire.cauldronState(self.hearth:getModData())) and M.milkRoom(batch, 1) > 0
+    if self.mode == "fire" then
+        return M.cauldronScalded(Cauldron.state(self.fire:getModData())) and M.milkRoom(batch, 1) > 0
     elseif self.mode == "carried" then
         local container = self.item:getFluidContainer()
         local ml = M.mlIn(container)
@@ -41,8 +42,8 @@ end
 
 function TPYoghurtIncubator:isValid()
     if not self.station:getSquare() then return false end
-    if self.mode == "hearth" then
-        if not self.hearth:getSquare() then return false end
+    if self.mode == "fire" then
+        if not self.fire:getSquare() then return false end
     elseif not self.character:getInventory():containsRecursive(self.item) then
         return false
     end
@@ -65,9 +66,9 @@ end
 -- What each mode does once the action is through: fn(self, batch, now).
 local COMPLETE = {}
 
-function COMPLETE.hearth(self, batch, now)
-    M.cauldronToPot(Fire.cauldronOf(self.hearth), batch, now)
-    Fire.redraw(self.hearth)
+function COMPLETE.fire(self, batch, now)
+    M.cauldronToPot(Cauldron.of(self.fire), batch, now)
+    Fire.redraw(self.fire)
 end
 
 function COMPLETE.carried(self, batch, now)
@@ -139,8 +140,8 @@ end
 function TPYoghurtIncubator:getDuration()
     local container = self.item and self.item:getFluidContainer()
     local litres = 0
-    if self.mode == "hearth" then
-        local cauldron = Fire.cauldronState(self.hearth:getModData())
+    if self.mode == "fire" then
+        local cauldron = Cauldron.state(self.fire:getModData())
         local batch = M.incubatorOf(self.station)
         litres = math.min(cauldron.ml or 0, M.milkRoom(batch, cauldron.ml or 0)) / 1000
     end
@@ -151,11 +152,11 @@ function TPYoghurtIncubator:getDuration()
     return Action.pourDuration(self.character, litres, 5)
 end
 
--- item is nil for "hearth", which takes the hearth instead.
-function TPYoghurtIncubator:new(character, station, item, mode, hearth)
+-- item is nil for "fire", which takes the fire instead.
+function TPYoghurtIncubator:new(character, station, item, mode, fire)
     local o = ISBaseTimedAction.new(self, character)
     o.station = station
-    o.hearth = hearth
+    o.fire = fire
     o.item = item
     o.mode = mode
     o.maxTime = o:getDuration()

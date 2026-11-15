@@ -10,6 +10,8 @@ TraditionalPreservationDairy = TraditionalPreservationDairy or {}
 local M = TraditionalPreservationDairy
 local Weather = require "TraditionalPreservationCore/Weather"
 local Fire = require "TraditionalPreservationCore/Fire"
+local Cauldron = require "TraditionalPreservationCore/Cauldron"
+local CauldronFluid = require "TraditionalPreservationCore/CauldronFluid"
 local Station = require "TraditionalPreservationCore/Station"
 local FluidAgeing = require "TraditionalPreservationCore/FluidAgeing"
 local Recipes = require "TraditionalPreservationCore/Recipes"
@@ -55,9 +57,9 @@ M.CAULDRON_PLAIN = Fire.PLACE
 M.EMBERS = Fire.EMBERS
 
 -- The Stone Hearth's cauldron (TP Core) holds one fluid at a time, or a blend of milks, and heats while its fire burns.
-M.HOT_C = Fire.HOT_C        -- milk this hot pours from the cauldron into a pot
+M.HOT_C = CauldronFluid.HOT_C        -- milk this hot pours from the cauldron into a pot
 -- Milk counts as scalded only once it has been at HOT_C or more this long in all (user, 2026-11-13): the hold is what
--- changes the whey proteins and gives a firm set. The cauldron counts it (Fire.heldHours), a pot on a stove or a
+-- changes the whey proteins and gives a firm set. The cauldron counts it (CauldronFluid.heldHours), a pot on a stove or a
 -- fire too (TP Core's FluidAgeing, scaldHold).
 M.SCALD_HOLD_HOURS = 1 / 3
 
@@ -103,7 +105,7 @@ for _, scalded in pairs(M.SCALDED_MILKS) do M.SCALDED[scalded] = true end
 M.STORE_MILK = { ["Base.Milk"] = true, ["Base.MilkBottle"] = true, ["Base.Milk_Personalsized"] = true }
 M.SOURED, M.ROTTEN = {}, {}
 for milk, sour in pairs(M.SOUR_MILKS) do M.SOURED[sour], M.ROTTEN[M.ROTTEN_MILKS[milk]] = true, true end
-Fire.blend("SourCowMilk", "SourSheepMilk", "SourAnimalMilk")
+CauldronFluid.blend("SourCowMilk", "SourSheepMilk", "SourAnimalMilk")
 -- Souring speed against 20 C. Mesophilic bacteria: frozen milk stops, a fridge crawls, best near blood heat; past
 -- 50 C the heat starts to kill them.
 local MILK_CURVE = { { 0, 0 }, { 2, 0.12 }, { 4, 0.19 }, { 10, 0.33 }, { 15, 0.5 }, { 20, 1 }, { 25, 1.25 }, { 30, 1.5 },
@@ -131,7 +133,7 @@ for milk, scalded in pairs(M.SCALDED_MILKS) do M.MILK_FOOD[scalded] = M.MILK_FOO
 -- cauldron, a container and a pot, as a mixed herd's milk always did. Scalded milk is milk too.
 M.MILKS = { CowMilk = true, SheepMilk = true, AnimalMilk = true }
 for milk, scalded in pairs(M.SCALDED_MILKS) do M.MILKS[scalded] = true end
-Fire.blend("CowMilk", "SheepMilk", "AnimalMilk", "ScaldedCowMilk", "ScaldedSheepMilk", "ScaldedAnimalMilk")
+CauldronFluid.blend("CowMilk", "SheepMilk", "AnimalMilk", "ScaldedCowMilk", "ScaldedSheepMilk", "ScaldedAnimalMilk")
 M.STARTER = "TraditionalPreservationDairy.ActiveYoghurtStarter"
 M.YOGHURT = "Base.Yoghurt"    -- vanilla's cup of Yogurt
 -- A Jar of Yogurt gives one portion, as much as a Yogurt cup holds, and keeps the rest (M.isStarter).
@@ -163,7 +165,7 @@ end
 
 -- The main fluid in a container if it is all milk (one kind, or a blend), and its ml by fluid; else nil.
 function M.milkIn(container)
-    local parts, name = Fire.partsIn(container)
+    local parts, name = CauldronFluid.partsIn(container)
     if not M.MILKS[name] then return nil end
     return name, parts
 end
@@ -200,13 +202,13 @@ M.placeTemperature = Weather.placeTemperature
 M.placeOf = Fire.placeOf
 M.noteFire = Fire.noteFire
 -- A Stone Hearth with the cauldron fitted, and those near a square.
-function M.cauldronsNear(square) return Fire.fittedNear(square, Fire.CAULDRON) end
-function M.hasCauldron(object) return Fire.isFitted(object, Fire.CAULDRON) end
+function M.cauldronsNear(square) return Fire.fittedNear(square, Cauldron.ID) end
+function M.hasCauldron(object) return Fire.isFitted(object, Cauldron.ID) end
 
 -- Temperatures: vanilla's item heat, for milk poured between our stores and the player's containers. Vanilla
 -- cools a container in the player's hands to room heat within seconds, so only the cauldron and the pot keep heat.
-M.heatCelsius = Fire.heatCelsius
-M.itemHeat = Fire.itemHeat
+M.heatCelsius = CauldronFluid.heatCelsius
+M.itemHeat = CauldronFluid.itemHeat
 
 -- More milk holds its heat longer: the time constant grows with the pot's size, so with the cube root of litres.
 function M.tau(ml, wrapped)
@@ -214,7 +216,7 @@ function M.tau(ml, wrapped)
     return base * (math.max(ml, M.TAU_FLOOR_ML) / M.CAPACITY_ML) ^ (1 / 3)
 end
 
-M.cool = Fire.cool
+M.cool = CauldronFluid.cool
 
 -- Frozen milk doesn't set (TP Core's Weather.frozen), whatever the sensitivity.
 function M.setRate(milkC)
@@ -251,7 +253,7 @@ end
 
 FluidAgeing.register({
     kind = M.MILK_KIND,
-    scaldHeat = Fire.itemHeat(M.HOT_C),
+    scaldHeat = CauldronFluid.itemHeat(M.HOT_C),
     scaldHold = M.SCALD_HOLD_HOURS,
     rate = M.milkRate,
     turnHours = M.MILK_TURN_HOURS,
@@ -327,7 +329,7 @@ function M.addMilk(batch, ml, milkC, now, fluid)
     if reason then return 0, reason end
     local had = batch.ml or 0
     batch.tempC = had > 0 and (batch.tempC * had + milkC * taken) / (had + taken) or milkC
-    if fluid then Fire.addParts(batch, fluid, taken) end
+    if fluid then CauldronFluid.addParts(batch, fluid, taken) end
     batch.ml = had + taken
     batch.last = batch.last or now
     return taken
@@ -355,7 +357,7 @@ function M.pourOut(batch, maxMl)
     local stage = M.stage(batch)
     if stage ~= "Cooling" and stage ~= "TooCold" then return 0 end
     local ml, tempC = math.min(batch.ml, maxMl or batch.ml), batch.tempC
-    local parts = Fire.partsOf(batch, ml)
+    local parts = CauldronFluid.partsOf(batch, ml)
     batch.ml = batch.ml - ml
     if batch.ml <= 0 then clear(batch, MILK_FIELDS) end
     return ml, tempC, parts
@@ -468,7 +470,7 @@ end
 
 -- One portion's food from the pot's milk, by its shares of each kind.
 function M.portionFood(batch)
-    local parts = Fire.partsOf(batch, 1)
+    local parts = CauldronFluid.partsOf(batch, 1)
     local food = {}
     for key in pairs(M.PORTION) do food[key] = 0 end
     for name, share in pairs(parts) do
@@ -561,7 +563,7 @@ end
 -- banked.
 function M.hoursToHot(cauldron, banked)
     if not M.MILKS[cauldron.fluid] then return nil end
-    return Fire.hoursToHot(cauldron, banked)
+    return CauldronFluid.hoursToHot(cauldron, banked)
 end
 
 function M.cauldronHot(cauldron)
@@ -574,12 +576,12 @@ function M.held(hours)
 end
 
 function M.cauldronScalded(cauldron)
-    return M.cauldronHot(cauldron) and M.held(Fire.heldHours(cauldron))
+    return M.cauldronHot(cauldron) and M.held(CauldronFluid.heldHours(cauldron))
 end
 
 -- Minutes of the hold still to go for the cauldron's milk (0 once held).
 function M.holdMinutesLeft(cauldron)
-    return math.max(math.ceil((M.SCALD_HOLD_HOURS - Fire.heldHours(cauldron)) * 60 - 1e-6), 0)
+    return math.max(math.ceil((M.SCALD_HOLD_HOURS - CauldronFluid.heldHours(cauldron)) * 60 - 1e-6), 0)
 end
 
 -- Fills the pot from the cauldron with hot milk, as much as fits. Returns the ml (0 with a reason when refused).
@@ -588,7 +590,7 @@ function M.cauldronToPot(cauldron, batch, now)
     if not M.cauldronScalded(cauldron) then return 0, "NotHeld" end
     local room, reason = M.milkRoom(batch, cauldron.ml)
     if room <= 0 then return 0, reason end
-    local ml, _, tempC, parts = Fire.take(cauldron, room)
+    local ml, _, tempC, parts = CauldronFluid.take(cauldron, room)
     M.addMilk(batch, ml, tempC, now, parts)
     return ml
 end
@@ -640,7 +642,7 @@ end
 -- What a container holds for a clabber: "Soured" if it is all soured milk (one kind or a blend), "Rotten" if its
 -- main fluid is rotten milk, else nil.
 function M.clabberIn(container)
-    local parts, name = Fire.partsIn(container)
+    local parts, name = CauldronFluid.partsIn(container)
     if parts and M.SOURED[name] then return "Soured" end
     local primary = container and not container:isEmpty() and container:getPrimaryFluid()
     if primary and M.ROTTEN[primary:getFluidTypeString()] then return "Rotten" end

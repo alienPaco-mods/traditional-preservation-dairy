@@ -8,10 +8,11 @@ H.installEvents()
 dofile("42/media/lua/shared/TraditionalPreservationDairy.lua")
 local M = TraditionalPreservationDairy
 local Fire = require "TraditionalPreservationCore/Fire"
+local CauldronFluid = require "TraditionalPreservationCore/CauldronFluid"
 
 -- Heat
-check("room heat is room temperature", M.heatCelsius(1.0) == Fire.ROOM_C)
-check("an item never reads hotter than the cauldron gets", M.heatCelsius(3.0) == Fire.MAX_C)
+check("room heat is room temperature", M.heatCelsius(1.0) == CauldronFluid.ROOM_C)
+check("an item never reads hotter than the cauldron gets", M.heatCelsius(3.0) == CauldronFluid.MAX_C)
 check("heat goes back to the item it came from", near(M.heatCelsius(M.itemHeat(60)), 60))
 check("a wrapped pot holds heat far longer", M.tau(5000, true) > 4 * M.tau(5000, false))
 check("less milk cools faster", M.tau(3000, false) < M.tau(5000, false))
@@ -202,7 +203,7 @@ M.advanceBatch(emberHand, 10, 0, 20)
 check("by embers only while they last, then the place under them", near(emberOut.tempC, emberHand.tempC, 1e-6))
 
 -- Stone Hearth cauldron: TP Core's rules (its tests/test_fire.lua); milk's own here
-check("the cauldron's numbers are the core's", Fire.CAULDRON_ML == 60000 and M.HOT_C == 85 and Fire.MAX_C == 95)
+check("the cauldron's numbers are the core's", CauldronFluid.CAULDRON_ML == 60000 and M.HOT_C == 85 and CauldronFluid.MAX_C == 95)
 check("water is never poured into a pot", M.cauldronToPot({ ml = 4000, fluid = "Water", tempC = 90 }, {}, 0) == 0
     and select(2, M.cauldronToPot({ ml = 4000, fluid = "Water", tempC = 90 }, {}, 0)) == "NoMilk")
 check("the time to hot means nothing for water", M.hoursToHot({ ml = 100, fluid = "Water", tempC = 20 }) == nil
@@ -229,8 +230,8 @@ local sheepPot = { ml = 1000, tempC = 80, fluid = "SheepMilk" }
 check("cow's milk goes in with sheep's", M.cauldronToPot({ ml = 2000, fluid = "CowMilk", tempC = 90, held = 1 }, sheepPot, 0) == 2000
     and sheepPot.fluid == "CowMilk" and sheepPot.parts.SheepMilk == 1000)
 local herdCauldron = {}
-Fire.pourInto(herdCauldron, "CowMilk", 3000, 90, 0)
-check("and the two share a cauldron", Fire.pourInto(herdCauldron, "SheepMilk", 1000, 90, 0) == 1000 and M.cauldronHot(herdCauldron))
+CauldronFluid.pourInto(herdCauldron, "CowMilk", 3000, 90, 0)
+check("and the two share a cauldron", CauldronFluid.pourInto(herdCauldron, "SheepMilk", 1000, 90, 0) == 1000 and M.cauldronHot(herdCauldron))
 local animalPot = { ml = 1000, tempC = 80, fluid = "AnimalMilk" }
 check("the game's generic AnimalMilk is milk and blends with cow's",
     M.cauldronHot({ ml = 100, fluid = "AnimalMilk", tempC = 90 })
@@ -264,8 +265,8 @@ local function pail()
     return o
 end
 local early, late = pail(), pail()
-Fire.filledFrom(early, { ml = 2000, fluid = "CowMilk", tempC = 90, hot = true, held = 0.1, hadMl = 0, hadC = 0, now = 0 })
-Fire.filledFrom(late, { ml = 2000, fluid = "CowMilk", tempC = 84, hot = false, held = 0.4, hadMl = 0, hadC = 0, now = 0 })
+CauldronFluid.filledFrom(early, { ml = 2000, fluid = "CowMilk", tempC = 90, hot = true, held = 0.1, hadMl = 0, hadC = 0, now = 0 })
+CauldronFluid.filledFrom(late, { ml = 2000, fluid = "CowMilk", tempC = 84, hot = false, held = 0.4, hadMl = 0, hadC = 0, now = 0 })
 check("drawn before the hold, the milk is hot but not scalded", not M.isScalded(early.md[M.CARRY_KEY], 2000))
 check("drawn after it, cooled a little since, it is scalded", M.isScalded(late.md[M.CARRY_KEY], 2000))
 local carry = M.carryIn(nil, 0, 20, 3000, 90, 0, true)
@@ -316,7 +317,7 @@ check("pouring it all out drops the record", M.carryOut(part, 1500) == nil)
 local crock = {}
 check("a new crock is empty", M.crockStage(crock) == "Empty" and M.collectStarters(crock) == 0)
 check("it loads once", M.loadCrock(crock, ledger) and crock.stage == "Cultivating" and not M.loadCrock(crock, ledger))
-check("loading milk must be warm, not hot", M.isWarm(40) and not M.isWarm(M.HOT_C) and not M.isWarm(Fire.ROOM_C)
+check("loading milk must be warm, not hot", M.isWarm(40) and not M.isWarm(M.HOT_C) and not M.isWarm(CauldronFluid.ROOM_C)
     and M.crockMilkRefusal(30) == "TooCool" and M.crockMilkRefusal(50) == "TooHot" and M.crockMilkRefusal(45) == nil)
 check("a load needs half a litre in the window", M.crockLoadRefusal(400, 40) == "TooLittle" and M.crockLoadRefusal(500, 40) == nil
     and M.crockLoadRefusal(2000, 90) == "TooHot" and M.crockLoadRefusal(2000, 20) == "TooCool")
@@ -350,8 +351,8 @@ check("fresh, scalded or no milk isn't soured", M.clabberRefusal(jug("CowMilk", 
     and M.clabberRefusal(jug("ScaldedCowMilk", 1)) == "NoSour" and M.clabberRefusal(jug("Water", 1)) == "NoSour"
     and M.clabberIn(jug("SourCowMilk", 0)) == nil)
 check("it needs half a litre", M.clabberRefusal(jug("SourCowMilk", 0.4)) == "TooLittle")
-check("soured milk may share the cauldron, as fresh milk does", Fire.blends("SourCowMilk", "SourSheepMilk")
-    and not Fire.blends("SourCowMilk", "CowMilk"))
+check("soured milk may share the cauldron, as fresh milk does", CauldronFluid.blends("SourCowMilk", "SourSheepMilk")
+    and not CauldronFluid.blends("SourCowMilk", "CowMilk"))
 local clabber = {}
 check("a clabber skips Cultivating: the crock waits for fresh milk at once", M.clabberCrock(clabber)
     and clabber.stage == "Waiting" and not M.clabberCrock(clabber) and M.feedCrock(clabber, ledger)
@@ -398,6 +399,8 @@ check("state lives under one prefixed key", modData.tpdIncubator.ml == 1000 and 
 
 -- Sandbox
 SandboxVars = { TraditionalPreservationDairy = { IncubationHours = 8, CultureHours = 36, TemperatureSensitivity = 1 } }
+-- Core's Cauldron teaches its recipe on the same event: no scripts here, so it only says it found none.
+ScriptManager = { instance = { getCraftRecipe = function() return nil end, getItem = function() return nil end } }
 H.fire("OnInitGlobalModData")
 check("the sandbox sets the times and sensitivity", M.INCUBATE_HOURS == 8 and M.CULTIVATE_HOURS == 36 and M.DEVELOP_HOURS == 18 and M.SENSITIVITY == 0)
 -- Milk goes off at vanilla's Food Spoilage speed times Dairy's own (pick A, 2026-11-14)
