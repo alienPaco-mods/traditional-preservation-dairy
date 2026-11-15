@@ -11,7 +11,9 @@ local UI = require "TraditionalPreservationCore/UI"
 local Cauldron = require "TraditionalPreservationCore/Cauldron"
 local InfoWindow = require "TraditionalPreservationCore/InfoWindow"
 local CauldronUI = require "TraditionalPreservationCore/CauldronUI"
+local CauldronFluid = require "TraditionalPreservationCore/CauldronFluid"
 local Transfer = require "TraditionalPreservationCore/Transfer"
+local PlaceKeepingUI = require "TraditionalPreservationCore/PlaceKeepingUI"
 local Tiles = require "TraditionalPreservationDairy/Tiles"
 
 local M = TraditionalPreservationDairy
@@ -688,3 +690,38 @@ Transfer.before(function(action, item)
         M.stampHeat(item, getGameTime():getWorldAgeHours())
     end
 end)
+
+-- Butter catches up on its keeping whenever it is looked at or moved (TP Core's PlaceKeepingUI).
+PlaceKeepingUI.watch(M.BUTTER_KEEPER, M.BUTTER_DAYS)
+
+-- Put Butter in the Cauldron on the Stone Hearth's menu (TP Core's CauldronUI.addPieces), and its notes in Stone
+-- Hearth Info.
+CauldronUI.addPieces({
+    title = getText("ContextMenu_TraditionalPreservationDairy_ButterInCauldron"),
+    icon = "Item_Butter",
+    pieceMl = M.BUTTER_PIECE_ML,
+    hoursLeft = M.butterHoursLeft,
+    kinds = { { fluid = M.MELTING_BUTTER, items = M.CAULDRON_BUTTERS, label = function(count)
+        return getText("ContextMenu_TraditionalPreservationDairy_ButterPieces", tostring(count))
+    end } },
+    help = getText("IGUI_TraditionalPreservationDairy_ButterHelp"),
+    noRoom = getText("IGUI_TraditionalPreservationDairy_ButterNoRoom"),
+    refusal = function(playerObj)
+        if playerObj:getPerkLevel(Perks.Cooking) < M.BUTTER_SKILL then return getText("IGUI_TraditionalPreservationDairy_ButterSkill") end
+    end,
+})
+
+CauldronUI.addNotes(function(info, notes)
+    local cauldron = info.part
+    if (cauldron.ml or 0) <= 0 then return end
+    if cauldron.fluid == M.RANCID_BUTTER then
+        table.insert(notes, getText("IGUI_TraditionalPreservationDairy_ButterRancid"))
+    elseif cauldron.fluid == M.MELTED_CLARIFIED then
+        table.insert(notes, getText("IGUI_TraditionalPreservationDairy_ButterMelted"))
+    elseif cauldron.fluid == M.MELTING_BUTTER then
+        local now = getGameTime():getWorldAgeHours()
+        table.insert(notes, getText("IGUI_TraditionalPreservationDairy_ButterMelting",
+            UI.hoursText(CauldronFluid.hoursToTurn(cauldron) or 0), UI.hoursText(math.max((cauldron.offAt or now) - now, 0))))
+    end
+end)
+

@@ -14,5 +14,8 @@
   "Fluid_Name_RottenAnimalMilk": "Animal's Milk (Rotten)",
   "Fluid_Container_TPDWrappedPot": "Wrapped Pot",
   "Fluid_Container_TPDWrappedJar": "Wrapped Jar",
-  "Fluid_Container_TPDWrappedBucket": "Wrapped Bucket"
+  "Fluid_Container_TPDWrappedBucket": "Wrapped Bucket",
+  "Fluid_Name_MeltingButter": "Butter (Melting)",
+  "Fluid_Name_MeltedClarifiedButter": "Clarified Butter (Melted)",
+  "Fluid_Name_RancidButter": "Butter (Rancid)"
 }

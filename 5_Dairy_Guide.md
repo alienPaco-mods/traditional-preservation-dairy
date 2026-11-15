@@ -13,7 +13,7 @@
 5. The Forged Cauldron
 6. The Yogurt Incubator
 7. Jars and Cups
-8. When Milk Goes Off
+8. When Milk and Butter Go Off
 9. The Starter Culture Crock
 10. Stations Reference
 11. The Dairymaid's Almanac (Seasons & Places)
@@ -189,7 +189,7 @@ eaten. A Yogurt stirred into oatmeal now brings its fuller food with it.
 
 ---
 
-## 8. When Milk Goes Off
+## 8. When Milk and Butter Go Off
 
 Vanilla milk keeps for ever. With this mod it doesn't, and what you do with a bucket of milk in its first day decides what it's good for.
 
@@ -238,6 +238,35 @@ Soured milk and yogurt are both milk turned by lactic bacteria. They're not the 
 - **Load Soured Milk** puts half a litre of clabber into an empty Starter Culture Crock, warm or cold, with no wheat. It skips the grain's day of cultivating and waits for fresh milk at once: **starters in about 12 hours instead of 36.**
 - **Rotten milk won't do.** By then other things are living in it.
 - **Backslopping** is the old word for starting a batch with a little of the last one. Every yogurt you set from a cup of the last pot is backslopped, and so is every crock you start from soured milk.
+
+### Butter
+
+Vanilla butter keeps for ever. Here it goes **rancid**, as real butter does: fresh for about a month in a cool cellar, much less in a warm kitchen. Store butter and churned butter alike.
+
+| Kept at | Butter fresh / rotten | Salted Butter fresh / rotten |
+|---|---|---|
+| A cellar or basement, about 15 C | 30 / 45 days | 90 / 120 days |
+| A powered fridge | about 75 / 110 days | about 7 / 10 months |
+| A room at 20 C | about 20 / 30 days | about 60 / 80 days |
+| 25 C and over | about 15 / 22 days | about 45 / 60 days |
+| Frozen, or a powered freezer | never | never |
+
+Two old ways to make it last. Both need **Cooking 2**.
+
+- **Salt Butter** (right-click the butter): a **Butter** and **1 Salt** (one use of anything salt: a box of Salt does ten butters). You get a **Salted Butter**: three times the keeping, the same food. A half-stale butter makes a half-stale salted one, so salt it fresh.
+- **Clarify it.** **Put Butter in a Pot** (an empty Pot or Forged Pot), **Add Butter to the Pot** for a second if you like, then cook it on any stove or fire: 30 minutes, burnt at 90. **Pour Off Clarified Butter** through a cloth (Cheese Cloth, Dish Towel, Ripped Sheets, a Sheet or a Strainer, kept) gives one **Clarified Butter** for each butter and the pot back. **It never goes off**, like Lard. Salted butter clarifies too.
+- **A whole summer's butter at once** goes in the Stone Hearth's cauldron: **Put Butter in the Cauldron** takes every Butter and Salted Butter you carry. Keep it steaming an hour over a lit fire and it reads **Clarified Butter (Melted)**; fill a pot or bucket from the cauldron and **Strain Clarified Butter** through a cloth, a quarter litre to a Clarified Butter. It can't burn in the cauldron, but left there raw it goes rancid when its oldest butter would have.
+
+| | Butter | Salted Butter | Clarified Butter |
+|---|---|---|---|
+| Weight | 0.3 | 0.3 | 0.25 |
+| Calories | 3,200 | 3,200 | 3,200 |
+| Keeps in a cellar | a month | three months | for ever |
+| Cooks like | Butter | Butter | Butter: stews, soups, pasta, toast, baking |
+
+With **Fish & Meat** on, Potted Meat seals under Clarified Butter as it does under Lard.
+
+> *Margin note:* fresh butter is still about a sixth water, with a little milk in it, and that is where it spoils first. Salt in the water holds the bacteria back, which is why Irish firkin butter, packed heavy with salt, crossed the Atlantic in casks. Boil the water off, pour the fat from the milk solids, and little is left to spoil: Indian *ghee* and Egyptian *samna* kept through a hot summer in a clay jar.
 
 > *Margin note:* in Russia soured raw milk is *prostokvasha*, "simply soured", and the Irish called it *bainne clábair*, "thick milk", which English made into bonny clabber. Every farm kitchen had a jug of it going, for pancakes and soda bread. The crock here takes a little game licence: a real clabber won't turn into yogurt by itself. Fed warm fresh milk, though, its acid and bacteria give the crock the head start the wheat would take a day to grow.
 
@@ -413,6 +442,7 @@ At 0 C and below the crock stops and waits: Crock Info says *Paused here (frozen
 - **Soured milk isn't waste.** Bake with it, or start the crock with it.
 - **Use the clay jars.** 2.5 L each, 10 portions, and you eat from the jar itself.
 - **Save every Empty Yogurt Container.** They can't be made, only emptied.
+- **Clarify the summer's butter.** A cow gives most in summer, when butter keeps worst. Clarified, it waits for winter in any cupboard.
 - **Grow two starters before you need them.** They're fresh 5 days: start the crock when you're down to your last yogurt, not after.
 
 ---
@@ -432,6 +462,9 @@ At 0 C and below the crock stops and waits: Crock Info says *Paused here (frozen
 | Load Soured Milk greyed out | You need half a litre of soured milk in one container. Fresh or scalded milk isn't soured; rotten milk is refused |
 | Crock won't place | It stands on the floor, a counter or a table, never on a stove, a fridge or a freezer |
 | No Empty Yogurt Containers | They come only from eating Yogurt. Use jars instead |
+| My butter reads Stale or Rotten | Butter keeps a month in a cellar, about 20 days in a warm room. Salt it, clarify it, or keep it in a basement or a powered fridge |
+| Pour Off Clarified Butter greyed out | Cook the pot first, on a stove or fire, and carry a cloth to pour it through. A burnt pot gives nothing: Scrape Out Burnt Butter for the pot |
+| Salt Butter or Put Butter in the Cauldron refused | Every butter step needs Cooking 2 |
 | Stations or recipes missing | TP Core must be enabled. Then check `~/Zomboid/console.txt`: the tile number 5172 must be unique among your mods |
 
 ---
@@ -447,6 +480,7 @@ Under **Traditional Preservation (Dairy)**:
 | Temperature sensitivity | Normal | Off / Forgiving / Normal / Harsh. Off runs at full speed in any weather; the milk still has to cool before the wrap goes on |
 | Milk goes off | On | Raw milk sours, then rots; scalded milk rots without souring. Off, milk keeps for ever as in vanilla |
 | Milk spoiling speed | 1 | 2 goes off twice as fast, 0.5 keeps twice as long (0.1 to 10); on top of the game's Food Spoilage |
+| Butter keeps by place | On | Butter and Salted Butter go rancid by place. Off, they keep for ever as in vanilla. Clarified Butter never goes off either way |
 
 ---
 
@@ -458,6 +492,7 @@ Each process laid out as the game's planting seasons: the months it works unheat
 |---|---|---|---|---|---|---|
 | **Setting yogurt** | April to January (a basement), April to November (indoors) | June, July, August, September, October | April (indoors 1.4 + 11.6 hours, a basement 1.4 + 12.9), May (indoors 1.6 + 8.4, a basement 1.5 + 10.5), November (indoors 1.5 + 9.3, a basement 1.5 + 8.8), December and January (a basement, 1.5 + 10.2 and 1.4 + 13.6) | February and March: it never sets | A loft (the warm roof), or indoors | 2.0 + 6.5 hours in a July loft; indoors 1.9 + 6.8 |
 | **Starting the crock** | June to November | July, August, September | June, October (a basement 4 to 5 days), November (a basement about 9) | December to May: weeks (indoors in January about 90 days, most of them paused frozen) | Indoors | About 2 days |
+| **Keeping butter** | All year | November to March (a basement, about two months) | July, August (a room about 15 days) | None | A basement or a powered fridge | Fresh a month in a cellar, 75 days in a fridge. **Salted three times as long; clarified for ever** |
 | **Keeping raw milk** | All year | January, February, March | July, August, September (a basement 3½ days, a room 1½ to 2) | None | A basement | Sours in 6 to 7 days, rotten in about 2 weeks. **Scalded milk never sours** |
 
 **Any month by an indoor fire or a powered room:**
@@ -484,11 +519,13 @@ Each process laid out as the game's planting seasons: the months it works unheat
 | `TPD.age(hours)` | Moves every loaded incubator and crock on by this many hours (1 if left out): an incubator replays the recorded weather, a crock's stage takes them as hours at the best temperature. |
 | `TPD.fast(hours)` | Test timer for setting. `TPD.fast()` goes back to the sandbox time. |
 | `TPD.milk(litres, c, fluid)` | A cooking pot of milk (default 5 L of cow's), at c degrees if given; fluid `"SheepMilk"` or `"AnimalMilk"` for the others. At 85 C or more it counts as having had its 20-minute hold. |
-| `TPD.give(name, n, option)` | Spawns `jar` (a full Jar of Yogurt; option `"clay"` or `"glazed"`), `starter` or `cup`; no name lists them. |
-| `TPD.kit(kind)` | What a test needs: yogurt (default), `"crock"` or `"wrap"`; `"?"` lists them. |
+| `TPD.give(name, n, option)` | Spawns `jar` (a full Jar of Yogurt; option `"clay"` or `"glazed"`), `starter`, `cup`, `butter`, `salted` or `clarified`; no name lists them. |
+| `TPD.kit(kind)` | What a test needs: yogurt (default), `"crock"`, `"wrap"` or `"butter"` (three Butter, a Salt, a pot, a Ripped Sheet); `"?"` lists them. |
 | `TPD.crocks()` | Every loaded crock: stage, progress, place. |
 | `TPD.ages()` | Each container of milk you carry: fluid, stage, age, hours to the next stage, place. |
 | `TPD.sour(hours)` | Ages the milk you carry by this many hours at 20 C (36 if left out: one souring). |
+| `TPD.butter()` | Each butter you carry: place, rate, age, days to stale and rotten there. |
+| `TPD.rancid(days)` | Ages the butter you carry by this many days (10 if left out) at its place. |
 | `TPD.tiles()` | Every station within 3 tiles: object class, sprite, solid flags. |
 
 **Typical check:** within 2 tiles of a Stone Hearth with the cauldron fitted (`TPC.kit()`, `TPC.fit()`), `TPC.cauldron(5)` and `TPC.hot()`, then `TPD.kit()`, Pour from the Cauldron and Add Starter. `TPD.age(3)` should show it wrapped and setting, `TPD.age(7)` Ready.

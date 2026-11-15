@@ -220,6 +220,25 @@ The crock's first stage takes 24 hours by an indoor fire in any month, about 32 
 | Each litre of yogurt collected | Cooking 2 (a cup earns a quarter) |
 | Collect the crock's starters | Cooking 2 |
 
+### 7. Butter that keeps
+
+Vanilla butter keeps for ever. Here it goes rancid by place (TP Core's `PlaceKeeping`, as Fish & Meat's Potted Meat; sandbox **Butter keeps by place**, on by default). Its days are a 15 C cellar's; a colder place counts a day as less, a warmer as more. Store or churned, a Butter gets them the first time it is seen.
+
+| Kept at | Butter fresh / rotten | Salted Butter fresh / rotten |
+|---|---|---|
+| A cellar, 15 C | 30 / 45 days | 90 / 120 days |
+| A powered fridge, 4 C | about 75 / 110 | about 225 / 300 |
+| A room at 20 C | about 20 / 30 | about 60 / 80 |
+| 25 C and over | about 15 / 22 | about 45 / 60 |
+| Frozen hard, a powered freezer | never | never |
+
+- **Salt Butter**: a Butter and a salt (anything tagged salt) make a **Salted Butter**, starting as far into its days as the butter was.
+- **Clarify**: **Put Butter in a Pot** (a cooking pot or forged pot, empty), **Add Butter to the Pot** for a second, cook it on any stove or fire (30 minutes; burnt at 90), then **Pour Off Clarified Butter** through a cloth or a Strainer (Cheese Cloth, Dish Towel, Ripped Sheets, Sheet; kept): one **Clarified Butter** for each butter, and the pot back.
+- **Many at once in the cauldron**: on a Stone Hearth with TP Core's cauldron, **Put Butter in the Cauldron** (every Butter and Salted Butter carried, a quarter litre each, up to 240). Kept steaming an hour over a lit fire it is **Clarified Butter (Melted)**: fill any container from the cauldron and **Strain Clarified Butter** through a cloth, a quarter litre to a Clarified Butter. Left raw it goes rancid when its oldest butter would have (Empty the Cauldron). Stone Hearth Info says how it is doing.
+- Every step but scraping a burnt pot takes **Cooking 2**. It never goes off, as Lard. A burnt pot gives only the pot back (**Scrape Out Burnt Butter**). Salted butter clarifies too.
+- Clarified Butter is 0.25 weight with all of the butter's food (the water had none). With Fish & Meat on, Potted Meat seals under it as under Lard.
+- Each butter's clock is `tpdKeep` in its ModData, on the ledger `TraditionalPreservationDairyButter`; the pot's count of butter is `tpdButter`. The cauldron's fluids `MeltingButter`, `MeltedClarifiedButter` and `RancidButter` keep their names once the mod is out.
+
 ## Sandbox options
 
 Under Traditional Preservation (Dairy):
@@ -231,6 +250,7 @@ Under Traditional Preservation (Dairy):
 | Temperature sensitivity | Normal | Off, Forgiving, Normal or Harsh. Off runs at full speed in any weather; the milk still has to cool before the wrap goes on |
 | Milk goes off | On | Raw milk sours, then spoils; scalded milk spoils without souring |
 | Milk spoiling speed | 1 | 2 goes off twice as fast, 0.5 keeps twice as long; multiplies vanilla's Food Spoilage (`FluidAgeing.foodRotSpeed`) |
+| Butter keeps by place | On | Butter and Salted Butter go rancid by place; off, they never spoil, as vanilla's. Clarified Butter never does |
 
 ## Tuning
 
@@ -279,7 +299,7 @@ In debug mode, `TPD.help()` in the Lua console lists commands for testing this m
 ## Known prototype caveats
 
 - **Empty Yogurt Containers can't be made yet**: they come only from eating looted or home-made Yogurt.
-- Vanilla is changed in four places: Yogurt (leaves its cup, and has a cow's milk portion's food), the milk fluids' names ("Cow's Milk (Fresh)"), milk going off, and the milk line of five vanilla recipes (Make Cake Batter, Prepare Muffins, Make Bowl of Cereal, Churn Butter, Make Mildew Cure). Another mod that changes the same things may conflict.
+- Vanilla is changed in five places: Yogurt (leaves its cup, and has a cow's milk portion's food), the milk fluids' names ("Cow's Milk (Fresh)"), milk going off, Butter going rancid, and the milk line of five vanilla recipes (Make Cake Batter, Prepare Muffins, Make Bowl of Cereal, Churn Butter, Make Mildew Cure). Another mod that changes the same things may conflict.
 - Several vanilla UI functions are wrapped (the station's right-click entry and the click on a station), so compare them with vanilla after a game update.
 - The tiledef number 5172 must be unique among your active mods.
 - Multiplayer is not supported. This mod is singleplayer only for now.
@@ -298,4 +318,5 @@ Still to check in the game:
 6. A pot left for weeks catches up and reads right on return.
 7. The incubator's and crock's menus with a controller.
 8. The hold at the scald: steaming cauldron milk refused for 20 minutes with the minutes to go, then poured; a pot on a stove reads Scalded only after 20 minutes at the steam (TESTING_GUIDE step 111).
-9. `console.txt` shows no repeating Lua errors after an hour of play, with the other Traditional Preservation mods on.
+9. Butter: going rancid by place, Salt Butter, clarifying one and two, the burnt pot (TESTING_GUIDE, butter).
+10. `console.txt` shows no repeating Lua errors after an hour of play, with the other Traditional Preservation mods on.

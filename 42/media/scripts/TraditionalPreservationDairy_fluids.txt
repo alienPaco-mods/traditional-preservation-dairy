@@ -260,4 +260,65 @@ module Base
             }
         }
     }
+
+    /* Butter in the Stone Hearth's cauldron (TraditionalPreservationDairyButter.lua): each butter goes in as 0.25 L of
+       MeltingButter; kept steaming an hour it is MeltedClarifiedButter, ladled into any container and strained through
+       a cloth, 0.25 L to a Clarified Butter. Left raw it goes rancid when its oldest butter would have. Never rename
+       them once the mod is out: saves hold the names. */
+    fluid MeltingButter
+    {
+        ColorReference = LightGoldenrodYellow,
+        DisplayName = Fluid_Name_MeltingButter,
+        Categories
+        {
+            Hazardous,
+        }
+    }
+
+    fluid MeltedClarifiedButter
+    {
+        ColorReference = Goldenrod,
+        DisplayName = Fluid_Name_MeltedClarifiedButter,
+        Categories
+        {
+            Beverage,
+        }
+        Properties
+        {
+            HungerChange = -96.0,
+            UnhappyChange = 80.0,
+            Calories = 12800.0,
+            Carbohydrates = 0.0,
+            Lipids = 1408.0,
+            Proteins = 0.0,
+        }
+        BlendWhiteList
+        {
+            whitelist = true,
+            categories
+            {
+                Beverage,
+            }
+        }
+    }
+
+    fluid RancidButter
+    {
+        ColorReference = Tan,
+        DisplayName = Fluid_Name_RancidButter,
+        Categories
+        {
+            Hazardous,
+        }
+        Properties
+        {
+            UnhappyChange = 60.0,
+        }
+        Poison
+        {
+            maxEffect = Mild,
+            minAmount = 0.1,
+            diluteRatio = 0.2,
+        }
+    }
 }

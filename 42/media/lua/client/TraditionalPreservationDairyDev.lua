@@ -16,11 +16,13 @@ function TPD.help()
     say("TPD.age(hours)       move every loaded incubator and crock on by this many hours (default 1; a crock's at the best temperature)")
     say("TPD.fast(hours)      setting takes this many hours at the best temperature. TPD.fast() goes back to the sandbox")
     say("TPD.milk(litres, c, fluid) a cooking pot of milk (default 5 L of CowMilk), at c degrees if given; fluid SheepMilk or AnimalMilk for the others")
-    say("TPD.give(name, n, option) spawn n of: jar (a full Jar of Yogurt; option \"clay\" or \"glazed\"), starter, cup (an Empty Yogurt Container). TPD.give() lists them")
+    say("TPD.give(name, n, option) spawn n of: jar (a full Jar of Yogurt; option \"clay\" or \"glazed\"), starter, cup (an Empty Yogurt Container), butter, salted, clarified. TPD.give() lists them")
     say("TPD.kit(kind)        the things a test of kind needs; TPD.kit() for yogurt, TPD.kit(\"?\") lists the kinds")
     say("TPD.crocks()         every loaded crock: stage, progress, place")
     say("TPD.ages()           every container of milk you carry: fluid, stage, age, hours to the next stage, place")
     say("TPD.sour(hours)      age the milk you carry by this many hours at 20 C (sours at 36, spoils at 72)")
+    say("TPD.butter()         every butter you carry: place, rate, age, days to stale and rotten there")
+    say("TPD.rancid(days)     age the butter you carry by this many days at its place (default 10)")
     say("TPD.tiles()          every station within 3 tiles: object class, sprite and square solid flags")
     say("The Stone Hearth's commands (cauldronInfo, stone, cauldron, fuel, hot, its kit) are TP Core's: TPC.help()")
 end
@@ -102,10 +104,13 @@ local GIVES = {
     end,
     starter = function(inventory) inventory:AddItem(M.STARTER) end,
     cup = function(inventory) inventory:AddItem(M.EMPTY_CUP) end,
+    butter = function(inventory) inventory:AddItem(M.BUTTER) end,
+    salted = function(inventory) inventory:AddItem(M.SALTED_BUTTER) end,
+    clarified = function(inventory) inventory:AddItem(M.CLARIFIED_BUTTER) end,
 }
 
 function TPD.give(name, count, option)
-    if not GIVES[name] then return say("Things: jar (option \"clay\" or \"glazed\"), starter, cup") end
+    if not GIVES[name] then return say("Things: jar (option \"clay\" or \"glazed\"), starter, cup, butter, salted, clarified") end
     local inventory = getPlayer():getInventory()
     for _ = 1, count or 1 do GIVES[name](inventory, option) end
     say(string.format("Gave %d %s%s.", count or 1, name, option and (" (" .. option .. ")") or ""))
@@ -126,6 +131,15 @@ local KITS = {
         about = string.format("%d wheat grains; warm the cauldron with TPC.cauldron(1, 40) by a Stone Hearth (Cauldron)", M.CROCK_WHEAT),
         give = function(inventory)
             for _ = 1, M.CROCK_WHEAT do inventory:AddItem(M.WHEAT) end
+        end,
+    },
+    butter = {
+        about = "three Butter, a Salt, a cooking pot and a Ripped Sheet to strain through: salt one, clarify two (Cooking 2); TPC.kit() for the cauldron",
+        give = function(inventory)
+            for _ = 1, 3 do inventory:AddItem(M.BUTTER) end
+            inventory:AddItem("Base.Salt")
+            inventory:AddItem("Base.Pot")
+            inventory:AddItem("Base.RippedSheets")
         end,
     },
     wrap = {
@@ -234,6 +248,29 @@ end
 
 -- What makes a station's tile block: the object's class, its sprite's flags and the square's, within 3 tiles.
 local TILES_RADIUS = 3
+
+-- Butter
+
+local function carriedButter()
+    local found = getPlayer():getInventory():getAllEvalRecurse(function(item) return M.BUTTER_DAYS[item:getFullType()] ~= nil end)
+    local list = {}
+    for i = 0, found:size() - 1 do table.insert(list, found:get(i)) end
+    return list
+end
+
+function TPD.butter()
+    if not M.butterByPlace() then say("Butter keeping by place is off in the sandbox.") end
+    local butter = carriedButter()
+    if #butter == 0 then return say("No Butter or Salted Butter on you.") end
+    for _, item in ipairs(butter) do say(M.BUTTER_KEEPER.describe(item)) end
+end
+
+function TPD.rancid(days)
+    days = days or 10
+    local butter = carriedButter()
+    for _, item in ipairs(butter) do M.BUTTER_KEEPER.age(item, days) end
+    say(string.format("Kept %d butter for %d days at their places. TPD.butter() to see them.", #butter, days))
+end
 
 function TPD.tiles()
     local stations = Station.near(getPlayer():getSquare(), TILES_RADIUS, function(object)

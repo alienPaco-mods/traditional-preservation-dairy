@@ -145,4 +145,105 @@ module TraditionalPreservationDairy
         WorldStaticModel = Yogurt,
         Tooltip = Tooltip_TraditionalPreservationDairy_EmptyYoghurtContainer,
     }
+
+    /* Butter worked with salt, about a twentieth of its weight, as storage butter was packed: it keeps three times
+       as long as plain butter, by place as it does (TraditionalPreservationDairyButter.lua sets its days, 90 fresh,
+       120 to rotten in a cellar). No days here, so with the sandbox's Butter keeps by place off it never spoils, as
+       vanilla's Butter. Vanilla Butter's food. */
+    item SaltedButter
+    {
+        DisplayCategory = Food,
+        ItemType = base:food,
+        Weight = 0.3,
+        Icon = Butter,
+        EvolvedRecipe = Pancakes:4;Sandwich:4;Stir fry:4;Pasta:4;Taco:4;Burrito:4;Toast:4;Oatmeal:4;Soup:4;Stew:4,
+        Spice = true,
+        HungerChange = -24.0,
+        UnhappyChange = 25,
+        Calories = 3200.0,
+        Carbohydrates = 0.0,
+        Lipids = 352.0,
+        Proteins = 0.0,
+        StaticModel = Butter,
+        WorldStaticModel = Butter,
+        Tags = base:bakingfat;base:minoringredient,
+        Tooltip = Tooltip_TraditionalPreservationDairy_SaltedButter,
+    }
+
+    /* Butter cooked until its water is gone and the clear fat poured off its milk solids (Pour Off Clarified Butter):
+       it keeps as Lard does, never going off. Butter's food, as the water had none; 0.25 of its 0.3 weight. Fish &
+       Meat's Potted Meat seals under it when Dairy is on (its Lua adds it to the fat line at load). */
+    item ClarifiedButter
+    {
+        DisplayCategory = Food,
+        ItemType = base:food,
+        Weight = 0.25,
+        Icon = Lard,
+        EvolvedRecipe = Pancakes:4;Sandwich:4;Stir fry:4;Pasta:4;Taco:4;Burrito:4;Toast:4;Oatmeal:4;Soup:4;Stew:4,
+        FoodType = NoExplicit,
+        Spice = true,
+        HungerChange = -24.0,
+        UnhappyChange = 20,
+        Calories = 3200.0,
+        Carbohydrates = 0.0,
+        Lipids = 352.0,
+        Proteins = 0.0,
+        StaticModel = Lard_Ground,
+        WorldStaticModel = Lard_Ground,
+        Tags = base:bakingfat,
+        Tooltip = Tooltip_TraditionalPreservationDairy_ClarifiedButter,
+    }
+
+    /* Butter in a pot to clarify: one, or two (Add Butter to the Pot; modData tpdButter holds the count). It can't
+       be eaten: it cooks on any stove or fire and can burn, then Pour Off Clarified Butter gives a Clarified Butter
+       for each. One item for each vanilla pot. One butter's food. */
+    item PotOfButter
+    {
+        DisplayCategory = Food,
+        ItemType = base:food,
+        Weight = 1.3,
+        Icon = PotFull,
+        CantEat = true,
+        BadInMicrowave = true,
+        CookingSound = FryingFood,
+        IsCookable = true,
+        MinutesToCook = 30,
+        MinutesToBurn = 90,
+        DaysFresh = 30,
+        DaysTotallyRotten = 45,
+        HungerChange = -24.0,
+        Calories = 3200.0,
+        Carbohydrates = 0.0,
+        Lipids = 352.0,
+        Proteins = 0.0,
+        StaticModel = CookingPotSoup_Ground,
+        WorldStaticModel = CookingPotSoup_Ground,
+        Tags = base:hasmetal,
+        Tooltip = Tooltip_TraditionalPreservationDairy_PotOfButter,
+    }
+
+    item PotForgedButter
+    {
+        DisplayCategory = Food,
+        ItemType = base:food,
+        Weight = 1.3,
+        Icon = Pot_Forged_Stew,
+        CantEat = true,
+        BadInMicrowave = true,
+        CookingSound = FryingFood,
+        IsCookable = true,
+        MinutesToCook = 30,
+        MinutesToBurn = 90,
+        DaysFresh = 30,
+        DaysTotallyRotten = 45,
+        HungerChange = -24.0,
+        Calories = 3200.0,
+        Carbohydrates = 0.0,
+        Lipids = 352.0,
+        Proteins = 0.0,
+        StaticModel = CookingPotForged_StewGround,
+        WorldStaticModel = CookingPotForged_StewGround,
+        Tags = base:hasmetal,
+        Tooltip = Tooltip_TraditionalPreservationDairy_PotOfButter,
+    }
 }

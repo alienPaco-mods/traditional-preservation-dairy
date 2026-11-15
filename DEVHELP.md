@@ -12,11 +12,13 @@ These console commands load only when the game runs in **debug mode** (launch op
 | `TPD.age(hours)` | Moves every loaded incubator and crock on by this many hours (1 if left out): an incubator replays the recorded weather, a crock's stage takes them as hours at the best temperature. |
 | `TPD.fast(hours)` | Test timer: milk sets in this many hours at the best temperature. `TPD.fast()` goes back to the sandbox time. |
 | `TPD.milk(litres, c, fluid)` | Gives a cooking pot of milk, 5 L if you leave the litres out, at `c` degrees if given; cow's unless `fluid` is `"SheepMilk"` or `"AnimalMilk"`. Raw, not scalded: heat it in a cauldron or on a stove. At `c` of 85 or more it counts as having had its 20-minute hold, so it reads Scalded at the next look; to watch the hold count, heat a cold pot on a stove instead. |
-| `TPD.give(name, n, option)` | Spawns `n` of: `jar` (a full, new Jar of Yogurt of cow's milk; glass, or option `"clay"` or `"glazed"`), `starter` (an Active Yogurt Starter) or `cup` (an Empty Yogurt Container). `TPD.give()` lists them. |
-| `TPD.kit(kind)` | Gives what a test needs. `TPD.kit()` is the yogurt kit (a Yogurt, a Clay Jar, a glass jar, 4 Empty Yogurt Containers), `TPD.kit("crock")` 20 wheat grains, `TPD.kit("wrap")` a Yogurt Pot, a Sheet and Twine. `TPD.kit("?")` lists them. |
+| `TPD.give(name, n, option)` | Spawns `n` of: `jar` (a full, new Jar of Yogurt of cow's milk; glass, or option `"clay"` or `"glazed"`), `starter` (an Active Yogurt Starter), `cup` (an Empty Yogurt Container), `butter`, `salted` or `clarified`. `TPD.give()` lists them. |
+| `TPD.kit(kind)` | Gives what a test needs. `TPD.kit()` is the yogurt kit (a Yogurt, a Clay Jar, a glass jar, 4 Empty Yogurt Containers), `TPD.kit("crock")` 20 wheat grains, `TPD.kit("wrap")` a Yogurt Pot, a Sheet and Twine, `TPD.kit("butter")` three Butter, a Salt, a cooking pot and a Ripped Sheet. `TPD.kit("?")` lists them. |
 | `TPD.crocks()` | Every loaded crock: position, stage, place, progress, speed and hours left. |
 | `TPD.ages()` | Each container of milk you carry: fluid, stage (Fresh, Turned, Spoiled; scalded), age in hours at 20 C, hours to the next stage, the place it is counted at. Sealed store milk shows "no age". |
 | `TPD.sour(hours)` | Ages the milk you carry by this many hours at 20 C (36 if left out: one souring) and swaps it at once. |
+| `TPD.butter()` | Each Butter and Salted Butter you carry: place, rate (days of age a day), age, and the days to stale and rotten there. |
+| `TPD.rancid(days)` | Ages the butter you carry by this many days (10 if left out) at its place. |
 | `TPD.tiles()` | Every incubator, crock and Stone Hearth within 3 tiles: object class, sprite and the square's solid flags, for placement bugs. |
 
 Right-click a station once to start tracking it if `TPD.pots()` or `TPD.crocks()` finds none.
@@ -24,3 +26,5 @@ Right-click a station once to start tracking it if `TPD.pots()` or `TPD.crocks()
 **Typical check of a batch:** within 2 tiles of a Stone Hearth with the cauldron fitted (`TPC.kit()`, `TPC.fit()`), `TPC.cauldron(5)` and `TPC.hot()` for 5 L of steaming milk (`TPC.cauldron(5, 20, "SheepMilk")` for sheep's), `TPD.kit()`, then Pour from the Cauldron and Add Starter on the incubator. `TPD.age(3)` should show it wrapped and setting, `TPD.age(7)` Ready.
 
 **Typical check of the crock:** `TPD.kit("crock")`, `TPC.cauldron(1, 40)` by a Stone Hearth within 2 tiles, Load Wheat and Warm Milk, `TPD.age(24)`, Feed Fresh Milk from `TPD.milk(1)`, `TPD.age(12)`, then Collect 2 Starters. **The clabber:** `TPD.milk(1)`, `TPD.sour()` (it reads Soured), Load Soured Milk on an empty crock (Cultured at once), feed, `TPD.age(12)`, collect.
+
+**Typical check of butter:** `TPD.kit("butter")`, `TPD.butter()` (each Butter 30 days fresh in a cellar; carried indoors it reads the room), `TPD.rancid(25)` and it reads Stale, again and Rotten. Salt Butter on a fresh one: `TPD.butter()` shows 90 / 120 days. Put Butter in a Pot, Add Butter to the Pot, cook it on a stove, Pour Off Clarified Butter (the sheet is kept): two Clarified Butter and the pot. Every step needs Cooking 2 (debug: set the perk). **In the cauldron:** `TPC.kit()`, `TPC.fit()`, Put Butter in the Cauldron, `TPC.hot()` and an hour's steaming (Stone Hearth Info says when), Fill from the Cauldron into a pot, Strain Clarified Butter.

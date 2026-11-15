@@ -161,6 +161,7 @@ end)
 
 Weather.record(function(now, climate)
     M.record(M.getLedger(), M.getHistory(), now, climate:getTemperature())
+    M.BUTTER_KEEPER.record(now, climate:getTemperature())
 end)
 
 -- A vanilla pour carries the heat: what goes in mixes, by volume, with what was there, so a pot just off the stove

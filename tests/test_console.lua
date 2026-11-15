@@ -59,4 +59,17 @@ check("give spawns starters and cups", #player.given == before + 3 and player.gi
 check("milk names the milks for a fluid that isn't one", run("milk", 1, nil, "Water"):find("SheepMilk", 1, true) ~= nil
     and #player.given == before + 3)
 
+before = #player.given
+run("kit", "butter")
+check("kit(\"butter\") gives three butter, a salt, a pot and a cloth", #player.given == before + 6 and player.given[before + 1] == M.BUTTER
+    and player.given[before + 4] == "Base.Salt" and player.given[before + 5] == "Base.Pot" and player.given[before + 6] == "Base.RippedSheets")
+run("give", "salted")
+run("give", "clarified")
+check("give spawns salted and clarified butter", player.given[before + 7] == M.SALTED_BUTTER
+    and player.given[before + 8] == M.CLARIFIED_BUTTER)
+local inventory = player:getInventory()
+function inventory:getAllEvalRecurse() return { size = function() return 0 end } end
+check("butter says so when you carry none", run("butter"):find("No Butter", 1, true) ~= nil)
+check("rancid ages none", run("rancid", 5):find("Kept 0 butter for 5 days", 1, true) ~= nil)
+
 H.done()

@@ -779,3 +779,4 @@ Events.OnInitWorld.Add(M.applyBaking)
 -- The parts in their own files: wrapping first, as carried milk asks whether its pot is wrapped.
 require "TraditionalPreservationDairyWrap"
 require "TraditionalPreservationDairyCarry"
+require "TraditionalPreservationDairyButter"

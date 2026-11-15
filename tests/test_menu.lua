@@ -270,4 +270,50 @@ stage, record = feed(1)
 check("a jug with milk left keeps its age", stage == "Developing" and record ~= nil)
 Fluid.Get = realGet
 
+-- Put Butter in the Cauldron on the Stone Hearth's menu (TP Core's CauldronUI.addPieces)
+require "TraditionalPreservationCore/FireUI"
+local onHearthMenu = handlers[#handlers]
+local function hearth(cauldron)
+    local modData = { [Fire.KEY] = { [Cauldron.ID] = cauldron or {} } }
+    local square = { getX = function() return 9 end, getY = function() return 9 end, getZ = function() return 0 end }
+    return { class = "IsoFireplace", getModData = function() return modData end, getSquare = function() return square end,
+        getSprite = function() return { getName = function() return StoneHearth.cauldronSprite("Empty", 0) end } end,
+        getTileName = function() return "Stone Oven" end, isLit = function() return false end,
+        getFuelAmount = function() return 120 end }
+end
+local function butterRow(aHearth)
+    local context = H.menu()
+    onHearthMenu(0, context, { aHearth }, false)
+    local cauldronOption = context:getOptionFromName(getText("IGUI_CraftingWindow_TPStoneHearthCauldron"))
+    local option = cauldronOption and cauldronOption.subOption:getOptionFromName(getText("ContextMenu_TraditionalPreservationDairy_ButterInCauldron"))
+    return option and option.subOption.options[1]
+end
+local function butter(fullType, rotten)
+    return { getFullType = function() return fullType end, isRotten = function() return rotten or false end,
+        getFluidContainer = function() return nil end, isFavorite = function() return false end,
+        hasTag = function() return false end }
+end
+local cook = 2
+Perks = Perks or { Cooking = "Cooking" }
+playerObj.getPerkLevel = function() return cook end
+playerObj.isTimedActionInstant = function() return false end
+ui.carried = {}
+check("no butter carried, no butter row", butterRow(hearth()) == nil)
+local plainButter, saltedButter = butter(M.BUTTER), butter(M.SALTED_BUTTER)
+ui.carried = { plainButter, saltedButter, butter(M.BUTTER, true), butter(M.CLARIFIED_BUTTER) }
+local row = butterRow(hearth())
+check("butter and salted butter count together, rotten and clarified left out",
+    row and row.name == getText("ContextMenu_TraditionalPreservationDairy_ButterPieces", "2") and not row.notAvailable)
+row.onSelect(playerObj, unpack(row.args))
+local queued = ui.queued[#ui.queued]
+check("choosing it queues the core's job with melting butter", queued.Type == "TPCauldronPieces" and queued.raw == M.MELTING_BUTTER
+    and queued.spec.pieceMl == M.BUTTER_PIECE_ML and queued.pieces[2] == saltedButter)
+row = butterRow(hearth({ ml = 500, fluid = "Water", tempC = 20 }))
+check("a cauldron of water refuses it with the reason", row.notAvailable == true
+    and row.toolTip.description == getText("IGUI_TraditionalPreservationDairy_ButterNoRoom"))
+cook = 1
+row = butterRow(hearth())
+check("under Cooking 2 it is refused, saying so", row.notAvailable == true
+    and row.toolTip.description == getText("IGUI_TraditionalPreservationDairy_ButterSkill"))
+
 H.done()

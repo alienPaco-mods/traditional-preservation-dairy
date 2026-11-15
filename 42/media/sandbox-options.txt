@@ -42,3 +42,10 @@ option TraditionalPreservationDairy.MilkSpoilSpeed {
     page = TraditionalPreservationDairy,
     translation = TraditionalPreservationDairy_MilkSpoilSpeed,
 }
+
+option TraditionalPreservationDairy.ButterByPlace {
+    type = boolean,
+    default = true,
+    page = TraditionalPreservationDairy,
+    translation = TraditionalPreservationDairy_ButterByPlace,
+}
