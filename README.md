@@ -270,7 +270,7 @@ Volumes, temperatures, cooling times, the setting and culture curves, the crock'
 - Weather is TP Core's shared ledger; a pot catches up hour by hour over the two weeks of kept weather, and the hours before that as one spell.
 - A Jar of Yogurt keeps its jar type in its ModData (`tpdJar`); its portions are its own food values (hunger, calories and so on, which the engine saves), and `tpdFood` marks a jar that has them. `tpdPortion` holds one portion's food, a quarter litre of the batch's milk by its shares (C23). Vanilla Yogurt's script food is set to a cow's milk portion at load, beside its `ReplaceOnUse`. A jar never filled at a pot (a debug spawn) gets a glass jar's four portions of vanilla Yogurt's food (30 kcal each) the first time it is touched. Its weight is a custom weight the engine saves. Vanilla's eat action is wrapped (`complete`, `serverStop`) to relabel the jar and give the empty jar back.
 - Every vanilla Yogurt gets `ReplaceOnUse` = Empty Yogurt Container at load, so eating or oatmeal leaves the cup.
-- The shared core (Weather, Station, UI, Stone Hearth) is the required TP Core mod (`~/MODS/TraditionalPreservationCore`), loaded as `require "TraditionalPreservationCore/Weather"`. Edit it there. Dairy names cow's and sheep's milk as a blend with `CauldronFluid.blend`.
+- The shared core (Weather, Station, UI, Stone Hearth) is the required TP Core mod (`TraditionalPreservationCore`), loaded as `require "TraditionalPreservationCore/Weather"`. Edit it there. Dairy names cow's and sheep's milk as a blend with `CauldronFluid.blend`.
 
 ## Debug commands
 
