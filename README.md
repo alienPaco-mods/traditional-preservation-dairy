@@ -1,4 +1,4 @@
-# Traditional Preservation (Dairy) — Build 42 prototype (v0.0.2)
+# Traditional Preservation (Dairy) — Build 42 prototype (v0.0.3)
 
 **Status: experimental.** The yogurt loop, from the Stone Hearth's cauldron to a cup of yogurt, and the starter crock have been played in the game with test timers. The latest changes (mixed milks, the cold-milk refusal, the jar weight after a reload) have only been checked offline so far (see the test plan). Back up your save before enabling.
 
@@ -239,6 +239,18 @@ Vanilla butter keeps for ever. Here it goes rancid by place (TP Core's `PlaceKee
 - Clarified Butter is 0.25 weight with all of the butter's food (the water had none). With Fish & Meat on, Potted Meat seals under it as under Lard.
 - Each butter's clock is `tpdKeep` in its ModData, on the ledger `TraditionalPreservationDairyButter`; a pot's record is TP Core's `tpItemFluid`. The fluids `MeltingButter`, `MeltedClarifiedButter` and `RancidButter` keep their names once the mod is out.
 
+### 8. Kefir
+
+Caucasus milk kefir, from grains found as loot (a **Packet of Kefir Grains**: a farm's storage shelves, a Gigamart's farming shelf, very rarely a home fridge or kitchen cupboard). Open it for 10 **Dried Kefir Grains**.
+
+- **In the Yogurt Incubator**, one culture at a time: **Add Kefir Grains** to an empty pot, then **Pour Milk**: any milk, raw or scalded, carried or from a Stone Hearth's cauldron within 2 tiles, up to 5 L. No scald, no cooling, no wrap. Milk over 45 C is refused; at 35 to 45 C the live grains come out Hungry.
+- **Speed**: a live grain to every 40 ml (125 for 5 L) ferments it in 24 hours at 18 to 25 C; fewer take longer, more go no faster. Hungry and dried grains count half. By the place's temperature: 0.15 at 4 C, 0.35 at 10, 0.6 at 15, 1.3 at 28, 1.5 at 30 to 35, paused frozen. Indoors in a Kentucky winter it doesn't finish in 3 days (`tools/season_report.lua`).
+- **Grains**: live ones grow a tenth a batch, by the share done at 15 to 28 C (the part-grain stays with the pot); hungry ones come back Live; dried ones come back over 2 batches. They are never made by a recipe and can't be eaten.
+- **Strain Kefir** into empty containers through a Strainer, or a cloth at twice the time; the grains come out with the first strain. **Take Out Kefir Grains** works before the milk goes in.
+- **Kefir** is a fluid: its milk's food less the lactose (cow's about 590 kcal a litre), cow's and sheep's mixed by share, all called Kefir. It ages as milk does, from the moment it is ready: **Kefir (Separated)** at about 3 days at 20 C (a little unhappiness), **Kefir (Rotten)** at about 10.
+- **Fresh kefir eases food sickness**, 10 a litre drunk, only while sick, then not again for 3 game hours.
+- Coming: grains starving out of milk, and drying them to keep.
+
 ## Sandbox options
 
 Under Traditional Preservation (Dairy):
@@ -319,4 +331,5 @@ Still to check in the game:
 7. The incubator's and crock's menus with a controller.
 8. The hold at the scald: steaming cauldron milk refused for 20 minutes with the minutes to go, then poured; a pot on a stove reads Scalded only after 20 minutes at the steam (TESTING_GUIDE step 111).
 9. Butter: going rancid by place, Salt Butter, clarifying one and two, the burnt pot (TESTING_GUIDE, butter).
-10. `console.txt` shows no repeating Lua errors after an hour of play, with the other Traditional Preservation mods on.
+10. Kefir: the fluids, the cure, the packet and loot; grains in the incubator, the speed by grains and place, hot milk, growth, straining (TESTING_GUIDE, kefir).
+11. `console.txt` shows no repeating Lua errors after an hour of play, with the other Traditional Preservation mods on.

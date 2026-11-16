@@ -7,8 +7,8 @@ Each station is a pair of tiles, south facing then east facing. Both are round p
 stool so they can be carried to a fire and set down by it; the facing shows only in where the incubator's lid lies
 when it is off. The base tile is the bare open pot. Every stage, the empty one too, is an overlay that
 TraditionalPreservationDairyWorld.lua layers over it, so a stage paints only what it adds: the incubator's lid lying
-against the pot (empty and ready), on the pot (cooling), slid half off (too cold for a starter), or under the cloth wrap, and its set yoghurt; the crock's linen
-cap, its wheat and milk, and its culture.
+against the pot (empty and ready), on the pot (cooling), slid half off (too cold for a starter), or under the cloth wrap, and its set yoghurt; kefir's linen
+cap over the pot's mouth, the lid against the pot; the crock's linen cap, its wheat and milk, and its culture.
 The overlay numbers are in OVERLAYS, keyed by the stage names the World's sprite tables use.
 
 Usage: python3 tools/build_tileset.py [path/to/ProjectZomboid/projectzomboid] [contact-sheet.png]
@@ -41,7 +41,7 @@ SQUASH = 0.5
 FACES = ["S", "E"]
 INCUBATOR, CROCK = 0, 2
 OVERLAYS = {
-    "incubator": {"Cooling": 4, "Incubating": 6, "Ready": 8, "Empty": 16, "TooCold": 18},
+    "incubator": {"Cooling": 4, "Incubating": 6, "Ready": 8, "Empty": 16, "TooCold": 18, "Kefir": 20},
     "crock": {"Cultivating": 10, "Developing": 12, "Ready": 14},
 }
 
@@ -103,6 +103,9 @@ CROCK_BACK = 6                 # pixels up from the tile's middle
 CROCK_SHADOW = 14              # shadow radius before its 2 px margin and blur (the widest belly is 17)
 CAP = [(26, 14.5), (29, 14.5), (31.5, 13.5), (33.5, 10), (34.5, 0)]
 CAP_TIE = 29
+# Kefir in the incubator: the same linen cap at the pot's size, over its flared rim, tied under it.
+POT_CAP = [(39, 18.5), (42.5, 18.5), (45, 17.5), (47.5, 13), (48.5, 0)]
+POT_CAP_TIE = 42
 STRIPS = 72                    # slices round a body
 LEVELS_PER_PX = 1.5            # bands up a body
 
@@ -366,6 +369,11 @@ def incubator_overlay(stage, face):
         layer.alpha_composite(slid_lid_layer(face))
     elif stage == "Incubating":
         layer = cloth_layer()
+    elif stage == "Kefir":
+        # Kefir is capped, not lidded: the lid leans against the pot.
+        layer = new_layer()
+        leaning_lid(layer, shadow, face)
+        layer.alpha_composite(cap_layer(pot_base(), POT_CAP, POT_CAP_TIE))
     else:
         layer = new_layer()
         if stage == "Ready":
@@ -393,17 +401,17 @@ def paint_crock(face):
     return soft_under_hard(shadow, layer, 30 + face, WEATHER)
 
 
-def cap_layer():
-    """A linen cap over the crock's mouth, tied round under the rim."""
+def cap_layer(base=None, cap=CAP, tie=CAP_TIE):
+    """A linen cap over a pot's mouth (the crock's unless said), tied round under the rim."""
     layer = new_layer()
-    base = crock_base()
-    paint_body(layer, base, CAP, lambda angle, z: shade(LINEN, 0.95 + 0.05 * math.sin(angle * 11))[:3],
-               hem=lambda angle: CAP[0][0] + 1.2 * math.sin(angle * 7))
+    base = base or crock_base()
+    paint_body(layer, base, cap, lambda angle, z: shade(LINEN, 0.95 + 0.05 * math.sin(angle * 11))[:3],
+               hem=lambda angle: cap[0][0] + 1.2 * math.sin(angle * 7))
     draw = ImageDraw.Draw(layer)
-    r = radius_at(CAP, CAP_TIE)
+    r = radius_at(cap, tie)
     for step in range(24):
         a0, a1 = math.pi * step / 24, math.pi * (step + 1) / 24
-        line(draw, surface_point(base, CAP, CAP_TIE, a0, r + 0.3), surface_point(base, CAP, CAP_TIE, a1, r + 0.3),
+        line(draw, surface_point(base, cap, tie, a0, r + 0.3), surface_point(base, cap, tie, a1, r + 0.3),
              shade(TWINE, light_at((a0 + a1) / 2)), 0.9)
     return layer
 
@@ -774,7 +782,7 @@ def lua_tiles():
 def contact_sheet(tiles, path):
     """Every stage over its station, for checking the art by eye; kept out of the mod."""
     rows = [(INCUBATOR, OVERLAYS["incubator"]), (CROCK, OVERLAYS["crock"])]
-    sheet = Image.new("RGBA", (TILE_W * 6, TILE_H * 2), (96, 110, 88, 255))
+    sheet = Image.new("RGBA", (TILE_W * (1 + max(len(stages) for _, stages in rows)), TILE_H * 2), (96, 110, 88, 255))
     for y, (base, stages) in enumerate(rows):
         for x, index in enumerate([None] + list(stages.values())):
             cell = tiles[base].copy()

@@ -24,5 +24,16 @@
   "ContextMenu_TraditionalPreservationDairy_ButterInCauldron": "Put Butter in the Cauldron",
   "ContextMenu_TraditionalPreservationDairy_ButterPieces": "Butter and Salted Butter (%1)",
   "ContextMenu_TraditionalPreservationDairy_ButterInPot": "Put Butter in a Pot",
-  "ContextMenu_TraditionalPreservationDairy_ButterPotRow": "%1 (%2 butter)"
+  "ContextMenu_TraditionalPreservationDairy_ButterPotRow": "%1 (%2 butter)",
+  "ContextMenu_TraditionalPreservationDairy_AddKefirGrains": "Add Kefir Grains",
+  "ContextMenu_TraditionalPreservationDairy_GrainsLive": "Live (%1)",
+  "ContextMenu_TraditionalPreservationDairy_GrainsHungry": "Hungry (%1)",
+  "ContextMenu_TraditionalPreservationDairy_GrainsDried": "Dried (%1)",
+  "ContextMenu_TraditionalPreservationDairy_GrainsReactivating": "Coming back from dried (%1)",
+  "ContextMenu_TraditionalPreservationDairy_GrainsDead": "Dead (%1)",
+  "ContextMenu_TraditionalPreservationDairy_GrainsOne": "One",
+  "ContextMenu_TraditionalPreservationDairy_GrainsEnough": "Enough for full speed (%1)",
+  "ContextMenu_TraditionalPreservationDairy_PourMilk": "Pour Milk",
+  "ContextMenu_TraditionalPreservationDairy_StrainKefir": "Strain Kefir",
+  "ContextMenu_TraditionalPreservationDairy_TakeGrains": "Take Out Kefir Grains"
 }

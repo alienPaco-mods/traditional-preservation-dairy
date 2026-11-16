@@ -53,21 +53,35 @@ function TPD.pots()
     for _, station in ipairs(stations) do
         local batch = TraditionalPreservationDairyWorld.updateIncubator(station, now)
         local placeC = M.placeTemperature(M.getLedger(), batch.place)
-        local hours, nextStage = M.forecast(batch, placeC)
-        say(string.format("%d,%d,%d %s: %.1f L at %.1f C, starter %s, set %.1f/%.0f h, %s at %.1f C; next %s in %s h",
-            station:getX(), station:getY(), station:getZ(), M.stage(batch), (batch.ml or 0) / 1000, batch.tempC or 0,
-            tostring(batch.starter), batch.workHours or 0, M.INCUBATE_HOURS, tostring(batch.place), placeC,
-            tostring(nextStage), hours and string.format("%.1f", hours) or "never"))
+        if batch.culture then
+            local left = M.kefirHoursLeft(batch, placeC)
+            local count, work = M.grainCount(batch)
+            say(string.format("%d,%d,%d %s: %.1f L at %.1f C, %d grains (%.1f at work, %.0f%% speed), fermented %.0f%%, %s at %.1f C; ready in %s h",
+                station:getX(), station:getY(), station:getZ(), M.stage(batch), (batch.ml or 0) / 1000, batch.tempC or 0, count, work,
+                M.kefirRatio(batch) * 100, (batch.progress or 0) * 100, tostring(batch.place), placeC, left and string.format("%.1f", left) or "never"))
+        else
+            local hours, nextStage = M.forecast(batch, placeC)
+            say(string.format("%d,%d,%d %s: %.1f L at %.1f C, starter %s, set %.1f/%.0f h, %s at %.1f C; next %s in %s h",
+                station:getX(), station:getY(), station:getZ(), M.stage(batch), (batch.ml or 0) / 1000, batch.tempC or 0,
+                tostring(batch.starter), batch.workHours or 0, M.INCUBATE_HOURS, tostring(batch.place), placeC,
+                tostring(nextStage), hours and string.format("%.1f", hours) or "never"))
+        end
     end
 end
 
 -- The pot's clock is set back, so the next look runs those hours again from the recorded weather. Hours
 -- before the history began count at the place's temperature now.
+-- A kefir pot ferments on the ledger, which can't be set back: its work is added straight (M.ageKefir), at its place now.
 local function agePots(hours)
+    local now = getGameTime():getWorldAgeHours()
     for _, station in ipairs(pots()) do
-        local batch = TraditionalPreservationDairyWorld.batchOf(station)
+        local batch = TraditionalPreservationDairyWorld.updateIncubator(station, now)
+        if batch.culture then
+            M.ageKefir(batch, hours, M.placeTemperature(M.getLedger(), batch.place), now)
+        elseif batch.readyHour then
+            batch.readyHour = batch.readyHour - hours
+        end
         if batch.lastHour then batch.lastHour = batch.lastHour - hours end
-        if batch.readyHour then batch.readyHour = batch.readyHour - hours end
         TraditionalPreservationDairyWorld.refresh(station)
     end
     say(string.format("Moved %d incubator(s) on by %.1f hours.", #pots(), hours))
@@ -151,13 +165,17 @@ local KITS = {
         end,
     },
     kefir = {
-        about = "a Packet of Kefir Grains, 10 live Kefir Grains and a pot of 2 L of cow's milk kefir (the incubator's culture comes later)",
+        about = "a Packet of Kefir Grains, 25 live Kefir Grains, a pot of 2 L of cow's milk kefir, a pot of 1 L of cow's milk (25 grains are the full ratio for it: 24 h in the incubator at 18-25 C), a Strainer and a Ripped Sheet",
         give = function(inventory)
             inventory:AddItem(M.GRAIN_PACKET)
-            for _ = 1, 10 do GIVES.grains(inventory) end
-            local pot = inventory:AddItem("Base.Pot")
-            pot:getFluidContainer():Empty()
-            pot:getFluidContainer():addFluid("CowKefir", 2)
+            for _ = 1, M.grainsFor(1000) do GIVES.grains(inventory) end
+            for _, fill in ipairs({ { "CowKefir", 2 }, { "CowMilk", 1 } }) do
+                local pot = inventory:AddItem("Base.Pot")
+                pot:getFluidContainer():Empty()
+                pot:getFluidContainer():addFluid(fill[1], fill[2])
+            end
+            inventory:AddItem(M.STRAINER)
+            inventory:AddItem("Base.RippedSheets")
         end,
     },
     wrap = {

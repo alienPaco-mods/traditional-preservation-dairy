@@ -626,5 +626,67 @@ tileGeometry
 
         }
 
+        /* traditionalpreservationdairy_01_20 */
+        tile
+        {
+            xy = 4x2,
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -5000x0x-5000,
+                max = 5000x100x5000,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -2518x0x-1642,
+                max = 2518x5676x1642,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -1642x0x-2518,
+                max = 1642x5676x2518,
+            }
+
+        }
+
+        /* traditionalpreservationdairy_01_21 */
+        tile
+        {
+            xy = 5x2,
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -5000x0x-5000,
+                max = 5000x100x5000,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -2518x0x-1642,
+                max = 2518x5676x1642,
+            }
+
+            box
+            {
+                translate = 0x0x0,
+                rotate = 0x0x0,
+                min = -1642x0x-2518,
+                max = 1642x5676x2518,
+            }
+
+        }
+
     }
 }

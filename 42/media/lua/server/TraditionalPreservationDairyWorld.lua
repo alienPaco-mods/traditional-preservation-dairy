@@ -16,6 +16,8 @@ local Pour = require "TraditionalPreservationCore/Pour"
 -- Each pot stage has its own look, by its name (M.INCUBATOR_OVERLAYS): an empty pot has its lid on the floor, one too
 -- cold for a starter has it slid half off. A crock waiting for its feed still shows the cloth.
 local CROCK_SPRITES = { Cultivating = "Cultivating", Waiting = "Cultivating", Developing = "Developing", Ready = "Ready" }
+-- A kefir pot shows the empty pot until milk is on its grains, then the linen cap until it is strained.
+local POT_SPRITES = { KefirGrains = "Empty", Fermenting = "Kefir", KefirReady = "Kefir" }
 
 local function squareKey(station)
     local square = station:getSquare()
@@ -73,7 +75,8 @@ local function refresh(station, sessionState)
         overlay = M.CROCK_OVERLAYS[CROCK_SPRITES[M.crockStage(World.updateCrock(station))]]
     else
         local batch = World.updateIncubator(station, getGameTime():getWorldAgeHours())
-        overlay = M.INCUBATOR_OVERLAYS[M.stage(batch)]
+        local stage = M.stage(batch)
+        overlay = M.INCUBATOR_OVERLAYS[POT_SPRITES[stage] or stage]
     end
     walkThrough(station)
     local names = {}

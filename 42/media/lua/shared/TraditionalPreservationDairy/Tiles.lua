@@ -19,6 +19,7 @@ return {
             Ready = 8,
             Empty = 16,
             TooCold = 18,
+            Kefir = 20,
         },
         crock = {
             Cultivating = 10,

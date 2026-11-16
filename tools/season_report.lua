@@ -24,11 +24,12 @@ for _, place in ipairs(M.PLACES) do
 end
 table.insert(PLACES, M.CAULDRON_PLAIN .. "Covered")
 table.insert(PLACES, M.CAULDRON_PLAIN .. "Open")
-local COLUMNS = "Indoors | Indoors, grid on | Loft | Basement | By a fire | By banked embers | By a fire, under a roof | By a fire, in the open |"
+local COLUMNS = "Indoors | Indoors, grid on | Loft | Basement | In a shed | By a fire | By banked embers | By a fire, under a roof | By a fire, in the open |"
 local RULE = "|---|---|---|---|---|---|---|---|---|---|"
 local STEPS_PER_HOUR = 6
 local START_HOUR = 18   -- the evening milking, set overnight as it traditionally was
 local POUR_C = 85
+local KEFIR_MILK_C = 20   -- kefir milk goes in at room heat: only its place matters
 local GIVE_UP_HOURS = 72
 
 local function readDays(path)
@@ -74,7 +75,7 @@ local function whereFor(place)
 end
 
 -- Per month and place: a full 5 L pot and a 1 L pot with a starter, a 5 L pot with none (how long until
--- it is too cold for one), and a crock fed as soon as it asks. All start on the first of the month at
+-- it is too cold for one), a crock fed as soon as it asks, and a 5 L kefir pot with live grains at the full ratio. All start on the first of the month at
 -- START_HOUR and are brought up to date every ten minutes, the same way an unloaded station catches up.
 local runs = {}
 local function startRuns(month)
@@ -90,6 +91,12 @@ local function startRuns(month)
         pot("full", 5000, "Yogurt")
         pot("small", 1000, "Yogurt")
         pot("bare", 5000, nil)
+        local kefir, grains = {}, {}
+        for i = 1, M.grainsFor(5000) do grains[i] = M.newGrain(M.GRAIN_LIVE, H.hours) end
+        M.addGrains(kefir, grains, runLedger)
+        M.addKefirMilk(kefir, 5000, KEFIR_MILK_C, H.hours, "CowMilk", runLedger)
+        table.insert(runs, { kind = "kefir", place = place, where = where, ledger = runLedger, history = runHistory,
+            month = month, start = H.hours, batch = kefir })
         local crock = {}
         M.startCrock(crock, runLedger)
         table.insert(runs, { kind = "crock", place = place, where = where, ledger = runLedger, history = runHistory,
@@ -120,6 +127,19 @@ local function updatePot(run)
     if since >= GIVE_UP_HOURS then run.finished = true end
 end
 
+local function updateKefir(run)
+    local batch = run.batch
+    M.catchUp(batch, H.hours, run.where, run.history, run.ledger)
+    local r = resultsOf(run)
+    if batch.readyHour then
+        r.ready = batch.readyHour - run.start
+        r.grains = M.grainsAfter(batch)[M.GRAIN_LIVE]
+        run.finished = true
+    elseif H.hours - run.start >= GIVE_UP_HOURS then
+        run.finished = true
+    end
+end
+
 local function updateCrock(run)
     local crock = run.batch
     M.updateCrock(crock, run.ledger, run.where)
@@ -146,7 +166,9 @@ for _, day in ipairs(days) do
             M.recordWeather(gridLedger, gridHistory, H.hours, temperature)
             for _, run in ipairs(runs) do
                 if not run.finished then
-                    if run.kind == "crock" then updateCrock(run) else updatePot(run) end
+                    if run.kind == "crock" then updateCrock(run)
+                    elseif run.kind == "kefir" then updateKefir(run)
+                    else updatePot(run) end
                 end
             end
         end
@@ -208,6 +230,21 @@ for month = 1, 12 do
     for _, place in ipairs(PLACES) do
         table.insert(cells, string.format("%s / %s", hoursText(get(month, place, "crock", "cultivated")),
             hoursText(get(month, place, "crock", "ready"))))
+    end
+    print(string.format("| %s | %s |", MONTHS[month], table.concat(cells, " | ")))
+end
+
+print("")
+print(string.format("Kefir: 5 L at %d C with %d live grains (the full ratio, %g h at best): hours to ready, then the",
+    KEFIR_MILK_C, M.grainsFor(5000), M.KEFIR_HOURS))
+print(string.format("live grains that come out. '-' means it wasn't ready after %d hours.", GIVE_UP_HOURS))
+print("| Month | Outdoors | " .. COLUMNS)
+print(RULE)
+for month = 1, 12 do
+    local cells = {}
+    for _, place in ipairs(PLACES) do
+        local ready = get(month, place, "kefir", "ready")
+        table.insert(cells, ready and string.format("%s / %d", hoursText(ready), get(month, place, "kefir", "grains")) or "-")
     end
     print(string.format("| %s | %s |", MONTHS[month], table.concat(cells, " | ")))
 end

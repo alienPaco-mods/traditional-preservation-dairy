@@ -84,14 +84,17 @@ function inventory:AddItem(fullType)
 end
 before = #player.given
 run("kit", "kefir")
-check("kit(\"kefir\") gives a packet, 10 live grains and a pot of 2 L of cow's kefir", #player.given == before + 12
+check("kit(\"kefir\") gives a packet, 25 live grains, pots of 2 L of cow's kefir and 1 L of cow's milk, a Strainer and a cloth",
+    #player.given == before + 30
     and player.given[before + 1] == M.GRAIN_PACKET and player.given[before + 2] == M.GRAIN
-    and made[2].modData[M.GRAIN_KEY].grainState == M.GRAIN_LIVE and made[11].modData[M.GRAIN_KEY].hour == 100
-    and player.given[before + 12] == "Base.Pot" and made[12].fluids.CowKefir == 2)
+    and made[2].modData[M.GRAIN_KEY].grainState == M.GRAIN_LIVE and made[26].modData[M.GRAIN_KEY].hour == 100
+    and player.given[before + 27] == "Base.Pot" and made[27].fluids.CowKefir == 2
+    and player.given[before + 28] == "Base.Pot" and made[28].fluids.CowMilk == 1
+    and player.given[before + 29] == M.STRAINER and player.given[before + 30] == "Base.RippedSheets")
 run("give", "packet")
 run("give", "dried", 3)
-check("give spawns packets and dried grains", player.given[before + 13] == M.GRAIN_PACKET and player.given[before + 16] == M.DRIED_GRAIN
-    and #player.given == before + 16)
+check("give spawns packets and dried grains", player.given[before + 31] == M.GRAIN_PACKET and player.given[before + 34] == M.DRIED_GRAIN
+    and #player.given == before + 34)
 check("give lists the kefir things", run("give"):find("packet, dried, grains", 1, true) ~= nil)
 check("milk refuses what is neither milk nor kefir and names the kefirs", run("milk", 1, nil, "Water"):find("CowKefir", 1, true) ~= nil)
 function inventory:getAllEvalRecurse() return { size = function() return 0 end } end

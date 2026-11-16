@@ -25,18 +25,23 @@ local Tiles = require "TraditionalPreservationDairy/Tiles"
 M.MOD_DATA_KEY = "TraditionalPreservationDairy"
 -- Each station keeps its state as one table under one key, so nothing else on the object can clash with it.
 -- Inside the incubator's: ml, tempC, starter, incubating, wrapHour, done, last, readyHour, fluid, parts, place, at,
--- fireUntil, under. Inside the crock's: stage, done, marks, fireUntil, under. The Stone Hearth and its cauldron are TP
+-- fireUntil, under; for kefir (TraditionalPreservationDairyKefir.lua) culture, grains, progress, growProgress, kefirMarks,
+-- kefirAge, partGrain. Inside the crock's: stage, done, marks, fireUntil, under. The Stone Hearth and its cauldron are TP
 -- Core's (TraditionalPreservationCore/Fire).
 M.INCUBATOR_KEY = "tpdIncubator"
 M.CROCK_KEY = "tpdCrock"
 -- What an emptied pot or crock forgets (place, at, fireUntil and under stay: where it stands).
 local MILK_FIELDS = { "ml", "tempC", "lastHour", "fluid", "parts" }
 local BATCH_FIELDS = { "ml", "tempC", "starter", "incubating", "wrapHour", "workHours", "lastHour", "readyHour", "fluid", "parts" }
+-- What an emptied kefir pot forgets: all but the part-grain it keeps for the next batch.
+M.KEFIR_FIELDS = { "ml", "tempC", "lastHour", "readyHour", "fluid", "parts", "culture", "grains", "progress", "growProgress",
+    "kefirMarks", "kefirAge" }
 local CROCK_FIELDS = { "stage", "workHours", "marks" }
 
 local function clear(stationModData, fields)
     for _, key in ipairs(fields) do stationModData[key] = nil end
 end
+M.clearFields = clear
 
 -- Incubator
 M.CAPACITY_ML = 5000
@@ -234,11 +239,16 @@ function M.milkRate(celsius)
     return Weather.curve(MILK_CURVE, celsius)
 end
 
--- Kefir ages on its own kind (TraditionalPreservationDairyKefir.lua), at milk's rate.
+-- Kefir ages on its own kind (TraditionalPreservationDairyKefir.lua), at milk's rate. In the pot it ferments on its own
+-- curve, and its grains grow only while that is in their range (M.kefirRate, M.kefirGrowRate there).
 M.KEFIR_PROCESS = "kefir"
+M.KEFIR_FERMENT = "kefirFerment"
+M.KEFIR_GROW = "kefirGrow"
 local PROCESSES = { [CROCK_PROCESS] = function(celsius) return M.cultureRate(celsius) end,
     [M.MILK_PROCESS] = function(celsius) return M.milkRate(celsius) end,
-    [M.KEFIR_PROCESS] = function(celsius) return M.milkRate(celsius) end }
+    [M.KEFIR_PROCESS] = function(celsius) return M.milkRate(celsius) end,
+    [M.KEFIR_FERMENT] = function(celsius) return M.kefirRate(celsius) end,
+    [M.KEFIR_GROW] = function(celsius) return M.kefirGrowRate(celsius) end }
 
 function M.newLedger(now)
     return Weather.newLedger(now, PROCESSES)
@@ -294,8 +304,9 @@ end
 
 -- Incubator
 
--- Empty, Cooling, TooCold, Incubating or Ready.
+-- Empty, Cooling, TooCold, Incubating or Ready; a kefir pot's are KefirGrains, Fermenting and KefirReady (M.kefirStage).
 function M.stage(batch)
+    if batch.culture == M.KEFIR_CULTURE then return M.kefirStage(batch) end
     if (batch.ml or 0) <= 0 then return "Empty" end
     if batch.readyHour then return "Ready" end
     if batch.incubating then return "Incubating" end
@@ -306,7 +317,7 @@ end
 -- How much of ml fits, or 0 with the reason it can't go in.
 function M.milkRoom(batch, ml)
     local stage = M.stage(batch)
-    if stage == "Incubating" or stage == "Ready" then return 0, stage end
+    if stage == "Incubating" or stage == "Ready" or stage == "KefirReady" then return 0, stage end
     local room = M.CAPACITY_ML - (batch.ml or 0)
     if room <= 0 then return 0, "Full" end
     return math.min(ml, room)
@@ -340,6 +351,7 @@ end
 
 -- The starter waits beside the pot until the milk is down to setting heat. It can go in before the milk.
 function M.canAddStarter(batch)
+    if batch.culture == M.KEFIR_CULTURE then return false, "KefirPot" end
     if batch.starter then return false, "HasStarter" end
     local stage = M.stage(batch)
     if stage == "Incubating" or stage == "Ready" then return false, stage end
@@ -453,6 +465,7 @@ end
 -- alike, so they run as one spell (two when a fire burnt out in them), however long the pot was away.
 function M.catchUp(batch, now, place, history, ledger)
     if (batch.ml or 0) <= 0 then batch.lastHour = now return end
+    -- A kefir pot's milk cools as a lidded pot's, with no wrap: no starter, so advanceBatch only cools it.
     local walkedTo = batch.lastHour or now
     local kept = math.floor(now) - M.HISTORY_HOURS + 1
     while walkedTo < kept do
@@ -464,6 +477,7 @@ function M.catchUp(batch, now, place, history, ledger)
         M.advanceBatch(batch, to - from, placeC, from)
     end)
     batch.lastHour = now
+    if batch.culture == M.KEFIR_CULTURE then M.fermentKefir(batch, now, place, ledger) end
 end
 
 -- Days since the yogurt set, for the jar's food age: freshness carries over and never resets.
@@ -549,7 +563,7 @@ function M.forecast(batch, placeC)
     local copy = {}
     for key, value in pairs(batch) do copy[key] = value end
     local stage = M.stage(copy)
-    if stage == "Empty" or stage == "Ready" or stage == "TooCold" then return nil end
+    if stage == "Empty" or stage == "Ready" or stage == "TooCold" or batch.culture then return nil end
     local hours, limit = 0, 96
     while hours < limit do
         M.advanceBatch(copy, M.STEP_HOURS, placeC, hours)
