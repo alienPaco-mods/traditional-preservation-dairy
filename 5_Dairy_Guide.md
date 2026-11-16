@@ -15,15 +15,16 @@
 7. Jars and Cups
 8. When Milk and Butter Go Off
 9. The Starter Culture Crock
-10. Stations Reference
-11. The Dairymaid's Almanac (Seasons & Places)
-12. Secrets & Hidden Features
-13. The Dairymaid's Notebook
-14. Tips
-15. Troubleshooting
-16. Sandbox Settings
-17. The Yearly Plan
-18. Appendix: The Tester's Toolkit
+10. Kefir
+11. Stations Reference
+12. The Dairymaid's Almanac (Seasons & Places)
+13. Secrets & Hidden Features
+14. The Dairymaid's Notebook
+15. Tips
+16. Troubleshooting
+17. Sandbox Settings
+18. The Yearly Plan
+19. Appendix: The Tester's Toolkit
 
 ---
 
@@ -32,6 +33,8 @@
 In vanilla, yogurt comes only from fridges, and once the town is picked clean it's gone. Your cow or sheep keeps giving milk, but there's nothing to do with it except drink it or churn it.
 
 This mod lets you **set your own yogurt the old way**: milk brought to the steam in a Stone Hearth's cauldron, cooled in a lidded clay pot, then wrapped in cloth to set overnight. The result is ordinary vanilla **Yogurt**, so it works in every recipe that uses it. Every Yogurt eaten leaves its cup behind to fill again, and when the last spoonful of starter is gone, a crock of wheat and warm milk grows a new one.
+
+The same incubator makes **kefir**: grains found on farm shelves, put in milk and left a day, no fire needed. Kefir is a drink that eases food sickness, and the grains grow with every batch (chapter 10).
 
 ---
 
@@ -295,7 +298,128 @@ No yogurt left to start from? Grow one.
 
 ---
 
-## 10. Stations Reference
+## 10. Kefir
+
+Kefir is milk turned by **grains**: little white lumps, like boiled cauliflower, of bacteria and yeasts living together. Put them in milk, leave it a day in a room, strain them out and put them in the next milk. No fire, no wrap, no thermometer. It is made in the same **Yogurt Incubator**, one culture at a time: a pot holds yogurt or kefir, never both.
+
+The grains are what you keep. They grow with every good batch, starve out of milk, and can't be made by any recipe: lose them all and you are back to searching the shelves.
+
+### Finding grains
+
+A **Packet of Kefir Grains** turns up on a farm's storage shelves and a Gigamart's farming shelf, very rarely in a home fridge or a kitchen cupboard. **Open Packet of Kefir Grains** (crafting menu, as a seed packet) for **10 Dried Kefir Grains**.
+
+| Item | Weight | What it is |
+|---|---|---|
+| Packet of Kefir Grains | 0.02 | A sachet, torn open for 10 Dried Kefir Grains |
+| Dried Kefir Grains | 0.001 | Asleep. They keep for ever, and 2 batches in milk bring them back |
+| Kefir Grains | 0.001 | One grain, a gram. Its state is in its name. Not food |
+| Kefir Grains on a Cloth | 0.1 and up | Grains spread to dry, with the cloth under them |
+
+### A batch
+
+| # | Step | Where | In | Out | Time |
+|---|---|---|---|---|---|
+| 1 | **Add Kefir Grains** | An empty incubator | Grains of one state, **One** or **All** | A kefir pot | a moment |
+| 2 | **Pour Milk** | Kefir pot | Any milk, raw or scalded, cow's or sheep's, from a container or a Stone Hearth's cauldron within 2 tiles, up to 5 L, under 45 C | Fermenting, under a linen cap | a moment |
+| 3 | Ferment | Incubator | | 5 L of Kefir (Fresh) | **24 hours** at 18 to 25 C with a live grain to every 40 ml* |
+| 4 | **Strain Kefir** | Incubator, ready | Empty containers; a Strainer, or a cloth (Cheesecloth, Dish Cloth, Ripped Sheet, Sheet) at twice the time, kept | Kefir, and all the grains on the first strain | as pouring |
+
+\* 125 live grains for a full 5 L pot. A packet's 10 dried grains count half while they come back: 200 ml in a day, then 400 ml once live.
+
+- **Grains go in first.** Grains into an empty pot make it a kefir pot; a pot with yogurt milk or a starter in refuses them. More grains can go in while it ferments.
+- **The milk can be cold.** Straight from the cow, the fridge or the cauldron, as it is. Only heat hurts: milk over **45 C** is refused, and at **35 to 45 C** the live grains come out Hungry (the menu warns you).
+- **Fewer grains, slower kefir.** Speed is the grains' share of the full ratio: 25 live grains in 5 L work at a fifth of the speed, 5 days at 20 C. More than the full ratio go no faster. Pouring more milk in mid-batch dilutes what is done.
+- **Take Out Kefir Grains** gives them back before the milk goes in.
+- **Mixed milks** ferment by their shares. Animal's milk (from Milk Powder) makes cow's kefir.
+
+> *Margin note:* kefir grains are not grain at all. They are a rubbery web of milk protein and a sugar called kefiran, spun by thirty-odd kinds of bacteria and yeasts that live in it together. The yeasts are why kefir fizzes a little and carries a trace of alcohol, usually under 1 per cent.
+
+### How fast
+
+| Place temperature | Speed | 5 L at the full ratio |
+|---|---|---|
+| frozen | paused | |
+| 5 C (a basement in winter) | 0.18 | about 5½ days |
+| 10 C | 0.35 | about 3 days |
+| 15 C | 0.6 | about 40 hours |
+| **18 to 25 C** | **1** | **24 hours** |
+| 28 C (by a fire indoors) | 1.3 | about 18.5 hours |
+| 30 to 35 C | 1.5 | 16 hours |
+
+The pot has no wrap: it takes the temperature of where it stands (the Almanac, chapter 12). Kefir is the easy one in summer and the hard one in winter, when a room drops under 10 C.
+
+### The grains, batch to batch
+
+Each grain counts by its state, and its name says which:
+
+| Grains | Count for speed | Grow | After the batch |
+|---|---|---|---|
+| **Kefir Grains (Live)** | 1 | a tenth more a batch, for the share fermented at 15 to 28 C | Live |
+| **Kefir Grains (Hungry)** | half | no | Live |
+| **Dried Kefir Grains**, then **Kefir Grains (Reviving)** | half | no | a step nearer Live: 2 batches from dried |
+| **Kefir Grains (Dead)** | refused | | |
+
+A part-grain of growth stays with the pot for the next batch, so 25 grains don't need ten batches to make one.
+
+### Grains out of milk
+
+Grains starve without milk: carried, in a crate, in a pot with no milk, or left in a finished batch from the moment it is ready. Each grain keeps its own clock, so grains from one strain can be split any way: some back in the pot, some to the fridge, some to dry.
+
+| Kept at | Hungry in | Dead in |
+|---|---|---|
+| 30 C | about 1⅓ days | about 5 days |
+| **20 C, a room** | **2 days** | **7 days** |
+| A basement in summer, about 13 C | about 4½ days | about 16 days |
+| A powered fridge | about 10 days | about 5 weeks |
+| Frozen | they wait | they wait |
+
+A place over **35 C** turns live grains Hungry, over **45 C** kills them. Grains coming back from dried don't go Hungry, but die at 7 days just the same.
+
+### Drying grains
+
+For keeping, dry them. Right-click a grain: **Spread Kefir Grains to Dry**, **One** or **All**, on a cloth you carry (a Cheesecloth, Dish Cloth, Ripped Sheet or Sheet). You get **Kefir Grains on a Cloth (Drying)**: put it down somewhere and leave it.
+
+| Place | Dry in |
+|---|---|
+| 25 C and over | 2 days |
+| 20 C | 2½ days |
+| 10 C | 5 days |
+| 5 C | 10 days |
+| frozen | paused |
+
+When it reads **(Dry)**, **Collect Dried Kefir Grains** gives Dried Kefir Grains and the cloth back. Dead grains aren't spread.
+
+### Kefir
+
+Kefir is a fluid, poured, drunk and carried as milk is. It is its milk less the sugar the grains ate:
+
+| A litre of | Hunger | Thirst | Unhappiness | Calories | Carbs | Fat | Protein |
+|---|---|---|---|---|---|---|---|
+| Cow's milk | -50 | -50 | | 615 | 46 g | 22 g | 33 g |
+| **Kefir (Fresh)**, cow's | -50 | -50 | | 590 | 40 g | 22 g | 33 g |
+| **Kefir (Fresh)**, sheep's | -50 | -50 | | 798 | 17 g | 17 g | 23 g |
+| **Kefir (Separated)** | -50 | -40 | +10 | as fresh | | | |
+| **Kefir (Rotten)** | | -20 | +30 | none: a mild poison | | | |
+
+- **Fresh kefir settles the stomach.** Each litre drunk while you have food sickness takes **10** off it. Then not again for **3 game hours**. Drunk healthy, it does nothing and starts no wait.
+- **It ages from the moment it is ready**, in the pot or out, on milk's curve:
+
+| Kept at | Separates in | Rotten in |
+|---|---|---|
+| 30 C | 2 days | about 7 days |
+| **20 C** | **3 days** | **10 days** |
+| A basement in summer, about 13 C | about 7 days | about 3 weeks |
+| A powered fridge | about 16 days | about 7 weeks |
+| A powered freezer | never | never |
+
+- **Separated kefir bakes** as soured milk does: cake batter, muffins and cereal take it in place of milk.
+- Cow's and sheep's kefir mix, and the jug reads plain Kefir.
+
+> *Margin note:* the story goes that the Caucasus mountaineers called the grains the Grains of the Prophet and would not sell them. In 1908 a Moscow dairy sent a young woman, Irina Sakharova, to charm a few from a Caucasian prince; he refused, his men carried her off to marry him, and a Tsar's court settled the matter by awarding her ten pounds of grains. Moscow had its kefir soon after. True or not, it tells you what the grains were worth.
+
+---
+
+## 11. Stations Reference
 
 | Station | Build menu | Skill | Materials | XP |
 |---|---|---|---|---|
@@ -315,7 +439,7 @@ The Stone Hearth and the Forged Cauldron are in the Quick Start and TP Core's gu
 | Each litre of yogurt collected | Cooking 2 (a cup earns a quarter) |
 | Collecting the crock's starters | Cooking 2 |
 
-You can walk through the incubator and the crock. **Incubator Info** and **Crock Info** (in the menu, or just click the station) show the stage, contents, temperature, place, progress, working speed and the time to the next change.
+You can walk through the incubator and the crock. **Incubator Info** and **Crock Info** (in the menu, or just click the station) show the stage, contents, temperature, place, progress, working speed and the time to the next change. A kefir pot's also shows its grains, what they count for, and the speed they give this milk.
 
 ### What the stations show
 
@@ -326,6 +450,8 @@ You can walk through the incubator and the crock. **Incubator Info** and **Crock
 | Too cold | The lid slid half off, milk showing in the gap |
 | Setting | A striped cloth over the pot, tied at the neck |
 | Ready | The lid off again, white yogurt in the pot |
+| Kefir grains, no milk yet | The open pot, as empty |
+| Kefir fermenting or ready | A linen cap tied over the mouth |
 
 | Crock | What you see |
 |---|---|
@@ -336,7 +462,7 @@ You can walk through the incubator and the crock. **Incubator Info** and **Crock
 
 ---
 
-## 11. The Dairymaid's Almanac (Seasons & Places)
+## 12. The Dairymaid's Almanac (Seasons & Places)
 
 The milk's temperature follows where the station stands. There are seven kinds of place:
 
@@ -389,13 +515,26 @@ The fire columns are a fire indoors. **A fire outside** warms the pot less in th
 
 At 0 C and below the crock stops and waits: Crock Info says *Paused here (frozen)*. Nothing is lost, and it goes on once it thaws.
 
+**Kefir:** 5 L of milk at 20 C with 125 live grains (the full ratio): hours to ready, and the live grains that come out. "Never" means it wasn't ready after 72 hours.
+
+| Month | Open air | Indoors | Loft | Basement | By a fire | By banked embers |
+|---|---|---|---|---|---|---|
+| Jan | never | never | never | never | 18.5 (137) | 24 (137) |
+| Mar | never | never | never | never | 18.5 (137) | 24 (137) |
+| May | 70 (125) | 59 (125) | 59 (125) | never | 18.5 (137) | 24 (137) |
+| Jul | 34 (134) | 24 (137) | 24 (137) | 52 (125) | 18.5 (137) | 24 (137) |
+| Sep | 43 (131) | 30 (137) | 24 (137) | 47 (125) | 18.5 (137) | 24 (137) |
+| Nov | never | never | never | 64 (125) | 18.5 (137) | 24 (137) |
+
+A fire outside: under a roof 61 hours in January, 50 in March, 24 from April to November; a campfire in the open never in January or December, about 60 hours in February and March, 22 to 27 from April to October. A powered room: 24 hours (137) in any month. Grains grow only in the hours at 15 to 28 C, so a cold, slow batch gives back just what went in.
+
 > *Margin note:* a cellar runs a month behind the weather. It still holds the autumn's warmth in December and January, so a full pot sets in the basement from April to January, indoors only from April to November.
 
 > *Margin note:* yogurt is a summer job in an unheated house, and a fire's the rest of the year. Farm wives set the crock on the warm side of the hearth, and a Kentucky winter gives no other way.
 
 ---
 
-## 12. Secrets & Hidden Features
+## 13. Secrets & Hidden Features
 
 - **It works while you're away**, even in unloaded areas. A pot left for a week reads right when you come back.
 - **The Wrapped Yogurt Pot carries 5 L of hot milk** and loses only about 15 C an hour. Unwrap it when empty for the pot, sheet and twine back.
@@ -405,7 +544,7 @@ At 0 C and below the crock stops and waits: Crock Info says *Paused here (frozen
 
 ---
 
-## 13. The Dairymaid's Notebook
+## 14. The Dairymaid's Notebook
 
 *Kept on a nail by the dairy door, the pages soft with steam.*
 
@@ -436,7 +575,7 @@ At 0 C and below the crock stops and waits: Crock Info says *Paused here (frozen
 
 ---
 
-## 14. Tips
+## 15. Tips
 
 - **Set it by the fire in winter.** A lit Stone Hearth, fireplace or antique stove within 2 tiles indoors holds a pot at 28 C: about 8 and a half hours from pouring to Ready in any month. A porch fire still sets a January pot in about 10 hours; a campfire in the open doesn't.
 - **Keep one yogurt back. Always.** A portion of a jar will do. Otherwise it's a day and a half with the crock, or half a day if you have soured milk.
@@ -445,10 +584,13 @@ At 0 C and below the crock stops and waits: Crock Info says *Paused here (frozen
 - **Save every Empty Yogurt Container.** They can't be made, only emptied.
 - **Clarify the summer's butter.** A cow gives most in summer, when butter keeps worst. Clarified, it waits for winter in any cupboard.
 - **Grow two starters before you need them.** They're fresh 5 days: start the crock when you're down to your last yogurt, not after.
+- **Never keep all your kefir grains in one pot.** Dry a handful on a cloth as soon as you have spare: dried, they keep for ever.
+- **Grow the grains before you drink the kefir.** A packet's 10 grains take about four weeks of daily batches (two to wake, then a tenth more each) to reach the 125 a full pot wants. Keep each batch small, at the full ratio, so it is done in a day.
+- **Keep a jug of kefir for the bad days.** A litre takes 10 off food sickness, once every 3 hours.
 
 ---
 
-## 15. Troubleshooting
+## 16. Troubleshooting
 
 | Problem | Why |
 |---|---|
@@ -467,11 +609,16 @@ At 0 C and below the crock stops and waits: Crock Info says *Paused here (frozen
 | Strain Clarified Butter missing | The pot must read Clarified Butter (Melted): an hour steaming on a stove or fire. Carry a cloth or a Strainer |
 | Put Butter in a Pot greyed out | Carry an empty Pot, Forged Pot, Saucepan or Copper Saucepan, or one holding melting butter (not a kettle). A clarified pot must be strained first |
 | Salt Butter or a Put Butter row refused | Every butter step needs Cooking 2 |
+| Add Kefir Grains refused | The pot holds yogurt milk or a starter: grains go into an empty pot first. Dead grains are refused |
+| Pour Milk refused on the grains | The milk is over 45 C: let it cool. At 35 to 45 C it goes in, but the live grains come out Hungry |
+| Kefir takes days | Too few grains for the milk (one live grain to every 40 ml), or a cold place: under 10 C it takes three days and more |
+| My grains read Hungry or Dead | Out of milk they go Hungry in 2 days and die in 7 in a room. Keep them in milk, in a fridge, or dry them |
+| Kefir didn't ease my stomach | Only fresh kefir, only while you have food sickness, and not again within 3 game hours |
 | Stations or recipes missing | TP Core must be enabled. Then check `~/Zomboid/console.txt`: the tile number 5172 must be unique among your mods |
 
 ---
 
-## 16. Sandbox Settings
+## 17. Sandbox Settings
 
 Under **Traditional Preservation (Dairy)**:
 
@@ -486,28 +633,29 @@ Under **Traditional Preservation (Dairy)**:
 
 ---
 
-## 17. The Yearly Plan
+## 18. The Yearly Plan
 
-Each process laid out as the game's planting seasons: the months it works unheated, its best and poor months, and the months it is out of season (then only by a fire, banked embers or in a powered room, below). Yogurt times are 5 L poured at 85 C at 18:00, **cooling + setting**, the grid off (the Dairymaid's Almanac, chapter 11); at its best a pot cools in about 2 hours and sets in 6.
+Each process laid out as the game's planting seasons: the months it works unheated, its best and poor months, and the months it is out of season (then only by a fire, banked embers or in a powered room, below). Yogurt times are 5 L poured at 85 C at 18:00, **cooling + setting**, the grid off (the Dairymaid's Almanac, chapter 12); at its best a pot cools in about 2 hours and sets in 6.
 
 | Process | Season | Best months | Poor months | Out of season | Where, at its best | Takes, at its best |
 |---|---|---|---|---|---|---|
 | **Setting yogurt** | April to January (a basement), April to November (indoors) | June, July, August, September, October | April (indoors 1.4 + 11.6 hours, a basement 1.4 + 12.9), May (indoors 1.6 + 8.4, a basement 1.5 + 10.5), November (indoors 1.5 + 9.3, a basement 1.5 + 8.8), December and January (a basement, 1.5 + 10.2 and 1.4 + 13.6) | February and March: it never sets | A loft (the warm roof), or indoors | 2.0 + 6.5 hours in a July loft; indoors 1.9 + 6.8 |
 | **Starting the crock** | June to November | July, August, September | June, October (a basement 4 to 5 days), November (a basement about 9) | December to May: weeks (indoors in January about 90 days, most of them paused frozen) | Indoors | About 2 days |
+| **Fermenting kefir** | May to October (indoors), June to November (a basement) | June, July, August, September (indoors or a loft) | May (indoors 59 hours), October (indoors 43, a loft 40), November (a basement 64) | December to April: not in 3 days unheated | A loft, or indoors | 24 hours, 125 grains give back 137 |
 | **Keeping butter** | All year | November to March (a basement, about two months) | July, August (a room about 15 days) | None | A basement or a powered fridge | Fresh a month in a cellar, 75 days in a fridge. **Salted three times as long; clarified for ever** |
 | **Keeping raw milk** | All year | January, February, March | July, August, September (a basement 3½ days, a room 1½ to 2) | None | A basement | Sours in 6 to 7 days, rotten in about 2 weeks. **Scalded milk never sours** |
 
 **Any month by an indoor fire or a powered room:**
 
-| Where | Yogurt | The crock's first stage |
-|---|---|---|
-| By a fire indoors (28 C) | 2.4 + 6.1 hours | 24 hours |
-| By banked embers indoors (24 C) | 2.1 + 6.2 hours | |
-| A powered room (22 C) | 2.0 + 6.5 hours | about 32 hours |
+| Where | Yogurt | The crock's first stage | Kefir |
+|---|---|---|---|
+| By a fire indoors (28 C) | 2.4 + 6.1 hours | 24 hours | 18.5 hours |
+| By banked embers indoors (24 C) | 2.1 + 6.2 hours | | 24 hours |
+| A powered room (22 C) | 2.0 + 6.5 hours | about 32 hours | 24 hours |
 
 ---
 
-## 18. Appendix: The Tester's Toolkit
+## 19. Appendix: The Tester's Toolkit
 
 *For testers, modders and the curious. These commands exist only when the game is started in debug mode (Steam launch option `-debug`). Type them into the in-game **Command Console** and press Enter. `TPD.help()` lists them in the game; the Stone Hearth's are TP Core's, `TPC.help()`.*
 
@@ -517,20 +665,22 @@ Each process laid out as the game's planting seasons: the months it works unheat
 |---|---|
 | `TPD.weather()` | Temperature by place, and how fast milk sets at each. |
 | `TPD.here()` | Which kind of place you're standing in. |
-| `TPD.pots()` | Every loaded incubator: stage, litres, milk temperature, what's next. |
+| `TPD.pots()` | Every loaded incubator: stage, litres, milk temperature, what's next; a kefir pot's grains, speed and hours to ready. |
 | `TPD.age(hours)` | Moves every loaded incubator and crock on by this many hours (1 if left out): an incubator replays the recorded weather, a crock's stage takes them as hours at the best temperature. |
 | `TPD.fast(hours)` | Test timer for setting. `TPD.fast()` goes back to the sandbox time. |
-| `TPD.milk(litres, c, fluid)` | A cooking pot of milk (default 5 L of cow's), at c degrees if given; fluid `"SheepMilk"` or `"AnimalMilk"` for the others. At 85 C or more it counts as having had its 20-minute hold. |
-| `TPD.give(name, n, option)` | Spawns `jar` (a full Jar of Yogurt; option `"clay"` or `"glazed"`), `starter`, `cup`, `butter`, `salted` or `clarified`; no name lists them. |
-| `TPD.kit(kind)` | What a test needs: yogurt (default), `"crock"`, `"wrap"` or `"butter"` (three Butter, a Salt, a pot, a Ripped Sheet); `"?"` lists them. |
+| `TPD.milk(litres, c, fluid)` | A cooking pot of milk (default 5 L of cow's), at c degrees if given; fluid `"SheepMilk"` or `"AnimalMilk"` for the others, `"CowKefir"` or `"SheepKefir"` for kefir. At 85 C or more it counts as having had its 20-minute hold. |
+| `TPD.give(name, n, option)` | Spawns `jar` (a full Jar of Yogurt; option `"clay"` or `"glazed"`), `starter`, `cup`, `butter`, `salted`, `clarified`, `packet` (of kefir grains), `dried`, `grains` (live) or `cloth` (10 grains drying); no name lists them. |
+| `TPD.kit(kind)` | What a test needs: yogurt (default), `"crock"`, `"wrap"`, `"butter"` (nine Butter, a Salt, a pot, a saucepan, a Ripped Sheet, a burnt pot) or `"kefir"` (a packet, 25 live grains, 2 L of kefir, 1 L of milk, a Strainer, a Ripped Sheet); `"?"` lists them. |
 | `TPD.crocks()` | Every loaded crock: stage, progress, place. |
-| `TPD.ages()` | Each container of milk you carry: fluid, stage, age, hours to the next stage, place. |
-| `TPD.sour(hours)` | Ages the milk you carry by this many hours at 20 C (36 if left out: one souring). |
+| `TPD.ages()` | Each container of milk or kefir you carry: fluid, stage, age, hours to the next stage, place. |
+| `TPD.sour(hours)` | Ages the milk and kefir you carry by this many hours at 20 C (36 if left out: one souring). Kefir separates at 72, rots at 240. |
 | `TPD.butter()` | Each butter you carry: place, rate, age, days to stale and rotten there. |
 | `TPD.rancid(days)` | Ages the butter you carry by this many days (10 if left out) at its place. |
+| `TPD.grains()` | Your kefir grains and cloths of grains: state, hours starved or dried, place. |
+| `TPD.starve(hours)` | Those grains starve this many hours more (48 if left out), the cloths dry as long. |
 | `TPD.tiles()` | Every station within 3 tiles: object class, sprite, solid flags. |
 
-**Typical check:** within 2 tiles of a Stone Hearth with the cauldron fitted (`TPC.kit()`, `TPC.fit()`), `TPC.cauldron(5)` and `TPC.hot()`, then `TPD.kit()`, Pour from the Cauldron and Add Starter. `TPD.age(3)` should show it wrapped and setting, `TPD.age(7)` Ready.
+**Typical check:** within 2 tiles of a Stone Hearth with the cauldron fitted (`TPC.kit()`, `TPC.fit()`), `TPC.cauldron(5)` and `TPC.hot()`, then `TPD.kit()`, Pour from the Cauldron and Add Starter. `TPD.age(3)` should show it wrapped and setting, `TPD.age(7)` Ready. **Kefir:** `TPD.kit("kefir")`, Add Kefir Grains (All), Pour Milk from the 1 L pot, `TPD.age(24)`, Strain Kefir: Kefir, and 27 grains back.
 
 ---
 
