@@ -1,4 +1,4 @@
-# Traditional Preservation (Dairy) — Build 42 prototype (v0.0.8)
+# Traditional Preservation (Dairy) — Build 42 prototype (v0.0.9)
 
 **Status: experimental.** The yogurt loop, from the Stone Hearth's cauldron to a cup of yogurt, and the starter crock have been played in the game with test timers. The latest changes (mixed milks, the cold-milk refusal, the jar weight after a reload) have only been checked offline so far (see the test plan). Back up your save before enabling.
 
@@ -54,7 +54,7 @@ Copy this folder to `~/Zomboid/mods/TraditionalPreservationDairy`, as a real cop
 
 | Station | Where | Skill | Materials |
 |---|---|---|---|
-| **Stone Hearth** (TP Core) | Build menu, Masonry | Masonry 2 | 8 Clay Bricks, 2 Clay, a trowel (kept) |
+| **Stone Hearth** (TP Core) | Build menu, Masonry | Masonry 2 | 12 Stone Blocks, 2 Clay, a trowel (kept) |
 | **Forged Cauldron** (TP Core), fitted on the Stone Hearth | Forge Cauldron at a forge, then Fit Cauldron on the Stone Hearth's menu | Blacksmith 4 | 2 Steel Sheets, 3 Charcoal, 1 Wire; to fit, 2 Iron Pipes, 1 Heavy Chain, 1 Large Hook, pliers (kept) |
 | **Yogurt Incubator** | Build menu, Pottery; floor | Tailoring 1 | 1 Yogurt Pot, 2 Ripped Sheets, 1 Twine |
 | **Starter Culture Crock** | Build menu, Pottery; floor, counter or table | Cooking 4 | 1 Clay Jar, Glazed Clay Jar or Clay Pot, 1 Ripped Sheet, 1 Twine |

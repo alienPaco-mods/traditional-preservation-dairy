@@ -1,5 +1,8 @@
 # Changelog: Traditional Preservation (Dairy)
 
+## 0.0.9
+- **Docs** (2026-11-16): the Stone Hearth is built of 12 Stone Blocks, 2 Clay and a trowel (TP Core 0.1.7; was 8 Clay Bricks). README, guide 5, Workshop text; nothing changes in game.
+
 ## 0.0.8
 - **Internal** (2026-11-16): the kefir grains loot goes through TP Core's `Loot.add` and names the packet by `GRAIN_PACKET`, not a second copy of its name. Same lists and weights; nothing changes in game. Needs TP Core 0.1.5.
 

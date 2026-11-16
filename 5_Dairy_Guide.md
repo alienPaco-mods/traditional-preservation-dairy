@@ -44,7 +44,7 @@ The same incubator makes **kefir**: grains found on farm shelves, put in milk an
 
 | Step | You need | You get |
 |---|---|---|
-| Build a **Stone Hearth** | 8 Clay Bricks, 2 Clay, a trowel (kept). Masonry 2 | A fireplace that cooks and warms |
+| Build a **Stone Hearth** | 12 Stone Blocks, 2 Clay, a trowel (kept). Masonry 2 | A fireplace that cooks and warms |
 | **Forge Cauldron**, then **Fit Cauldron** on the Stone Hearth | 2 Steel Sheets, 3 Charcoal, 1 Wire at a forge (Blacksmith 4); 2 Iron Pipes, 1 Heavy Chain, 1 Large Hook, pliers (kept) | A 60 L **Forged Cauldron** over the fire |
 | Throw a **Yogurt Pot** and fire it | 6 Clay, a little water. Pottery 2, wheel and kiln | The pot |
 | Build a **Yogurt Incubator** within 2 tiles of the Stone Hearth | 1 Yogurt Pot, 2 Ripped Sheets, 1 Twine. Tailoring 1 | The incubator |
