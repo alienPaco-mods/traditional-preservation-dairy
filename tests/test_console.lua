@@ -61,12 +61,14 @@ check("milk names the milks for a fluid that isn't one", run("milk", 1, nil, "Wa
 
 before = #player.given
 run("kit", "butter")
-check("kit(\"butter\") gives three butter, a salt, a pot and a cloth", #player.given == before + 6 and player.given[before + 1] == M.BUTTER
-    and player.given[before + 4] == "Base.Salt" and player.given[before + 5] == "Base.Pot" and player.given[before + 6] == "Base.RippedSheets")
+check("kit(\"butter\") gives nine butter, a salt, a pot, a saucepan, a cloth and a burnt pot", #player.given == before + 14
+    and player.given[before + 1] == M.BUTTER and player.given[before + 10] == "Base.Salt" and player.given[before + 11] == "Base.Pot"
+    and player.given[before + 12] == "Base.Saucepan" and player.given[before + 13] == "Base.RippedSheets"
+    and player.given[before + 14] == M.BURNT_BUTTER["Base.Pot"])
 run("give", "salted")
 run("give", "clarified")
-check("give spawns salted and clarified butter", player.given[before + 7] == M.SALTED_BUTTER
-    and player.given[before + 8] == M.CLARIFIED_BUTTER)
+check("give spawns salted and clarified butter", player.given[before + 15] == M.SALTED_BUTTER
+    and player.given[before + 16] == M.CLARIFIED_BUTTER)
 local inventory = player:getInventory()
 -- Kefir: given items answer for their modData and fluid.
 local made = {}

@@ -96,10 +96,13 @@
   "IGUI_TraditionalPreservationDairy_ScaldedHelp": "Scalded milk (20 minutes at 85 C or more: a Stone Hearth's cauldron, a stove or a fire) in any container. It goes in at the heat it has now: an open pot cools in minutes, a Wrapped Yogurt Pot in hours.",
   "IGUI_TraditionalPreservationDairy_WrappedName": "Wrapped %1",
   "IGUI_TraditionalPreservationDairy_CauldronNotHeld": "The milk is steaming, but not scalded yet: hold it at 85 C for %1 more minutes. Keep the fire lit.",
-  "IGUI_TraditionalPreservationDairy_ButterHelp": "All of it goes in, as far as there is room. Kept steaming for an hour over a lit fire its water cooks off; then fill a pot, bucket or jar from the cauldron and strain it through a cloth. It can't burn here.",
+  "IGUI_TraditionalPreservationDairy_ButterHelp": "One butter, the oldest, or all of them, as far as there is room. Kept steaming for an hour over a lit fire its water cooks off; then fill a pot, bucket or jar from the cauldron and strain it through a cloth. It can't burn here.",
   "IGUI_TraditionalPreservationDairy_ButterNoRoom": "The cauldron has no room for it, or holds something else. Empty it first.",
   "IGUI_TraditionalPreservationDairy_ButterSkill": "Needs Cooking 2.",
   "IGUI_TraditionalPreservationDairy_ButterMelting": "The butter is clarified after %1 more of steaming over a lit fire. Left raw, it goes rancid in %2.",
   "IGUI_TraditionalPreservationDairy_ButterMelted": "The butter is clarified. Fill a pot, bucket or jar from the cauldron, then strain it through a cloth or a Strainer: a quarter litre makes a Clarified Butter.",
-  "IGUI_TraditionalPreservationDairy_ButterRancid": "The butter went rancid before it was clarified. Empty the cauldron."
+  "IGUI_TraditionalPreservationDairy_ButterRancid": "The butter went rancid before it was clarified. Empty the cauldron.",
+  "IGUI_TraditionalPreservationDairy_ButterPotHelp": "Each butter melts to a quarter litre: one, the oldest, or all, as many as there is room for. Kept steaming an hour on any stove or fire it is clarified: strain it through a cloth or a Strainer, a quarter litre a Clarified Butter. Another hour on the heat and it burns. Left raw it goes rancid when its oldest butter would have.",
+  "IGUI_TraditionalPreservationDairy_ButterPotNoRoom": "No room, or it holds something else. A pot takes 6 butter, a saucepan 2; clarified butter must be strained out first.",
+  "IGUI_TraditionalPreservationDairy_ButterNoPot": "Needs an empty cooking pot or saucepan, or one holding melting butter."
 }

@@ -140,12 +140,14 @@ local KITS = {
         end,
     },
     butter = {
-        about = "three Butter, a Salt, a cooking pot and a Ripped Sheet to strain through: salt one, clarify two (Cooking 2); TPC.kit() for the cauldron",
+        about = "nine Butter, a Salt, a cooking pot, a saucepan, a Ripped Sheet to strain through and a burnt pot to scrape out: salt one, clarify six in the pot and two in the saucepan (Cooking 2); TPC.kit() for the cauldron",
         give = function(inventory)
-            for _ = 1, 3 do inventory:AddItem(M.BUTTER) end
+            for _ = 1, 9 do inventory:AddItem(M.BUTTER) end
             inventory:AddItem("Base.Salt")
             inventory:AddItem("Base.Pot")
+            inventory:AddItem("Base.Saucepan")
             inventory:AddItem("Base.RippedSheets")
+            inventory:AddItem(M.BURNT_BUTTER["Base.Pot"]):setBurnt(true)
         end,
     },
     kefir = {

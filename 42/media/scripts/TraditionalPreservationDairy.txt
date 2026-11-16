@@ -121,10 +121,10 @@ module TraditionalPreservationDairy
     }
 
     /* Butter that keeps (TraditionalPreservationDairyButter.lua). Salting takes a salt (anything tagged salt, as Fish
-       & Meat's cures do) worked into a butter: it keeps three times as long. Clarifying takes no station: a pot,
-       one or two butter, then any stove or fire, and the clear fat poured off its milk solids keeps as Lard does.
-       The Stone Hearth's cauldron clarifies many at once (Put Butter in the Cauldron, then Strain Clarified Butter).
-       Every step but scraping a burnt pot takes Cooking 2. */
+       & Meat's cures do) worked into a butter: it keeps three times as long. Clarifying takes no station: Put Butter
+       in a Pot (a menu, not a recipe: a pot or saucepan, or the Stone Hearth's cauldron for many at once) melts it to
+       a fluid, steamed an hour on any stove or fire it is clarified, then Strain Clarified Butter. Every step but
+       scraping a burnt pot takes Cooking 2. */
     craftRecipe SaltButter
     {
         timedAction = MixingBowl,
@@ -144,87 +144,8 @@ module TraditionalPreservationDairy
         }
     }
 
-    craftRecipe PutButterInPot
-    {
-        timedAction = MixingBowl,
-        time = 40,
-        Tags = InHandCraft;CanBeDoneFromFloor;Cooking,
-        category = Cooking,
-        SkillRequired = Cooking:2,
-        OnCreate = TraditionalPreservationDairy.onPutButterInPot,
-        inputs
-        {
-            item 1 [Base.Pot;Base.PotForged] mode:destroy flags[InheritCondition;IsEmpty] mappers[potType],
-            item 1 [Base.Butter;TraditionalPreservationDairy.SaltedButter] flags[InheritFoodAge;ItemCount] mode:destroy,
-        }
-        outputs
-        {
-            item 1 mapper:potType,
-        }
-        itemMapper potType
-        {
-            TraditionalPreservationDairy.PotOfButter = Base.Pot,
-            TraditionalPreservationDairy.PotForgedButter = Base.PotForged,
-        }
-    }
-
-    craftRecipe AddButterToPot
-    {
-        timedAction = MixingBowl,
-        time = 30,
-        Tags = InHandCraft;CanBeDoneFromFloor;Cooking,
-        category = Cooking,
-        SkillRequired = Cooking:2,
-        OnTest = TraditionalPreservationDairy.canAddButter,
-        OnCreate = TraditionalPreservationDairy.onAddButter,
-        inputs
-        {
-            item 1 [TraditionalPreservationDairy.PotOfButter;TraditionalPreservationDairy.PotForgedButter] mode:destroy flags[InheritCondition] mappers[sameItem],
-            item 1 [Base.Butter;TraditionalPreservationDairy.SaltedButter] flags[ItemCount] mode:destroy,
-        }
-        outputs
-        {
-            item 1 mapper:sameItem,
-        }
-        itemMapper sameItem
-        {
-            TraditionalPreservationDairy.PotOfButter = TraditionalPreservationDairy.PotOfButter,
-            TraditionalPreservationDairy.PotForgedButter = TraditionalPreservationDairy.PotForgedButter,
-        }
-    }
-
-    /* A cooked pot: the clear fat poured off its milk solids through a cloth or a Strainer (kept), a Clarified Butter
-       for each butter that went in (onPourOffClarified adds the second), and the pot back. IsCookedFoodItem lets burnt food through, so canPourOffClarified refuses a
-       burnt pot. */
-    craftRecipe PourOffClarifiedButter
-    {
-        timedAction = MixingBowl,
-        time = 60,
-        Tags = InHandCraft;CanBeDoneFromFloor;Cooking,
-        category = Cooking,
-        SkillRequired = Cooking:2,
-        xpAward = Cooking:5,
-        OnTest = TraditionalPreservationDairy.canPourOffClarified,
-        OnCreate = TraditionalPreservationDairy.onPourOffClarified,
-        inputs
-        {
-            item 1 [TraditionalPreservationDairy.PotOfButter;TraditionalPreservationDairy.PotForgedButter] mappers[potType] flags[InheritCondition;IsCookedFoodItem;ItemCount] mode:destroy,
-            item 1 [Base.CheeseCloth;Base.DishCloth;Base.RippedSheets;Base.Sheet;Base.Strainer] mode:keep,
-        }
-        outputs
-        {
-            item 1 mapper:potType,
-            item 1 TraditionalPreservationDairy.ClarifiedButter,
-        }
-        itemMapper potType
-        {
-            Base.Pot = TraditionalPreservationDairy.PotOfButter,
-            Base.PotForged = TraditionalPreservationDairy.PotForgedButter,
-        }
-    }
-
-    /* Clarified butter melted in the Stone Hearth's cauldron, in whatever it was ladled into: a quarter litre strains
-       through a cloth or a Strainer (kept, as the container is) to a Clarified Butter, as a butter in a pot does. */
+    /* Clarified butter melted in a pot, a saucepan or the Stone Hearth's cauldron, in whatever holds it: a quarter
+       litre strains through a cloth or a Strainer (kept, as the container is) to a Clarified Butter. */
     craftRecipe StrainClarifiedButter
     {
         timedAction = MixingBowl,
@@ -245,26 +166,27 @@ module TraditionalPreservationDairy
         }
     }
 
-    /* The only way to get the pot back from burnt butter (canScrapeButter), rotten or not. */
+    /* The only way to get the vessel back from burnt butter, its condition kept. */
     craftRecipe ScrapeOutBurntButter
     {
         timedAction = MixingBowl,
         time = 80,
         Tags = InHandCraft;CanBeDoneFromFloor;Cooking,
         category = Cooking,
-        OnTest = TraditionalPreservationDairy.canScrapeButter,
         inputs
         {
-            item 1 [TraditionalPreservationDairy.PotOfButter;TraditionalPreservationDairy.PotForgedButter] mappers[potType] flags[InheritCondition;AllowRottenItem;ItemCount] mode:destroy,
+            item 1 [TraditionalPreservationDairy.PotOfBurntButter;TraditionalPreservationDairy.PotForgedBurntButter;TraditionalPreservationDairy.SaucepanBurntButter;TraditionalPreservationDairy.SaucepanCopperBurntButter] mappers[vesselType] flags[InheritCondition;AllowRottenItem;ItemCount] mode:destroy,
         }
         outputs
         {
-            item 1 mapper:potType,
+            item 1 mapper:vesselType,
         }
-        itemMapper potType
+        itemMapper vesselType
         {
-            Base.Pot = TraditionalPreservationDairy.PotOfButter,
-            Base.PotForged = TraditionalPreservationDairy.PotForgedButter,
+            Base.Pot = TraditionalPreservationDairy.PotOfBurntButter,
+            Base.PotForged = TraditionalPreservationDairy.PotForgedBurntButter,
+            Base.Saucepan = TraditionalPreservationDairy.SaucepanBurntButter,
+            Base.SaucepanCopper = TraditionalPreservationDairy.SaucepanCopperBurntButter,
         }
     }
 

@@ -14,6 +14,7 @@ local CauldronUI = require "TraditionalPreservationCore/CauldronUI"
 local CauldronFluid = require "TraditionalPreservationCore/CauldronFluid"
 local Transfer = require "TraditionalPreservationCore/Transfer"
 local PlaceKeepingUI = require "TraditionalPreservationCore/PlaceKeepingUI"
+local ItemFluidUI = require "TraditionalPreservationCore/ItemFluidUI"
 local Tiles = require "TraditionalPreservationDairy/Tiles"
 
 local M = TraditionalPreservationDairy
@@ -694,6 +695,11 @@ end)
 -- Butter catches up on its keeping whenever it is looked at or moved (TP Core's PlaceKeepingUI).
 PlaceKeepingUI.watch(M.BUTTER_KEEPER, M.BUTTER_DAYS)
 
+-- Every step of clarifying takes Cooking 2.
+local function butterRefusal(playerObj)
+    if playerObj:getPerkLevel(Perks.Cooking) < M.BUTTER_SKILL then return getText("IGUI_TraditionalPreservationDairy_ButterSkill") end
+end
+
 -- Put Butter in the Cauldron on the Stone Hearth's menu (TP Core's CauldronUI.addPieces), and its notes in Stone
 -- Hearth Info.
 CauldronUI.addPieces({
@@ -706,9 +712,26 @@ CauldronUI.addPieces({
     end } },
     help = getText("IGUI_TraditionalPreservationDairy_ButterHelp"),
     noRoom = getText("IGUI_TraditionalPreservationDairy_ButterNoRoom"),
-    refusal = function(playerObj)
-        if playerObj:getPerkLevel(Perks.Cooking) < M.BUTTER_SKILL then return getText("IGUI_TraditionalPreservationDairy_ButterSkill") end
+    refusal = butterRefusal,
+})
+
+-- Put Butter in a Pot on a butter's right-click menu (TP Core's ItemFluidUI.addPieces): a pot or saucepan, the
+-- cauldron's route at a smaller size.
+ItemFluidUI.addPieces({
+    title = getText("ContextMenu_TraditionalPreservationDairy_ButterInPot"),
+    icon = "Item_Butter",
+    items = M.CAULDRON_BUTTERS,
+    fluid = M.MELTING_BUTTER,
+    pieceMl = M.BUTTER_PIECE_ML,
+    hoursLeft = M.butterHoursLeft,
+    vessels = M.BUTTER_VESSELS,
+    label = function(pot, count)
+        return getText("ContextMenu_TraditionalPreservationDairy_ButterPotRow", pot:getDisplayName(), tostring(count))
     end,
+    help = getText("IGUI_TraditionalPreservationDairy_ButterPotHelp"),
+    noRoom = getText("IGUI_TraditionalPreservationDairy_ButterPotNoRoom"),
+    noVessel = getText("IGUI_TraditionalPreservationDairy_ButterNoPot"),
+    refusal = butterRefusal,
 })
 
 CauldronUI.addNotes(function(info, notes)

@@ -288,10 +288,14 @@ local function butterRow(aHearth)
     local option = cauldronOption and cauldronOption.subOption:getOptionFromName(getText("ContextMenu_TraditionalPreservationDairy_ButterInCauldron"))
     return option and option.subOption.options[1]
 end
-local function butter(fullType, rotten)
+local function butter(fullType, rotten, age)
+    local data = {}
     return { getFullType = function() return fullType end, isRotten = function() return rotten or false end,
         getFluidContainer = function() return nil end, isFavorite = function() return false end,
-        hasTag = function() return false end }
+        hasTag = function() return false end, getModData = function() return data end,
+        getAge = function() return age or 0 end, getOffAgeMax = function() return 45 end, setOffAge = function() end,
+        setOffAgeMax = function() end, getOffAge = function() return 30 end, setAge = function() end,
+        getOutermostContainer = function() return nil end, getWorldItem = function() return nil end }
 end
 local cook = 2
 Perks = Perks or { Cooking = "Cooking" }
@@ -299,15 +303,20 @@ playerObj.getPerkLevel = function() return cook end
 playerObj.isTimedActionInstant = function() return false end
 ui.carried = {}
 check("no butter carried, no butter row", butterRow(hearth()) == nil)
-local plainButter, saltedButter = butter(M.BUTTER), butter(M.SALTED_BUTTER)
+local plainButter, saltedButter = butter(M.BUTTER, false, 10), butter(M.SALTED_BUTTER)
 ui.carried = { plainButter, saltedButter, butter(M.BUTTER, true), butter(M.CLARIFIED_BUTTER) }
 local row = butterRow(hearth())
 check("butter and salted butter count together, rotten and clarified left out",
     row and row.name == getText("ContextMenu_TraditionalPreservationDairy_ButterPieces", "2") and not row.notAvailable)
-row.onSelect(playerObj, unpack(row.args))
+local picks = row.subOption.options
+check("the row opens One and All (2)", #picks == 2 and picks[2].name == getText("ContextMenu_TraditionalPreservationCore_PiecesAll", "2"))
+picks[1].onSelect(picks[1].target, unpack(picks[1].args))
 local queued = ui.queued[#ui.queued]
-check("choosing it queues the core's job with melting butter", queued.Type == "TPCauldronPieces" and queued.raw == M.MELTING_BUTTER
-    and queued.spec.pieceMl == M.BUTTER_PIECE_ML and queued.pieces[2] == saltedButter)
+check("One puts the oldest butter", #queued.pieces == 1 and queued.pieces[1] == plainButter)
+picks[2].onSelect(picks[2].target, unpack(picks[2].args))
+queued = ui.queued[#ui.queued]
+check("All queues the core's job with melting butter, oldest first", queued.Type == "TPPutPieces" and queued.spec.fluid == M.MELTING_BUTTER
+    and queued.spec.pieceMl == M.BUTTER_PIECE_ML and queued.pieces[1] == plainButter and queued.pieces[2] == saltedButter)
 row = butterRow(hearth({ ml = 500, fluid = "Water", tempC = 20 }))
 check("a cauldron of water refuses it with the reason", row.notAvailable == true
     and row.toolTip.description == getText("IGUI_TraditionalPreservationDairy_ButterNoRoom"))
@@ -315,5 +324,73 @@ cook = 1
 row = butterRow(hearth())
 check("under Cooking 2 it is refused, saying so", row.notAvailable == true
     and row.toolTip.description == getText("IGUI_TraditionalPreservationDairy_ButterSkill"))
+
+-- Put Butter in a Pot, on a butter's own menu (TP Core's ItemFluidUI): one row per pot or saucepan in reach
+local inventoryHandlers = H.handlers.OnFillInventoryObjectContextMenu
+local onButterMenu = inventoryHandlers[#inventoryHandlers]
+local function potMenu(clicked)
+    local context = H.menu()
+    clicked.class = "InventoryItem"
+    onButterMenu(0, context, { clicked })
+    return context:getOptionFromName(getText("ContextMenu_TraditionalPreservationDairy_ButterInPot"))
+end
+local function vessel(name, fullType, fluid, litres, capacity)
+    return H.vessel(name, fluid, litres, capacity, { getFullType = function() return fullType end })
+end
+cook = 2
+local pot, saucepan = vessel("Cooking Pot", "Base.Pot", nil, 0, 1.5), vessel("Saucepan", "Base.Saucepan", nil, 0, 0.6)
+local kettle = vessel("Kettle", "Base.Kettle", nil, 0, 1.5)
+ui.carried = { plainButter, saltedButter, butter(M.BUTTER, true), kettle }
+local option = potMenu(plainButter)
+check("no pot or saucepan in reach: greyed out, saying what it needs (a kettle doesn't count)", option and option.isDisabled
+    and option.toolTip.description == getText("IGUI_TraditionalPreservationDairy_ButterNoPot"))
+ui.carried = { plainButter, saltedButter, pot, saucepan, vessel("Pot of Water", "Base.Pot", "Water", 1, 1.5) }
+option = potMenu(saltedButter)
+local rows = option.subOption.options
+check("a row for each empty pot and saucepan, the pot of water left out", #rows == 2
+    and rows[1].name == getText("ContextMenu_TraditionalPreservationDairy_ButterPotRow", "Cooking Pot", "2")
+    and rows[1].itemForTexture == pot and not rows[1].notAvailable)
+picks = rows[2].subOption.options
+picks[1].onSelect(picks[1].target, unpack(picks[1].args))
+queued = ui.queued[#ui.queued]
+check("a vessel's One puts the oldest butter in it", queued.Type == "TPPutPieces" and queued.into.item == saucepan
+    and #queued.pieces == 1 and queued.pieces[1] == plainButter)
+picks[2].onSelect(picks[2].target, unpack(picks[2].args))
+queued = ui.queued[#ui.queued]
+check("its All queues the core's job with melting butter into that vessel", queued.Type == "TPPutPieces"
+    and queued.into.item == saucepan and queued.spec.fluid == M.MELTING_BUTTER and queued.spec.pieceMl == M.BUTTER_PIECE_ML
+    and #queued.pieces == 2)
+ui.carried = { plainButter, vessel("Pot of Butter", "Base.Pot", M.MELTED_CLARIFIED, 1.5, 1.5), vessel("Half Pot", "Base.Pot", M.MELTING_BUTTER, 0.5, 1.5) }
+rows = potMenu(plainButter).subOption.options
+check("a pot of melting butter takes more; clarified butter must be strained out first", #rows == 1
+    and rows[1].name == getText("ContextMenu_TraditionalPreservationDairy_ButterPotRow", "Half Pot", "1"))
+check("with one carried the row puts it straight in, no One or All", rows[1].subOption == nil and rows[1].onSelect ~= nil)
+ui.carried = { plainButter, vessel("Full Pot", "Base.Pot", M.MELTING_BUTTER, 1.5, 1.5) }
+rows = potMenu(plainButter).subOption.options
+check("a full one is refused with the reason", rows[1].notAvailable
+    and rows[1].toolTip.description == getText("IGUI_TraditionalPreservationDairy_ButterPotNoRoom"))
+cook = 1
+ui.carried = { plainButter, pot }
+rows = potMenu(plainButter).subOption.options
+check("under Cooking 2 it is refused, saying so", rows[1].notAvailable
+    and rows[1].toolTip.description == getText("IGUI_TraditionalPreservationDairy_ButterSkill"))
+check("a clarified butter has no such row", potMenu(butter(M.CLARIFIED_BUTTER)) == nil)
+
+-- A pot of raw butter is sealed against pouring, but can always be emptied: Empty in vanilla's (bare) Fluid menu
+local function fluidMenu(clicked)
+    local context = H.menu()
+    local fluidOption = context:addOption(getText("ContextMenu_Fluid"))
+    context:addSubMenu(fluidOption, context:getNew(context))
+    clicked.class = "InventoryItem"
+    for _, handler in ipairs(inventoryHandlers) do handler(0, context, { clicked }) end
+    return fluidOption.subOption:getOptionFromName(getText("Fluid_Empty"))
+end
+local rawPot = vessel("Raw Pot", "Base.Pot", M.MELTING_BUTTER, 0.5, 1.5)
+local empty = fluidMenu(rawPot)
+check("a pot of melting butter gets Empty in its Fluid menu", empty ~= nil)
+empty.onSelect(empty.target, unpack(empty.args))
+check("choosing it queues the core's empty job for that pot", ui.queued[#ui.queued].Type == "TPEmptyFluid"
+    and ui.queued[#ui.queued].item == rawPot)
+check("a pot of clarified butter is left to vanilla's Empty", fluidMenu(vessel("Done Pot", "Base.Pot", M.MELTED_CLARIFIED, 0.5, 1.5)) == nil)
 
 H.done()

@@ -1,4 +1,5 @@
--- Checks butter that keeps (TraditionalPreservationDairyButter.lua): rancid by place, salted, clarified. Run from the
+-- Checks butter that keeps (TraditionalPreservationDairyButter.lua): rancid by place, salted, clarified in a pot or
+-- the cauldron. Run from the
 -- mod folder: luajit tests/test_butter.lua
 local H = dofile((os.getenv("TPCORE") or "../TraditionalPreservationCore") .. "/tests/harness.lua")
 local check, near = H.check, H.near
@@ -71,32 +72,29 @@ M.onSaltButter(craft({ old }, { made }))
 check("Salt Butter: its days and a third of them gone, as the butter's", made.offAge == 90 and made.offAgeMax == 120
     and near(made.age, 30) and made.modData.tpdKeep ~= nil)
 
--- The pot: one butter, then a second, then poured off
-local pot = food("TraditionalPreservationDairy.PotOfButter", 30, 45, 2)
-M.onPutButterInPot(craft({}, { pot }))
-check("a pot holds one butter at its script weight", M.butterInPot(pot) == 1 and near(pot.weight, 1.3))
-check("room for a second", M.canAddButter(pot))
-local second = food("TraditionalPreservationDairy.PotOfButter")
-M.onAddButter(craft({ pot }, { second }))
-check("the second makes two, heavier, the pot's age kept", M.butterInPot(second) == 2 and near(second.weight, 1.6)
-    and second.age == 2 and second.custom)
-check("no room for a third", not M.canAddButter(second))
-local cooked = food("TraditionalPreservationDairy.PotOfButter")
-cooked.cooked = true
-check("nor to a cooked pot", not M.canAddButter(cooked))
-check("other inputs pass the test", M.canAddButter(food(M.BUTTER)))
-
-local given = {}
-local cook = { getInventory = function() return { AddItem = function(_, t) table.insert(given, t) end } end }
-M.onPourOffClarified(craft({ second }, {}), cook)
-check("a pot of two gives the cook a second Clarified Butter", #given == 1 and given[1] == M.CLARIFIED_BUTTER)
-given = {}
-M.onPourOffClarified(craft({ pot }, {}), cook)
-check("a pot of one gives none more", #given == 0)
-local burnt = food("TraditionalPreservationDairy.PotForgedButter")
-burnt.burnt = true
-check("burnt butter pours off nothing, and only it scrapes out", not M.canPourOffClarified(burnt) and M.canScrapeButter(burnt)
-    and M.canPourOffClarified(pot) and not M.canScrapeButter(pot))
+-- A pot or saucepan (TP Core's ItemFluid): the cauldron's route at a smaller size, and it can burn
+local ItemFluid = require "TraditionalPreservationCore/ItemFluid"
+check("a pot takes 6 butter, a saucepan 2", ItemFluid.pieceRoom(1.5, 0, false, M.BUTTER_PIECE_ML) == 6
+    and ItemFluid.pieceRoom(0.6, 0, false, M.BUTTER_PIECE_ML) == 2)
+local potRecord = {}
+ItemFluid.putPieces(potRecord, { 45 * 24, 20 * 24 }, 0)
+check("in a pot it goes rancid when the older butter would have", near(potRecord.offAt, 20 * 24))
+local potFluid, potBurnt = M.MELTING_BUTTER, false
+for minute = 0, 62 do potFluid = ItemFluid.advance(potRecord, potFluid, minute / 60, true, "Base.Saucepan") end
+check("steamed an hour it is clarified", potFluid == M.MELTED_CLARIFIED)
+for minute = 63, 125 do
+    potFluid, potBurnt = ItemFluid.advance(potRecord, potFluid, minute / 60, true, "Base.Saucepan")
+    if potBurnt then break end
+end
+check("an hour more and it burns", potBurnt)
+local vessels = 0
+for vessel, burnt in pairs(M.BURNT_BUTTER) do
+    vessels = vessels + 1
+    check(vessel .. " burns to a Dairy item", ItemFluid.burntItem(M.MELTED_CLARIFIED, vessel) == burnt
+        and M.BUTTER_VESSELS[vessel] and burnt:match("^TraditionalPreservationDairy%."))
+end
+check("both pots and both saucepans, no kettle", vessels == 4 and not M.BUTTER_VESSELS["Base.Kettle"])
+check("the cauldron's butter never burns", ItemFluid.burntItem(M.MELTED_CLARIFIED, "Base.Bucket") == nil)
 
 -- The cauldron: a butter a quarter litre, raw it stays in and goes rancid by its oldest butter
 local CauldronFluid = require "TraditionalPreservationCore/CauldronFluid"

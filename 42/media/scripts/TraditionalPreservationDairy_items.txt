@@ -170,7 +170,7 @@ module TraditionalPreservationDairy
         Tooltip = Tooltip_TraditionalPreservationDairy_SaltedButter,
     }
 
-    /* Butter cooked until its water is gone and the clear fat poured off its milk solids (Pour Off Clarified Butter):
+    /* Butter cooked until its water is gone and the clear fat strained off its milk solids (Strain Clarified Butter):
        it keeps as Lard does, never going off. Butter's food, as the water had none; 0.25 of its 0.3 weight. Fish &
        Meat's Potted Meat seals under it when Dairy is on (its Lua adds it to the fat line at load). */
     item ClarifiedButter
@@ -194,57 +194,59 @@ module TraditionalPreservationDairy
         Tooltip = Tooltip_TraditionalPreservationDairy_ClarifiedButter,
     }
 
-    /* Butter in a pot to clarify: one, or two (Add Butter to the Pot; modData tpdButter holds the count). It can't
-       be eaten: it cooks on any stove or fire and can burn, then Pour Off Clarified Butter gives a Clarified Butter
-       for each. One item for each vanilla pot. One butter's food. */
-    item PotOfButter
+    /* Clarified butter held steaming too long in a pot or saucepan (TP Core's ItemFluid, TraditionalPreservationDairyButter.lua
+       M.BURNT_BUTTER): the vessel is swapped for one of these, flagged burnt, its condition kept. Only Scrape Out Burnt
+       Butter gives the vessel back. One item for each vanilla pot and saucepan, with its look. */
+    item PotOfBurntButter
     {
         DisplayCategory = Food,
         ItemType = base:food,
-        Weight = 1.3,
+        Weight = 1.2,
         Icon = PotFull,
         CantEat = true,
-        BadInMicrowave = true,
-        CookingSound = FryingFood,
-        IsCookable = true,
-        MinutesToCook = 30,
-        MinutesToBurn = 90,
-        DaysFresh = 30,
-        DaysTotallyRotten = 45,
-        HungerChange = -24.0,
-        Calories = 3200.0,
-        Carbohydrates = 0.0,
-        Lipids = 352.0,
-        Proteins = 0.0,
         StaticModel = CookingPotSoup_Ground,
         WorldStaticModel = CookingPotSoup_Ground,
         Tags = base:hasmetal,
-        Tooltip = Tooltip_TraditionalPreservationDairy_PotOfButter,
+        Tooltip = Tooltip_TraditionalPreservationDairy_BurntButter,
     }
 
-    item PotForgedButter
+    item PotForgedBurntButter
     {
         DisplayCategory = Food,
         ItemType = base:food,
-        Weight = 1.3,
+        Weight = 1.2,
         Icon = Pot_Forged_Stew,
         CantEat = true,
-        BadInMicrowave = true,
-        CookingSound = FryingFood,
-        IsCookable = true,
-        MinutesToCook = 30,
-        MinutesToBurn = 90,
-        DaysFresh = 30,
-        DaysTotallyRotten = 45,
-        HungerChange = -24.0,
-        Calories = 3200.0,
-        Carbohydrates = 0.0,
-        Lipids = 352.0,
-        Proteins = 0.0,
         StaticModel = CookingPotForged_StewGround,
         WorldStaticModel = CookingPotForged_StewGround,
         Tags = base:hasmetal,
-        Tooltip = Tooltip_TraditionalPreservationDairy_PotOfButter,
+        Tooltip = Tooltip_TraditionalPreservationDairy_BurntButter,
+    }
+
+    item SaucepanBurntButter
+    {
+        DisplayCategory = Food,
+        ItemType = base:food,
+        Weight = 0.8,
+        Icon = SaucepanFilled,
+        CantEat = true,
+        StaticModel = SaucePanRice,
+        WorldStaticModel = SaucePanRice,
+        Tags = base:hasmetal,
+        Tooltip = Tooltip_TraditionalPreservationDairy_BurntButter,
+    }
+
+    item SaucepanCopperBurntButter
+    {
+        DisplayCategory = Food,
+        ItemType = base:food,
+        Weight = 0.8,
+        Icon = CopperPot_Pasta,
+        CantEat = true,
+        StaticModel = SaucepanCopperRice,
+        WorldStaticModel = SaucepanCopperRice,
+        Tags = base:hasmetal,
+        Tooltip = Tooltip_TraditionalPreservationDairy_BurntButter,
     }
 
     /* Kefir grains (Dairy's kefir). Only from loot: a packet of dried grains, opened like a seed packet. Each grain is

@@ -254,8 +254,9 @@ Vanilla butter keeps for ever. Here it goes **rancid**, as real butter does: fre
 Two old ways to make it last. Both need **Cooking 2**.
 
 - **Salt Butter** (right-click the butter): a **Butter** and **1 Salt** (one use of anything salt: a box of Salt does ten butters). You get a **Salted Butter**: three times the keeping, the same food. A half-stale butter makes a half-stale salted one, so salt it fresh.
-- **Clarify it.** **Put Butter in a Pot** (an empty Pot or Forged Pot), **Add Butter to the Pot** for a second if you like, then cook it on any stove or fire: 30 minutes, burnt at 90. **Pour Off Clarified Butter** through a cloth (Cheese Cloth, Dish Towel, Ripped Sheets, a Sheet or a Strainer, kept) gives one **Clarified Butter** for each butter and the pot back. **It never goes off**, like Lard. Salted butter clarifies too.
-- **A whole summer's butter at once** goes in the Stone Hearth's cauldron: **Put Butter in the Cauldron** takes every Butter and Salted Butter you carry. Keep it steaming an hour over a lit fire and it reads **Clarified Butter (Melted)**; fill a pot or bucket from the cauldron and **Strain Clarified Butter** through a cloth, a quarter litre to a Clarified Butter. It can't burn in the cauldron, but left there raw it goes rancid when its oldest butter would have.
+- **Clarify it.** Right-click a butter, **Put Butter in a Pot**, pick the pot, then **One** (the oldest butter) or **All**: each butter melts to a quarter litre of **Butter (Melting)**, as many as there is room for (a Pot or Forged Pot takes 6, a Saucepan or Copper Saucepan 2; more can go in until it is clarified, and that starts the hour again). Keep it steaming an hour on any stove or fire and the whole pot is **Clarified Butter (Melted)**. **Strain Clarified Butter** through a cloth (Cheese Cloth, Dish Towel, Ripped Sheets, a Sheet or a Strainer, kept): a quarter litre to a **Clarified Butter**. **It never goes off**, like Lard. Salted butter clarifies too.
+- **Mind the pot.** Another hour on the heat and the butter burns: you are left with a burnt pot, and **Scrape Out Burnt Butter** gives the pot back. Raw melting butter can't be poured into another container or topped up with anything else (Fluid, **Empty** throws it away if you change your mind), and left off the heat it goes rancid when its oldest butter would have.
+- **A whole summer's butter at once** goes in the Stone Hearth's cauldron, the same way at a bigger size: **Put Butter in the Cauldron** takes one or all of the Butter and Salted Butter you carry. Keep it steaming an hour over a lit fire, fill a pot or bucket from the cauldron and strain it. It can't burn in the cauldron, but left there raw it goes rancid just the same.
 
 | | Butter | Salted Butter | Clarified Butter |
 |---|---|---|---|
@@ -463,8 +464,9 @@ At 0 C and below the crock stops and waits: Crock Info says *Paused here (frozen
 | Crock won't place | It stands on the floor, a counter or a table, never on a stove, a fridge or a freezer |
 | No Empty Yogurt Containers | They come only from eating Yogurt. Use jars instead |
 | My butter reads Stale or Rotten | Butter keeps a month in a cellar, about 20 days in a warm room. Salt it, clarify it, or keep it in a basement or a powered fridge |
-| Pour Off Clarified Butter greyed out | Cook the pot first, on a stove or fire, and carry a cloth to pour it through. A burnt pot gives nothing: Scrape Out Burnt Butter for the pot |
-| Salt Butter or Put Butter in the Cauldron refused | Every butter step needs Cooking 2 |
+| Strain Clarified Butter missing | The pot must read Clarified Butter (Melted): an hour steaming on a stove or fire. Carry a cloth or a Strainer |
+| Put Butter in a Pot greyed out | Carry an empty Pot, Forged Pot, Saucepan or Copper Saucepan, or one holding melting butter (not a kettle). A clarified pot must be strained first |
+| Salt Butter or a Put Butter row refused | Every butter step needs Cooking 2 |
 | Stations or recipes missing | TP Core must be enabled. Then check `~/Zomboid/console.txt`: the tile number 5172 must be unique among your mods |
 
 ---
