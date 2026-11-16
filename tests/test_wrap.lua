@@ -35,10 +35,10 @@ local SCRIPT = { ["Base.Pot"] = { "Pot", 1.5, 0.8 }, ["Base.ClayJar"] = { "Jar",
 
 local function item(fullType)
     local script = SCRIPT[fullType]
-    local it = { fullType = fullType, data = {}, heat = 1, condition = 10, favorite = false,
+    local it = { fullType = fullType, modData = {}, heat = 1, condition = 10, favorite = false,
         fluid = script and fluidContainer(script[1], script[2], script[3]) }
     function it:getFullType() return self.fullType end
-    function it:getModData() return self.data end
+    function it:getModData() return self.modData end
     function it:getFluidContainer() return self.fluid end
     function it:getContainer() return self.container end
     function it:getWorldItem() return self.worldItem end
@@ -54,18 +54,18 @@ instanceItem = item
 
 -- The player's inventory.
 local bag = { items = {} }
-function bag:AddItem(thing)
-    if type(thing) == "string" then thing = item(thing) end
-    thing.container = self
-    table.insert(self.items, thing)
-    return thing
+function bag:AddItem(added)
+    if type(added) == "string" then added = item(added) end
+    added.container = self
+    table.insert(self.items, added)
+    return added
 end
-function bag:contains(thing)
-    for _, it in ipairs(self.items) do if it == thing then return true end end
+function bag:contains(item)
+    for _, it in ipairs(self.items) do if it == item then return true end end
     return false
 end
-function bag:Remove(thing)
-    for i, it in ipairs(self.items) do if it == thing then table.remove(self.items, i) thing.container = nil return end end
+function bag:Remove(item)
+    for i, it in ipairs(self.items) do if it == item then table.remove(self.items, i) item.container = nil return end end
 end
 -- The item of a type in the bag now (a swap replaces it).
 local function find(fullType)
@@ -88,8 +88,8 @@ check("a tick later it is a new pot, so the new name shows at once", wrapped ~= 
     and shown(wrapped) == "TPDWrappedPot")
 pot = wrapped
 check("it shows as a pot bundled in towels, in the inventory and on the ground, after the swap too",
-    pot.data.customInventoryIcon == "media/textures/Item_WrappedPot.png"
-    and pot.data.worldStaticModel == "TraditionalPreservationDairy.TowelBundle_Pot")
+    pot.modData.customInventoryIcon == "media/textures/Item_WrappedPot.png"
+    and pot.modData.worldStaticModel == "TraditionalPreservationDairy.TowelBundle_Pot")
 check("it keeps its capacity and no longer catches rain", pot.fluid.capacity == 1.5 and pot.fluid.rain == 0)
 check("it can't be wrapped twice, and can be unwrapped", not M.canWrap(pot) and M.canUnwrap(pot) and not M.wrap(pot))
 check("a sheet or twine passes either recipe's test", M.canWrap(item("Base.Sheet")) and M.canUnwrap(item("Base.Twine")))
@@ -98,23 +98,23 @@ M.wrap(jar)
 M.wrap(bucket)
 check("jars and buckets wrap under their own names, with their own capacity", jar.fluid.name == "TPDWrappedJar"
     and jar.fluid.capacity == 2.5 and bucket.fluid.name == "TPDWrappedBucket" and bucket.fluid.capacity == 10)
-check("each wraps to its own look", jar.data.customInventoryIcon == "media/textures/Item_WrappedClayJar.png"
-    and bucket.data.worldStaticModel == "TraditionalPreservationDairy.TowelBundle_BucketCarved")
+check("each wraps to its own look", jar.modData.customInventoryIcon == "media/textures/Item_WrappedClayJar.png"
+    and bucket.modData.worldStaticModel == "TraditionalPreservationDairy.TowelBundle_BucketCarved")
 check("anything else isn't wrapped", not M.wrap(item("Base.WaterBottle")))
 H.fire("OnTick")
 check("an item in no container keeps its own (its new name shows after a load)", jar.fluid.name == "TPDWrappedJar")
 
 -- What it holds goes over with the swap
 pot.fluid.fluids.ScaldedCowMilk = 1.2
-pot.data.tpdCarry = { ml = 1200, c = 80 }
+pot.modData.tpdCarry = { ml = 1200, c = 80 }
 pot.heat, pot.favorite = 1.6, true
 check("unwrapped, it is a plain pot again: name and rain back", M.unwrap(pot) and not M.isWrapped(pot)
     and pot.fluid.name == "Pot" and pot.fluid.rain == 0.8
-    and pot.data.customInventoryIcon == nil and pot.data.worldStaticModel == nil)
+    and pot.modData.customInventoryIcon == nil and pot.modData.worldStaticModel == nil)
 H.fire("OnTick")
 local plain = find("Base.Pot")
 check("the new pot shows its name and holds the same milk, record, heat and favourite", plain ~= pot
-    and shown(plain) == "Pot" and plain.fluid.fluids.ScaldedCowMilk == 1.2 and plain.data.tpdCarry.c == 80
+    and shown(plain) == "Pot" and plain.fluid.fluids.ScaldedCowMilk == 1.2 and plain.modData.tpdCarry.c == 80
     and plain.heat == 1.6 and plain.favorite == true and plain.fluid.rain == 0.8)
 check("unwrapping a bare pot does nothing", not M.unwrap(plain))
 pot = plain

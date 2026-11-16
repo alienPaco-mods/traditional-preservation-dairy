@@ -63,7 +63,7 @@ function M.swapForFresh(item)
     fresh:setRainCatcher(old:getRainCatcher())
     fresh:copyFluidsFrom(old)
     local modData = new:getModData()
-    for key, value in pairs(item:getModData()) do modData[key] = value end
+    for key, field in pairs(item:getModData()) do modData[key] = field end
     new:setItemHeat(item:getItemHeat())
     new:setCondition(item:getCondition())
     new:setFavorite(item:isFavorite())
@@ -78,9 +78,9 @@ end
 
 local function onTick()
     if #renamed == 0 then return end
-    local list = renamed
+    local toSwap = renamed
     renamed = {}
-    for _, item in ipairs(list) do M.swapForFresh(item) end
+    for _, item in ipairs(toSwap) do M.swapForFresh(item) end
 end
 
 Events.OnTick.Add(onTick)

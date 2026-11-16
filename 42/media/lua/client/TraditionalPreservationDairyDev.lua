@@ -48,15 +48,15 @@ end
 
 function TPD.pots()
     local now = getGameTime():getWorldAgeHours()
-    local list = pots()
-    if #list == 0 then return say("No incubator loaded and tracked. Right-click one to start tracking it.") end
-    for _, station in ipairs(list) do
-        local state = TraditionalPreservationDairyWorld.updateIncubator(station, now)
-        local placeC = M.placeTemperature(M.getLedger(), state.place)
-        local hours, nextStage = M.forecast(state, placeC)
+    local stations = pots()
+    if #stations == 0 then return say("No incubator loaded and tracked. Right-click one to start tracking it.") end
+    for _, station in ipairs(stations) do
+        local batch = TraditionalPreservationDairyWorld.updateIncubator(station, now)
+        local placeC = M.placeTemperature(M.getLedger(), batch.place)
+        local hours, nextStage = M.forecast(batch, placeC)
         say(string.format("%d,%d,%d %s: %.1f L at %.1f C, starter %s, set %.1f/%.0f h, %s at %.1f C; next %s in %s h",
-            station:getX(), station:getY(), station:getZ(), M.stage(state), (state.ml or 0) / 1000, state.tempC or 0,
-            tostring(state.starter), state.done or 0, M.INCUBATE_HOURS, tostring(state.place), placeC,
+            station:getX(), station:getY(), station:getZ(), M.stage(batch), (batch.ml or 0) / 1000, batch.tempC or 0,
+            tostring(batch.starter), batch.workHours or 0, M.INCUBATE_HOURS, tostring(batch.place), placeC,
             tostring(nextStage), hours and string.format("%.1f", hours) or "never"))
     end
 end
@@ -65,9 +65,9 @@ end
 -- before the history began count at the place's temperature now.
 local function agePots(hours)
     for _, station in ipairs(pots()) do
-        local state = TraditionalPreservationDairyWorld.incubatorState(station)
-        if state.last then state.last = state.last - hours end
-        if state.readyHour then state.readyHour = state.readyHour - hours end
+        local batch = TraditionalPreservationDairyWorld.batchOf(station)
+        if batch.lastHour then batch.lastHour = batch.lastHour - hours end
+        if batch.readyHour then batch.readyHour = batch.readyHour - hours end
         TraditionalPreservationDairyWorld.refresh(station)
     end
     say(string.format("Moved %d incubator(s) on by %.1f hours.", #pots(), hours))
@@ -188,14 +188,14 @@ local function crocks()
 end
 
 function TPD.crocks()
-    local list = crocks()
-    if #list == 0 then return say("No crock loaded and tracked. Right-click one to start tracking it.") end
-    for _, station in ipairs(list) do
-        local state = TraditionalPreservationDairyWorld.updateCrock(station)
-        local line = string.format("%d,%d,%d %s, %s", station:getX(), station:getY(), station:getZ(), M.crockStage(state), tostring(state.place))
-        if state.done then
-            local status = M.crockStatus(state, M.getLedger(), state.place)
-            line = line .. string.format(": %.1f/%.0f h at %.0f%% speed, %s h left", state.done, M.crockHours(state), status.rate * 100,
+    local stations = crocks()
+    if #stations == 0 then return say("No crock loaded and tracked. Right-click one to start tracking it.") end
+    for _, station in ipairs(stations) do
+        local crock = TraditionalPreservationDairyWorld.updateCrock(station)
+        local line = string.format("%d,%d,%d %s, %s", station:getX(), station:getY(), station:getZ(), M.crockStage(crock), tostring(crock.place))
+        if crock.workHours then
+            local status = M.crockStatus(crock, M.getLedger(), crock.place)
+            line = line .. string.format(": %.1f/%.0f h at %.0f%% speed, %s h left", crock.workHours, M.crockHours(crock), status.rate * 100,
                 status.hoursLeft and string.format("%.1f", status.hoursLeft) or "never")
         end
         say(line)
@@ -204,8 +204,8 @@ end
 
 local function ageCrocks(hours)
     for _, station in ipairs(crocks()) do
-        local state = TraditionalPreservationDairyWorld.crockState(station)
-        if state.done then state.done = state.done + hours end
+        local crock = TraditionalPreservationDairyWorld.crockOf(station)
+        if crock.workHours then crock.workHours = crock.workHours + hours end
         TraditionalPreservationDairyWorld.refresh(station)
     end
     say(string.format("Moved %d crock(s) on by %.1f hours.", #crocks(), hours))
@@ -223,30 +223,30 @@ end
 
 -- Every milk container in the player's inventory, brought up to now.
 local function carriedMilk()
-    local now, list = getGameTime():getWorldAgeHours(), {}
+    local now, carried = getGameTime():getWorldAgeHours(), {}
     local items = getPlayer():getInventory():getAllEvalRecurse(function(item) return item:getFluidContainer() ~= nil end)
     for i = 0, items:size() - 1 do
         local item = items:get(i)
-        local record, spec = FluidAgeing.look(item, now)
-        if record or FluidAgeing.specIn(item:getFluidContainer()) then table.insert(list, { item = item, record = record, spec = spec }) end
+        local fluidAge, fluidKind = FluidAgeing.look(item, now)
+        if fluidAge or FluidAgeing.fluidKindIn(item:getFluidContainer()) then table.insert(carried, { item = item, fluidAge = fluidAge, fluidKind = fluidKind }) end
     end
-    return list
+    return carried
 end
 
 function TPD.ages()
-    local list = carriedMilk()
-    if #list == 0 then return say("You carry no milk or kefir.") end
-    for _, entry in ipairs(list) do
-        local item, record, spec = entry.item, entry.record, entry.spec
+    local carried = carriedMilk()
+    if #carried == 0 then return say("You carry no milk or kefir.") end
+    for _, milk in ipairs(carried) do
+        local item, fluidAge, fluidKind = milk.item, milk.fluidAge, milk.fluidKind
         local fluid = item:getFluidContainer():getPrimaryFluid()
-        if not record then
+        if not fluidAge then
             say(string.format("%s: %s, no age (sealed store milk, or milk going off is switched off)", item:getDisplayName(),
                 fluid and fluid:getFluidTypeString() or "?"))
         else
-            local left = FluidAgeing.hoursLeft(record, spec)
+            local left = FluidAgeing.hoursLeft(fluidAge, fluidKind)
             say(string.format("%s: %s, %s%s, age %.1f h at 20 C, next stage in %s h at 20 C, %s", item:getDisplayName(),
-                fluid and fluid:getFluidTypeString() or "?", FluidAgeing.stage(record, spec), FluidAgeing.inState(record, M.SCALDED_STATE) and " (scalded)" or "",
-                record.age, left and string.format("%.1f", left) or "never", tostring(record.place)))
+                fluid and fluid:getFluidTypeString() or "?", FluidAgeing.stage(fluidAge, fluidKind), FluidAgeing.inState(fluidAge, M.SCALDED_STATE) and " (scalded)" or "",
+                fluidAge.age, left and string.format("%.1f", left) or "never", tostring(fluidAge.place)))
         end
     end
 end
@@ -254,10 +254,10 @@ end
 function TPD.sour(hours)
     hours = hours or M.MILK_TURN_HOURS
     local count = 0
-    for _, entry in ipairs(carriedMilk()) do
-        if entry.record then
-            entry.record.age = entry.record.age + hours
-            FluidAgeing.apply(entry.item:getFluidContainer(), entry.record, entry.spec)
+    for _, milk in ipairs(carriedMilk()) do
+        if milk.fluidAge then
+            milk.fluidAge.age = milk.fluidAge.age + hours
+            FluidAgeing.apply(milk.item:getFluidContainer(), milk.fluidAge, milk.fluidKind)
             count = count + 1
         end
     end
@@ -289,17 +289,17 @@ function TPD.rancid(days)
 end
 
 function TPD.tiles()
-    local stations = Station.near(getPlayer():getSquare(), TILES_RADIUS, function(object)
-        return M.isIncubator(object) or M.isCrock(object) or M.hasCauldron(object)
+    local stations = Station.near(getPlayer():getSquare(), TILES_RADIUS, function(isoObject)
+        return M.isIncubator(isoObject) or M.isCrock(isoObject) or M.hasCauldron(isoObject)
     end)
-    for _, object in ipairs(stations) do
-        local square = object:getSquare()
-        local props, squareProps = object:getSprite():getProperties(), square:getProperties()
-        local attached = object:getAttachedAnimSprite()
-        local blocks = instanceof(object, "IsoThumpable") and string.format(" blockAll %s passThrough %s",
-            tostring(object:isBlockAllTheSquare()), tostring(object:isCanPassThrough())) or ""
+    for _, station in ipairs(stations) do
+        local square = station:getSquare()
+        local props, squareProps = station:getSprite():getProperties(), square:getProperties()
+        local attached = station:getAttachedAnimSprite()
+        local blocks = instanceof(station, "IsoThumpable") and string.format(" blockAll %s passThrough %s",
+            tostring(station:isBlockAllTheSquare()), tostring(station:isCanPassThrough())) or ""
         say(string.format("%d,%d %s%s %s: sprite solid %s solidtrans %s; square solid %s solidtrans %s; attached %d",
-            square:getX(), square:getY(), object:getClass():getSimpleName(), blocks, object:getSprite():getName(),
+            square:getX(), square:getY(), station:getClass():getSimpleName(), blocks, station:getSprite():getName(),
             tostring(props:has(IsoFlagType.solid)), tostring(props:has(IsoFlagType.solidtrans)),
             tostring(squareProps:has(IsoFlagType.solid)), tostring(squareProps:has(IsoFlagType.solidtrans)),
             attached and attached:size() or 0))

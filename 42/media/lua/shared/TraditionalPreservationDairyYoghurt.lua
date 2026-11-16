@@ -39,11 +39,11 @@ end
 -- Portions left in a Jar of Yogurt. A jar never filled at a pot (a debug spawn: its script holds no food) gets a
 -- glass jar's worth (SPAWNED_JAR_ML) once.
 function M.jarPortions(jar)
-    local data = jar:getModData()
-    if not data.tpdFood then
+    local jarModData = jar:getModData()
+    if not jarModData.tpdFood then
         local portions = M.SPAWNED_JAR_ML / M.CUP_ML
         M.setPortions(jar, portions, portions)
-        data.tpdFood = true
+        jarModData.tpdFood = true
     end
     return M.portionsIn(jar:getHungChange(), M.jarPortion(jar))
 end
@@ -62,11 +62,11 @@ end
 -- A freshly collected jar: ml of yogurt in an empty jar of jarType, aged in days, portion being one portion's food.
 function M.fillJar(jar, jarType, ml, age, portion)
     jar:setAge(age)
-    local data = jar:getModData()
-    data.tpdJar = jarType
-    data.tpdFood = true
-    data.tpdPortion = portion
-    data.customInventoryIcon = M.JAR_ICONS[jarType]
+    local jarModData = jar:getModData()
+    jarModData.tpdJar = jarType
+    jarModData.tpdFood = true
+    jarModData.tpdPortion = portion
+    jarModData.customInventoryIcon = M.JAR_ICONS[jarType]
     -- The last jar from a pot may be part-full: it is a full jar for eating shares, short of portions.
     M.setPortions(jar, ml / M.CUP_ML, M.JAR_ML[jarType] / M.CUP_ML, portion)
     M.labelJar(jar)

@@ -35,7 +35,7 @@ local function readDays(path)
     local days = {}
     for line in io.lines(path) do
         local f = {}
-        for value in line:gmatch("%S+") do table.insert(f, value) end
+        for field in line:gmatch("%S+") do table.insert(f, field) end
         -- Each month's forecast also holds the 10 days before it (offset below 0): skipped, so a month is 30 days.
         if #f >= 6 and tonumber(f[3]) >= 0 then
             table.insert(days, { world = tonumber(f[1]), offset = tonumber(f[3]), month = tonumber(f[2]), low = tonumber(f[4]), mean = tonumber(f[5]), high = tonumber(f[6]) })
@@ -98,7 +98,7 @@ local function startRuns(month)
 end
 
 local results = {}
-local function result(run)
+local function resultsOf(run)
     local key = run.month .. run.place .. run.kind
     results[key] = results[key] or {}
     return results[key]
@@ -108,7 +108,7 @@ local function updatePot(run)
     local batch = run.batch
     local was = M.stage(batch)
     M.catchUp(batch, H.hours, run.where, run.history, run.ledger)
-    local now, r = M.stage(batch), result(run)
+    local now, r = M.stage(batch), resultsOf(run)
     local since = H.hours - run.start
     if batch.wrapHour then r.wrap = batch.wrapHour - run.start end
     if was == "Cooling" and now == "TooCold" then r.cold = since end
@@ -124,10 +124,10 @@ local function updateCrock(run)
     local crock = run.batch
     M.updateCrock(crock, run.ledger, run.where)
     if crock.stage == "Waiting" then
-        result(run).cultivated = H.hours - run.start
+        resultsOf(run).cultivated = H.hours - run.start
         M.feedCrock(crock, run.ledger)
     elseif crock.stage == "Ready" then
-        result(run).ready = H.hours - run.start
+        resultsOf(run).ready = H.hours - run.start
         run.finished = true
     end
 end
@@ -142,8 +142,8 @@ for _, day in ipairs(days) do
         for step = 1, STEPS_PER_HOUR do
             H.setHours(H.hours + 1 / STEPS_PER_HOUR)
             local temperature = temperatureAt(day, hour + step / STEPS_PER_HOUR)
-            M.record(ledger, history, H.hours, temperature)
-            M.record(gridLedger, gridHistory, H.hours, temperature)
+            M.recordWeather(ledger, history, H.hours, temperature)
+            M.recordWeather(gridLedger, gridHistory, H.hours, temperature)
             for _, run in ipairs(runs) do
                 if not run.finished then
                     if run.kind == "crock" then updateCrock(run) else updatePot(run) end
@@ -153,8 +153,8 @@ for _, day in ipairs(days) do
     end
 end
 
-local function hoursText(value)
-    return value and string.format("%.1f", value) or "-"
+local function hoursText(hours)
+    return hours and string.format("%.1f", hours) or "-"
 end
 
 local function get(month, place, kind, field)

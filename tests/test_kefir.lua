@@ -24,7 +24,7 @@ end
 local fluids = {}
 for name, body in read("42/media/scripts/TraditionalPreservationDairy_fluids.txt"):gmatch("fluid (%w+)%s*(%b{})") do
     local props = {}
-    for key, value in (body:match("Properties%s*(%b{})") or ""):gmatch("(%w+) = (%-?[%d.]+)") do props[key] = tonumber(value) end
+    for key, number in (body:match("Properties%s*(%b{})") or ""):gmatch("(%w+) = (%-?[%d.]+)") do props[key] = tonumber(number) end
     props.hazardous = body:find("Hazardous") ~= nil
     fluids[name] = props
 end
@@ -48,18 +48,18 @@ check("no kefir carries a foodSicknessChange (it never reaches the drinker: TP C
     not read("42/media/scripts/TraditionalPreservationDairy_fluids.txt"):find("FoodSickness"))
 
 -- Going off
-local spec = FluidAgeing.spec(M.KEFIR_KIND)
-check("kefir ages on its own kind, at milk's rate", spec and spec.kind == "kefir" and spec.rate == M.milkRate)
-local record = { kind = M.KEFIR_KIND, age = 0 }
-check("fresh at first", FluidAgeing.stage(record, spec) == "Fresh")
-record.age = 71.9
-check("still fresh just short of 3 days at 20 C", FluidAgeing.stage(record, spec) == "Fresh")
-record.age = 72
-check("separated at 3 days", FluidAgeing.stage(record, spec) == "Turned")
-record.age = 240
-check("rotten at 10 days", FluidAgeing.stage(record, spec) == "Spoiled")
-check("each kefir separates to its own and rots to its own", spec.fresh.SheepKefir == "SeparatedSheepKefir"
-    and spec.spoiledOf.SeparatedCowKefir == "RottenCowKefir" and spec.spoiledOf.SheepKefir == "RottenSheepKefir")
+local kefir = FluidAgeing.fluidKind(M.KEFIR_PROCESS)
+check("kefir ages on its own kind, at milk's rate", kefir and kefir.process == "kefir" and kefir.rate == M.milkRate)
+local fluidAge = { process = M.KEFIR_PROCESS, age = 0 }
+check("fresh at first", FluidAgeing.stage(fluidAge, kefir) == "Fresh")
+fluidAge.age = 71.9
+check("still fresh just short of 3 days at 20 C", FluidAgeing.stage(fluidAge, kefir) == "Fresh")
+fluidAge.age = 72
+check("separated at 3 days", FluidAgeing.stage(fluidAge, kefir) == "Turned")
+fluidAge.age = 240
+check("rotten at 10 days", FluidAgeing.stage(fluidAge, kefir) == "Spoiled")
+check("each kefir separates to its own and rots to its own", kefir.fresh.SheepKefir == "SeparatedSheepKefir"
+    and kefir.spoiledOf.SeparatedCowKefir == "RottenCowKefir" and kefir.spoiledOf.SheepKefir == "RottenSheepKefir")
 check("a 15 C basement keeps it twice as long as a 20 C room, a fridge about five times",
     near(M.milkRate(15), 0.5) and M.milkRate(4) < 0.2)
 
@@ -74,7 +74,7 @@ check("separated kefir eases nothing", Drink.eased({ SeparatedCowKefir = 1 }, { 
 
 -- Grains
 local grain = M.newGrain(nil, 100)
-check("a new grain is live, at no reactivation stage, set now", grain.state == M.GRAIN_LIVE and grain.stage == 0 and grain.hour == 100)
+check("a new grain is live, at no reactivation stage, set now", grain.grainState == M.GRAIN_LIVE and grain.stage == 0 and grain.hour == 100)
 local share, grows = M.grainShare(grain)
 check("a live grain counts 1 and grows", share == 1 and grows)
 share, grows = M.grainShare(M.newGrain(M.GRAIN_HUNGRY, 0))
@@ -82,10 +82,10 @@ check("a hungry one counts half and doesn't grow", share == 0.5 and not grows)
 share, grows = M.grainShare(M.newGrain(M.GRAIN_REACTIVATING, 0))
 check("one coming back from dried counts half and doesn't grow", share == 0.5 and not grows)
 check("a dead one counts nothing", M.grainShare(M.newGrain(M.GRAIN_DEAD, 0)) == 0)
-local data = {}
-local item = { getModData = function() return data end }
+local itemModData = {}
+local item = { getModData = function() return itemModData end }
 local first = M.grainOf(item, 5)
-check("a grain with no record gets a live one, kept under its key", first.state == M.GRAIN_LIVE and data[M.GRAIN_KEY] == first
+check("a grain with no record gets a live one, kept under its key", first.grainState == M.GRAIN_LIVE and itemModData[M.GRAIN_KEY] == first
     and M.grainOf(item, 9) == first and first.hour == 5)
 
 -- Items, the packet and the loot
@@ -107,9 +107,9 @@ ProceduralDistributions = { list = { CrateFarming = { items = { "WheatBagSeed", 
 package.preload["Items/ProceduralDistributions"] = function() return true end
 dofile("42/media/lua/server/TraditionalPreservationDairyLoot.lua")
 local function weightIn(list)
-    local entries = ProceduralDistributions.list[list].items
-    for i = 1, #entries, 2 do
-        if entries[i] == M.GRAIN_PACKET then return entries[i + 1] end
+    local lootItems = ProceduralDistributions.list[list].items
+    for i = 1, #lootItems, 2 do
+        if lootItems[i] == M.GRAIN_PACKET then return lootItems[i + 1] end
     end
 end
 check("packets on farm storage shelves and a Gigamart's farming shelf, very rarely in a home fridge or kitchen cupboard",

@@ -17,7 +17,7 @@ end
 
 -- Engine stand-ins. Food values are kept as 32-bit floats, as the engine does.
 local ffi = require "ffi"
-local function f32(value) return tonumber(ffi.new("float", value)) end
+local function f32(number) return tonumber(ffi.new("float", number)) end
 local WEIGHTS = { ["Base.EmptyJar"] = 0.2, ["Base.ClayJar"] = 0.3, ["Base.ClayJarGlazed"] = 0.3 }
 ScriptManager = { instance = { getItem = function(_, fullType)
     return WEIGHTS[fullType] and { getActualWeight = function() return WEIGHTS[fullType] end }
@@ -26,9 +26,9 @@ function getItemNameFromFullType() return "Jar of Yogurt" end
 function getTexture(name) return name end
 
 local function food(fullType)
-    local item = { fullType = fullType, data = {}, hung = 0, base = 0, calories = 0, age = 0 }
+    local item = { fullType = fullType, modData = {}, hung = 0, base = 0, calories = 0, age = 0 }
     function item:getFullType() return self.fullType end
-    function item:getModData() return self.data end
+    function item:getModData() return self.modData end
     function item:setHungChange(v) self.hung = f32(v) end
     function item:getHungChange() return self.hung end
     function item:setBaseHunger(v) self.base = f32(v) end
@@ -103,8 +103,8 @@ check("it is named and weighed by its portions", glass.name == "Jar of Yogurt (4
 local clay = bag:AddItem(M.YOGHURT_JAR)
 M.fillJar(clay, "Base.ClayJar", 2500, 0)
 check("a clay jar holds ten, with its own look", near(M.jarPortions(clay), 10)
-    and clay.data.customInventoryIcon == "media/textures/Item_JarOfYoghurt_Clay.png"
-    and glass.data.customInventoryIcon == nil
+    and clay.modData.customInventoryIcon == "media/textures/Item_JarOfYoghurt_Clay.png"
+    and glass.modData.customInventoryIcon == nil
     and near(clay.weight, 2.8))
 local part = bag:AddItem(M.YOGHURT_JAR)
 M.fillJar(part, "Base.ClayJar", 1500, 0)
@@ -175,7 +175,7 @@ local COW = M.portionFood({ fluid = "CowMilk", ml = 1000 })
 local milky = bag:AddItem(M.YOGHURT_JAR)
 M.fillJar(milky, "Base.EmptyJar", 1000, 0, COW)
 check("a jar keeps its milk's food", near(M.jarPortions(milky), 4) and near(M.jarFull(milky), 4)
-    and near(milky.calories, 615) and near(milky.hung, -0.5) and milky.data.tpdPortion == COW)
+    and near(milky.calories, 615) and near(milky.hung, -0.5) and milky.modData.tpdPortion == COW)
 eat(milky, M.portionShare(M.jarPortions(milky), M.jarFull(milky)))
 check("a portion eaten is a quarter of the milk", near(M.jarPortions(milky), 3) and near(milky.calories, 461.25))
 local milkCup = bag:AddItem(M.EMPTY_CUP)
@@ -197,7 +197,7 @@ check("vanilla Yogurt: its empty cup and a cow's milk portion", table.concat(par
 -- A jar never filled at a pot (a debug spawn): no food values, nothing in its modData
 local spawned = bag:AddItem(M.YOGHURT_JAR)
 check("a spawned jar gets a glass jar's four portions once", near(M.jarPortions(spawned), 4) and near(M.jarFull(spawned), 4)
-    and spawned.data.tpdFood == true)
+    and spawned.modData.tpdFood == true)
 for _ = 1, 4 do eat(spawned, M.portionShare(M.jarPortions(spawned), M.jarFull(spawned))) end
 check("and empties back into a clay jar, as its model is one", not bag:contains(spawned) and bag:count("Base.ClayJar") == 3)
 

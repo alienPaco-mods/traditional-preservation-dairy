@@ -58,7 +58,7 @@ end
 local function tile(x, y, class, sprite, modData)
     local square = { getX = function() return x end, getY = function() return y end, getZ = function() return 0 end,
         isOutside = function() return false end, isInARoom = function() return true end }
-    local object = {
+    local station = {
         class = class,
         getSprite = function() return { getName = function() return sprite end } end,
         getModData = function() return modData end,
@@ -73,16 +73,16 @@ local function tile(x, y, class, sprite, modData)
         clearAttachedAnimSprite = function() end,
         addAttachedAnimSpriteByName = function() end,
     }
-    ground[x .. "," .. y] = { object }
-    return object
+    ground[x .. "," .. y] = { station }
+    return station
 end
 
 local function incubator(x, batch)
     return tile(x, 5, "IsoThumpable", M.spriteName(M.INCUBATOR_SPRITE), { movableData = { [M.INCUBATOR_KEY] = batch or {} } })
 end
 
-local function crock(x, state)
-    return tile(x, 5, "IsoThumpable", M.spriteName(M.CROCK_SPRITE), { movableData = { [M.CROCK_KEY] = state or {} } })
+local function crock(x, crockModData)
+    return tile(x, 5, "IsoThumpable", M.spriteName(M.CROCK_SPRITE), { movableData = { [M.CROCK_KEY] = crockModData or {} } })
 end
 
 -- A Stone Hearth one tile from the pot at 5,5.
@@ -181,7 +181,7 @@ ui.carried = {}
 pour = named(open(incubator(5, { ml = M.CAPACITY_ML, fluid = "CowMilk", tempC = 80 }))[1], POUR)
 check("a full pot takes no more", pour.isDisabled == true
     and pour.toolTip.description == getText("IGUI_TraditionalPreservationDairy_PotFull"))
-sub = open(incubator(5, { ml = 2000, fluid = "CowMilk", tempC = 30, starter = "Yogurt", done = M.INCUBATE_HOURS, readyHour = 90 }))[1]
+sub = open(incubator(5, { ml = 2000, fluid = "CowMilk", tempC = 30, starter = "Yogurt", workHours = M.INCUBATE_HOURS, readyHour = 90 }))[1]
 check("set yogurt is collected, not poured", named(sub, "ContextMenu_TraditionalPreservationDairy_Collect") ~= nil
     and named(sub, "ContextMenu_TraditionalPreservationDairy_FillPotCups") ~= nil and named(sub, POUR) == nil)
 
@@ -196,9 +196,9 @@ check("the crock's menu opens with its status and Crock Info", subs[2].options[1
 
 -- A Jar of Yogurt as a starter: a whole portion left, not gone off
 local function jarOf(name, portions, rotten)
-    local data = { tpdFood = true, customInventoryIcon = "icon" }
+    local modData = { tpdFood = true, customInventoryIcon = "icon" }
     return { getFullType = function() return M.YOGHURT_JAR end, getDisplayName = function() return name end,
-        isFavorite = function() return false end, isRotten = function() return rotten end, getModData = function() return data end,
+        isFavorite = function() return false end, isRotten = function() return rotten end, getModData = function() return modData end,
         getHungChange = function() return M.PORTION.hunger * portions end, getFluidContainer = function() return nil end }
 end
 ui.carried = { jarOf("Low Jar", 0.5), jarOf("Bad Jar", 3, true), jarOf("Good Jar", 2) }
@@ -251,7 +251,7 @@ local function feedJug(litres)
     function container:getAmount() return self.litres end
     function container:removeFluid(l) self.litres = self.litres - l end
     function container:getSpecificFluidAmount(fluid) return fluid == "CowMilk" and self.litres or 0 end
-    local modData = { [FluidAgeing.KEY] = { kind = M.MILK_KIND, age = 30 } }
+    local modData = { [FluidAgeing.KEY] = { process = M.MILK_PROCESS, age = 30 } }
     return { getFluidContainer = function() return container end, getModData = function() return modData end }, modData
 end
 local function feed(litres)
@@ -264,10 +264,10 @@ end
 -- Fluids by name, so FluidAgeing sees the jug's milk.
 local realGet = Fluid.Get
 Fluid.Get = function(name) return name end
-local stage, record = feed(M.CROCK_FEED_ML / 1000)
-check("a feed that empties the jug starts the crock and forgets the milk's age", stage == "Developing" and record == nil)
-stage, record = feed(1)
-check("a jug with milk left keeps its age", stage == "Developing" and record ~= nil)
+local stage, fluidAge = feed(M.CROCK_FEED_ML / 1000)
+check("a feed that empties the jug starts the crock and forgets the milk's age", stage == "Developing" and fluidAge == nil)
+stage, fluidAge = feed(1)
+check("a jug with milk left keeps its age", stage == "Developing" and fluidAge ~= nil)
 Fluid.Get = realGet
 
 -- Put Butter in the Cauldron on the Stone Hearth's menu (TP Core's CauldronUI.addPieces)
@@ -289,10 +289,10 @@ local function butterRow(aHearth)
     return option and option.subOption.options[1]
 end
 local function butter(fullType, rotten, age)
-    local data = {}
+    local modData = {}
     return { getFullType = function() return fullType end, isRotten = function() return rotten or false end,
         getFluidContainer = function() return nil end, isFavorite = function() return false end,
-        hasTag = function() return false end, getModData = function() return data end,
+        hasTag = function() return false end, getModData = function() return modData end,
         getAge = function() return age or 0 end, getOffAgeMax = function() return 45 end, setOffAge = function() end,
         setOffAgeMax = function() end, getOffAge = function() return 30 end, setAge = function() end,
         getOutermostContainer = function() return nil end, getWorldItem = function() return nil end }
@@ -315,8 +315,8 @@ local queued = ui.queued[#ui.queued]
 check("One puts the oldest butter", #queued.pieces == 1 and queued.pieces[1] == plainButter)
 picks[2].onSelect(picks[2].target, unpack(picks[2].args))
 queued = ui.queued[#ui.queued]
-check("All queues the core's job with melting butter, oldest first", queued.Type == "TPPutPieces" and queued.spec.fluid == M.MELTING_BUTTER
-    and queued.spec.pieceMl == M.BUTTER_PIECE_ML and queued.pieces[1] == plainButter and queued.pieces[2] == saltedButter)
+check("All queues the core's job with melting butter, oldest first", queued.Type == "TPPutPieces" and queued.asFluid.fluid == M.MELTING_BUTTER
+    and queued.asFluid.pieceMl == M.BUTTER_PIECE_ML and queued.pieces[1] == plainButter and queued.pieces[2] == saltedButter)
 row = butterRow(hearth({ ml = 500, fluid = "Water", tempC = 20 }))
 check("a cauldron of water refuses it with the reason", row.notAvailable == true
     and row.toolTip.description == getText("IGUI_TraditionalPreservationDairy_ButterNoRoom"))
@@ -358,7 +358,7 @@ check("a vessel's One puts the oldest butter in it", queued.Type == "TPPutPieces
 picks[2].onSelect(picks[2].target, unpack(picks[2].args))
 queued = ui.queued[#ui.queued]
 check("its All queues the core's job with melting butter into that vessel", queued.Type == "TPPutPieces"
-    and queued.into.item == saucepan and queued.spec.fluid == M.MELTING_BUTTER and queued.spec.pieceMl == M.BUTTER_PIECE_ML
+    and queued.into.item == saucepan and queued.asFluid.fluid == M.MELTING_BUTTER and queued.asFluid.pieceMl == M.BUTTER_PIECE_ML
     and #queued.pieces == 2)
 ui.carried = { plainButter, vessel("Pot of Butter", "Base.Pot", M.MELTED_CLARIFIED, 1.5, 1.5), vessel("Half Pot", "Base.Pot", M.MELTING_BUTTER, 0.5, 1.5) }
 rows = potMenu(plainButter).subOption.options

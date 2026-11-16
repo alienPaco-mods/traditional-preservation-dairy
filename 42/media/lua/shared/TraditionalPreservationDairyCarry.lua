@@ -1,4 +1,4 @@
--- Traditional Preservation (Dairy): carried milk's heat and scald, kept as a record on the item, and the cauldron's
+-- Traditional Preservation (Dairy): carried milk's heat and scald, kept on the item as its carry, and the cauldron's
 -- hooks that write it. Required by TraditionalPreservationDairy.lua, whose M it adds to.
 TraditionalPreservationDairy = TraditionalPreservationDairy or {}
 local M = TraditionalPreservationDairy
@@ -6,32 +6,32 @@ local CauldronFluid = require "TraditionalPreservationCore/CauldronFluid"
 local FluidAgeing = require "TraditionalPreservationCore/FluidAgeing"
 
 -- Carried milk: a container filled from the cauldron, taken hot off a stove or a fire, or poured into from one of those
--- keeps a record of its heat in its item modData (vanilla's item heat drops to the room within seconds of leaving
+-- keeps its heat as a carry in its item modData (vanilla's item heat drops to the room within seconds of leaving
 -- the heat). An open pot or bucket cools in minutes; the Wrapped Yogurt Pot (a clay pot in its cloth) in hours.
 M.CARRY_KEY = "tpdCarry"      -- { ml, c, hour, scalded }
 M.WRAPPED_POT_TAU = 4.0       -- hours, for 5 L: 85 to 70 C in about an hour at 20 C
 M.OPEN_TAU = 0.25             -- hours, for 5 L: 85 to 45 C in about 15 minutes at 20 C, to 35 C in about 8 more
-M.STAMP_C = 30                -- milk taken off the heat warmer than this keeps a record of it
+M.STAMP_C = 30                -- milk taken off the heat warmer than this keeps a carry
 
 function M.carryTau(ml, open)
     return (open and M.OPEN_TAU or M.WRAPPED_POT_TAU) * (math.max(ml, CauldronFluid.FLOOR_ML) / M.CAPACITY_ML) ^ (1 / 3)
 end
 
 -- Records ml of milk at tempC going into a container that already holds hadMl at hadC. The milk stays scalded
--- only if the new milk is and everything already in it was recorded as scalded. Returns the new record.
+-- only if the new milk is and everything already in it was recorded as scalded. Returns the new carry.
 function M.carryIn(carry, hadMl, hadC, ml, tempC, now, scalded)
     local kept = hadMl <= 0 or M.isScalded(carry, hadMl)
-    local record = {
+    local newCarry = {
         ml = hadMl + ml,
         c = hadMl > 0 and (hadC * hadMl + tempC * ml) / (hadMl + ml) or tempC,
         hour = now,
         scalded = (scalded and kept) or nil,
     }
-    if carry and hadMl > 0 then record.place, record.fireUntil, record.under = carry.place, carry.fireUntil, carry.under end
-    return record
+    if carry and hadMl > 0 then newCarry.place, newCarry.fireUntil, newCarry.placeWithoutFire = carry.place, carry.fireUntil, carry.placeWithoutFire end
+    return newCarry
 end
 
--- Takes ml out of the record; nil once it is empty.
+-- Takes ml out of the carry; nil once it is empty.
 function M.carryOut(carry, ml)
     if not carry then return nil end
     carry.ml = carry.ml - ml
@@ -40,7 +40,7 @@ function M.carryOut(carry, ml)
 end
 
 -- True if the container's ml is all recorded, scalded milk. Taking milk out (vanilla's pour or drink too) is
--- harmless; holding more than the record means milk was added some other way, which voids it.
+-- harmless; holding more than the carry means milk was added some other way, which voids it.
 function M.isScalded(carry, ml)
     return carry ~= nil and carry.scalded == true and ml <= (carry.ml or 0) + 0.5
 end
@@ -56,8 +56,8 @@ function M.allScalded(parts)
     return any
 end
 
--- Shrinks the record to ml once milk has left by vanilla's menus, so milk added later can't hide in the gap.
--- Call it whenever a container is looked at (menus, tooltips). Returns the record, nil once the container is empty.
+-- Shrinks the carry to ml once milk has left by vanilla's menus, so milk added later can't hide in the gap.
+-- Call it whenever a container is looked at (menus, tooltips). Returns the carry, nil once the container is empty.
 function M.noteCarry(carry, ml)
     if not carry then return nil end
     if ml <= 0.5 then return nil end
@@ -65,7 +65,7 @@ function M.noteCarry(carry, ml)
     return carry
 end
 
--- The heat of carried milk, brought up to now at placeC (the record is updated); open for anything but a Wrapped Pot.
+-- The heat of carried milk, brought up to now at placeC (the carry is updated); open for anything but a Wrapped Pot.
 function M.wrappedC(carry, now, placeC, open)
     if now > carry.hour then
         carry.c = M.cool(carry.c, placeC, now - carry.hour, M.carryTau(carry.ml, open))
@@ -80,9 +80,9 @@ function M.carriedRefusal(carry, ml, parts)
     if not M.allScalded(parts) and not M.isScalded(carry, ml) then return "NotScalded" end
 end
 
--- The record on a carried item
+-- The carry on a carried item
 
--- An item's record, shrunk to the milk it holds now; nil (and dropped) once it holds no plain milk.
+-- An item's carry, shrunk to the milk it holds now; nil (and dropped) once it holds no plain milk.
 function M.carryOf(item)
     local modData = item:getModData()
     local carry = modData[M.CARRY_KEY]
@@ -105,12 +105,12 @@ end
 
 -- While a player carries warm milk, the World brings it up to now every game minute and notes where it is. Set
 -- down, it keeps the last place it was carried in, so the time until it is next looked at counts there.
-function M.carryTick(carry, now, ledger, place, fireUntil, under, open)
+function M.carryTick(carry, now, ledger, place, fireUntil, placeWithoutFire, open)
     M.advanceCarry(carry, now, ledger, place, nil, open)
-    carry.place, carry.fireUntil, carry.under = place, fireUntil, under
+    carry.place, carry.fireUntil, carry.placeWithoutFire = place, fireUntil, placeWithoutFire
 end
 
--- The heat of an item's milk: its record's if it has one (cooling slowly in a Wrapped Pot, fast in anything else),
+-- The heat of an item's milk: its carry's if it has one (cooling slowly in a Wrapped Pot, fast in anything else),
 -- else vanilla's item heat. holder is whoever is looking at it, whose place counts if it was never carried.
 function M.carriedC(item, now, holder)
     local carry = M.carryOf(item)
@@ -138,21 +138,21 @@ function M.pouredInto(item, carry, hadMl, hadC, moved, fromC, scalded, now)
     M.recordCarry(item, carry, hadMl, hadC, moved, fromC, now, scalded)
 end
 
--- Writes the record after ml of milk at tempC went into an item that held hadMl at hadC (carry: its record from
+-- Writes the carry after ml of milk at tempC went into an item that held hadMl at hadC (carry: its carry from
 -- before), and sets vanilla's item heat to match.
 function M.recordCarry(item, carry, hadMl, hadC, ml, tempC, now, scalded)
-    local record = M.carryIn(carry, hadMl, hadC, ml, tempC, now, scalded)
-    item:getModData()[M.CARRY_KEY] = record
-    item:setItemHeat(M.itemHeat(record.c))
+    local newCarry = M.carryIn(carry, hadMl, hadC, ml, tempC, now, scalded)
+    item:getModData()[M.CARRY_KEY] = newCarry
+    item:setItemHeat(M.itemHeat(newCarry.c))
 end
 
--- Writes the record after ml left the item.
+-- Writes the carry after ml left the item.
 function M.recordTaken(item, carry, ml)
     item:getModData()[M.CARRY_KEY] = M.carryOut(carry, ml)
 end
 
 -- The cauldron's hooks: a Wrapped Pot pours in at its own heat; milk drawn steaming is marked so the incubator takes
--- it. Milk that left an item is already gone from the container, so reading the record shrinks it to match.
+-- it. Milk that left an item is already gone from the container, so reading the carry shrinks it to match.
 CauldronFluid.hook("heatOf", function(item, now, character)
     local carry = M.carryOf(item)
     return carry and M.advanceCarry(carry, now, M.getLedger(), (M.placeOf(character)), nil, not M.isWrapped(item)) or nil

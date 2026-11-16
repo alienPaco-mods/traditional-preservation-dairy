@@ -15,15 +15,15 @@ local Action = require "TraditionalPreservationCore/Action"
 local FluidAgeing = require "TraditionalPreservationCore/FluidAgeing"
 
 -- Brought up to the minute first, so hot milk mixes with the pot as it is now.
-local function state(self)
+local function batchNow(self)
     TraditionalPreservationDairyWorld.refresh(self.station)
-    return TraditionalPreservationDairyWorld.incubatorState(self.station)
+    return TraditionalPreservationDairyWorld.batchOf(self.station)
 end
 
 local function canDo(self)
-    local batch = M.incubatorOf(self.station)
+    local batch = M.batchOf(self.station)
     if self.mode == "fire" then
-        return M.cauldronScalded(Cauldron.state(self.fire:getModData())) and M.milkRoom(batch, 1) > 0
+        return M.cauldronScalded(Cauldron.cauldronModData(self.fire:getModData())) and M.milkRoom(batch, 1) > 0
     elseif self.mode == "carried" then
         local container = self.item:getFluidContainer()
         local ml = M.mlIn(container)
@@ -128,7 +128,7 @@ function COMPLETE.collect(self, batch, now)
 end
 
 function TPYoghurtIncubator:complete()
-    COMPLETE[self.mode](self, state(self), getGameTime():getWorldAgeHours())
+    COMPLETE[self.mode](self, batchNow(self), getGameTime():getWorldAgeHours())
     TraditionalPreservationDairyWorld.refresh(self.station)
     return true
 end
@@ -141,8 +141,8 @@ function TPYoghurtIncubator:getDuration()
     local container = self.item and self.item:getFluidContainer()
     local litres = 0
     if self.mode == "fire" then
-        local cauldron = Cauldron.state(self.fire:getModData())
-        local batch = M.incubatorOf(self.station)
+        local cauldron = Cauldron.cauldronModData(self.fire:getModData())
+        local batch = M.batchOf(self.station)
         litres = math.min(cauldron.ml or 0, M.milkRoom(batch, cauldron.ml or 0)) / 1000
     end
     if self.mode == "pourOut" and container then litres = container:getCapacity() end

@@ -12,10 +12,10 @@ local LOOT = {
     KitchenDryFood = 0.5,
 }
 
-for list, weight in pairs(LOOT) do
-    local entry = ProceduralDistributions.list[list]
-    if entry and entry.items then
-        table.insert(entry.items, "TraditionalPreservationDairy.KefirGrainsPacket")
-        table.insert(entry.items, weight)
+for distributionName, weight in pairs(LOOT) do
+    local distribution = ProceduralDistributions.list[distributionName]
+    if distribution and distribution.items then
+        table.insert(distribution.items, "TraditionalPreservationDairy.KefirGrainsPacket")
+        table.insert(distribution.items, weight)
     end
 end

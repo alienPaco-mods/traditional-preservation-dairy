@@ -32,7 +32,7 @@ function M.butterByPlace()
 end
 
 M.BUTTER_KEEPER = PlaceKeeping.new({
-    kind = "butter", curve = M.BUTTER_AGE_CURVE, ledgerKey = M.BUTTER_LEDGER_KEY, modDataKey = "tpdKeep",
+    process = "butter", curve = M.BUTTER_AGE_CURVE, ledgerKey = M.BUTTER_LEDGER_KEY, modDataKey = "tpdKeep",
     enabled = M.butterByPlace, days = M.BUTTER_DAYS,
 })
 

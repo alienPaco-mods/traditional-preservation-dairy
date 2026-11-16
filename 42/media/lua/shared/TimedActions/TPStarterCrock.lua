@@ -16,9 +16,9 @@ local FluidAgeing = require "TraditionalPreservationCore/FluidAgeing"
 local DURATIONS = { load = 120, clabber = 60, feed = 60, collect = 60 }
 
 -- Brought up to the minute first, so a crock that has just turned is seen as it is now.
-local function state(self)
+local function crockNow(self)
     TraditionalPreservationDairyWorld.refresh(self.station)
-    return TraditionalPreservationDairyWorld.crockState(self.station)
+    return TraditionalPreservationDairyWorld.crockOf(self.station)
 end
 
 -- Half a litre of milk at 35 to 45 C in the cauldron.
@@ -53,7 +53,7 @@ function TPStarterCrock:isValid()
         if not self.started and not hasWheat(self) then return false end
         if stage ~= "Empty" then return false end
         if self.item then return inInventory(self, self.item) and itemReady(self) end
-        return self.fire:getSquare() ~= nil and cauldronReady(Cauldron.state(self.fire:getModData()))
+        return self.fire:getSquare() ~= nil and cauldronReady(Cauldron.cauldronModData(self.fire:getModData()))
     elseif self.mode == "clabber" then
         return stage == "Empty" and inInventory(self, self.item) and M.clabberRefusal(self.item:getFluidContainer()) == nil
     elseif self.mode == "feed" then
@@ -73,7 +73,7 @@ function TPStarterCrock:start()
 end
 
 function TPStarterCrock:complete()
-    local crock = state(self)
+    local crock = crockNow(self)
     local ledger = M.getLedger()
     if self.mode == "load" then
         local cauldron = not self.item and Cauldron.of(self.fire)

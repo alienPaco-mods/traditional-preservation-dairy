@@ -75,8 +75,8 @@ local made = {}
 local plainAdd = inventory.AddItem
 function inventory:AddItem(fullType)
     plainAdd(self, fullType)
-    local data, fluids = {}, {}
-    local item = { fullType = fullType, getModData = function() return data end, data = data, fluids = fluids,
+    local modData, fluids = {}, {}
+    local item = { fullType = fullType, getModData = function() return modData end, modData = modData, fluids = fluids,
         getFluidContainer = function() return { Empty = function() end,
             addFluid = function(_, name, litres) fluids[name] = litres end } end }
     table.insert(made, item)
@@ -86,7 +86,7 @@ before = #player.given
 run("kit", "kefir")
 check("kit(\"kefir\") gives a packet, 10 live grains and a pot of 2 L of cow's kefir", #player.given == before + 12
     and player.given[before + 1] == M.GRAIN_PACKET and player.given[before + 2] == M.GRAIN
-    and made[2].data[M.GRAIN_KEY].state == M.GRAIN_LIVE and made[11].data[M.GRAIN_KEY].hour == 100
+    and made[2].modData[M.GRAIN_KEY].grainState == M.GRAIN_LIVE and made[11].modData[M.GRAIN_KEY].hour == 100
     and player.given[before + 12] == "Base.Pot" and made[12].fluids.CowKefir == 2)
 run("give", "packet")
 run("give", "dried", 3)

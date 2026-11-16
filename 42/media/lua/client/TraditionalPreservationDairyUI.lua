@@ -77,33 +77,33 @@ end
 -- The pot's note for a stage that waits on the player, in its hover and in Incubator Info.
 local WAITING_NOTES = { Empty = "IGUI_TraditionalPreservationDairy_HelpEmpty", TooCold = "IGUI_TraditionalPreservationDairy_TooCold" }
 
-local function statusText(state)
-    local stage = M.stage(state)
+local function statusText(batch)
+    local stage = M.stage(batch)
     if stage == "Empty" then
-        return getText(state.starter and "IGUI_TraditionalPreservationDairy_EmptyStarter" or "IGUI_TraditionalPreservationDairy_Empty")
+        return getText(batch.starter and "IGUI_TraditionalPreservationDairy_EmptyStarter" or "IGUI_TraditionalPreservationDairy_Empty")
     end
-    return say("IGUI_TraditionalPreservationDairy_Stage" .. stage, litresText(state.ml), degrees(state.tempC))
+    return say("IGUI_TraditionalPreservationDairy_Stage" .. stage, litresText(batch.ml), degrees(batch.tempC))
 end
 
 -- The hover: where the pot stands, what comes next and when, if the place's temperature holds.
-local function detailText(station, state)
-    local place = state.place or M.placeOf(station)
+local function detailText(station, batch)
+    local place = batch.place or M.placeOf(station)
     local placeC = M.placeTemperature(M.getLedger(), place)
     local lines = { UI.placeText(place, placeC) }
-    local stage = M.stage(state)
+    local stage = M.stage(batch)
     if WAITING_NOTES[stage] then
         table.insert(lines, getText(WAITING_NOTES[stage]))
     elseif stage == "Ready" then
-        table.insert(lines, say("IGUI_TraditionalPreservationDairy_Jars", tostring(glassJars(state.ml)), tostring(clayJars(state.ml)), tostring(M.cupsInPot(state))))
+        table.insert(lines, say("IGUI_TraditionalPreservationDairy_Jars", tostring(glassJars(batch.ml)), tostring(clayJars(batch.ml)), tostring(M.cupsInPot(batch))))
     else
         if stage == "Cooling" then
-            table.insert(lines, getText(state.starter and "IGUI_TraditionalPreservationDairy_StarterIn" or "IGUI_TraditionalPreservationDairy_NoStarter"))
+            table.insert(lines, getText(batch.starter and "IGUI_TraditionalPreservationDairy_StarterIn" or "IGUI_TraditionalPreservationDairy_NoStarter"))
         else
-            table.insert(lines, say("IGUI_TraditionalPreservationDairy_SetProgress", UI.percent(math.min(state.done / M.INCUBATE_HOURS, 1)),
-                UI.percent(M.setRate(state.tempC))))
+            table.insert(lines, say("IGUI_TraditionalPreservationDairy_SetProgress", UI.percent(math.min(batch.workHours / M.INCUBATE_HOURS, 1)),
+                UI.percent(M.setRate(batch.tempC))))
         end
         -- Next: the wrap goes on, the yogurt sets, or the milk goes too cold for a starter.
-        local hours, nextStage = M.forecast(state, placeC)
+        local hours, nextStage = M.forecast(batch, placeC)
         if hours then
             table.insert(lines, say("IGUI_TraditionalPreservationDairy_Next" .. nextStage, hoursText(hours)))
         else
@@ -121,12 +121,12 @@ local function addItemMenu(menu, option, playerObj, station, items, mode, label)
         sub:addOption(say("ContextMenu_TraditionalPreservationDairy_All", tostring(#items)), playerObj, onAction, station, items, mode)
     end
     for _, item in ipairs(items) do
-        local entry = sub:addOption(label(item), playerObj, onAction, station, { item }, mode)
-        entry.itemForTexture = item
+        local itemOption = sub:addOption(label(item), playerObj, onAction, station, { item }, mode)
+        itemOption.itemForTexture = item
     end
 end
 
--- The cauldron's state, brought up to now when the World runs here.
+-- The cauldron's modData, brought up to now when the World runs here.
 local cauldronOf = Cauldron.of
 
 -- The first fire near the station whose cauldron passes test, else nil and the nearest one's cauldron.
@@ -153,9 +153,9 @@ local function onCauldronPour(playerObj, station, fire)
     ISTimedActionQueue.add(TPYoghurtIncubator:new(playerObj, station, nil, "fire", fire))
 end
 
-local function addCauldronPourMenu(menu, playerObj, station, state)
+local function addCauldronPourMenu(menu, playerObj, station, batch)
     local label = getText("ContextMenu_TraditionalPreservationDairy_PourFromCauldron")
-    local room, reason = M.milkRoom(state, 1)
+    local room, reason = M.milkRoom(batch, 1)
     local fire, cauldron
     if room > 0 then fire, cauldron = cauldronFor(station, M.cauldronScalded) end
     if fire then label = say("ContextMenu_TraditionalPreservationDairy_MilkItem", label, litresText(cauldron.ml), degrees(cauldron.tempC)) end
@@ -178,11 +178,11 @@ end
 -- Every container of plain milk, wherever it was carried from. Milk that isn't scalded (never at 85 C: cauldron, stove
 -- or fire), or is too cold for the starter already in the pot, shows in red with the reason. An open pot loses its
 -- heat in minutes, a Wrapped Yogurt Pot in hours.
-local function addCarriedPourMenu(menu, playerObj, station, state)
+local function addCarriedPourMenu(menu, playerObj, station, batch)
     local option = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_PourScalded"))
     local items = findItems(playerObj, function(item) return M.milkIn(item:getFluidContainer()) ~= nil end)
     showFirst(option, items, BUCKET_ICON)
-    local room, reason = M.milkRoom(state, 1)
+    local room, reason = M.milkRoom(batch, 1)
     if room <= 0 then return disableWith(option, getText(REFUSALS[reason])) end
     if #items == 0 then return disableWith(option, getText("IGUI_TraditionalPreservationDairy_NoMilkItem")) end
     tooltipFor(option, getText("IGUI_TraditionalPreservationDairy_ScaldedHelp"))
@@ -192,19 +192,19 @@ local function addCarriedPourMenu(menu, playerObj, station, state)
         local container = item:getFluidContainer()
         local ml = M.mlIn(container)
         local heat = M.carriedC(item, now(), playerObj)
-        local entry = sub:addOption(say("ContextMenu_TraditionalPreservationDairy_MilkItem", UI.itemName(item), litresText(ml),
+        local itemOption = sub:addOption(say("ContextMenu_TraditionalPreservationDairy_MilkItem", UI.itemName(item), litresText(ml),
             degrees(heat)), playerObj, onAction, station, { item }, "carried")
-        entry.itemForTexture = item
+        itemOption.itemForTexture = item
         local _, parts = M.milkIn(container)
-        local refusal = M.carriedRefusal(M.carryOf(item), ml, parts) or M.coldRefusal(state, ml, heat)
-        if refusal then refuse(entry, say(REFUSALS[refusal], degrees(heat))) end
+        local refusal = M.carriedRefusal(M.carryOf(item), ml, parts) or M.coldRefusal(batch, ml, heat)
+        if refusal then refuse(itemOption, say(REFUSALS[refusal], degrees(heat))) end
     end
 end
 
-local function addStarterMenu(menu, playerObj, station, state)
+local function addStarterMenu(menu, playerObj, station, batch)
     local option = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_AddStarter"))
     option.iconTexture = getTexture(STARTER_ICON)
-    local ok, reason = M.canAddStarter(state)
+    local ok, reason = M.canAddStarter(batch)
     if not ok then return disableWith(option, getText(REFUSALS[reason])) end
     local starters = findItems(playerObj, M.isStarter)
     if #starters == 0 then return disableWith(option, getText("IGUI_TraditionalPreservationDairy_NoStarterItem")) end
@@ -216,14 +216,14 @@ local function addStarterMenu(menu, playerObj, station, state)
     for _, item in ipairs(starters) do
         if not seen[item:getFullType()] then
             seen[item:getFullType()] = true
-            local entry = sub:addOption(UI.itemName(item), playerObj, onAction, station, { item }, "starter")
-            entry.itemForTexture = item
-            if item:getFullType() == M.YOGHURT_JAR then tooltipFor(entry, getText("IGUI_TraditionalPreservationDairy_JarStarter")) end
+            local itemOption = sub:addOption(UI.itemName(item), playerObj, onAction, station, { item }, "starter")
+            itemOption.itemForTexture = item
+            if item:getFullType() == M.YOGHURT_JAR then tooltipFor(itemOption, getText("IGUI_TraditionalPreservationDairy_JarStarter")) end
         end
     end
 end
 
-local function addPourOutMenu(menu, playerObj, station, state)
+local function addPourOutMenu(menu, playerObj, station, batch)
     local option = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_PourOut"))
     local empties = findItems(playerObj, M.isEmptyContainer)
     showFirst(option, empties, BUCKET_ICON)
@@ -233,14 +233,14 @@ local function addPourOutMenu(menu, playerObj, station, state)
     end)
 end
 
-local function addCollectMenu(menu, playerObj, station, state)
+local function addCollectMenu(menu, playerObj, station, batch)
     local option = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_Collect"))
     option.iconTexture = getTexture(JAR_ICON)
     local jars = findItems(playerObj, function(item) return M.JAR_ML[item:getFullType()] ~= nil and M.isEmptyContainer(item) end)
     if #jars == 0 then return disableWith(option, getText("IGUI_TraditionalPreservationDairy_NoJar")) end
     local types = {}
     for index, jar in ipairs(jars) do types[index] = jar:getFullType() end
-    local most = M.jarsFor(state.ml, types)
+    local most = M.jarsFor(batch.ml, types)
     local picked = firstOf(jars, most)
     local sub = menu:getNew(menu)
     menu:addSubMenu(option, sub)
@@ -250,8 +250,8 @@ local function addCollectMenu(menu, playerObj, station, state)
         local jarType = jar:getFullType()
         if not seen[jarType] then
             seen[jarType] = true
-            local entry = sub:addOption(say("ContextMenu_TraditionalPreservationDairy_OneJar", jar:getDisplayName(), litresText(M.JAR_ML[jarType])), playerObj, onAction, station, { jar }, "collect")
-            entry.itemForTexture = jar
+            local itemOption = sub:addOption(say("ContextMenu_TraditionalPreservationDairy_OneJar", jar:getDisplayName(), litresText(M.JAR_ML[jarType])), playerObj, onAction, station, { jar }, "collect")
+            itemOption.itemForTexture = jar
         end
     end
     if most > 1 then
@@ -261,12 +261,12 @@ local function addCollectMenu(menu, playerObj, station, state)
 end
 
 -- Empty Yogurt Containers filled straight from the pot, a quarter of a jar each, as old as the batch.
-local function addCupMenu(menu, playerObj, station, state)
+local function addCupMenu(menu, playerObj, station, batch)
     local option = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_FillPotCups"))
     option.iconTexture = getTexture(YOGHURT_ICON)
     local empties = findItems(playerObj, function(item) return item:getFullType() == M.EMPTY_CUP end)
     if #empties == 0 then return disableWith(option, getText("IGUI_TraditionalPreservationDairy_NoEmptyCup")) end
-    local most = math.min(#empties, M.cupsInPot(state))
+    local most = math.min(#empties, M.cupsInPot(batch))
     local picked = firstOf(empties, most)
     local sub = menu:getNew(menu)
     menu:addSubMenu(option, sub)
@@ -286,27 +286,27 @@ local function stationLabel(name, status, summary)
 end
 
 local function addIncubatorMenu(context, playerObj, station, summary)
-    local state = TraditionalPreservationDairyWorld.updateIncubator(station, now())
-    local option = context:addOption(stationLabel("IGUI_CraftingWindow_YoghurtIncubator", statusText(state), summary))
+    local batch = TraditionalPreservationDairyWorld.updateIncubator(station, now())
+    local option = context:addOption(stationLabel("IGUI_CraftingWindow_YoghurtIncubator", statusText(batch), summary))
     option.iconTexture = getTexture(STATION_ICON)
     local menu = context:getNew(context)
     context:addSubMenu(option, menu)
 
-    local status = menu:addOption(statusText(state))
+    local status = menu:addOption(statusText(batch))
     status.isDisabled = true
-    tooltipFor(status, detailText(station, state))
-    local info = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_PotInfo"), playerObj, PotWindow.open, station)
-    info.iconTexture = getTexture(STATION_ICON)
+    tooltipFor(status, detailText(station, batch))
+    local infoOption = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_PotInfo"), playerObj, PotWindow.open, station)
+    infoOption.iconTexture = getTexture(STATION_ICON)
 
-    local stage = M.stage(state)
+    local stage = M.stage(batch)
     if stage == "Ready" then
-        addCollectMenu(menu, playerObj, station, state)
-        return addCupMenu(menu, playerObj, station, state)
+        addCollectMenu(menu, playerObj, station, batch)
+        return addCupMenu(menu, playerObj, station, batch)
     end
-    addCauldronPourMenu(menu, playerObj, station, state)
-    addCarriedPourMenu(menu, playerObj, station, state)
-    if stage ~= "Incubating" then addStarterMenu(menu, playerObj, station, state) end
-    if stage == "Cooling" or stage == "TooCold" then addPourOutMenu(menu, playerObj, station, state) end
+    addCauldronPourMenu(menu, playerObj, station, batch)
+    addCarriedPourMenu(menu, playerObj, station, batch)
+    if stage ~= "Incubating" then addStarterMenu(menu, playerObj, station, batch) end
+    if stage == "Cooling" or stage == "TooCold" then addPourOutMenu(menu, playerObj, station, batch) end
 end
 
 -- Crock
@@ -329,9 +329,9 @@ local LOAD_REFUSALS = {
     TooHot = "IGUI_TraditionalPreservationDairy_CrockTooHot",
 }
 
-local function refuseLoad(entry, ml, celsius)
+local function refuseLoad(subOption, ml, celsius)
     local refusal = M.crockLoadRefusal(ml, celsius)
-    if refusal then refuse(entry, say(LOAD_REFUSALS[refusal], degrees(celsius))) end
+    if refusal then refuse(subOption, say(LOAD_REFUSALS[refusal], degrees(celsius))) end
 end
 
 -- Wheat and half a litre of milk at 35 to 45 C: one entry for the nearest Stone Hearth within 2 tiles, one per milk
@@ -353,23 +353,23 @@ local function addLoadMenu(menu, playerObj, station)
     if cauldron then
         local label = getText("ContextMenu_TraditionalPreservationDairy_LoadFromCauldron")
         if M.MILKS[cauldron.fluid] then label = say("ContextMenu_TraditionalPreservationDairy_MilkItem", label, litresText(cauldron.ml), degrees(cauldron.tempC)) end
-        local entry = sub:addOption(label, playerObj, onCrockAction, station, "load", nil, picked, fire)
-        entry.iconTexture = getTexture(CAULDRON_ICON)
+        local cauldronOption = sub:addOption(label, playerObj, onCrockAction, station, "load", nil, picked, fire)
+        cauldronOption.iconTexture = getTexture(CAULDRON_ICON)
         if not fire then
             if M.MILKS[cauldron.fluid] then
-                refuseLoad(entry, cauldron.ml or 0, cauldron.tempC or 0)
+                refuseLoad(cauldronOption, cauldron.ml or 0, cauldron.tempC or 0)
             else
-                refuse(entry, getText("IGUI_TraditionalPreservationDairy_CauldronNoMilk"))
+                refuse(cauldronOption, getText("IGUI_TraditionalPreservationDairy_CauldronNoMilk"))
             end
         end
     end
     for _, item in ipairs(milks) do
         local ml = M.mlIn(item:getFluidContainer())
         local heat = M.carriedC(item, now(), playerObj)
-        local entry = sub:addOption(say("ContextMenu_TraditionalPreservationDairy_MilkItem", UI.itemName(item), litresText(ml),
+        local itemOption = sub:addOption(say("ContextMenu_TraditionalPreservationDairy_MilkItem", UI.itemName(item), litresText(ml),
             degrees(heat)), playerObj, onCrockAction, station, "load", item, picked)
-        entry.itemForTexture = item
-        refuseLoad(entry, ml, heat)
+        itemOption.itemForTexture = item
+        refuseLoad(itemOption, ml, heat)
     end
 end
 
@@ -390,11 +390,11 @@ local function addClabberMenu(menu, playerObj, station)
     menu:addSubMenu(option, sub)
     for _, item in ipairs(milks) do
         local container = item:getFluidContainer()
-        local entry = sub:addOption(say("ContextMenu_TraditionalPreservationDairy_FluidItem", UI.itemName(item),
+        local itemOption = sub:addOption(say("ContextMenu_TraditionalPreservationDairy_FluidItem", UI.itemName(item),
             litresText(container:getAmount() * 1000)), playerObj, onCrockAction, station, "clabber", item)
-        entry.itemForTexture = item
+        itemOption.itemForTexture = item
         local refusal = M.clabberRefusal(container)
-        if refusal then refuse(entry, getText(CLABBER_REFUSALS[refusal])) end
+        if refusal then refuse(itemOption, getText(CLABBER_REFUSALS[refusal])) end
     end
 end
 
@@ -407,9 +407,9 @@ local function addFeedMenu(menu, playerObj, station)
     local sub = menu:getNew(menu)
     menu:addSubMenu(option, sub)
     for _, item in ipairs(milks) do
-        local entry = sub:addOption(say("ContextMenu_TraditionalPreservationDairy_FluidItem", UI.itemName(item),
+        local itemOption = sub:addOption(say("ContextMenu_TraditionalPreservationDairy_FluidItem", UI.itemName(item),
             litresText(item:getFluidContainer():getAmount() * 1000)), playerObj, onCrockAction, station, "feed", item)
-        entry.itemForTexture = item
+        itemOption.itemForTexture = item
     end
 end
 
@@ -419,13 +419,13 @@ local function crockNext(stage, status, stalled)
     return say("IGUI_TraditionalPreservationDairy_Next" .. (stage == "Cultivating" and "Waiting" or "Starters"), hoursText(status.hoursLeft))
 end
 
-local function crockDetail(station, state)
+local function crockDetail(station, crock)
     local ledger = M.getLedger()
-    local place = state.place or M.placeOf(station)
+    local place = crock.place or M.placeOf(station)
     local lines = { UI.placeText(place, M.placeTemperature(ledger, place)) }
-    local stage = M.crockStage(state)
+    local stage = M.crockStage(crock)
     if stage == "Cultivating" or stage == "Developing" then
-        local status = M.crockStatus(state, ledger, place)
+        local status = M.crockStatus(crock, ledger, place)
         table.insert(lines, say("IGUI_TraditionalPreservationDairy_CrockProgress", UI.percent(status.progress), UI.percent(status.rate)))
         table.insert(lines, crockNext(stage, status, "IGUI_TraditionalPreservationDairy_CrockStalled"))
     else
@@ -435,8 +435,8 @@ local function crockDetail(station, state)
 end
 
 local function addCrockMenu(context, playerObj, station, summary)
-    local state = TraditionalPreservationDairyWorld.updateCrock(station)
-    local stage = M.crockStage(state)
+    local crock = TraditionalPreservationDairyWorld.updateCrock(station)
+    local stage = M.crockStage(crock)
     local option = context:addOption(stationLabel("IGUI_CraftingWindow_StarterCultureCrock",
         getText("IGUI_TraditionalPreservationDairy_Crock" .. stage), summary))
     option.iconTexture = getTexture(CROCK_ICON)
@@ -445,9 +445,9 @@ local function addCrockMenu(context, playerObj, station, summary)
 
     local status = menu:addOption(getText("IGUI_TraditionalPreservationDairy_Crock" .. stage))
     status.isDisabled = true
-    tooltipFor(status, crockDetail(station, state))
-    local info = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_CrockInfo"), playerObj, CrockWindow.open, station)
-    info.iconTexture = getTexture(CROCK_ICON)
+    tooltipFor(status, crockDetail(station, crock))
+    local infoOption = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_CrockInfo"), playerObj, CrockWindow.open, station)
+    infoOption.iconTexture = getTexture(CROCK_ICON)
 
     if stage == "Empty" then
         addLoadMenu(menu, playerObj, station)
@@ -480,16 +480,16 @@ end
 -- The forecast runs the pot ahead step by step, so it is worked out twice a second, not every frame.
 function PotWindow:refresh()
     local station = self.station
-    local state = TraditionalPreservationDairyWorld.updateIncubator(station, now())
-    local place = state.place or M.placeOf(station)
+    local batch = TraditionalPreservationDairyWorld.updateIncubator(station, now())
+    local place = batch.place or M.placeOf(station)
     local placeC = M.placeTemperature(M.getLedger(), place)
-    local hours, nextStage = M.forecast(state, placeC)
-    self.info = { state = state, stage = M.stage(state), place = place, placeC = placeC, hours = hours, nextStage = nextStage }
+    local hours, nextStage = M.forecast(batch, placeC)
+    self.potView = { batch = batch, stage = M.stage(batch), place = place, placeC = placeC, hours = hours, nextStage = nextStage }
 end
 
 -- Days since it set, and how long it stays fresh: the jar's own shelf life, which the age carries into.
-local function ageText(state)
-    local days = M.ageDays(state, now())
+local function ageText(batch)
+    local days = M.ageDays(batch, now())
     local script = ScriptManager.instance:getItem(M.YOGHURT_JAR)
     local fresh = script and script:getDaysFresh() or 0
     local age = days < 1 and getText("IGUI_TraditionalPreservationDairy_InfoToday") or say("IGUI_TraditionalPreservationDairy_InfoDays", tostring(math.floor(days)))
@@ -499,58 +499,58 @@ end
 
 function PotWindow:render()
     ISCollapsableWindow.render(self)
-    if self.isCollapsed or not self.info then return end
-    local info = self.info
-    local state, stage = info.state, info.stage
-    local ml = state.ml or 0
+    if self.isCollapsed or not self.potView then return end
+    local potView = self.potView
+    local batch, stage = potView.batch, potView.stage
+    local ml = batch.ml or 0
     local y = self:top()
 
     y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoStage", getText("IGUI_TraditionalPreservationDairy_InfoStage" .. stage))
     y = self:bar(y, "IGUI_TraditionalPreservationDairy_InfoContents", ml / M.CAPACITY_ML, BAR_COLOURS.contents,
         say("IGUI_TraditionalPreservationDairy_InfoLitres", litresText(ml), litresText(M.CAPACITY_ML)))
-    local milkC = (ml > 0 and stage ~= "Ready") and say("IGUI_TraditionalPreservationDairy_InfoDegrees", degrees(state.tempC)) or "-"
+    local milkC = (ml > 0 and stage ~= "Ready") and say("IGUI_TraditionalPreservationDairy_InfoDegrees", degrees(batch.tempC)) or "-"
     y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoMilk", milkC)
     y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoSetting",
         say("IGUI_TraditionalPreservationDairy_InfoSettingValue", degrees(M.SET_C), degrees(M.STARTER_MIN_C)))
-    y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoPlace", UI.placeText(info.place, info.placeC))
-    y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoStarter", getText(STARTER_TEXT[state.starter] or "IGUI_TraditionalPreservationDairy_InfoStarterNone"))
+    y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoPlace", UI.placeText(potView.place, potView.placeC))
+    y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoStarter", getText(STARTER_TEXT[batch.starter] or "IGUI_TraditionalPreservationDairy_InfoStarterNone"))
     if stage == "Incubating" or stage == "Ready" then
-        local share = math.min((state.done or 0) / M.INCUBATE_HOURS, 1)
+        local share = math.min((batch.workHours or 0) / M.INCUBATE_HOURS, 1)
         y = self:bar(y, "IGUI_TraditionalPreservationDairy_InfoSet", share, BAR_COLOURS.set, UI.percent(share))
     end
     if stage == "Incubating" then
-        y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoSpeed", UI.percent(M.setRate(state.tempC)))
+        y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoSpeed", UI.percent(M.setRate(batch.tempC)))
     end
     if stage == "Cooling" or stage == "Incubating" then
-        local nextText = info.hours and say("IGUI_TraditionalPreservationDairy_Next" .. info.nextStage, hoursText(info.hours))
+        local nextText = potView.hours and say("IGUI_TraditionalPreservationDairy_Next" .. potView.nextStage, hoursText(potView.hours))
             or getText(stage == "Incubating" and "IGUI_TraditionalPreservationDairy_InfoNever" or "IGUI_TraditionalPreservationDairy_InfoHolds")
         y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoNext", nextText)
     end
     if stage == "Ready" then
-        y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoAgeLabel", ageText(state))
+        y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoAgeLabel", ageText(batch))
         y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoJars", say("IGUI_TraditionalPreservationDairy_InfoJarsCount", tostring(glassJars(ml)), tostring(clayJars(ml))))
     end
 
     local notes = {}
     if WAITING_NOTES[stage] then
         table.insert(notes, getText(WAITING_NOTES[stage]))
-    elseif stage == "Cooling" and not state.starter then
+    elseif stage == "Cooling" and not batch.starter then
         table.insert(notes, getText("IGUI_TraditionalPreservationDairy_NoStarter"))
-    elseif stage == "Incubating" and not info.hours then
+    elseif stage == "Incubating" and not potView.hours then
         table.insert(notes, getText("IGUI_TraditionalPreservationDairy_NeverSets"))
     end
-    if (stage == "Cooling" or stage == "Incubating") and info.hours then
+    if (stage == "Cooling" or stage == "Incubating") and potView.hours then
         table.insert(notes, getText("IGUI_TraditionalPreservationDairy_InfoAssumes"))
     end
     self:drawNotes(y, notes)
 end
 
 -- Stone Hearth Info (TP Core's) says what the cauldron's milk is for.
-CauldronUI.addNotes(function(info, notes)
-    local ml = info.part.ml or 0
+CauldronUI.addNotes(function(fireView, notes)
+    local ml = fireView.part.ml or 0
     if ml <= 0 then
         table.insert(notes, getText("IGUI_TraditionalPreservationDairy_CauldronHelpEmpty"))
-    elseif not M.MILKS[info.part.fluid] then
+    elseif not M.MILKS[fireView.part.fluid] then
         table.insert(notes, getText("IGUI_TraditionalPreservationDairy_CauldronHelpWater"))
     end
 end)
@@ -570,16 +570,16 @@ end
 
 function CrockWindow:refresh()
     local station = self.station
-    local state = TraditionalPreservationDairyWorld.updateCrock(station)
-    local place = state.place or M.placeOf(station)
-    self.info = { state = state, stage = M.crockStage(state), status = M.crockStatus(state, M.getLedger(), place) }
+    local crock = TraditionalPreservationDairyWorld.updateCrock(station)
+    local place = crock.place or M.placeOf(station)
+    self.crockView = { crock = crock, stage = M.crockStage(crock), status = M.crockStatus(crock, M.getLedger(), place) }
 end
 
 function CrockWindow:render()
     ISCollapsableWindow.render(self)
-    if self.isCollapsed or not self.info then return end
-    local info = self.info
-    local stage, status = info.stage, info.status
+    if self.isCollapsed or not self.crockView then return end
+    local crockView = self.crockView
+    local stage, status = crockView.stage, crockView.status
     local working = stage == "Cultivating" or stage == "Developing"
     local y = self:top()
 
@@ -607,10 +607,10 @@ end
 
 -- Clicking a pot opens Incubator Info, and clicking a crock Crock Info, as clicking a door opens it (a Stone Hearth's click
 -- is TP Core's).
-InfoWindow.clickOpens(function(object) return M.stationKind(object) ~= nil end, function(playerObj, object)
-    TraditionalPreservationDairyWorld.track(object)
-    local window = M.isCrock(object) and CrockWindow or PotWindow
-    window.open(playerObj, object)
+InfoWindow.clickOpens(function(isoObject) return M.stationKind(isoObject) ~= nil end, function(playerObj, station)
+    TraditionalPreservationDairyWorld.track(station)
+    local window = M.isCrock(station) and CrockWindow or PotWindow
+    window.open(playerObj, station)
 end)
 
 -- The crock stands on a counter or a table, never on a stove, a fridge or a freezer.
@@ -624,12 +624,12 @@ UI.keepDoorsFree(Tiles.STATIONS)
 -- ("Yogurt Incubator (Cooling: 2.0 L at 60 C)"), so the player picks the right one.
 local function onFillContextMenu(playerNum, context, worldobjects, test)
     local stations, seen = {}, {}
-    for _, object in ipairs(worldobjects) do
-        if M.stationKind(object) and not seen[object] then
+    for _, isoObject in ipairs(worldobjects) do
+        if M.stationKind(isoObject) and not seen[isoObject] then
             -- Vanilla's probe for a controller's prompt: say there is a menu, do no work.
             if test then return ISWorldObjectContextMenu.setTest() end
-            seen[object] = true
-            table.insert(stations, object)
+            seen[isoObject] = true
+            table.insert(stations, isoObject)
         end
     end
     local playerObj = getSpecificPlayer(playerNum)
@@ -707,7 +707,7 @@ CauldronUI.addPieces({
     icon = "Item_Butter",
     pieceMl = M.BUTTER_PIECE_ML,
     hoursLeft = M.butterHoursLeft,
-    kinds = { { fluid = M.MELTING_BUTTER, items = M.CAULDRON_BUTTERS, label = function(count)
+    fluidRows = { { fluid = M.MELTING_BUTTER, items = M.CAULDRON_BUTTERS, label = function(count)
         return getText("ContextMenu_TraditionalPreservationDairy_ButterPieces", tostring(count))
     end } },
     help = getText("IGUI_TraditionalPreservationDairy_ButterHelp"),
@@ -734,8 +734,8 @@ ItemFluidUI.addPieces({
     refusal = butterRefusal,
 })
 
-CauldronUI.addNotes(function(info, notes)
-    local cauldron = info.part
+CauldronUI.addNotes(function(fireView, notes)
+    local cauldron = fireView.part
     if (cauldron.ml or 0) <= 0 then return end
     if cauldron.fluid == M.RANCID_BUTTER then
         table.insert(notes, getText("IGUI_TraditionalPreservationDairy_ButterRancid"))

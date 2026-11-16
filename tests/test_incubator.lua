@@ -46,7 +46,7 @@ M.addMilk(warm, 3000, 85, 0)
 M.advanceBatch(warm, 6, 20, 0)
 M.addMilk(warm, 2000, 90, 6)
 check("hot milk on top warms it back up", warm.tempC >= M.STARTER_MIN_C and M.stage(warm) == "Cooling")
-local part = { ml = 3000, tempC = 30, last = 0 }
+local part = { ml = 3000, tempC = 30, lastHour = 0 }
 check("a small pot takes part of it out", M.pourOut(part, 1000) == 1000 and part.ml == 2000 and part.tempC == 30)
 local ml, tempC = M.pourOut(cold)
 check("it can be poured out to reheat", ml == 5000 and tempC < M.STARTER_MIN_C and M.stage(cold) == "Empty")
@@ -69,7 +69,7 @@ check("and is ready", M.stage(pot) == "Ready" and pot.readyHour > 3 and pot.read
 check("age counts from setting", near(M.ageDays(pot, pot.readyHour + 48), 2))
 
 -- A cold shed sets slowly or not at all
-local shed = { ml = 5000, tempC = 45, starter = "Yogurt", incubating = true, done = 0 }
+local shed = { ml = 5000, tempC = 45, starter = "Yogurt", incubating = true, workHours = 0 }
 M.advanceBatch(shed, 48, 2, 0)
 check("near freezing it never sets", M.stage(shed) == "Incubating")
 M.SENSITIVITY = 0
@@ -126,16 +126,16 @@ check("old jars and cups go by vanilla Yogurt", near(M.portionsIn(-0.4), 4) and 
 local ledger, history = M.getLedger(), M.getHistory()
 for hour = 11, 30 do
     H.setHours(hour)
-    M.record(ledger, history, hour, hour < 20 and 30 or 0)
+    M.recordWeather(ledger, history, hour, hour < 20 and 30 or 0)
 end
 check("the history has each hour", M.pastTemperature(history, 15, "Open") == 30 and M.pastTemperature(history, 25, "Open") == 0)
 check("and nothing for hours it never saw", M.pastTemperature(history, 5, "Open") == nil)
-local away = { ml = 5000, tempC = 85, last = 11 }
+local away = { ml = 5000, tempC = 85, lastHour = 11 }
 M.catchUp(away, 30, "Open", history, ledger)
 local stepped = { ml = 5000, tempC = 85 }
 M.advanceBatch(stepped, 9, 30, 11)
 M.advanceBatch(stepped, 10, 0, 20)
-check("an unloaded pot replays the hours it missed", near(away.tempC, stepped.tempC, 1e-6) and away.last == 30)
+check("an unloaded pot replays the hours it missed", near(away.tempC, stepped.tempC, 1e-6) and away.lastHour == 30)
 local kept = history[25 % M.HISTORY_HOURS + 1]
 check("a basement follows the ground the history kept", kept.ground ~= nil and kept.ground ~= kept.season
     and M.pastTemperature(history, 25, "Basement") == 10 + 0.4 * (kept.ground - 10))
@@ -144,31 +144,31 @@ check("a basement follows the ground the history kept", kept.ground ~= nil and k
 local realCool, steps = M.cool, 0
 M.cool = function(...) steps = steps + 1 return realCool(...) end
 local YEAR = 8760
-local yearAway = { ml = 5000, tempC = 85, starter = "Yogurt", last = 11 }
+local yearAway = { ml = 5000, tempC = 85, starter = "Yogurt", lastHour = 11 }
 M.catchUp(yearAway, 11 + YEAR, "Fireside", history, ledger)
 local yearCost = steps
 local yearByHand = { ml = 5000, tempC = 85, starter = "Yogurt" }
 M.advanceBatch(yearByHand, YEAR, Fire.FIRE_C, 11)
 check("a year away costs no more than the history's hours", yearCost < M.HISTORY_HOURS / M.STEP_HOURS + 500)
 check("and comes out as the long way does", M.stage(yearAway) == "Ready" and near(yearAway.readyHour, yearByHand.readyHour, 0.2)
-    and near(yearAway.tempC, yearByHand.tempC, 0.01) and yearAway.last == 11 + YEAR)
-local coldYear = { ml = 5000, tempC = 85, last = 11 }
+    and near(yearAway.tempC, yearByHand.tempC, 0.01) and yearAway.lastHour == 11 + YEAR)
+local coldYear = { ml = 5000, tempC = 85, lastHour = 11 }
 M.catchUp(coldYear, 11 + YEAR, "Basement", history, ledger)
 check("milk with no starter just cools", M.stage(coldYear) == "TooCold"
     and near(coldYear.tempC, M.placeTemperature(ledger, "Basement"), 0.01))
-local stalled = { ml = 5000, tempC = 85, starter = "Yogurt", last = 11 }
+local stalled = { ml = 5000, tempC = 85, starter = "Yogurt", lastHour = 11 }
 M.catchUp(stalled, 11 + YEAR, "Open", history, ledger)
 local stalledByHand = { ml = 5000, tempC = 85, starter = "Yogurt" }
 M.advanceBatch(stalledByHand, YEAR, M.placeTemperature(ledger, "Open"), 11)
 check("a started pot too cold to set wraps and waits", M.stage(stalled) == "Incubating" and M.stage(stalledByHand) == "Incubating"
-    and near(stalled.done, stalledByHand.done, 0.01) and near(stalled.wrapHour, stalledByHand.wrapHour, 1e-6))
-local burntYear = { ml = 5000, tempC = 85, starter = "Yogurt", last = 11, fireUntil = 13, under = "Open" }
+    and near(stalled.workHours, stalledByHand.workHours, 0.01) and near(stalled.wrapHour, stalledByHand.wrapHour, 1e-6))
+local burntYear = { ml = 5000, tempC = 85, starter = "Yogurt", lastHour = 11, fireUntil = 13, placeWithoutFire = "Open" }
 M.catchUp(burntYear, 11 + YEAR, "Fireside", history, ledger)
 local burntByHand = { ml = 5000, tempC = 85, starter = "Yogurt" }
 M.advanceBatch(burntByHand, 2, Fire.FIRE_C, 11)
 M.advanceBatch(burntByHand, YEAR - 2, M.placeTemperature(ledger, "Open"), 13)
 check("a fire that burnt out early in it counts only till then", M.stage(burntYear) == M.stage(burntByHand)
-    and near(burntYear.done, burntByHand.done, 0.01) and near(burntYear.tempC, burntByHand.tempC, 0.01))
+    and near(burntYear.workHours, burntByHand.workHours, 0.01) and near(burntYear.tempC, burntByHand.tempC, 0.01))
 M.cool = realCool
 
 -- By a fire
@@ -179,22 +179,22 @@ M.advanceBatch(winter, 14, Fire.FIRE_C, 0)
 check("by the fire it sets even in winter", M.stage(winter) == "Ready")
 
 -- The fire burns out while the pot is away
-local burnt = { ml = 5000, tempC = 85, last = 11, fireUntil = 15, under = "Open" }
+local burnt = { ml = 5000, tempC = 85, lastHour = 11, fireUntil = 15, placeWithoutFire = "Open" }
 M.catchUp(burnt, 30, "Fireside", history, ledger)
 local byHand = { ml = 5000, tempC = 85 }
 M.advanceBatch(byHand, 4, Fire.FIRE_C, 11)
 M.advanceBatch(byHand, 5, 30, 15)
 M.advanceBatch(byHand, 10, 0, 20)
 check("by the fire only while the fuel lasts, then the place under it", near(burnt.tempC, byHand.tempC, 1e-6))
-local onAndOn = { ml = 5000, tempC = 85, last = 11 }
+local onAndOn = { ml = 5000, tempC = 85, lastHour = 11 }
 M.catchUp(onAndOn, 30, "Fireside", history, ledger)
 check("a fire with no burn-out noted burns on", onAndOn.tempC > Fire.FIRE_C - 0.5)
 local embersC = M.placeTemperature(ledger, M.EMBERS)
-local embers = { ml = 5000, tempC = 85, last = 11 }
+local embers = { ml = 5000, tempC = 85, lastHour = 11 }
 M.catchUp(embers, 30, M.EMBERS, history, ledger)
 check("banked embers are a cooler fire, whatever the weather", embersC < Fire.FIRE_C
     and M.pastTemperature(history, 3, M.EMBERS) == embersC and embers.tempC < onAndOn.tempC)
-local emberOut = { ml = 5000, tempC = 85, last = 11, fireUntil = 15, under = "Open" }
+local emberOut = { ml = 5000, tempC = 85, lastHour = 11, fireUntil = 15, placeWithoutFire = "Open" }
 M.catchUp(emberOut, 30, M.EMBERS, history, ledger)
 local emberHand = { ml = 5000, tempC = 85 }
 M.advanceBatch(emberHand, 4, embersC, 11)
@@ -212,7 +212,7 @@ check("hot milk is cauldronHot, hot water isn't", M.cauldronHot({ ml = 100, flui
     and not M.cauldronHot({ ml = 100, fluid = "Water", tempC = 90 }))
 
 -- From the cauldron into the pot
-local hotCauldron = { ml = 10000, fluid = "SheepMilk", tempC = 90, last = 0, held = 0.25 }
+local hotCauldron = { ml = 10000, fluid = "SheepMilk", tempC = 90, lastHour = 0, held = 0.25 }
 local fromHearth = {}
 check("steaming 15 minutes is not scalded: it won't pour yet", select(2, M.cauldronToPot(hotCauldron, fromHearth, 0)) == "NotHeld"
     and fromHearth.ml == nil and M.holdMinutesLeft(hotCauldron) == 5)
@@ -221,7 +221,7 @@ check("the hold is 20 minutes", M.SCALD_HOLD_HOURS == 1 / 3 and M.cauldronScalde
 check("hot milk fills the pot up", M.cauldronToPot(hotCauldron, fromHearth, 0) == 5000 and fromHearth.ml == 5000
     and fromHearth.tempC == 90 and fromHearth.fluid == "SheepMilk" and hotCauldron.ml == 5000)
 check("a full pot takes no more", select(2, M.cauldronToPot(hotCauldron, fromHearth, 0)) == "Full")
-local topUp = { ml = 3000, tempC = 50, fluid = "SheepMilk", last = 0 }
+local topUp = { ml = 3000, tempC = 50, fluid = "SheepMilk", lastHour = 0 }
 check("it tops up a cooling pot, mixing the heat", M.cauldronToPot(hotCauldron, topUp, 0) == 2000 and near(topUp.tempC, 66)
     and topUp.fluid == "SheepMilk")
 hotCauldron.tempC = 80
@@ -323,17 +323,17 @@ check("a load needs half a litre in the window", M.crockLoadRefusal(400, 40) == 
     and M.crockLoadRefusal(2000, 90) == "TooHot" and M.crockLoadRefusal(2000, 20) == "TooCool")
 for hour = 31, 31 + 24 do
     H.setHours(hour)
-    M.record(ledger, history, hour, 30)
+    M.recordWeather(ledger, history, hour, 30)
 end
 M.updateCrock(crock, ledger, "Open")
 check("a day of warm weather cultivates the crock", crock.stage == "Waiting")
 H.setHours(60)
-M.record(ledger, history, 60, 30)
+M.recordWeather(ledger, history, 60, 30)
 M.updateCrock(crock, ledger, "Open")
 check("then it waits for fresh milk", crock.stage == "Waiting" and M.feedCrock(crock, ledger))
 for hour = 61, 61 + 12 do
     H.setHours(hour)
-    M.record(ledger, history, hour, 30)
+    M.recordWeather(ledger, history, hour, 30)
 end
 M.updateCrock(crock, ledger, "Open")
 check("and develops into starter", crock.stage == "Ready")
@@ -363,39 +363,39 @@ local hearthCrock = {}
 M.startCrock(hearthCrock, ledger)
 for hour = 74, 74 + 24 do
     H.setHours(hour)
-    M.record(ledger, history, hour, -10)
+    M.recordWeather(ledger, history, hour, -10)
 end
 M.updateCrock(hearthCrock, ledger, "Fireside")
 check("by a fire the crock goes by the clock, not the frost", hearthCrock.stage == "Waiting"
     and M.crockStatus(hearthCrock, ledger, "Fireside").temperature == Fire.FIRE_C)
 local outCrock = {}
 M.startCrock(outCrock, ledger)
-outCrock.fireUntil, outCrock.under = 74 + 24 + 12, "Open"
+outCrock.fireUntil, outCrock.placeWithoutFire = 74 + 24 + 12, "Open"
 for hour = 99, 99 + 24 do
     H.setHours(hour)
-    M.record(ledger, history, hour, -10)
+    M.recordWeather(ledger, history, hour, -10)
 end
 M.updateCrock(outCrock, ledger, "Fireside")
 check("by a fire that burns out, a crock counts only the fire's hours in a frost",
-    near(outCrock.done, 12 * M.cultureRate(Fire.FIRE_C) + 13 * M.cultureRate(-10), 0.2))
+    near(outCrock.workHours, 12 * M.cultureRate(Fire.FIRE_C) + 13 * M.cultureRate(-10), 0.2))
 local emberCrock = {}
 M.startCrock(emberCrock, ledger)
-emberCrock.fireUntil, emberCrock.under = 123 + 100, "Open"
+emberCrock.fireUntil, emberCrock.placeWithoutFire = 123 + 100, "Open"
 for hour = 124, 123 + 11 do
     H.setHours(hour)
-    M.record(ledger, history, hour, -10)
+    M.recordWeather(ledger, history, hour, -10)
 end
 M.updateCrock(emberCrock, ledger, M.EMBERS)
 check("a crock by banked embers cultivates at their heat, not the frost's",
-    near(emberCrock.done, 11 * M.cultureRate(M.placeTemperature(ledger, M.EMBERS)), 0.2))
+    near(emberCrock.workHours, 11 * M.cultureRate(M.placeTemperature(ledger, M.EMBERS)), 0.2))
 check("grain cultures like warm, not hot", M.cultureRate(30) == 1 and M.cultureRate(5) < 0.1)
 check("and pause frozen", M.cultureRate(0) == 0 and M.cultureRate(1) > 0)
 
 -- Save keys
 local modData = {}
-local state = M.stateOf(modData, M.INCUBATOR_KEY)
-M.addMilk(state, 1000, 85, 0)
-check("state lives under one prefixed key", modData.tpdIncubator.ml == 1000 and modData.ml == nil and M.stateOf(modData, M.INCUBATOR_KEY) == state)
+local batch = M.stationModData(modData, M.INCUBATOR_KEY)
+M.addMilk(batch, 1000, 85, 0)
+check("batch lives under one prefixed key", modData.tpdIncubator.ml == 1000 and modData.ml == nil and M.stationModData(modData, M.INCUBATOR_KEY) == batch)
 
 -- Sandbox
 SandboxVars = { TraditionalPreservationDairy = { IncubationHours = 8, CultureHours = 36, TemperatureSensitivity = 1 } }
@@ -404,12 +404,12 @@ ScriptManager = { instance = { getCraftRecipe = function() return nil end, getIt
 H.fire("OnInitGlobalModData")
 check("the sandbox sets the times and sensitivity", M.INCUBATE_HOURS == 8 and M.CULTIVATE_HOURS == 36 and M.DEVELOP_HOURS == 18 and M.SENSITIVITY == 0)
 -- Milk goes off at vanilla's Food Spoilage speed times Dairy's own (pick A, 2026-11-14)
-local milkSpec = require("TraditionalPreservationCore/FluidAgeing").spec(M.MILK_KIND)
+local milk = require("TraditionalPreservationCore/FluidAgeing").fluidKind(M.MILK_PROCESS)
 local sandbox, milkSpeed = SandboxVars, M.MILK_SPEED
 SandboxVars, M.MILK_SPEED = nil, 1
-check("milk: Normal with no sandbox", milkSpec.speed() == 1)
+check("milk: Normal with no sandbox", milk.speed() == 1)
 SandboxVars, M.MILK_SPEED = { FoodRotSpeed = 5 }, 2
-check("milk: Very Slow food spoilage times the milk's own speed", math.abs(milkSpec.speed() - 0.8) < 1e-9)
+check("milk: Very Slow food spoilage times the milk's own speed", math.abs(milk.speed() - 0.8) < 1e-9)
 SandboxVars, M.MILK_SPEED = sandbox, milkSpeed
 
 H.done()

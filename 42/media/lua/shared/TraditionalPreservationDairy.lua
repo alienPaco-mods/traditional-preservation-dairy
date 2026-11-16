@@ -30,12 +30,12 @@ M.MOD_DATA_KEY = "TraditionalPreservationDairy"
 M.INCUBATOR_KEY = "tpdIncubator"
 M.CROCK_KEY = "tpdCrock"
 -- What an emptied pot or crock forgets (place, at, fireUntil and under stay: where it stands).
-local MILK_FIELDS = { "ml", "tempC", "last", "fluid", "parts" }
-local BATCH_FIELDS = { "ml", "tempC", "starter", "incubating", "wrapHour", "done", "last", "readyHour", "fluid", "parts" }
-local CROCK_FIELDS = { "stage", "done", "marks" }
+local MILK_FIELDS = { "ml", "tempC", "lastHour", "fluid", "parts" }
+local BATCH_FIELDS = { "ml", "tempC", "starter", "incubating", "wrapHour", "workHours", "lastHour", "readyHour", "fluid", "parts" }
+local CROCK_FIELDS = { "stage", "workHours", "marks" }
 
-local function clear(state, fields)
-    for _, key in ipairs(fields) do state[key] = nil end
+local function clear(stationModData, fields)
+    for _, key in ipairs(fields) do stationModData[key] = nil end
 end
 
 -- Incubator
@@ -81,7 +81,7 @@ M.CROCK_STARTERS = 2
 -- Clabber: half a litre of soured milk, of any warmth, starts the crock with no wheat. Its own lactic bacteria are
 -- the culture the grain would have grown, so it skips Cultivating and waits for fresh milk at once.
 M.CLABBER_ML = 500
-local CROCK_KIND = "culture"
+local CROCK_PROCESS = "culture"
 -- Grain starters are kept warm, not hot: best at 25 to 35 C, slow when cool, near stopped by 5.
 local CULTURE_CURVE = { { 5, 0.03 }, { 10, 0.1 }, { 15, 0.3 }, { 20, 0.6 }, { 25, 1 }, { 35, 1 }, { 40, 0.6 }, { 45, 0.1 } }
 
@@ -90,7 +90,7 @@ local CULTURE_CURVE = { { 5, 0.03 }, { 10, 0.1 }, { 15, 0.3 }, { 20, 0.6 }, { 25
 -- and a half to sour in a 20 C room, 3 days in a 15 C basement, 8 in a fridge, a day at 30 C. Store milk (sealed
 -- cartons and bottles) keeps until it is poured out, and then counts as scalded: it was pasteurised. Scalded milk goes
 -- by its scalded name (Cow's Milk (Scalded)) until raw milk is mixed in.
-M.MILK_KIND = "milk"
+M.MILK_PROCESS = "milk"
 M.MILK_TURN_HOURS = 36
 M.MILK_SPOIL_HOURS = 72
 M.MILK_SPOILS = true          -- sandbox: Milk goes off
@@ -98,7 +98,7 @@ M.MILK_SPEED = 1              -- sandbox: how fast, 1 as above, on top of vanill
 M.SOUR_MILKS = { CowMilk = "SourCowMilk", SheepMilk = "SourSheepMilk", AnimalMilk = "SourAnimalMilk" }
 M.ROTTEN_MILKS = { CowMilk = "RottenCowMilk", SheepMilk = "RottenSheepMilk", AnimalMilk = "RottenAnimalMilk" }
 M.SCALDED_MILKS = { CowMilk = "ScaldedCowMilk", SheepMilk = "ScaldedSheepMilk", AnimalMilk = "ScaldedAnimalMilk" }
--- The name of scalded milk's state in TP Core's FluidAgeing record.
+-- The name of scalded milk's state in TP Core's FluidAgeing fluidAge.
 M.SCALDED_STATE = "Scalded"
 M.SCALDED = {}
 for _, scalded in pairs(M.SCALDED_MILKS) do M.SCALDED[scalded] = true end
@@ -182,12 +182,12 @@ M.isEmptyContainer = Container.isEmptyVessel
 -- Which station this is ("incubator" or "crock") and which way it faces, or nil for anything else.
 M.stationKind = Station.kinds(Tiles.PREFIX, M.FACE_COUNT, { incubator = M.INCUBATOR_SPRITE, crock = M.CROCK_SPRITE })
 
-function M.isIncubator(object)
-    return M.stationKind(object) == "incubator"
+function M.isIncubator(isoObject)
+    return M.stationKind(isoObject) == "incubator"
 end
 
-function M.isCrock(object)
-    return M.stationKind(object) == "crock"
+function M.isCrock(isoObject)
+    return M.stationKind(isoObject) == "crock"
 end
 
 M.SENSITIVITY = 1
@@ -203,7 +203,7 @@ M.placeOf = Fire.placeOf
 M.noteFire = Fire.noteFire
 -- A Stone Hearth with the cauldron fitted, and those near a square.
 function M.cauldronsNear(square) return Fire.fittedNear(square, Cauldron.ID) end
-function M.hasCauldron(object) return Fire.isFitted(object, Cauldron.ID) end
+function M.hasCauldron(isoObject) return Fire.isFitted(isoObject, Cauldron.ID) end
 
 -- Temperatures: vanilla's item heat, for milk poured between our stores and the player's containers. Vanilla
 -- cools a container in the player's hands to room heat within seconds, so only the cauldron and the pot keep heat.
@@ -235,13 +235,13 @@ function M.milkRate(celsius)
 end
 
 -- Kefir ages on its own kind (TraditionalPreservationDairyKefir.lua), at milk's rate.
-M.KEFIR_KIND = "kefir"
-local KINDS = { [CROCK_KIND] = function(celsius) return M.cultureRate(celsius) end,
-    [M.MILK_KIND] = function(celsius) return M.milkRate(celsius) end,
-    [M.KEFIR_KIND] = function(celsius) return M.milkRate(celsius) end }
+M.KEFIR_PROCESS = "kefir"
+local PROCESSES = { [CROCK_PROCESS] = function(celsius) return M.cultureRate(celsius) end,
+    [M.MILK_PROCESS] = function(celsius) return M.milkRate(celsius) end,
+    [M.KEFIR_PROCESS] = function(celsius) return M.milkRate(celsius) end }
 
 function M.newLedger(now)
-    return Weather.newLedger(now, KINDS)
+    return Weather.newLedger(now, PROCESSES)
 end
 
 function M.getLedger()
@@ -249,13 +249,13 @@ function M.getLedger()
 end
 
 function M.getHistory()
-    local data = ModData.getOrCreate(M.MOD_DATA_KEY)
-    data.history = data.history or {}
-    return data.history
+    local dairyModData = ModData.getOrCreate(M.MOD_DATA_KEY)
+    dairyModData.history = dairyModData.history or {}
+    return dairyModData.history
 end
 
 FluidAgeing.register({
-    kind = M.MILK_KIND,
+    process = M.MILK_PROCESS,
     scaldHeat = CauldronFluid.itemHeat(M.HOT_C),
     scaldHold = M.SCALD_HOLD_HOURS,
     rate = M.milkRate,
@@ -274,8 +274,8 @@ FluidAgeing.register({
 
 -- One ten-minute reading: the ledger for the crock, and the hour's slot in the history for the incubator.
 -- An hour's slot keeps the last reading in it, with the season mean that goes with it.
-function M.record(ledger, history, now, temperature)
-    Weather.advance(ledger, now, temperature, KINDS)
+function M.recordWeather(ledger, history, now, temperature)
+    Weather.advance(ledger, now, temperature, PROCESSES)
     local hour = math.floor(now)
     history[hour % M.HISTORY_HOURS + 1] = { hour = hour, temperature = ledger.temperature, season = ledger.seasonTemperature,
         ground = ledger.groundTemperature, grid = ledger.gridOn }
@@ -283,9 +283,9 @@ end
 
 -- The place's temperature in a past hour, or nil when the history has no reading for it.
 function M.pastTemperature(history, hour, place)
-    local entry = history[hour % M.HISTORY_HOURS + 1]
-    local reading = entry and entry.hour == hour and { temperature = entry.temperature, seasonTemperature = entry.season,
-        groundTemperature = entry.ground, gridOn = entry.grid } or nil
+    local slot = history[hour % M.HISTORY_HOURS + 1]
+    local reading = slot and slot.hour == hour and { temperature = slot.temperature, seasonTemperature = slot.season,
+        groundTemperature = slot.ground, gridOn = slot.grid } or nil
     -- A fire indoors needs no reading; one under a roof or in the open does.
     if Fire.isFirePlace(place) then return Fire.fireC(place, reading) end
     if not reading then return nil end
@@ -334,7 +334,7 @@ function M.addMilk(batch, ml, milkC, now, fluid)
     batch.tempC = had > 0 and (batch.tempC * had + milkC * taken) / (had + taken) or milkC
     if fluid then CauldronFluid.addParts(batch, fluid, taken) end
     batch.ml = had + taken
-    batch.last = batch.last or now
+    batch.lastHour = batch.lastHour or now
     return taken
 end
 
@@ -347,10 +347,10 @@ function M.canAddStarter(batch)
     return true
 end
 
-function M.addStarter(batch, kind)
+function M.addStarter(batch, starter)
     local ok, reason = M.canAddStarter(batch)
     if not ok then return false, reason end
-    batch.starter = kind
+    batch.starter = starter
     return true
 end
 
@@ -371,9 +371,9 @@ end
 -- November's pots indoors never set), and the yogurt is done within a step's resolution.
 function M.advanceBatch(batch, hours, placeC, now)
     if (batch.ml or 0) <= 0 then return end
-    local t = 0
-    while t < hours - 1e-9 do
-        local step = math.min(M.STEP_HOURS, hours - t)
+    local elapsed = 0
+    while elapsed < hours - 1e-9 do
+        local step = math.min(M.STEP_HOURS, hours - elapsed)
         local wrapped = batch.incubating and not batch.readyHour
         local before = batch.tempC
         batch.tempC = M.cool(before, placeC, step, M.tau(batch.ml, wrapped))
@@ -381,43 +381,43 @@ function M.advanceBatch(batch, hours, placeC, now)
             -- Cooling is exponential, so the crossing is exact: lidded to SET_C, wrapped for the rest of the step.
             local cross = M.tau(batch.ml, false) * math.log((before - placeC) / (M.SET_C - placeC))
             batch.tempC = M.cool(M.SET_C, placeC, step - cross, M.tau(batch.ml, true))
-            batch.incubating, batch.wrapHour = true, now + t + cross   -- read by tools/season_report.lua
-            batch.done = M.setRate(batch.tempC) * (step - cross)
+            batch.incubating, batch.wrapHour = true, now + elapsed + cross   -- read by tools/season_report.lua
+            batch.workHours = M.setRate(batch.tempC) * (step - cross)
         end
-        t = t + step
+        elapsed = elapsed + step
         if not batch.incubating and batch.starter and batch.tempC <= M.SET_C then
             batch.incubating = true
-            batch.wrapHour = now + t   -- read by tools/season_report.lua
-            batch.done = 0
+            batch.wrapHour = now + elapsed   -- read by tools/season_report.lua
+            batch.workHours = 0
         elseif wrapped then
-            batch.done = batch.done + M.setRate(batch.tempC) * step
-            if batch.done >= M.INCUBATE_HOURS then batch.readyHour = now + t end
+            batch.workHours = batch.workHours + M.setRate(batch.tempC) * step
+            if batch.workHours >= M.INCUBATE_HOURS then batch.readyHour = now + elapsed end
         end
     end
 end
 
 -- By a fire until it burns out (fireUntil), then the place under it.
-local function placeAt(state, place, hour)
-    if Fire.isFirePlace(place) and state.fireUntil and hour >= state.fireUntil then return state.under or Weather.DEFAULT_PLACE end
+local function placeAt(milk, place, hour)
+    if Fire.isFirePlace(place) and milk.fireUntil and hour >= milk.fireUntil then return milk.placeWithoutFire or Weather.DEFAULT_PLACE end
     return place
 end
 
--- Where a stretch from t that would end at stop ends instead: when the fire it stands by burns out, if that is sooner.
-local function fireStop(state, place, t, stop)
-    if Fire.isFirePlace(place) and state.fireUntil and t < state.fireUntil then return math.min(stop, state.fireUntil) end
+-- Where a stretch from walkedTo that would end at stop ends instead: when the fire it stands by burns out, if that is sooner.
+local function fireStop(milk, place, walkedTo, stop)
+    if Fire.isFirePlace(place) and milk.fireUntil and walkedTo < milk.fireUntil then return math.min(stop, milk.fireUntil) end
     return stop
 end
 
--- Walks a pot or carried milk (state, with its fireUntil and under) from hour t to now, at place: one stretch an hour,
+-- Walks a pot or carried milk (milk, with its fireUntil and placeWithoutFire) from hour walkedTo to now, at place: one stretch an hour,
 -- broken where the fire burns out, each at the history's reading for that hour (the ledger's now where it has none).
 -- step(from, to, placeC) runs each stretch.
-function M.walkHours(state, place, t, now, history, ledger, step)
-    while t < now do
-        local hour = math.floor(t)
-        local stop = fireStop(state, place, t, math.min(hour + 1, now))
-        local here = placeAt(state, place, t)
-        step(t, stop, M.pastTemperature(history, hour, here) or M.placeTemperature(ledger, here))
-        t = stop
+function M.walkHours(milk, place, walkedTo, now, history, ledger, step)
+    while walkedTo < now do
+        local hour = math.floor(walkedTo)
+        local stop = fireStop(milk, place, walkedTo, math.min(hour + 1, now))
+        local here = placeAt(milk, place, walkedTo)
+        step(walkedTo, stop, M.pastTemperature(history, hour, here) or M.placeTemperature(ledger, here))
+        walkedTo = stop
     end
 end
 
@@ -425,24 +425,24 @@ end
 -- settling to the place; after that nothing changes but at a steady rate, so the rest is one exact step.
 function M.advanceSpell(batch, hours, placeC, now)
     if (batch.ml or 0) <= 0 then return end
-    local t = 0
-    while t < hours - 1e-9 and batch.starter and not batch.readyHour and math.abs(batch.tempC - placeC) >= SETTLED_C do
-        local step = math.min(M.STEP_HOURS, hours - t)
-        M.advanceBatch(batch, step, placeC, now + t)
-        t = t + step
+    local elapsed = 0
+    while elapsed < hours - 1e-9 and batch.starter and not batch.readyHour and math.abs(batch.tempC - placeC) >= SETTLED_C do
+        local step = math.min(M.STEP_HOURS, hours - elapsed)
+        M.advanceBatch(batch, step, placeC, now + elapsed)
+        elapsed = elapsed + step
     end
-    local left = hours - t
+    local left = hours - elapsed
     if left <= 1e-9 then return end
     if batch.starter and not batch.incubating and batch.tempC <= M.SET_C then
-        batch.incubating, batch.wrapHour, batch.done = true, now + t, 0
+        batch.incubating, batch.wrapHour, batch.workHours = true, now + elapsed, 0
     end
     local wrapped = batch.incubating and not batch.readyHour
     if wrapped then
-        local rate, need = M.setRate(batch.tempC), M.INCUBATE_HOURS - batch.done
+        local rate, need = M.setRate(batch.tempC), M.INCUBATE_HOURS - batch.workHours
         if rate * left >= need then
-            batch.done, batch.readyHour = M.INCUBATE_HOURS, now + t + need / rate
+            batch.workHours, batch.readyHour = M.INCUBATE_HOURS, now + elapsed + need / rate
         else
-            batch.done = batch.done + rate * left
+            batch.workHours = batch.workHours + rate * left
         end
     end
     batch.tempC = M.cool(batch.tempC, placeC, left, M.tau(batch.ml, wrapped))
@@ -452,18 +452,18 @@ end
 -- history has no reading (a gap longer than it keeps, or the hour now). The hours before the history all read
 -- alike, so they run as one spell (two when a fire burnt out in them), however long the pot was away.
 function M.catchUp(batch, now, place, history, ledger)
-    if (batch.ml or 0) <= 0 then batch.last = now return end
-    local t = batch.last or now
+    if (batch.ml or 0) <= 0 then batch.lastHour = now return end
+    local walkedTo = batch.lastHour or now
     local kept = math.floor(now) - M.HISTORY_HOURS + 1
-    while t < kept do
-        local stop = fireStop(batch, place, t, kept)
-        M.advanceSpell(batch, stop - t, M.placeTemperature(ledger, placeAt(batch, place, t)), t)
-        t = stop
+    while walkedTo < kept do
+        local stop = fireStop(batch, place, walkedTo, kept)
+        M.advanceSpell(batch, stop - walkedTo, M.placeTemperature(ledger, placeAt(batch, place, walkedTo)), walkedTo)
+        walkedTo = stop
     end
-    M.walkHours(batch, place, t, now, history, ledger, function(from, to, placeC)
+    M.walkHours(batch, place, walkedTo, now, history, ledger, function(from, to, placeC)
         M.advanceBatch(batch, to - from, placeC, from)
     end)
-    batch.last = now
+    batch.lastHour = now
 end
 
 -- Days since the yogurt set, for the jar's food age: freshness carries over and never resets.
@@ -605,12 +605,12 @@ M.mlIn = Container.ml
 
 -- The ledger keeps totals for the weather's places only, so time by a fire counts by the clock (Fire.catchUp).
 local function markCrock(crock, ledger)
-    crock.marks = Weather.mark({}, ledger, CROCK_KIND)
+    crock.marks = Weather.mark({}, ledger, CROCK_PROCESS)
 end
 
 function M.startCrock(crock, ledger)
     crock.stage = "Cultivating"
-    crock.done = 0
+    crock.workHours = 0
     markCrock(crock, ledger)
 end
 
@@ -653,9 +653,9 @@ end
 
 -- Why a container can't clabber the crock ("Rotten", "TooLittle", "NoSour"), or nil if it can.
 function M.clabberRefusal(container)
-    local kind = M.clabberIn(container)
-    if kind == "Rotten" then return "Rotten" end
-    if not kind then return "NoSour" end
+    local clabber = M.clabberIn(container)
+    if clabber == "Rotten" then return "Rotten" end
+    if not clabber then return "NoSour" end
     if M.mlIn(container) < M.CLABBER_ML - 0.5 then return "TooLittle" end
 end
 
@@ -663,7 +663,7 @@ end
 function M.clabberCrock(crock)
     if M.crockStage(crock) ~= "Empty" then return false end
     crock.stage = "Waiting"
-    crock.done = 0
+    crock.workHours = 0
     return true
 end
 
@@ -674,26 +674,26 @@ function M.collectStarters(crock)
     return M.CROCK_STARTERS
 end
 
--- The station's state table, made on first use.
-function M.stateOf(modData, key)
+-- The station's own table under key in its modData, made on first use.
+function M.stationModData(modData, key)
     modData[key] = modData[key] or {}
     return modData[key]
 end
 
--- A pot's or crock's state as saved, not brought up to now (the World's updateIncubator / updateCrock do that): for
+-- A pot's batch or a crock's culture as saved, not brought up to now (the World's updateIncubator / updateCrock do that): for
 -- checks that run every tick of an action.
-function M.incubatorOf(station)
-    return M.stateOf(Station.movableData(station), M.INCUBATOR_KEY)
+function M.batchOf(station)
+    return M.stationModData(Station.movableData(station), M.INCUBATOR_KEY)
 end
 
 function M.crockOf(station)
-    return M.stateOf(Station.movableData(station), M.CROCK_KEY)
+    return M.stationModData(Station.movableData(station), M.CROCK_KEY)
 end
 
 function M.feedCrock(crock, ledger)
     if crock.stage ~= "Waiting" then return false end
     crock.stage = "Developing"
-    crock.done = 0
+    crock.workHours = 0
     markCrock(crock, ledger)
     return true
 end
@@ -705,8 +705,8 @@ end
 function M.updateCrock(crock, ledger, place)
     local stage = crock.stage
     if stage ~= "Cultivating" and stage ~= "Developing" then return end
-    crock.done = crock.done + Fire.catchUp(crock, crock.marks, ledger, CROCK_KIND, place, M.cultureRate)
-    if crock.done >= M.crockHours(crock) then
+    crock.workHours = crock.workHours + Fire.catchUp(crock, crock.marks, ledger, CROCK_PROCESS, place, M.cultureRate)
+    if crock.workHours >= M.crockHours(crock) then
         crock.stage = stage == "Cultivating" and "Waiting" or "Ready"
     end
 end
@@ -716,8 +716,8 @@ function M.crockStatus(crock, ledger, place)
     local rate = M.cultureRate(temperature)
     local hours = M.crockHours(crock)
     return {
-        progress = math.min((crock.done or 0) / hours, 1),
-        hoursLeft = rate > 0 and math.max(hours - (crock.done or 0), 0) / rate or nil,
+        progress = math.min((crock.workHours or 0) / hours, 1),
+        hoursLeft = rate > 0 and math.max(hours - (crock.workHours or 0), 0) / rate or nil,
         temperature = temperature,
         place = place,
         rate = rate,
