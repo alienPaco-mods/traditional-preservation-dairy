@@ -94,7 +94,7 @@ local CULTURE_CURVE = { { 5, 0.03 }, { 10, 0.1 }, { 15, 0.3 }, { 20, 0.6 }, { 25
 -- scalded milk never sours (the heat killed them) and spoils at the same age. Ages are hours at 20 C: about a day
 -- and a half to sour in a 20 C room, 3 days in a 15 C basement, 8 in a fridge, a day at 30 C. Store milk (sealed
 -- cartons and bottles) keeps until it is poured out, and then counts as scalded: it was pasteurised. Scalded milk goes
--- by its scalded name (Cow's Milk (Scalded)) until raw milk is mixed in.
+-- by its scalded name (Cow's Milk (Scalded, Fresh)) until raw milk is mixed in.
 M.MILK_PROCESS = "milk"
 M.MILK_TURN_HOURS = 36
 M.MILK_SPOIL_HOURS = 72

@@ -1,4 +1,4 @@
-# Traditional Preservation (Dairy) — Build 42 prototype (v0.0.3)
+# Traditional Preservation (Dairy) — Build 42 prototype (v0.0.4)
 
 **Status: experimental.** The yogurt loop, from the Stone Hearth's cauldron to a cup of yogurt, and the starter crock have been played in the game with test timers. The latest changes (mixed milks, the cold-milk refusal, the jar weight after a reload) have only been checked offline so far (see the test plan). Back up your save before enabling.
 
@@ -128,7 +128,7 @@ Vanilla milk keeps for ever. Here it doesn't (TP Core's `FluidAgeing`; sandbox *
 | Milk reads | When | Good for |
 |---|---|---|
 | Cow's Milk (Fresh) | Raw, young | Everything |
-| Cow's Milk (Scalded) | Has been held at 85 C or more for 20 minutes in all (the cauldron, or a pot on a lit stove or fire), poured out of the incubator, or poured out of a store carton | Everything. It never sours |
+| Cow's Milk (Scalded, Fresh) | Has been held at 85 C or more for 20 minutes in all (the cauldron, or a pot on a lit stove or fire), poured out of the incubator, or poured out of a store carton | Everything. It never sours |
 | Cow's Milk (Soured) | Raw milk after 36 hours' worth of 20 C | Drinking (its milk's food, a little unhappiness), Make Cake Batter, Prepare Muffins, Make Bowl of Cereal, and Load Soured Milk on an empty crock. The incubator, the crock's feed, Churn Butter and Make Mildew Cure refuse it |
 | Cow's Milk (Rotten) | Any milk after 72 hours' worth of 20 C | Nothing: food poisoning. Pour it away |
 
@@ -247,7 +247,7 @@ Caucasus milk kefir, from grains found as loot (a **Packet of Kefir Grains**: a 
 - **Speed**: a live grain to every 40 ml (125 for 5 L) ferments it in 24 hours at 18 to 25 C; fewer take longer, more go no faster. Hungry and dried grains count half. By the place's temperature: 0.15 at 4 C, 0.35 at 10, 0.6 at 15, 1.3 at 28, 1.5 at 30 to 35, paused frozen. Indoors in a Kentucky winter it doesn't finish in 3 days (`tools/season_report.lua`).
 - **Grains**: live ones grow a tenth a batch, by the share done at 15 to 28 C (the part-grain stays with the pot); hungry ones come back Live; dried ones come back over 2 batches. They are never made by a recipe and can't be eaten.
 - **Strain Kefir** into empty containers through a Strainer, or a cloth at twice the time; the grains come out with the first strain. **Take Out Kefir Grains** works before the milk goes in.
-- **Kefir** is a fluid: its milk's food less the lactose (cow's about 590 kcal a litre), cow's and sheep's mixed by share, all called Kefir. It ages as milk does, from the moment it is ready: **Kefir (Separated)** at about 3 days at 20 C (a little unhappiness), **Kefir (Rotten)** at about 10.
+- **Kefir** is a fluid: its milk's food less the lactose (cow's about 590 kcal a litre), cow's and sheep's mixed by share, both called Kefir (Fresh). It ages as milk does, from the moment it is ready: **Kefir (Separated)** at about 3 days at 20 C (a little unhappiness), **Kefir (Rotten)** at about 10.
 - **Fresh kefir eases food sickness**, 10 a litre drunk, only while sick, then not again for 3 game hours.
 - Coming: grains starving out of milk, and drying them to keep.
 
@@ -288,7 +288,7 @@ Volumes, temperatures, cooling times, the setting and culture curves, the crock'
 - Temperature during setting slows it but never spoils a batch.
 - A room or an open roof is the 10-day mean (22 C while the grid is on); a basement follows the ground (the 10-day mean's own 30-day mean) two fifths as far from 10 C; room heating isn't modelled beyond a fire within 2 tiles.
 - Milk goes off (TP Core's `FluidAgeing`): raw milk turns to its Soured twin at 36 hours' worth of 20 C and to its Rotten one at
-  72; scalded milk (held 20 minutes at 85 C or more) skips souring and goes by its Scalded twin (`SCALDED_MILKS`, "Cow's Milk (Scalded)") until raw milk
+  72; scalded milk (held 20 minutes at 85 C or more) skips souring and goes by its Scalded twin (`SCALDED_MILKS`, "Cow's Milk (Scalded, Fresh)") until raw milk
   is mixed in; it spoils to its milk's Rotten one. The curve (`MILK_CURVE`) and the hours are at the top of the main Lua file. Its age
   lives in the container's ModData (`tpFluidAge`, TP Core's key) and on Dairy's weather ledger (`milkOpen` and so on).
 - Any milk bakes, fresh, scalded or soured: vanilla Make Cake Batter, Prepare Muffins and Make Bowl of Cereal take all

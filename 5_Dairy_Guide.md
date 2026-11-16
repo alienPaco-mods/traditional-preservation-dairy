@@ -196,7 +196,7 @@ Vanilla milk keeps for ever. With this mod it doesn't, and what you do with a bu
 | The milk reads | When | Good for |
 |---|---|---|
 | **Cow's Milk (Fresh)** | Raw and young | Everything |
-| **Cow's Milk (Scalded)** | It has been held at 85 C or more for 20 minutes (the cauldron, or a pot on a lit stove or fire), or it came out of the incubator or a store carton | Everything. It never sours |
+| **Cow's Milk (Scalded, Fresh)** | It has been held at 85 C or more for 20 minutes (the cauldron, or a pot on a lit stove or fire), or it came out of the incubator or a store carton | Everything. It never sours |
 | **Cow's Milk (Soured)** | Raw milk, a day and a half old in a warm room | Drinking (the same food, a little unhappiness), baking (cake batter, muffins, cereal) and starting the crock without wheat (chapter 9). Not yogurt, butter or mildew cure |
 | **Cow's Milk (Rotten)** | Any milk, twice that old | Nothing. It poisons you: pour it away |
 

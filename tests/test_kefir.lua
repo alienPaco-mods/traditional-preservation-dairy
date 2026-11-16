@@ -133,7 +133,7 @@ for milk, kefir in pairs(M.KEFIRS) do kinds[kefir] = true end
 local count = 0
 for kefir in pairs(kinds) do
     count = count + 1
-    check(kefir .. ": called Kefir in each stage", names:find('"Fluid_Name_' .. kefir .. '": "Kefir"', 1, true)
+    check(kefir .. ": called Kefir (Fresh), (Separated), (Rotten)", names:find('"Fluid_Name_' .. kefir .. '": "Kefir (Fresh)"', 1, true)
         and names:find('"Fluid_Name_Separated' .. kefir .. '": "Kefir (Separated)"', 1, true)
         and names:find('"Fluid_Name_Rotten' .. kefir .. '": "Kefir (Rotten)"', 1, true))
 end
