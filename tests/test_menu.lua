@@ -23,7 +23,7 @@ local playerSquare = { getX = function() return 5 end, getY = function() return 
 local playerObj = { getSquare = function() return playerSquare end, isOutside = function() return false end }
 function getSpecificPlayer() return playerObj end
 function getClimateManager()
-    return { getTemperature = function() return 18 end, getHumidity = function() return 50 end }
+    return { isUpdated = function() return true end, getTemperature = function() return 18 end, getHumidity = function() return 50 end }
 end
 -- The ground: objects by "x,y", all on level 0.
 local ground = {}

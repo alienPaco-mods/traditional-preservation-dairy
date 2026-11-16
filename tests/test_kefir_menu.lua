@@ -45,7 +45,7 @@ local playerObj = { getSquare = function() return playerSquare end, isOutside = 
     getInventory = function() return inventory end, isTimedActionInstant = function() return false end }
 function getSpecificPlayer() return playerObj end
 function getClimateManager()
-    return { getTemperature = function() return 18 end, getHumidity = function() return 50 end }
+    return { isUpdated = function() return true end, getTemperature = function() return 18 end, getHumidity = function() return 50 end }
 end
 local ground = {}
 function getCell()

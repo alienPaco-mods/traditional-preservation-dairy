@@ -9,7 +9,7 @@ H.installGetText()
 
 -- Engine stand-ins
 function getClimateManager()
-    return { getTemperature = function() return 18 end, getHumidity = function() return 50 end }
+    return { isUpdated = function() return true end, getTemperature = function() return 18 end, getHumidity = function() return 50 end }
 end
 SandboxVars = { TraditionalPreservationDairy = { IncubationHours = 6 } }
 -- Nothing is built near the player, and no station is tracked.
