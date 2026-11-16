@@ -104,7 +104,7 @@ check("no recipe makes grains", not read("42/media/scripts/TraditionalPreservati
 
 ProceduralDistributions = { list = { CrateFarming = { items = { "WheatBagSeed", 8 } }, GigamartFarming = { items = {} },
     FridgeGeneric = { items = {} }, KitchenDryFood = { items = {} } } }
-package.preload["Items/ProceduralDistributions"] = function() return true end
+package.preload["TraditionalPreservationDairy"] = function() return true end
 dofile("42/media/lua/server/TraditionalPreservationDairyLoot.lua")
 local function weightIn(list)
     local lootItems = ProceduralDistributions.list[list].items

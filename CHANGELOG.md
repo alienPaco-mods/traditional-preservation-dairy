@@ -1,5 +1,8 @@
 # Changelog: Traditional Preservation (Dairy)
 
+## 0.0.8
+- **Internal** (2026-11-16): the kefir grains loot goes through TP Core's `Loot.add` and names the packet by `GRAIN_PACKET`, not a second copy of its name. Same lists and weights; nothing changes in game. Needs TP Core 0.1.5.
+
 ## 0.0.7
 - **Workshop text** (2026-11-16): it said no loot table is changed; it now names the Packet of Kefir Grains loot. Nothing changes in game.
 
