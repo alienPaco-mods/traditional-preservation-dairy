@@ -8,6 +8,7 @@ require "TimedActions/TPYoghurtIncubator"
 require "TimedActions/TPStarterCrock"
 require "TimedActions/TPFillYoghurtCup"
 require "TimedActions/TPKefirIncubator"
+require "TimedActions/TPKefirGrains"
 local UI = require "TraditionalPreservationCore/UI"
 local Cauldron = require "TraditionalPreservationCore/Cauldron"
 local InfoWindow = require "TraditionalPreservationCore/InfoWindow"
@@ -97,6 +98,12 @@ local function statusText(batch)
     return say("IGUI_TraditionalPreservationDairy_Stage" .. stage, litresText(batch.ml), degrees(batch.tempC))
 end
 
+-- Why a kefir pot won't ferment: no grain left alive, or the place is frozen.
+local function stalledKey(batch)
+    if select(2, M.grainCount(batch)) <= 0 then return "IGUI_TraditionalPreservationDairy_GrainsAllDead" end
+    return "IGUI_TraditionalPreservationDairy_KefirStalled"
+end
+
 -- A kefir pot's grains and their share of full speed, and when it will be ready if the place's temperature holds.
 local function kefirLines(batch, placeC, lines)
     local stage = M.stage(batch)
@@ -106,7 +113,7 @@ local function kefirLines(batch, placeC, lines)
         UI.percent(M.kefirRatio(batch)), UI.percent(M.kefirRate(placeC))))
     local hours = M.kefirHoursLeft(batch, placeC)
     table.insert(lines, hours and say("IGUI_TraditionalPreservationDairy_NextKefirReady", hoursText(hours))
-        or getText("IGUI_TraditionalPreservationDairy_KefirStalled"))
+        or getText(stalledKey(batch)))
 end
 
 -- The hover: where the pot stands, what comes next and when, if the place's temperature holds.
@@ -331,7 +338,7 @@ local GRAIN_GROUPS = { "Live", "Hungry", "Dried", "Reactivating", "Dead" }
 
 local function grainGroup(item)
     if item:getFullType() == M.DRIED_GRAIN then return "Dried" end
-    return M.grainOf(item, now()).grainState
+    return M.keepGrain(item, now()).grainState
 end
 
 -- How many of a group bring the pot's milk to full speed, counting the grains already in; nil with no milk yet or when
@@ -705,7 +712,7 @@ local function renderKefir(window, potView)
     if stage == "KefirGrains" then table.insert(notes, getText("IGUI_TraditionalPreservationDairy_HelpKefirGrains")) end
     if stage == "KefirReady" then table.insert(notes, getText("IGUI_TraditionalPreservationDairy_HelpKefirReady")) end
     if stage == "Fermenting" then
-        table.insert(notes, getText(potView.hours and "IGUI_TraditionalPreservationDairy_InfoAssumes" or "IGUI_TraditionalPreservationDairy_KefirStalled"))
+        table.insert(notes, getText(potView.hours and "IGUI_TraditionalPreservationDairy_InfoAssumes" or stalledKey(batch)))
     end
     window:drawNotes(y, notes)
 end
@@ -896,6 +903,63 @@ end
 
 Events.OnFillInventoryObjectContextMenu.Add(onFillInventoryMenu)
 
+-- Kefir grains in hand: Spread Kefir Grains to Dry on a grain's menu (One, All), Collect Dried Kefir Grains on a cloth of
+-- them once dry.
+local function onGrainsAction(playerObj, mode, item, items, cloth)
+    for _, carried in ipairs(items or { item }) do ISInventoryPaneContextMenu.transferIfNeeded(playerObj, carried) end
+    if cloth then ISInventoryPaneContextMenu.transferIfNeeded(playerObj, cloth) end
+    ISTimedActionQueue.add(TPKefirGrains:new(playerObj, mode, item, items, cloth))
+end
+
+local function dryingCloth(playerObj)
+    local inventory = playerObj:getInventory()
+    for _, cloth in ipairs(M.DRY_CLOTHS) do
+        local item = inventory:getFirstTypeRecurse(cloth)
+        if item then return item end
+    end
+end
+
+local function addSpreadMenu(context, playerObj)
+    local option = context:addOption(getText("ContextMenu_TraditionalPreservationDairy_SpreadGrains"))
+    option.iconTexture = getTexture(GRAINS_ICON)
+    local alive = findItems(playerObj, function(item)
+        return item:getFullType() == M.GRAIN and M.keepGrain(item, now()).grainState ~= M.GRAIN_DEAD
+    end)
+    if #alive == 0 then return disableWith(option, getText("IGUI_TraditionalPreservationDairy_NoLiveGrains")) end
+    local cloth = dryingCloth(playerObj)
+    if not cloth then return disableWith(option, getText("IGUI_TraditionalPreservationDairy_NoDryingCloth")) end
+    tooltipFor(option, getText("IGUI_TraditionalPreservationDairy_SpreadHelp"))
+    local sub = context:getNew(context)
+    context:addSubMenu(option, sub)
+    sub:addOption(getText("ContextMenu_TraditionalPreservationDairy_GrainsOne"), playerObj, onGrainsAction, "spread", nil,
+        { alive[1] }, cloth)
+    if #alive > 1 then
+        sub:addOption(say("ContextMenu_TraditionalPreservationDairy_All", tostring(#alive)), playerObj, onGrainsAction, "spread", nil,
+            alive, cloth)
+    end
+end
+
+local function addCollectMenu(context, playerObj, item)
+    local drying = M.keepDrying(item, now())
+    if not drying then return end
+    local option = context:addOption(getText("ContextMenu_TraditionalPreservationDairy_CollectDriedGrains"), playerObj,
+        onGrainsAction, "collect", item)
+    option.iconTexture = getTexture(GRAINS_ICON)
+    if M.isDry(drying) then return end
+    local hours = M.dryingHoursLeft(drying, M.placeTemperature(M.getLedger(), drying.dry.place))
+    disableWith(option, hours and say("IGUI_TraditionalPreservationDairy_DryingLeft", hoursText(hours))
+        or getText("IGUI_TraditionalPreservationDairy_DryingFrozen"))
+end
+
+local function onFillGrainsMenu(playerNum, context, items)
+    local playerObj = getSpecificPlayer(playerNum)
+    local onCloth = UI.firstSelected(items, function(item) return item:getFullType() == M.GRAIN_DRYING end)
+    if onCloth then return addCollectMenu(context, playerObj, onCloth) end
+    if UI.firstSelected(items, function(item) return item:getFullType() == M.GRAIN end) then addSpreadMenu(context, playerObj) end
+end
+
+Events.OnFillInventoryObjectContextMenu.Add(onFillGrainsMenu)
+
 -- Milk taken off a stove or a fire keeps its heat as a record (vanilla's drops within seconds): read as it is moved,
 -- while it is still on the heat.
 Transfer.before(function(action, item)
@@ -906,8 +970,10 @@ Transfer.before(function(action, item)
     end
 end)
 
--- Butter catches up on its keeping whenever it is looked at or moved (TP Core's PlaceKeepingUI).
+-- Butter catches up on its keeping whenever it is looked at or moved (TP Core's PlaceKeepingUI); so do kefir grains on
+-- their starving clocks, and grains drying on a cloth.
 PlaceKeepingUI.watch(M.BUTTER_KEEPER, M.BUTTER_DAYS)
+PlaceKeepingUI.watch({ keep = M.keepGrain }, { [M.GRAIN] = true, [M.GRAIN_DRYING] = true })
 
 -- Every step of clarifying takes Cooking 2.
 local function butterRefusal(playerObj)

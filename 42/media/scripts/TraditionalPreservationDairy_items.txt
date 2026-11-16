@@ -279,4 +279,15 @@ module TraditionalPreservationDairy
         Icon = KefirGrains,
         Tooltip = Tooltip_TraditionalPreservationDairy_KefirGrains,
     }
+
+    /* Grains spread on a cloth to dry where it is left (TraditionalPreservationDairyKefir.lua): the count and the cloth
+       are in modData, and its weight is set as it is made. Dry, Collect Dried Kefir Grains gives them and the cloth back. */
+    item KefirGrainsOnCloth
+    {
+        DisplayCategory = Cooking,
+        ItemType = base:normal,
+        Weight = 0.1,
+        Icon = KefirGrains,
+        Tooltip = Tooltip_TraditionalPreservationDairy_KefirGrainsOnCloth,
+    }
 }

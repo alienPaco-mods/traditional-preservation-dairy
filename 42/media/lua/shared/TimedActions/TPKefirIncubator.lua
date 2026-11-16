@@ -63,13 +63,18 @@ function TPKefirIncubator:start()
     self:setActionAnim("Loot")
 end
 
--- Gives the grains (counts by grain key) as items, each with its record, set at hour.
-local function giveGrains(self, grains, hour)
-    local inventory = self.character:getInventory()
-    for key, n in pairs(grains or {}) do
-        for _ = 1, n do
+-- Gives the grains (lots: { key, n, age }) as items, each with its record set at hour, and its clock as starved as
+-- the lot was.
+local function giveGrains(self, lots, hour)
+    local inventory, ledger = self.character:getInventory(), M.getLedger()
+    for _, lot in ipairs(lots or {}) do
+        for _ = 1, lot.n do
             local item = inventory:AddItem(M.GRAIN)
-            if item then item:getModData()[M.GRAIN_KEY] = M.grainOfKey(key, hour) end
+            if item then
+                local place = FluidAgeing.placeOfItem(item) or FluidAgeing.DEFAULT_PLACE
+                item:getModData()[M.GRAIN_KEY] = M.grainRecord(lot.key, hour, lot.age, ledger, place)
+                M.keepGrain(item, hour, place, ledger)
+            end
         end
     end
 end
@@ -86,7 +91,7 @@ function COMPLETE.grains(self, batch, hour)
             table.insert(items, item)
         end
     end
-    if M.addGrains(batch, grains, M.getLedger()) > 0 then
+    if M.addGrains(batch, grains, M.getLedger(), hour) > 0 then
         for _, item in ipairs(items) do Action.removeItem(item) end
     end
 end
@@ -112,17 +117,17 @@ end
 -- The kefir keeps the age it had in the pot (TP Core's FluidAgeing), and is renamed for it: separated if it was.
 function COMPLETE.strain(self, batch, hour)
     local container = self.item:getFluidContainer()
-    local ml, kefir, age, grains = M.strainKefir(batch, math.floor(container:getCapacity() * 1000))
+    local ml, kefir, age, _, lots = M.strainKefir(batch, math.floor(container:getCapacity() * 1000))
     if ml <= 0 then return end
     FluidAgeing.clearIfEmpty(self.item)
     for name, part in pairs(kefir) do container:addFluid(name, part / 1000) end
     if age then self.item:getModData()[FluidAgeing.KEY] = age end
     FluidAgeing.look(self.item, hour)
-    giveGrains(self, grains, hour)
+    giveGrains(self, lots, hour)
 end
 
 function COMPLETE.takeGrains(self, batch, hour)
-    giveGrains(self, M.takeGrains(batch), hour)
+    giveGrains(self, select(2, M.takeGrains(batch)), hour)
 end
 
 function TPKefirIncubator:complete()

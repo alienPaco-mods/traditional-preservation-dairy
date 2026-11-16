@@ -5,6 +5,7 @@ H.useModPaths()
 H.installClock(100)
 H.installModData()
 H.installEvents()
+H.installGetText()
 
 -- Engine stand-ins
 function getClimateManager()
@@ -75,10 +76,13 @@ local made = {}
 local plainAdd = inventory.AddItem
 function inventory:AddItem(fullType)
     plainAdd(self, fullType)
-    local modData, fluids = {}, {}
+    local modData, fluids, name = {}, {}, fullType
     local item = { fullType = fullType, getModData = function() return modData end, modData = modData, fluids = fluids,
         getFluidContainer = function() return { Empty = function() end,
-            addFluid = function(_, name, litres) fluids[name] = litres end } end }
+            addFluid = function(_, name, litres) fluids[name] = litres end } end,
+        getFullType = function() return fullType end, getOutermostContainer = function() return nil end,
+        getWorldItem = function() return nil end, getName = function() return name end,
+        setName = function(_, text) name = text end, setCustomName = function() end }
     table.insert(made, item)
     return item
 end
@@ -95,10 +99,19 @@ run("give", "packet")
 run("give", "dried", 3)
 check("give spawns packets and dried grains", player.given[before + 31] == M.GRAIN_PACKET and player.given[before + 34] == M.DRIED_GRAIN
     and #player.given == before + 34)
-check("give lists the kefir things", run("give"):find("packet, dried, grains", 1, true) ~= nil)
+check("give lists the kefir things", run("give"):find("packet, dried, grains, cloth", 1, true) ~= nil)
+run("give", "cloth")
+local cloth = made[#made]
+check("give cloth: a Ripped Sheet of 10 grains, drying", player.given[before + 35] == M.GRAIN_DRYING
+    and cloth.modData[M.DRYING_KEY].count == 10 and cloth.modData[M.DRYING_KEY].cloth == "Base.RippedSheets"
+    and cloth:getName():find("Drying", 1, true) ~= nil)
+check("a live grain given is named for its state", made[2]:getName() == getText("IGUI_TraditionalPreservationDairy_GrainName",
+    getText("IGUI_TraditionalPreservationDairy_GrainLive")))
 check("milk refuses what is neither milk nor kefir and names the kefirs", run("milk", 1, nil, "Water"):find("CowKefir", 1, true) ~= nil)
 function inventory:getAllEvalRecurse() return { size = function() return 0 end } end
 check("butter says so when you carry none", run("butter"):find("No Butter", 1, true) ~= nil)
 check("rancid ages none", run("rancid", 5):find("Kept 0 butter for 5 days", 1, true) ~= nil)
+check("grains says so when there are none", run("grains"):find("No Kefir Grains", 1, true) ~= nil)
+check("starve starves none", run("starve"):find("0 item(s) by 48.0 hours", 1, true) ~= nil)
 
 H.done()

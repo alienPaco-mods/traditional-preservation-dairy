@@ -17,13 +17,15 @@ function TPD.help()
     say("TPD.age(hours)       move every loaded incubator and crock on by this many hours (default 1; a crock's at the best temperature)")
     say("TPD.fast(hours)      setting takes this many hours at the best temperature. TPD.fast() goes back to the sandbox")
     say("TPD.milk(litres, c, fluid) a cooking pot of milk (default 5 L of CowMilk), at c degrees if given; fluid SheepMilk or AnimalMilk for the others, or a kefir (CowKefir, SheepKefir: both read Kefir (Fresh))")
-    say("TPD.give(name, n, option) spawn n of: jar (a full Jar of Yogurt; option \"clay\" or \"glazed\"), starter, cup (an Empty Yogurt Container), butter, salted, clarified, packet (of kefir grains), dried, grains (live kefir grains). TPD.give() lists them")
+    say("TPD.give(name, n, option) spawn n of: jar (a full Jar of Yogurt; option \"clay\" or \"glazed\"), starter, cup (an Empty Yogurt Container), butter, salted, clarified, packet (of kefir grains), dried, grains (live kefir grains), cloth (10 grains drying on a Ripped Sheet). TPD.give() lists them")
     say("TPD.kit(kind)        the things a test of kind needs; TPD.kit() for yogurt, TPD.kit(\"?\") lists the kinds")
     say("TPD.crocks()         every loaded crock: stage, progress, place")
     say("TPD.ages()           every container of milk you carry: fluid, stage, age, hours to the next stage, place")
     say("TPD.sour(hours)      age the milk and kefir you carry by this many hours at 20 C (milk sours at 36, spoils at 72; kefir separates at 72, rots at 240)")
     say("TPD.butter()         every butter you carry or within 4 tiles (a fridge, a freezer): place, rate, age, days to stale and rotten there")
     say("TPD.rancid(days)     age that butter by this many days at its place (default 10)")
+    say("TPD.grains()         kefir grains and grains drying on a cloth, carried or within 4 tiles: state, hours starved, place, drying left")
+    say("TPD.starve(hours)    those grains starve this many hours at 20 C (default 48: Hungry; 168 dead), and the cloths dry this many hours at full speed")
     say("TPD.tiles()          every station within 3 tiles: object class, sprite and square solid flags")
     say("The Stone Hearth's commands (cauldronInfo, stone, cauldron, fuel, hot, its kit) are TP Core's: TPC.help()")
 end
@@ -126,11 +128,18 @@ local GIVES = {
     clarified = function(inventory) inventory:AddItem(M.CLARIFIED_BUTTER) end,
     packet = function(inventory) inventory:AddItem(M.GRAIN_PACKET) end,
     dried = function(inventory) inventory:AddItem(M.DRIED_GRAIN) end,
-    grains = function(inventory) M.grainOf(inventory:AddItem(M.GRAIN), getGameTime():getWorldAgeHours()) end,
+    grains = function(inventory) M.keepGrain(inventory:AddItem(M.GRAIN), getGameTime():getWorldAgeHours()) end,
+    -- A Ripped Sheet of 10 grains, set drying now.
+    cloth = function(inventory)
+        local item, now = inventory:AddItem(M.GRAIN_DRYING), getGameTime():getWorldAgeHours()
+        item:getModData()[M.DRYING_KEY] = M.newDrying(10, "Base.RippedSheets", M.getLedger(), now,
+            FluidAgeing.placeOfItem(item) or FluidAgeing.DEFAULT_PLACE)
+        M.keepDrying(item, now)
+    end,
 }
 
 function TPD.give(name, count, option)
-    if not GIVES[name] then return say("Things: jar (option \"clay\" or \"glazed\"), starter, cup, butter, salted, clarified, packet, dried, grains") end
+    if not GIVES[name] then return say("Things: jar (option \"clay\" or \"glazed\"), starter, cup, butter, salted, clarified, packet, dried, grains, cloth") end
     local inventory = getPlayer():getInventory()
     for _ = 1, count or 1 do GIVES[name](inventory, option) end
     say(string.format("Gave %d %s%s.", count or 1, name, option and (" (" .. option .. ")") or ""))
@@ -304,6 +313,53 @@ function TPD.rancid(days)
     local butter = nearbyButter()
     for _, item in ipairs(butter) do M.BUTTER_KEEPER.age(item, days) end
     say(string.format("Kept %d butter for %d days at their places. TPD.butter() to see them.", #butter, days))
+end
+
+-- Kefir grains
+
+local GRAIN_TYPES = { [M.GRAIN] = true, [M.GRAIN_DRYING] = true }
+
+function TPD.grains()
+    local found = PlaceKeepingUI.near(GRAIN_TYPES)
+    if #found == 0 then return say("No Kefir Grains or grains on a cloth on you or within " .. PlaceKeepingUI.REACH .. " tiles.") end
+    local now, ledger = getGameTime():getWorldAgeHours(), M.getLedger()
+    for _, item in ipairs(found) do
+        if item:getFullType() == M.GRAIN then
+            local grain = M.keepGrain(item, now)
+            local clock = grain.clock
+            say(string.format("%s: %s, starved %.1f h at 20 C (Hungry at %d, dead at %d), in %s", item:getDisplayName(),
+                grain.grainState, clock and clock.starve.age or 0, M.GRAIN_HUNGRY_HOURS, M.GRAIN_DEAD_HOURS,
+                tostring(clock and clock.starve.place)))
+        else
+            local drying = M.keepDrying(item, now)
+            if drying then
+                local left = M.dryingHoursLeft(drying, M.placeTemperature(ledger, drying.dry.place))
+                say(string.format("%s: %d grains, dried %.1f of %d h, %s h left in %s", item:getDisplayName(), drying.count,
+                    drying.dry.age, M.GRAIN_DRY_HOURS, left and string.format("%.1f", left) or "never", tostring(drying.dry.place)))
+            end
+        end
+    end
+end
+
+function TPD.starve(hours)
+    hours = hours or M.GRAIN_HUNGRY_HOURS
+    local found, now = PlaceKeepingUI.near(GRAIN_TYPES), getGameTime():getWorldAgeHours()
+    for _, item in ipairs(found) do
+        if item:getFullType() == M.GRAIN then
+            local grain = M.keepGrain(item, now)
+            if grain.clock then
+                grain.clock.starve.age = grain.clock.starve.age + hours
+                M.keepGrain(item, now)
+            end
+        else
+            local drying = M.keepDrying(item, now)
+            if drying then
+                drying.dry.age = drying.dry.age + hours
+                M.keepDrying(item, now)
+            end
+        end
+    end
+    say(string.format("Starved or dried %d item(s) by %.1f hours. TPD.grains() to see them.", #found, hours))
 end
 
 function TPD.tiles()

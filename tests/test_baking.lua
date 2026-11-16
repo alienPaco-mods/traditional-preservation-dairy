@@ -10,12 +10,14 @@ dofile("42/media/lua/shared/TraditionalPreservationDairy.lua")
 local M = TraditionalPreservationDairy
 local Recipes = require "TraditionalPreservationCore/Recipes"
 
-local ALL = "AnimalMilk;CowMilk;SheepMilk;ScaldedAnimalMilk;ScaldedCowMilk;ScaldedSheepMilk;SourAnimalMilk;SourCowMilk;SourSheepMilk"
+local ALL = "AnimalMilk;CowMilk;SheepMilk;ScaldedAnimalMilk;ScaldedCowMilk;ScaldedSheepMilk;SourAnimalMilk;SourCowMilk;SourSheepMilk;SeparatedCowKefir;SeparatedSheepKefir"
 local extra = M.bakingMilks()
-check("cake batter: cow's milk only becomes every milk, fresh, scalded or soured",
-    Recipes.widenLine("fluid 1.0 [CowMilk]", extra) == "fluid 1.0 [CowMilk;AnimalMilk;SheepMilk;ScaldedAnimalMilk;ScaldedCowMilk;ScaldedSheepMilk;SourAnimalMilk;SourCowMilk;SourSheepMilk]")
+check("cake batter: cow's milk only becomes every milk, fresh, scalded or soured, and separated kefir",
+    Recipes.widenLine("fluid 1.0 [CowMilk]", extra) == "fluid 1.0 [CowMilk;AnimalMilk;SheepMilk;ScaldedAnimalMilk;ScaldedCowMilk;ScaldedSheepMilk;SourAnimalMilk;SourCowMilk;SourSheepMilk;SeparatedCowKefir;SeparatedSheepKefir]")
 check("cereal: cow's and sheep's gain the rest",
-    Recipes.widenLine("fluid 0.3 [CowMilk;SheepMilk]", extra) == "fluid 0.3 [CowMilk;SheepMilk;AnimalMilk;ScaldedAnimalMilk;ScaldedCowMilk;ScaldedSheepMilk;SourAnimalMilk;SourCowMilk;SourSheepMilk]")
+    Recipes.widenLine("fluid 0.3 [CowMilk;SheepMilk]", extra) == "fluid 0.3 [CowMilk;SheepMilk;AnimalMilk;ScaldedAnimalMilk;ScaldedCowMilk;ScaldedSheepMilk;SourAnimalMilk;SourCowMilk;SourSheepMilk;SeparatedCowKefir;SeparatedSheepKefir]")
+check("fresh and rotten kefir don't bake: only separated", not Recipes.widenLine("fluid 1.0 [CowMilk]", extra):find("[^d]CowKefir")
+    and not Recipes.widenLine("fluid 1.0 [CowMilk]", extra):find("Rotten"))
 check("a widened line is left alone", Recipes.widenLine("fluid 1.0 [" .. ALL .. "]", extra) == nil)
 check("no rotten milk anywhere", not Recipes.widenLine("fluid 1.0 [CowMilk]", extra):find("Rotten"))
 check("water is no milk", Recipes.widenLine("fluid 1.0 [Water]", extra) == nil)

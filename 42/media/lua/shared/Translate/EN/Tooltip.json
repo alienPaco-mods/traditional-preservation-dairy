@@ -12,5 +12,6 @@
   "Tooltip_TraditionalPreservationDairy_BurntButter": "Clarified butter left on the heat too long. Scrape Out Burnt Butter to get the pot or saucepan back.",
   "Tooltip_TraditionalPreservationDairy_KefirGrainsPacket": "A sachet of dried kefir grains. Open it for 10 grains.",
   "Tooltip_TraditionalPreservationDairy_DriedKefirGrains": "Kefir grains dried to keep. Two batches in milk bring them back to life.",
-  "Tooltip_TraditionalPreservationDairy_KefirGrains": "Live kefir grains: a gram each, about 40 ml of milk a grain. They grow with every good batch, and starve without milk."
+  "Tooltip_TraditionalPreservationDairy_KefirGrains": "Kefir grains: a gram each, about 40 ml of milk a grain. They grow with every good batch. Out of milk they go hungry in about 2 days and die in about 7 at 20 C, slower in a fridge. Spread them on a cloth to dry them for keeping.",
+  "Tooltip_TraditionalPreservationDairy_KefirGrainsOnCloth": "Kefir grains drying on a cloth where it is left: about 2 days at 25 C, 5 at 10 C. Dry, collect them as Dried Kefir Grains and the cloth comes back."
 }

@@ -26,7 +26,7 @@ M.MOD_DATA_KEY = "TraditionalPreservationDairy"
 -- Each station keeps its state as one table under one key, so nothing else on the object can clash with it.
 -- Inside the incubator's: ml, tempC, starter, incubating, wrapHour, done, last, readyHour, fluid, parts, place, at,
 -- fireUntil, under; for kefir (TraditionalPreservationDairyKefir.lua) culture, grains, progress, growProgress, kefirMarks,
--- kefirAge, partGrain. Inside the crock's: stage, done, marks, fireUntil, under. The Stone Hearth and its cauldron are TP
+-- kefirAge, partGrain, grainClock, grainLots, grainsDone. Inside the crock's: stage, done, marks, fireUntil, under. The Stone Hearth and its cauldron are TP
 -- Core's (TraditionalPreservationCore/Fire).
 M.INCUBATOR_KEY = "tpdIncubator"
 M.CROCK_KEY = "tpdCrock"
@@ -35,7 +35,7 @@ local MILK_FIELDS = { "ml", "tempC", "lastHour", "fluid", "parts" }
 local BATCH_FIELDS = { "ml", "tempC", "starter", "incubating", "wrapHour", "workHours", "lastHour", "readyHour", "fluid", "parts" }
 -- What an emptied kefir pot forgets: all but the part-grain it keeps for the next batch.
 M.KEFIR_FIELDS = { "ml", "tempC", "lastHour", "readyHour", "fluid", "parts", "culture", "grains", "progress", "growProgress",
-    "kefirMarks", "kefirAge" }
+    "kefirMarks", "kefirAge", "grainClock", "grainLots", "grainsDone" }
 local CROCK_FIELDS = { "stage", "workHours", "marks" }
 
 local function clear(stationModData, fields)
@@ -240,15 +240,23 @@ function M.milkRate(celsius)
 end
 
 -- Kefir ages on its own kind (TraditionalPreservationDairyKefir.lua), at milk's rate. In the pot it ferments on its own
--- curve, and its grains grow only while that is in their range (M.kefirRate, M.kefirGrowRate there).
+-- curve, and its grains grow only while that is in their range (M.kefirRate, M.kefirGrowRate there). Grains out of
+-- milk starve at milk's rate too (the kefir process); the hours a place is over the heats that weaken and kill them,
+-- and grains spread on a cloth drying, are counted on their own.
 M.KEFIR_PROCESS = "kefir"
 M.KEFIR_FERMENT = "kefirFerment"
 M.KEFIR_GROW = "kefirGrow"
+M.GRAIN_HOT = "kefirGrainHot"
+M.GRAIN_KILL = "kefirGrainKill"
+M.GRAIN_DRY = "kefirGrainDry"
 local PROCESSES = { [CROCK_PROCESS] = function(celsius) return M.cultureRate(celsius) end,
     [M.MILK_PROCESS] = function(celsius) return M.milkRate(celsius) end,
     [M.KEFIR_PROCESS] = function(celsius) return M.milkRate(celsius) end,
     [M.KEFIR_FERMENT] = function(celsius) return M.kefirRate(celsius) end,
-    [M.KEFIR_GROW] = function(celsius) return M.kefirGrowRate(celsius) end }
+    [M.KEFIR_GROW] = function(celsius) return M.kefirGrowRate(celsius) end,
+    [M.GRAIN_HOT] = function(celsius) return M.grainHotRate(celsius) end,
+    [M.GRAIN_KILL] = function(celsius) return M.grainKillRate(celsius) end,
+    [M.GRAIN_DRY] = function(celsius) return M.grainDryRate(celsius) end }
 
 function M.newLedger(now)
     return Weather.newLedger(now, PROCESSES)
@@ -464,7 +472,12 @@ end
 -- history has no reading (a gap longer than it keeps, or the hour now). The hours before the history all read
 -- alike, so they run as one spell (two when a fire burnt out in them), however long the pot was away.
 function M.catchUp(batch, now, place, history, ledger)
-    if (batch.ml or 0) <= 0 then batch.lastHour = now return end
+    if (batch.ml or 0) <= 0 then
+        batch.lastHour = now
+        -- Grains with no milk on them starve.
+        if batch.culture == M.KEFIR_CULTURE then M.fermentKefir(batch, now, place, ledger) end
+        return
+    end
     -- A kefir pot's milk cools as a lidded pot's, with no wrap: no starter, so advanceBatch only cools it.
     local walkedTo = batch.lastHour or now
     local kept = math.floor(now) - M.HISTORY_HOURS + 1
@@ -760,11 +773,12 @@ Events.OnInitGlobalModData.Add(M.applySandbox)
 -- Any milk bakes, and soured milk bakes as fresh does (clabbered milk was the old baker's buttermilk), so vanilla's
 -- cake batter, muffins and cereal take all three milks (vanilla: cow's only, cereal sheep's too), fresh, scalded or
 -- soured. Butter and mildew cure want fresh milk and keep their milks, scalded or not: store milk poured out is
--- scalded, so without that they would refuse what they took before.
+-- scalded, so without that they would refuse what they took before. Separated kefir, curds and whey, bakes as soured
+-- milk does.
 M.SOUR_BAKING = { "Base.MakeCakeBatter", "Base.PrepareMuffins", "Base.MakeBowlOfCereal" }
 M.SCALDED_ONLY = { "Base.churn_butter", "Base.MakeMildewCure" }
 
--- What a line naming any milk should also take: every milk, its scalded and its soured twin.
+-- What a line naming any milk should also take: every milk, its scalded and its soured twin, and separated kefir.
 function M.bakingMilks()
     local all, extra = {}, {}
     for milk in pairs(M.SOUR_MILKS) do all[#all + 1] = milk end
@@ -772,6 +786,10 @@ function M.bakingMilks()
     local plain = #all
     for i = 1, plain do all[#all + 1] = M.SCALDED_MILKS[all[i]] end
     for i = 1, plain do all[#all + 1] = M.SOUR_MILKS[all[i]] end
+    local separated = {}
+    for _, kefir in pairs(M.SEPARATED_KEFIRS or {}) do separated[#separated + 1] = kefir end
+    table.sort(separated)
+    for _, kefir in ipairs(separated) do all[#all + 1] = kefir end
     for milk in pairs(M.SOUR_MILKS) do extra[milk] = all end
     return extra
 end

@@ -249,7 +249,9 @@ Caucasus milk kefir, from grains found as loot (a **Packet of Kefir Grains**: a 
 - **Strain Kefir** into empty containers through a Strainer, or a cloth at twice the time; the grains come out with the first strain. **Take Out Kefir Grains** works before the milk goes in.
 - **Kefir** is a fluid: its milk's food less the lactose (cow's about 590 kcal a litre), cow's and sheep's mixed by share, both called Kefir (Fresh). It ages as milk does, from the moment it is ready: **Kefir (Separated)** at about 3 days at 20 C (a little unhappiness), **Kefir (Rotten)** at about 10.
 - **Fresh kefir eases food sickness**, 10 a litre drunk, only while sick, then not again for 3 game hours.
-- Coming: grains starving out of milk, and drying them to keep.
+- **Grains starve out of milk**: on their own, in a pot with no milk, or left in a finished batch (from the moment it is ready), each grain on its own clock. They go **Hungry** at about 2 days and die at about 7 at 20 C, on milk's curve: a fridge about 5 times as long, frozen they wait. A place over 35 C turns live grains Hungry, over 45 C kills them. The name says the state: *Kefir Grains (Live)*, *(Hungry)*, *(Reviving)*, *(Dead)*. Grains coming back from dried don't go Hungry, but die at 7 days.
+- **Spread Kefir Grains to Dry** on a cloth (a Cheesecloth, Dish Cloth, Ripped Sheet or Sheet): they dry where the cloth is left, on the place's temperature, about 2 days at 25 C, 2.5 at 20, 5 at 10, paused frozen. **Collect Dried Kefir Grains** gives Dried Kefir Grains, to keep or to bring back over 2 batches, and the cloth back. Dead grains aren't spread.
+- **Separated kefir bakes** as soured milk does: cake batter, muffins and cereal take it in place of milk.
 
 ## Sandbox options
 

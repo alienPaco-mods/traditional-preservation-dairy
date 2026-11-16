@@ -33,8 +33,10 @@ local inventory = {
         return false
     end,
     AddItem = function(_, fullType)
-        local modData = {}
-        local item = { fullType = fullType, getModData = function() return modData end }
+        local modData, name = {}, fullType
+        local item = { fullType = fullType, getModData = function() return modData end, getFullType = function() return fullType end,
+            getOutermostContainer = function() return nil end, getWorldItem = function() return nil end,
+            getName = function() return name end, setName = function(_, text) name = text end, setCustomName = function() end }
         table.insert(given, item)
         return item
     end,
@@ -108,7 +110,12 @@ local function thing(fullType, modData)
     modData = modData or {}
     local item = { getFullType = function() return fullType end, getDisplayName = function() return fullType end,
         isFavorite = function() return false end, getModData = function() return modData end,
-        getFluidContainer = function() return nil end }
+        getFluidContainer = function() return nil end, getOutermostContainer = function() return nil end,
+        getWorldItem = function() return nil end }
+    local name = fullType
+    item.getName = function() return name end
+    item.setName = function(_, text) name = text end
+    item.setCustomName = function() end
     item.getContainer = function()
         return { Remove = function()
             for i, carried in ipairs(ui.carried) do
