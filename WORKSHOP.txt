@@ -59,7 +59,7 @@ If the milk falls under 40 C before a starter is in, it is too cold: pour it out
 [*]Raw milk sours in about a day and a half at 20 C (3 days in a basement, 8 in a powered fridge, never frozen) and is rotten as long again after. Scalded milk never sours and rots at the same age. Sealed store milk keeps until it is poured out.
 [*]Soured milk still bakes: vanilla cake batter, muffins and cereal now take cow's, sheep's or animal milk, fresh, scalded or soured.
 [*]A Jar of Yogurt stays fresh 10 days; the cups keep its age.
-[*]No loot table is changed. Vanilla's milks now read "(Fresh)" and go off, five vanilla recipes take more kinds of milk (cake batter, muffins, cereal, butter, mildew cure), and vanilla Yogurt gains its empty container and a real cup's food (a quarter litre of cow's milk: 154 kcal, was 30); Yogurt already in a save keeps its old values. A food mod that also changes Yogurt may conflict: the last one loaded wins.
+[*]The only loot it adds is the Packet of Kefir Grains (found on a farm's storage shelves, rarely on a Gigamart farming shelf, very rarely in a home fridge or kitchen cupboard). Vanilla's milks now read "(Fresh)" and go off, five vanilla recipes take more kinds of milk (cake batter, muffins, cereal, butter, mildew cure), and vanilla Yogurt gains its empty container and a real cup's food (a quarter litre of cow's milk: 154 kcal, was 30); Yogurt already in a save keeps its old values. A food mod that also changes Yogurt may conflict: the last one loaded wins.
 [*]The tiledef number 5172 must be unique among your active mods.
 [/list]
 

@@ -1,5 +1,8 @@
 # Changelog: Traditional Preservation (Dairy)
 
+## 0.0.7
+- **Workshop text** (2026-11-16): it said no loot table is changed; it now names the Packet of Kefir Grains loot. Nothing changes in game.
+
 ## 0.0.6
 - **Kefir in the player's guide** (2026-11-16): guide 5 has a new chapter 10, Kefir (finding grains, a batch, speed by place, the grains' states, starving, drying, the fluids and the cure), kefir rows in the Almanac, the Yearly Plan, Tips, Troubleshooting, What the stations show and the Tester's Toolkit; later chapters renumbered 11 to 19. README header now shows the right version. Docs only: nothing changes in game.
 
