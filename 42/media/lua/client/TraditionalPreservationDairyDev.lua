@@ -5,6 +5,7 @@ if not isDebugEnabled() then return end
 local M = TraditionalPreservationDairy
 local FluidAgeing = require "TraditionalPreservationCore/FluidAgeing"
 local Station = require "TraditionalPreservationCore/Station"
+local PlaceKeepingUI = require "TraditionalPreservationCore/PlaceKeepingUI"
 TPD = {}
 
 local function say(text) print("[TPD] " .. text) end
@@ -15,14 +16,14 @@ function TPD.help()
     say("TPD.pots()           every loaded incubator: stage, litres, milk temperature, what's next")
     say("TPD.age(hours)       move every loaded incubator and crock on by this many hours (default 1; a crock's at the best temperature)")
     say("TPD.fast(hours)      setting takes this many hours at the best temperature. TPD.fast() goes back to the sandbox")
-    say("TPD.milk(litres, c, fluid) a cooking pot of milk (default 5 L of CowMilk), at c degrees if given; fluid SheepMilk or AnimalMilk for the others")
-    say("TPD.give(name, n, option) spawn n of: jar (a full Jar of Yogurt; option \"clay\" or \"glazed\"), starter, cup (an Empty Yogurt Container), butter, salted, clarified. TPD.give() lists them")
+    say("TPD.milk(litres, c, fluid) a cooking pot of milk (default 5 L of CowMilk), at c degrees if given; fluid SheepMilk or AnimalMilk for the others, or a kefir (CowKefir, SheepKefir: both read Kefir)")
+    say("TPD.give(name, n, option) spawn n of: jar (a full Jar of Yogurt; option \"clay\" or \"glazed\"), starter, cup (an Empty Yogurt Container), butter, salted, clarified, packet (of kefir grains), dried, grains (live kefir grains). TPD.give() lists them")
     say("TPD.kit(kind)        the things a test of kind needs; TPD.kit() for yogurt, TPD.kit(\"?\") lists the kinds")
     say("TPD.crocks()         every loaded crock: stage, progress, place")
     say("TPD.ages()           every container of milk you carry: fluid, stage, age, hours to the next stage, place")
-    say("TPD.sour(hours)      age the milk you carry by this many hours at 20 C (sours at 36, spoils at 72)")
-    say("TPD.butter()         every butter you carry: place, rate, age, days to stale and rotten there")
-    say("TPD.rancid(days)     age the butter you carry by this many days at its place (default 10)")
+    say("TPD.sour(hours)      age the milk and kefir you carry by this many hours at 20 C (milk sours at 36, spoils at 72; kefir separates at 72, rots at 240)")
+    say("TPD.butter()         every butter you carry or within 4 tiles (a fridge, a freezer): place, rate, age, days to stale and rotten there")
+    say("TPD.rancid(days)     age that butter by this many days at its place (default 10)")
     say("TPD.tiles()          every station within 3 tiles: object class, sprite and square solid flags")
     say("The Stone Hearth's commands (cauldronInfo, stone, cauldron, fuel, hot, its kit) are TP Core's: TPC.help()")
 end
@@ -82,7 +83,9 @@ function TPD.fast(hours)
 end
 
 function TPD.milk(litres, celsius, fluid)
-    if fluid and not M.MILKS[fluid] then return say("Milks: CowMilk, SheepMilk, AnimalMilk") end
+    if fluid and not M.MILKS[fluid] and not M.SEPARATED_KEFIRS[fluid] then
+        return say("Milks: CowMilk, SheepMilk, AnimalMilk; kefirs: CowKefir, SheepKefir")
+    end
     local pot = getPlayer():getInventory():AddItem("Base.Pot")
     local container = pot:getFluidContainer()
     container:Empty()
@@ -107,10 +110,13 @@ local GIVES = {
     butter = function(inventory) inventory:AddItem(M.BUTTER) end,
     salted = function(inventory) inventory:AddItem(M.SALTED_BUTTER) end,
     clarified = function(inventory) inventory:AddItem(M.CLARIFIED_BUTTER) end,
+    packet = function(inventory) inventory:AddItem(M.GRAIN_PACKET) end,
+    dried = function(inventory) inventory:AddItem(M.DRIED_GRAIN) end,
+    grains = function(inventory) M.grainOf(inventory:AddItem(M.GRAIN), getGameTime():getWorldAgeHours()) end,
 }
 
 function TPD.give(name, count, option)
-    if not GIVES[name] then return say("Things: jar (option \"clay\" or \"glazed\"), starter, cup, butter, salted, clarified") end
+    if not GIVES[name] then return say("Things: jar (option \"clay\" or \"glazed\"), starter, cup, butter, salted, clarified, packet, dried, grains") end
     local inventory = getPlayer():getInventory()
     for _ = 1, count or 1 do GIVES[name](inventory, option) end
     say(string.format("Gave %d %s%s.", count or 1, name, option and (" (" .. option .. ")") or ""))
@@ -140,6 +146,16 @@ local KITS = {
             inventory:AddItem("Base.Salt")
             inventory:AddItem("Base.Pot")
             inventory:AddItem("Base.RippedSheets")
+        end,
+    },
+    kefir = {
+        about = "a Packet of Kefir Grains, 10 live Kefir Grains and a pot of 2 L of cow's milk kefir (the incubator's culture comes later)",
+        give = function(inventory)
+            inventory:AddItem(M.GRAIN_PACKET)
+            for _ = 1, 10 do GIVES.grains(inventory) end
+            local pot = inventory:AddItem("Base.Pot")
+            pot:getFluidContainer():Empty()
+            pot:getFluidContainer():addFluid("CowKefir", 2)
         end,
     },
     wrap = {
@@ -217,7 +233,7 @@ end
 
 function TPD.ages()
     local list = carriedMilk()
-    if #list == 0 then return say("You carry no milk.") end
+    if #list == 0 then return say("You carry no milk or kefir.") end
     for _, entry in ipairs(list) do
         local item, record, spec = entry.item, entry.record, entry.spec
         local fluid = item:getFluidContainer():getPrimaryFluid()
@@ -243,7 +259,7 @@ function TPD.sour(hours)
             count = count + 1
         end
     end
-    say(string.format("Aged %d container(s) of milk by %.1f hours. TPD.ages() to see them.", count, hours))
+    say(string.format("Aged %d container(s) of milk or kefir by %.1f hours. TPD.ages() to see them.", count, hours))
 end
 
 -- What makes a station's tile block: the object's class, its sprite's flags and the square's, within 3 tiles.
@@ -251,23 +267,21 @@ local TILES_RADIUS = 3
 
 -- Butter
 
-local function carriedButter()
-    local found = getPlayer():getInventory():getAllEvalRecurse(function(item) return M.BUTTER_DAYS[item:getFullType()] ~= nil end)
-    local list = {}
-    for i = 0, found:size() - 1 do table.insert(list, found:get(i)) end
-    return list
+-- Butter carried, and in containers (a fridge, a freezer, a crate) within TP Core's PlaceKeepingUI.REACH tiles.
+local function nearbyButter()
+    return PlaceKeepingUI.near(M.BUTTER_DAYS)
 end
 
 function TPD.butter()
     if not M.butterByPlace() then say("Butter keeping by place is off in the sandbox.") end
-    local butter = carriedButter()
-    if #butter == 0 then return say("No Butter or Salted Butter on you.") end
+    local butter = nearbyButter()
+    if #butter == 0 then return say("No Butter or Salted Butter on you or within " .. PlaceKeepingUI.REACH .. " tiles.") end
     for _, item in ipairs(butter) do say(M.BUTTER_KEEPER.describe(item)) end
 end
 
 function TPD.rancid(days)
     days = days or 10
-    local butter = carriedButter()
+    local butter = nearbyButter()
     for _, item in ipairs(butter) do M.BUTTER_KEEPER.age(item, days) end
     say(string.format("Kept %d butter for %d days at their places. TPD.butter() to see them.", #butter, days))
 end

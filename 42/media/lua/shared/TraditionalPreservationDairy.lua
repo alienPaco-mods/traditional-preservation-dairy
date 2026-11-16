@@ -234,8 +234,11 @@ function M.milkRate(celsius)
     return Weather.curve(MILK_CURVE, celsius)
 end
 
+-- Kefir ages on its own kind (TraditionalPreservationDairyKefir.lua), at milk's rate.
+M.KEFIR_KIND = "kefir"
 local KINDS = { [CROCK_KIND] = function(celsius) return M.cultureRate(celsius) end,
-    [M.MILK_KIND] = function(celsius) return M.milkRate(celsius) end }
+    [M.MILK_KIND] = function(celsius) return M.milkRate(celsius) end,
+    [M.KEFIR_KIND] = function(celsius) return M.milkRate(celsius) end }
 
 function M.newLedger(now)
     return Weather.newLedger(now, KINDS)
@@ -780,3 +783,4 @@ Events.OnInitWorld.Add(M.applyBaking)
 require "TraditionalPreservationDairyWrap"
 require "TraditionalPreservationDairyCarry"
 require "TraditionalPreservationDairyButter"
+require "TraditionalPreservationDairyKefir"

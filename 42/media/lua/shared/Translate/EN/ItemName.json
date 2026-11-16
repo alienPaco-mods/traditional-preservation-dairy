@@ -8,5 +8,8 @@
   "TraditionalPreservationDairy.SaltedButter": "Salted Butter",
   "TraditionalPreservationDairy.ClarifiedButter": "Clarified Butter",
   "TraditionalPreservationDairy.PotOfButter": "Pot of Butter",
-  "TraditionalPreservationDairy.PotForgedButter": "Pot of Butter"
+  "TraditionalPreservationDairy.PotForgedButter": "Pot of Butter",
+  "TraditionalPreservationDairy.KefirGrainsPacket": "Packet of Kefir Grains",
+  "TraditionalPreservationDairy.DriedKefirGrains": "Dried Kefir Grains",
+  "TraditionalPreservationDairy.KefirGrains": "Kefir Grains"
 }

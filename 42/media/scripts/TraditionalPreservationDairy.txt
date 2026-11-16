@@ -267,4 +267,21 @@ module TraditionalPreservationDairy
             Base.PotForged = TraditionalPreservationDairy.PotForgedButter,
         }
     }
+
+    /* Opened as vanilla opens a seed packet. The packet isn't kept: it is a sachet torn open. */
+    craftRecipe OpenKefirGrainsPacket
+    {
+        timedAction = PutSeedsInPacket,
+        time = 20,
+        Tags = InHandCraft;CanBeDoneInDark;Cooking,
+        category = Cooking,
+        inputs
+        {
+            item 1 [TraditionalPreservationDairy.KefirGrainsPacket] flags[ItemCount],
+        }
+        outputs
+        {
+            item 10 TraditionalPreservationDairy.DriedKefirGrains,
+        }
+    }
 }

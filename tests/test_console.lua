@@ -68,6 +68,30 @@ run("give", "clarified")
 check("give spawns salted and clarified butter", player.given[before + 7] == M.SALTED_BUTTER
     and player.given[before + 8] == M.CLARIFIED_BUTTER)
 local inventory = player:getInventory()
+-- Kefir: given items answer for their modData and fluid.
+local made = {}
+local plainAdd = inventory.AddItem
+function inventory:AddItem(fullType)
+    plainAdd(self, fullType)
+    local data, fluids = {}, {}
+    local item = { fullType = fullType, getModData = function() return data end, data = data, fluids = fluids,
+        getFluidContainer = function() return { Empty = function() end,
+            addFluid = function(_, name, litres) fluids[name] = litres end } end }
+    table.insert(made, item)
+    return item
+end
+before = #player.given
+run("kit", "kefir")
+check("kit(\"kefir\") gives a packet, 10 live grains and a pot of 2 L of cow's kefir", #player.given == before + 12
+    and player.given[before + 1] == M.GRAIN_PACKET and player.given[before + 2] == M.GRAIN
+    and made[2].data[M.GRAIN_KEY].state == M.GRAIN_LIVE and made[11].data[M.GRAIN_KEY].hour == 100
+    and player.given[before + 12] == "Base.Pot" and made[12].fluids.CowKefir == 2)
+run("give", "packet")
+run("give", "dried", 3)
+check("give spawns packets and dried grains", player.given[before + 13] == M.GRAIN_PACKET and player.given[before + 16] == M.DRIED_GRAIN
+    and #player.given == before + 16)
+check("give lists the kefir things", run("give"):find("packet, dried, grains", 1, true) ~= nil)
+check("milk refuses what is neither milk nor kefir and names the kefirs", run("milk", 1, nil, "Water"):find("CowKefir", 1, true) ~= nil)
 function inventory:getAllEvalRecurse() return { size = function() return 0 end } end
 check("butter says so when you carry none", run("butter"):find("No Butter", 1, true) ~= nil)
 check("rancid ages none", run("rancid", 5):find("Kept 0 butter for 5 days", 1, true) ~= nil)

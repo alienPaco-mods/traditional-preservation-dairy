@@ -17,5 +17,11 @@
   "Fluid_Container_TPDWrappedBucket": "Wrapped Bucket",
   "Fluid_Name_MeltingButter": "Butter (Melting)",
   "Fluid_Name_MeltedClarifiedButter": "Clarified Butter (Melted)",
-  "Fluid_Name_RancidButter": "Butter (Rancid)"
+  "Fluid_Name_RancidButter": "Butter (Rancid)",
+  "Fluid_Name_CowKefir": "Kefir",
+  "Fluid_Name_SeparatedCowKefir": "Kefir (Separated)",
+  "Fluid_Name_RottenCowKefir": "Kefir (Rotten)",
+  "Fluid_Name_SheepKefir": "Kefir",
+  "Fluid_Name_SeparatedSheepKefir": "Kefir (Separated)",
+  "Fluid_Name_RottenSheepKefir": "Kefir (Rotten)"
 }

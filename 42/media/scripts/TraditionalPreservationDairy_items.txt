@@ -178,7 +178,7 @@ module TraditionalPreservationDairy
         DisplayCategory = Food,
         ItemType = base:food,
         Weight = 0.25,
-        Icon = Lard,
+        Icon = ClarifiedButter,
         EvolvedRecipe = Pancakes:4;Sandwich:4;Stir fry:4;Pasta:4;Taco:4;Burrito:4;Toast:4;Oatmeal:4;Soup:4;Stew:4,
         FoodType = NoExplicit,
         Spice = true,
@@ -245,5 +245,36 @@ module TraditionalPreservationDairy
         WorldStaticModel = CookingPotForged_StewGround,
         Tags = base:hasmetal,
         Tooltip = Tooltip_TraditionalPreservationDairy_PotOfButter,
+    }
+
+    /* Kefir grains (Dairy's kefir). Only from loot: a packet of dried grains, opened like a seed packet. Each grain is
+       its own item, a gram; live grains keep their state and clock in modData (TraditionalPreservationDairyKefir.lua),
+       so grains from one batch can be split any way. Grains can't be eaten. */
+    item KefirGrainsPacket
+    {
+        DisplayCategory = Cooking,
+        ItemType = base:normal,
+        Weight = 0.02,
+        Icon = KefirGrainsPacket,
+        DoubleClickRecipe = OpenKefirGrainsPacket,
+        Tooltip = Tooltip_TraditionalPreservationDairy_KefirGrainsPacket,
+    }
+
+    item DriedKefirGrains
+    {
+        DisplayCategory = Cooking,
+        ItemType = base:normal,
+        Weight = 0.001,
+        Icon = DriedKefirGrains,
+        Tooltip = Tooltip_TraditionalPreservationDairy_DriedKefirGrains,
+    }
+
+    item KefirGrains
+    {
+        DisplayCategory = Cooking,
+        ItemType = base:normal,
+        Weight = 0.001,
+        Icon = KefirGrains,
+        Tooltip = Tooltip_TraditionalPreservationDairy_KefirGrains,
     }
 }

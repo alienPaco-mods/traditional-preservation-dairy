@@ -62,6 +62,11 @@ YOGHURT = (240, 236, 222)
 MILK = (226, 220, 200)
 WHEAT = (196, 160, 92)
 CULTURE = (236, 226, 196)
+KEFIR_LIVE = (240, 234, 212)   # live kefir grains: creamy white, glossy, like small cauliflower florets
+KEFIR_DRIED = (206, 180, 128)  # dried: shrunken, yellowed and matt
+PACKET = (214, 196, 160)       # a kraft paper packet
+PACKET_LABEL = (78, 104, 140)
+GHEE = (226, 168, 58)          # clarified butter: deeper amber than butter, its milk solids gone
 SHADOW = (0, 0, 0, 80)
 SHADOW_BLUR = 3              # px of feathering round the floor shadow
 OUTLINE = (44, 30, 22, 255)
@@ -104,7 +109,7 @@ LEVELS_PER_PX = 1.5            # bands up a body
 # Item icons: name -> how it is painted.
 ICON_SIZE = 32
 ITEM_ICONS = ["YoghurtPotUnfired", "YoghurtPot", "JarOfYoghurt", "ActiveYoghurtStarter", "EmptyYoghurtContainer",
-              "WrappedYoghurtPot"]
+              "WrappedYoghurtPot", "KefirGrains", "DriedKefirGrains", "KefirGrainsPacket"]
 
 TILE_PROPS = {}
 for base, group, custom in ((INCUBATOR, "Yoghurt", "Incubator"), (CROCK, "Starter Culture", "Crock")):
@@ -634,6 +639,54 @@ def cup_icon():
     return outlined(shrink(layer))
 
 
+def grains_icon(colour, gloss, shrunk):
+    """A small heap of kefir grains: lumpy florets, each a few overlapping knobs, lit from the top left. Dried ones are
+    smaller and matt."""
+    layer = new_layer()
+    draw = ImageDraw.Draw(layer)
+    rng = random.Random(41 if gloss else 43)
+    size = 0.75 if shrunk else 1.0
+    florets = [(-7, 3, 5.5), (5, 4, 5), (-1, -4, 6), (8, -4, 4), (-9, -5, 4), (1, 7, 4.5)]
+    for fx, fy, fr in florets:
+        fx, fy, fr = FOOT_X + fx * size, FOOT_Y - 20 + fy * size, fr * size
+        for _ in range(5):
+            kx, ky = fx + rng.uniform(-fr * 0.6, fr * 0.6), fy + rng.uniform(-fr * 0.5, fr * 0.5)
+            kr = fr * rng.uniform(0.45, 0.7)
+            draw.ellipse(box(kx, ky, kr, kr * 0.9), fill=shade(colour, 0.78))
+            draw.ellipse(box(kx - kr * 0.15, ky - kr * 0.15, kr * 0.8, kr * 0.72), fill=shade(colour, 0.95))
+            if gloss:
+                draw.ellipse(box(kx - kr * 0.35, ky - kr * 0.35, kr * 0.25, kr * 0.2), fill=shade(colour, 1.12))
+    return outlined(shrink(layer))
+
+
+def packet_icon():
+    """A paper seed-style packet, folded over at the top, with a blue label and a few dried grains printed on it."""
+    layer = new_layer()
+    draw = ImageDraw.Draw(layer)
+    left, right, top, bottom = FOOT_X - 11, FOOT_X + 11, FOOT_Y - 40, FOOT_Y - 6
+    poly(draw, [(left, top), (right, top), (right, bottom), (left, bottom)], shade(PACKET, 1.0))
+    poly(draw, [(left, top), (right, top), (right, top + 5), (left, top + 5)], shade(PACKET, 0.82))
+    poly(draw, [(left + 3, top + 9), (right - 3, top + 9), (right - 3, top + 15), (left + 3, top + 15)], PACKET_LABEL)
+    for gx, gy, gr in ((-4, 23, 3), (2, 22, 2.6), (-1, 27, 2.8), (5, 27, 2.2)):
+        draw.ellipse(box(FOOT_X + gx, top + gy, gr, gr * 0.9), fill=shade(KEFIR_DRIED, 0.9))
+    return outlined(shrink(layer))
+
+
+def recoloured(icon, colour):
+    """A vanilla icon in another colour: each body pixel takes colour at the pixel's own lightness against the
+    icon's lightest, so the shading stays; the dark outline is kept."""
+    icon = icon.convert("RGBA")
+    pixels = icon.load()
+    lightness = [sum(pixels[x, y][:3]) for y in range(icon.height) for x in range(icon.width) if pixels[x, y][3] > 128]
+    top = max(lightness)
+    for y in range(icon.height):
+        for x in range(icon.width):
+            r, g, b, a = pixels[x, y]
+            if a > 0 and r + g + b > 200:
+                pixels[x, y] = shade(colour, (r + g + b) / top)[:3] + (a,)
+    return icon
+
+
 def write_icons(folder, game):
     folder.mkdir(parents=True, exist_ok=True)
     jars = pzart.extract_sprites(game / "media/texturepacks/UI2.pack", {"Item_GlassJar", "Item_GlassJar_Mask",
@@ -646,12 +699,17 @@ def write_icons(folder, game):
         "ActiveYoghurtStarter": jar_icon(jar, mask, CULTURE, cap=True),
         "EmptyYoghurtContainer": cup_icon(),
         "WrappedYoghurtPot": wrapped_pot_icon(),
+        "KefirGrains": grains_icon(KEFIR_LIVE, gloss=True, shrunk=False),
+        "DriedKefirGrains": grains_icon(KEFIR_DRIED, gloss=False, shrunk=True),
+        "KefirGrainsPacket": packet_icon(),
     }
     assert list(icons) == ITEM_ICONS
     # The same Jar of Yoghurt item, as it looks in a clay jar: World sets it by the jar it was collected in.
     icons["JarOfYoghurt_Clay"] = clay_jar_icon(jars["Item_ClayJar_Fired"])
     icons["JarOfYoghurt_Glazed"] = clay_jar_icon(jars["Item_ClayJar_Glazed_Fired"])
-    vanilla = vanilla_icons(game, WRAPPED_VANILLA.values())
+    vanilla = vanilla_icons(game, [*WRAPPED_VANILLA.values(), "Item_Butter"])
+    # Clarified Butter: vanilla's butter block in ghee's amber.
+    icons["ClarifiedButter"] = recoloured(vanilla["Item_Butter"], GHEE)
     for look, name in WRAPPED_VANILLA.items():
         icons["Wrapped" + look] = towel_wrap(vanilla[name])
     for name, icon in icons.items():

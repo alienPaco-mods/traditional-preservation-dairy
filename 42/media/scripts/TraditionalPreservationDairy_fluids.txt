@@ -321,4 +321,183 @@ module Base
             diluteRatio = 0.2,
         }
     }
+
+    /* Kefir: milk fermented by kefir grains (Dairy's kefir, TraditionalPreservationDairyKefir.lua). Its milk's food less
+       the lactose the grains ate (about 6 g of sugar, 25 kcal a litre). Always a little sour, so fresh kefir has no
+       unhappiness. Left long it over-ferments and separates into curds and whey (Separated: drinkable, a little
+       unhappiness, bakes like soured milk), then rots (TP Core's FluidAgeing, as milk). Fresh kefir eases food
+       sickness, 10 a litre, through TP Core's Drink (a fluid's foodSicknessChange never reaches the drinker). A fluid's
+       food is its type's, so each milk keeps a kefir of its own, but all are called Kefir: two fluids of one name show
+       as one, three or more as Mixed Beverages, so there are only two. Animal's milk (from Milk Powder) has cow's
+       food and makes the cow's. Never rename them once the mod is out: saves hold the names. */
+    fluid CowKefir
+    {
+        ColorReference = Ivory,
+        DisplayName = Fluid_Name_CowKefir,
+        Categories
+        {
+            Beverage,
+        }
+        Properties
+        {
+            HungerChange = -50.0,
+            ThirstChange = -50.0,
+            Calories = 590.0,
+            Carbohydrates = 40.0,
+            Lipids = 22.0,
+            Proteins = 33.0,
+        }
+        BlendWhiteList
+        {
+            whitelist = true,
+            categories
+            {
+                Beverage,
+            }
+        }
+    }
+
+    fluid SeparatedCowKefir
+    {
+        ColorReference = Beige,
+        DisplayName = Fluid_Name_SeparatedCowKefir,
+        Categories
+        {
+            Beverage,
+        }
+        Properties
+        {
+            HungerChange = -50.0,
+            ThirstChange = -40.0,
+            UnhappyChange = 10.0,
+            Calories = 590.0,
+            Carbohydrates = 40.0,
+            Lipids = 22.0,
+            Proteins = 33.0,
+        }
+        BlendWhiteList
+        {
+            whitelist = true,
+            categories
+            {
+                Beverage,
+            }
+        }
+    }
+
+    fluid SheepKefir
+    {
+        ColorReference = Ivory,
+        DisplayName = Fluid_Name_SheepKefir,
+        Categories
+        {
+            Beverage,
+        }
+        Properties
+        {
+            HungerChange = -50.0,
+            ThirstChange = -50.0,
+            Calories = 798.0,
+            Carbohydrates = 17.0,
+            Lipids = 17.0,
+            Proteins = 23.0,
+        }
+        BlendWhiteList
+        {
+            whitelist = true,
+            categories
+            {
+                Beverage,
+            }
+        }
+    }
+
+    fluid SeparatedSheepKefir
+    {
+        ColorReference = Beige,
+        DisplayName = Fluid_Name_SeparatedSheepKefir,
+        Categories
+        {
+            Beverage,
+        }
+        Properties
+        {
+            HungerChange = -50.0,
+            ThirstChange = -40.0,
+            UnhappyChange = 10.0,
+            Calories = 798.0,
+            Carbohydrates = 17.0,
+            Lipids = 17.0,
+            Proteins = 23.0,
+        }
+        BlendWhiteList
+        {
+            whitelist = true,
+            categories
+            {
+                Beverage,
+            }
+        }
+    }
+
+    fluid RottenCowKefir
+    {
+        ColorReference = Khaki,
+        DisplayName = Fluid_Name_RottenCowKefir,
+        Categories
+        {
+            Beverage,
+            Hazardous,
+        }
+        Properties
+        {
+            ThirstChange = -20.0,
+            UnhappyChange = 30.0,
+        }
+        Poison
+        {
+            maxEffect = Mild,
+            minAmount = 0.1,
+            diluteRatio = 0.2,
+        }
+        BlendWhiteList
+        {
+            whitelist = true,
+            categories
+            {
+                Beverage,
+            }
+        }
+    }
+
+    fluid RottenSheepKefir
+    {
+        ColorReference = Khaki,
+        DisplayName = Fluid_Name_RottenSheepKefir,
+        Categories
+        {
+            Beverage,
+            Hazardous,
+        }
+        Properties
+        {
+            ThirstChange = -20.0,
+            UnhappyChange = 30.0,
+        }
+        Poison
+        {
+            maxEffect = Mild,
+            minAmount = 0.1,
+            diluteRatio = 0.2,
+        }
+        BlendWhiteList
+        {
+            whitelist = true,
+            categories
+            {
+                Beverage,
+            }
+        }
+    }
+
 }
