@@ -1,5 +1,8 @@
 # Changelog: Traditional Preservation (Dairy)
 
+## 0.0.10
+- **Docs** (2026-11-17): the Stone Hearth takes 12 Clay (TP Core 0.1.9; was 2). README, guide, Workshop text.
+
 ## 0.0.9
 - **Docs** (2026-11-16): the Stone Hearth is built of 12 Stone Blocks, 2 Clay and a trowel (TP Core 0.1.7; was 8 Clay Bricks). README, guide 5, Workshop text; nothing changes in game.
 
