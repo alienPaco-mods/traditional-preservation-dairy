@@ -1,5 +1,8 @@
 # Changelog: Traditional Preservation (Dairy)
 
+## 0.0.11
+- **By a fire** (2026-11-18, TP Core 0.1.11): butter, milk in a bottle, kefir grains and grains drying on a cloth count by a fire or banked embers when within 2 tiles of one (28 / 24 C). Ready kefir in a pot by a fire, and its grains starving there, now age by the pot's noted fire; before, time there counted nothing. Needs TP Core 0.1.11.
+
 ## 0.0.10
 - **Docs** (2026-11-17): the Stone Hearth takes 12 Clay (TP Core 0.1.9; was 2). README, guide, Workshop text.
 

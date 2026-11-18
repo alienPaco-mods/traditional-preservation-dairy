@@ -101,14 +101,14 @@ local function hoursOver(marks, ledger, process, place)
     return hours
 end
 
--- Brings a clock up to now at the place it was seen in last, and counts from place on. Returns the hours starved since,
--- and the hours over each heat.
-function M.advanceGrainClock(clock, ledger, now, place)
+-- Brings a clock up to now at the place it was seen in last, and counts from place on (by a fire, fireNote: the pot's
+-- noted fire, else the clock's own). Returns the hours starved since, and the hours over each heat.
+function M.advanceGrainClock(clock, ledger, now, place, fireNote)
     local was = clock.starve.place
     local hot = hoursOver(clock.hot, ledger, M.GRAIN_HOT, was)
     local killed = hoursOver(clock.kill, ledger, M.GRAIN_KILL, was)
     local before = clock.starve.age
-    FluidAgeing.advance(clock.starve, M.GRAIN_STARVING, ledger, now, place)
+    FluidAgeing.advance(clock.starve, M.GRAIN_STARVING, ledger, now, place, fireNote)
     return clock.starve.age - before, hot, killed
 end
 
@@ -136,7 +136,9 @@ function M.keepGrain(item, now, place, ledger)
     now = now or getGameTime():getWorldAgeHours()
     ledger = ledger or M.getLedger()
     local grain = M.grainOf(item, now)
-    place = place or FluidAgeing.placeOfItem(item) or (grain.clock and grain.clock.starve.place) or Weather.DEFAULT_PLACE
+    local fire, holder
+    if not place then place, fire, holder = FluidAgeing.placeOfItem(item) end
+    place = place or (grain.clock and grain.clock.starve.place) or Weather.DEFAULT_PLACE
     if grain.grainState ~= M.GRAIN_DEAD then
         if not grain.clock then
             grain.clock = M.newGrainClock(ledger, now, place)
@@ -148,6 +150,7 @@ function M.keepGrain(item, now, place, ledger)
                 if fate == M.GRAIN_DEAD then grain.clock = nil end
             end
         end
+        if holder and grain.clock then FluidAgeing.noteFire(grain.clock.starve, fire, holder, now) end
     end
     M.nameGrain(item, grain)
     return grain
@@ -291,7 +294,7 @@ function M.keepPotGrains(batch, now, place, ledger)
         batch.grainClock = M.newGrainClock(ledger, now, place)
         return
     end
-    local starved, hot, killed = M.advanceGrainClock(batch.grainClock, ledger, now, place)
+    local starved, hot, killed = M.advanceGrainClock(batch.grainClock, ledger, now, place, batch)
     M.grainFates(batch, starved, hot, killed)
 end
 
@@ -430,7 +433,7 @@ function M.fermentKefir(batch, now, place, ledger)
     M.keepPotGrains(batch, now, place, ledger)
     local stage = M.kefirStage(batch)
     if stage == "KefirReady" then
-        if batch.kefirAge then FluidAgeing.advance(batch.kefirAge, FluidAgeing.fluidKind(M.KEFIR_PROCESS), ledger, now, place) end
+        if batch.kefirAge then FluidAgeing.advance(batch.kefirAge, FluidAgeing.fluidKind(M.KEFIR_PROCESS), ledger, now, place, batch) end
         return
     end
     if stage ~= "Fermenting" then return end
@@ -618,8 +621,11 @@ function M.keepDrying(item, now, place, ledger)
     local drying = item:getModData()[M.DRYING_KEY]
     if not drying then return nil end
     now = now or getGameTime():getWorldAgeHours()
-    place = place or FluidAgeing.placeOfItem(item) or drying.dry.place or Weather.DEFAULT_PLACE
+    local fire, holder
+    if not place then place, fire, holder = FluidAgeing.placeOfItem(item) end
+    place = place or drying.dry.place or Weather.DEFAULT_PLACE
     FluidAgeing.advance(drying.dry, M.GRAIN_DRYING_KIND, ledger or M.getLedger(), now, place)
+    if holder then FluidAgeing.noteFire(drying.dry, fire, holder, now) end
     local name = getText(M.isDry(drying) and "IGUI_TraditionalPreservationDairy_GrainsOnClothDry"
         or "IGUI_TraditionalPreservationDairy_GrainsOnClothDrying", tostring(drying.count))
     if item:getName() ~= name then
