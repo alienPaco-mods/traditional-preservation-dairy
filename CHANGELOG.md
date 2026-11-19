@@ -1,5 +1,10 @@
 # Changelog: Traditional Preservation (Dairy)
 
+## 0.0.14
+- **A Yogurt Incubator or Starter Culture Crock with anything in it can't be picked up** (2026-11-19): milk, a
+  starter, kefir grains or a culture keep it where it is, and its time goes by its place; empty, it picks up as
+  before. Hot milk still travels in a Wrapped Yogurt Pot.
+
 ## 0.0.13
 - **Aired rooms** (2026-11-19, TP Core 0.1.15): kefir grains on a cloth dry by moving air: in a shut room they wait
   (*It won't dry here: the room is shut. Open a window.*; `M.STILL_AIR_PLACE`). The yogurt history keeps the rooms'

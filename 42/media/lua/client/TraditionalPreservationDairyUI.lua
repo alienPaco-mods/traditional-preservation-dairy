@@ -838,6 +838,20 @@ end)
 local crockFaces = {}
 for face = 0, M.FACE_COUNT - 1 do crockFaces[M.spriteName(M.CROCK_SPRITE + face)] = true end
 UI.offAppliances(crockFaces)
+-- A pot or crock with anything in it stays where it is: milk, a starter, kefir grains or a culture, its time goes by
+-- its place (user, 2026-11-19: no station is moved mid-process; hot milk travels in a Wrapped Yogurt Pot, an item).
+-- Empty, it picks up as any moveable.
+UI.keepInPlace(function(isoObject)
+    local kind = M.stationKind(isoObject)
+    if not kind or not isoObject:hasModData() then return nil end
+    local movableData = isoObject:getModData().movableData
+    if kind == "crock" then
+        local crock = movableData and movableData[M.CROCK_KEY]
+        return (crock ~= nil and M.crockStage(crock) ~= "Empty") or nil
+    end
+    local batch = movableData and movableData[M.INCUBATOR_KEY]
+    return (batch ~= nil and (M.stage(batch) ~= "Empty" or batch.starter ~= nil)) or nil
+end)
 -- No station, the incubator or the crock, is put down in front of a door (TP Core's Doors).
 UI.keepDoorsFree(Tiles.STATIONS)
 

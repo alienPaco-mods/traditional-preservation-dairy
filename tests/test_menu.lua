@@ -62,6 +62,7 @@ local function tile(x, y, class, sprite, modData)
         class = class,
         getSprite = function() return { getName = function() return sprite end } end,
         getModData = function() return modData end,
+        hasModData = function() return true end,
         getSquare = function() return square end,
         isOutside = function() return false end,
         isLit = function() return false end,
@@ -392,5 +393,13 @@ empty.onSelect(empty.target, unpack(empty.args))
 check("choosing it queues the core's empty job for that pot", ui.queued[#ui.queued].Type == "TPEmptyFluid"
     and ui.queued[#ui.queued].item == rawPot)
 check("a pot of clarified butter is left to vanilla's Empty", fluidMenu(vessel("Done Pot", "Base.Pot", M.MELTED_CLARIFIED, 0.5, 1.5)) == nil)
+
+-- Picking a pot or crock up: only empty (user, 2026-11-19: no station is moved mid-process)
+local function canPickUp(station) return ISMoveableSpriteProps.canPickUpMoveable({}, nil, nil, station) end
+check("an empty pot and an empty crock pick up", canPickUp(incubator(20)) == true and canPickUp(crock(21)) == true)
+check("not with milk, a starter or kefir grains in", canPickUp(incubator(22, { ml = 1000, tempC = 40 })) == false
+    and canPickUp(incubator(23, { starter = "yogurt" })) == false
+    and canPickUp(incubator(24, { culture = M.KEFIR_CULTURE, grains = { [M.GRAIN_LIVE] = 1 } })) == false)
+check("nor a crock with its culture going", canPickUp(crock(25, { stage = "Cultivating" })) == false)
 
 H.done()
