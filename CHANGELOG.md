@@ -1,5 +1,9 @@
 # Changelog: Traditional Preservation (Dairy)
 
+## 0.0.12
+- **No shed column** (2026-11-19, TP Core 0.1.14): TP Core has no Enclosed place any more, so `tools/season_report.lua`
+  drops *In a shed*. Nothing changes in game.
+
 ## 0.0.11
 - **By a fire** (2026-11-18, TP Core 0.1.11): butter, milk in a bottle, kefir grains and grains drying on a cloth count by a fire or banked embers when within 2 tiles of one (28 / 24 C). Ready kefir in a pot by a fire, and its grains starving there, now age by the pot's noted fire; before, time there counted nothing. Needs TP Core 0.1.11.
 
