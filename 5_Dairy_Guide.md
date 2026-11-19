@@ -439,7 +439,7 @@ The Stone Hearth and the Forged Cauldron are in the Quick Start and TP Core's gu
 | Each litre of yogurt collected | Cooking 2 (a cup earns a quarter) |
 | Collecting the crock's starters | Cooking 2 |
 
-You can walk through the incubator and the crock. **Incubator Info** and **Crock Info** (in the menu, or just click the station) show the stage, contents, temperature, place, progress, working speed and the time to the next change. A kefir pot's also shows its grains, what they count for, and the speed they give this milk.
+You can walk through the incubator and the crock. **Incubator Info** and **Crock Info** (in the menu) show the stage, contents, temperature, place, progress, working speed and the time to the next change. A kefir pot's also shows its grains, what they count for, and the speed they give this milk.
 
 ### What the stations show
 

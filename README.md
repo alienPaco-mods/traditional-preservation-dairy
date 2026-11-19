@@ -167,7 +167,7 @@ Sheep's and the game's generic animal milk go the same way under their own names
 | Developing | Fed fresh milk | Milk with plenty of wheat in it |
 | Ready | Starters to collect | The thickened culture, a few grains left |
 
-**Incubator Info** and **Crock Info** (in the menu, or just click the station) open a small window with the stage, contents, temperature, place, progress, working speed and the time to the next change. With several stations under one click, the menu shows one entry for each, named with its status.
+**Incubator Info** and **Crock Info** (in the menu) open a small window with the stage, contents, temperature, place, progress, working speed and the time to the next change. With several stations under one click, the menu shows one entry for each, named with its status.
 
 ## Temperature and places
 

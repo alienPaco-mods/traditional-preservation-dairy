@@ -828,12 +828,6 @@ end
 
 -- Clicking a pot opens Incubator Info, and clicking a crock Crock Info, as clicking a door opens it (a Stone Hearth's click
 -- is TP Core's).
-InfoWindow.clickOpens(function(isoObject) return M.stationKind(isoObject) ~= nil end, function(playerObj, station)
-    TraditionalPreservationDairyWorld.track(station)
-    local window = M.isCrock(station) and CrockWindow or PotWindow
-    window.open(playerObj, station)
-end)
-
 -- The crock stands on a counter or a table, never on a stove, a fridge or a freezer.
 local crockFaces = {}
 for face = 0, M.FACE_COUNT - 1 do crockFaces[M.spriteName(M.CROCK_SPRITE + face)] = true end

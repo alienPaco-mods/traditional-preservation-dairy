@@ -1,6 +1,9 @@
 # Changelog: Traditional Preservation (Dairy)
 
 
+## 0.0.16
+- **Info windows open from the right-click menu only** (user, session 53): a left click on a station is vanilla's again, as for every vanilla workstation (a container opens its loot window). Incubator Info and Crock Info are in their menus.
+
 ## 0.0.15
 - **Kefir grains dry on TP Core's Drying Cloth** (2026-11-19; needs TP Core 0.1.20): ten grains to a lot, by the
   same curve as before (about 2 days at 25 C and up, 5 at 10 C, waiting in a shut room and when frozen). Dry, they
