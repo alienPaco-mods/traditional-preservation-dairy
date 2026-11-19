@@ -96,7 +96,10 @@ local function open(...)
     local context = H.menu()
     onFillMenu(0, context, { ... }, false)
     local subs = {}
-    for index, option in ipairs(context.options) do subs[index] = option.subOption end
+    -- Each station's submenu, in order (its Info row in the main menu has none).
+    for _, option in ipairs(context.options) do
+        if option.subOption then table.insert(subs, option.subOption) end
+    end
     return subs, context
 end
 
@@ -112,8 +115,9 @@ check("the controller's probe is told there is a menu, and nothing is built", ui
 local subs
 subs, context = open(pot)
 local sub = subs[1]
-check("one pot: one menu, under its plain name", #context.options == 1
-    and context.options[1].name == getText("IGUI_CraftingWindow_YoghurtIncubator"))
+check("one pot: one menu, under its plain name, and its Info at the main menu's bottom", #context.options == 2
+    and context.options[1].name == getText("IGUI_CraftingWindow_YoghurtIncubator")
+    and context.options[2].name == getText("ContextMenu_TraditionalPreservationDairy_PotInfo"))
 check("the first line is the pot's status, greyed, with a hover", sub.options[1].name == getText("IGUI_TraditionalPreservationDairy_Empty")
     and sub.options[1].isDisabled == true and sub.options[1].toolTip.description ~= nil)
 check("Incubator Info is on it", named(sub, "ContextMenu_TraditionalPreservationDairy_PotInfo") ~= nil)
@@ -190,9 +194,13 @@ check("set yogurt is collected, not poured", named(sub, "ContextMenu_Traditional
 local cooling = incubator(4, { ml = 2000, fluid = "CowMilk", tempC = 60 })
 local starter = crock(5)
 subs, context = open(cooling, starter, cooling)
-check("each station under the click gets one menu", #context.options == 2)
-check("named with its status, so they can be told apart", context.options[1].name:find("(", 1, true) ~= nil
-    and context.options[1].name:find("2.0", 1, true) ~= nil and context.options[2].name:find("(", 1, true) ~= nil)
+local entries = {}
+for _, option in ipairs(context.options) do
+    if option.subOption then table.insert(entries, option) end
+end
+check("each station under the click gets one menu, and one Info row", #entries == 2 and #context.options == 4)
+check("named with its status, so they can be told apart", entries[1].name:find("(", 1, true) ~= nil
+    and entries[1].name:find("2.0", 1, true) ~= nil and entries[2].name:find("(", 1, true) ~= nil)
 check("the crock's menu opens with its status and Crock Info", subs[2].options[1].isDisabled == true and #subs[2].options >= 2)
 
 -- A Jar of Yogurt as a starter: a whole portion left, not gone off

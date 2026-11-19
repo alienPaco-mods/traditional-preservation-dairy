@@ -1,6 +1,9 @@
 # Changelog: Traditional Preservation (Dairy)
 
 
+## 0.0.17
+- **Info in the main menu too** (user, session 53): every station's Info row is also at the bottom of the main right-click menu, besides its submenu (TP Core's `UI.topInfo`). Incubator Info and Crock Info.
+
 ## 0.0.16
 - **Info windows open from the right-click menu only** (user, session 53): a left click on a station is vanilla's again, as for every vanilla workstation (a container opens its loot window). Incubator Info and Crock Info are in their menus.
 

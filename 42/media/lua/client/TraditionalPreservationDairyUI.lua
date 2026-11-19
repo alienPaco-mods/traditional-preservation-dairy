@@ -486,6 +486,7 @@ local function addIncubatorMenu(context, playerObj, station, summary)
     tooltipFor(status, detailText(station, batch))
     local infoOption = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_PotInfo"), playerObj, PotWindow.open, station)
     infoOption.iconTexture = getTexture(STATION_ICON)
+    UI.topInfo(context, getText("ContextMenu_TraditionalPreservationDairy_PotInfo"), getTexture(STATION_ICON), playerObj, PotWindow.open, station)
 
     if batch.culture then return addKefirMenu(menu, playerObj, station, batch) end
     local stage = M.stage(batch)
@@ -640,6 +641,7 @@ local function addCrockMenu(context, playerObj, station, summary)
     tooltipFor(status, crockDetail(station, crock))
     local infoOption = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_CrockInfo"), playerObj, CrockWindow.open, station)
     infoOption.iconTexture = getTexture(CROCK_ICON)
+    UI.topInfo(context, getText("ContextMenu_TraditionalPreservationDairy_CrockInfo"), getTexture(CROCK_ICON), playerObj, CrockWindow.open, station)
 
     if stage == "Empty" then
         addLoadMenu(menu, playerObj, station)
