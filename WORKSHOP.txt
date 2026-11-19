@@ -13,7 +13,7 @@ Traditional Preservation (Dairy) requires [b]Traditional Preservation (Core)[/b]
 [*]Milk goes off: raw milk sours and then rots, scalded milk never sours, a fridge slows both, and soured milk still bakes
 [*]Real temperatures: the milk cools, the wrap goes on at 45 C, and it sets in about 6 hours when kept warm
 [*]Cow's and sheep's milk, alone or mixed, as a mixed herd's always was
-[*]Collect into glass jars (1 L) or clay jars (2.5 L) and eat from the jar, 250 ml at a time, or spoon it into cups of vanilla Yogurt that keep the batch's age
+[*]Collect into glass jars (1 L) or ceramic jars (2.5 L) and eat from the jar, 250 ml at a time, or spoon it into cups of vanilla Yogurt that keep the batch's age
 [*]Every Yogurt eaten leaves its Empty Yogurt Container
 [*]Butter goes rancid, by place: a month in a cool cellar, two or three weeks in a warm kitchen. Salt it to keep it three times as long, or clarify it in a pot or a whole summer's butter at once in the Stone Hearth's cauldron, and it never goes off
 [*]A Starter Culture Crock grows a new starter from wheat and milk, and stands on a counter, a table or the floor
@@ -36,7 +36,7 @@ Traditional Preservation (Dairy) requires [b]Traditional Preservation (Core)[/b]
 [h2]The stations[/h2]
 [list]
 [*][b]Yogurt Incubator[/b], Tailoring 1: a Yogurt Pot, 2 Ripped Sheets and Twine. Throw the pot on the wheel (Pottery 2, 6 Clay) and fire it in a kiln.
-[*][b]Starter Culture Crock[/b], Cooking 4: a Clay Jar, Glazed Clay Jar or Clay Pot, a Ripped Sheet and Twine.
+[*][b]Starter Culture Crock[/b], Cooking 4: a Ceramic Jar, Glazed Ceramic Jar or Ceramic Pot, a Ripped Sheet and Twine.
 [*][b]Stone Hearth[/b] (TP Core), Masonry 2: 12 Stone Blocks, 12 Clay and a trowel. A working fireplace; fit TP Core's [b]Forged Cauldron[/b] on it (forged from 2 Steel Sheets at a forge, Blacksmith 4; hung with 2 Iron Pipes, a Heavy Chain and a Large Hook) for a 60 L kettle over the fire.
 [/list]
 

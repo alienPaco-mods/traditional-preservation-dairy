@@ -148,7 +148,7 @@ end
 -- One kit per kind of test, so each new dairy (kefir, emmental-style, brined cheese) adds an entry here.
 local KITS = {
     yogurt = {
-        about = "a yogurt for a starter, a Clay Jar, a glass jar and four empty yogurt containers",
+        about = "a yogurt for a starter, a Ceramic Jar, a glass jar and four empty yogurt containers",
         give = function(inventory)
             inventory:AddItem(M.YOGHURT)
             inventory:AddItem("Base.ClayJar")

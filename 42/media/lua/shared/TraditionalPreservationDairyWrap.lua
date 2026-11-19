@@ -14,7 +14,7 @@ M.WRAPPED_POT = "TraditionalPreservationDairy.WrappedYoghurtPot"
 M.WRAP_KEY = "tpdWrapped"     -- { name, rain }
 M.WRAPPABLE = {
     ["Base.Pot"] = true, ["Base.PotForged"] = true,
-    ["Base.EmptyJar"] = true, ["Base.JarCrafted"] = true, ["Base.ClayJar"] = true,
+    ["Base.EmptyJar"] = true, ["Base.JarCrafted"] = true, ["Base.ClayJar"] = true, ["Base.ClayJarGlazed"] = true,
     ["Base.Bucket"] = true, ["Base.BucketEmpty"] = true, ["Base.BucketCarved"] = true,
 }
 M.WRAPPED_NAMES = { Pot = "TPDWrappedPot", Jar = "TPDWrappedJar", Bucket = "TPDWrappedBucket" }
@@ -23,7 +23,8 @@ M.WRAPPED_NAMES = { Pot = "TPDWrappedPot", Jar = "TPDWrappedJar", Bucket = "TPDW
 -- reads first and saves: customInventoryIcon and worldStaticModel.
 M.WRAPPED_LOOKS = {
     ["Base.Pot"] = "Pot", ["Base.PotForged"] = "PotForged",
-    ["Base.EmptyJar"] = "Jar", ["Base.JarCrafted"] = "Jar", ["Base.ClayJar"] = "ClayJar",
+    -- The glazed jar is the ceramic one's shape: the same bundle.
+    ["Base.EmptyJar"] = "Jar", ["Base.JarCrafted"] = "Jar", ["Base.ClayJar"] = "ClayJar", ["Base.ClayJarGlazed"] = "ClayJar",
     ["Base.Bucket"] = "Bucket", ["Base.BucketEmpty"] = "Bucket", ["Base.BucketCarved"] = "BucketCarved",
 }
 

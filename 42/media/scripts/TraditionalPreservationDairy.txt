@@ -47,7 +47,7 @@ module TraditionalPreservationDairy
     {
         timedAction = Making,
         time = 60,
-        Tags = InHandCraft;Cooking,
+        Tags = InHandCraft;CanBeDoneFromFloor;Cooking,
         category = Cooking,
         inputs
         {
@@ -66,7 +66,7 @@ module TraditionalPreservationDairy
     {
         timedAction = Making,
         time = 30,
-        Tags = InHandCraft;Cooking,
+        Tags = InHandCraft;CanBeDoneFromFloor;Cooking,
         category = Cooking,
         inputs
         {
@@ -86,13 +86,13 @@ module TraditionalPreservationDairy
     {
         timedAction = Making,
         time = 60,
-        Tags = InHandCraft;Cooking,
+        Tags = InHandCraft;CanBeDoneFromFloor;Cooking,
         category = Cooking,
         OnTest = TraditionalPreservationDairy.canWrap,
         OnCreate = TraditionalPreservationDairy.onWrapped,
         inputs
         {
-            item 1 [Base.Pot;Base.PotForged;Base.EmptyJar;Base.JarCrafted;Base.ClayJar;Base.Bucket;Base.BucketEmpty;Base.BucketCarved] mode:keep flags[IsEmpty],
+            item 1 [Base.Pot;Base.PotForged;Base.EmptyJar;Base.JarCrafted;Base.ClayJar;Base.ClayJarGlazed;Base.Bucket;Base.BucketEmpty;Base.BucketCarved] mode:keep flags[IsEmpty],
             item 1 [Base.Sheet],
             item 1 [Base.Twine],
         }
@@ -105,13 +105,13 @@ module TraditionalPreservationDairy
     {
         timedAction = Making,
         time = 30,
-        Tags = InHandCraft;Cooking,
+        Tags = InHandCraft;CanBeDoneFromFloor;Cooking,
         category = Cooking,
         OnTest = TraditionalPreservationDairy.canUnwrap,
         OnCreate = TraditionalPreservationDairy.onUnwrapped,
         inputs
         {
-            item 1 [Base.Pot;Base.PotForged;Base.EmptyJar;Base.JarCrafted;Base.ClayJar;Base.Bucket;Base.BucketEmpty;Base.BucketCarved] mode:keep flags[IsEmpty],
+            item 1 [Base.Pot;Base.PotForged;Base.EmptyJar;Base.JarCrafted;Base.ClayJar;Base.ClayJarGlazed;Base.Bucket;Base.BucketEmpty;Base.BucketCarved] mode:keep flags[IsEmpty],
         }
         outputs
         {
@@ -195,7 +195,7 @@ module TraditionalPreservationDairy
     {
         timedAction = PutSeedsInPacket,
         time = 20,
-        Tags = InHandCraft;CanBeDoneInDark;Cooking,
+        Tags = InHandCraft;CanBeDoneFromFloor;CanBeDoneInDark;Cooking,
         category = Cooking,
         inputs
         {

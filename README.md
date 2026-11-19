@@ -22,7 +22,7 @@ Copy this folder to `~/Zomboid/mods/TraditionalPreservationDairy`, as a real cop
 2. **Build a Stone Hearth** (TP Core), fit TP Core's **Forged Cauldron** on it, and keep wood for it. 10 L take about 1.5 hours to steam, 20 L about 2, a full 60 L about 2.75. (No Stone Hearth yet: a pot of milk on any lit stove or fire scalds too; see Filling the incubator.)
 3. **Throw a Yogurt Pot** on the wheel and fire it, then build it into a Yogurt Incubator within 2 tiles of the Stone Hearth.
 4. **Keep one yogurt back.** Each batch takes one vanilla Yogurt, one portion of a Jar of Yogurt, or one Active Yogurt Starter. With none left, build a Starter Culture Crock.
-5. **Save your Empty Yogurt Containers and jars.** Each cup of yogurt needs a container; a glass jar holds a litre, a clay jar 2.5 L, and you eat from the jar itself.
+5. **Save your Empty Yogurt Containers and jars.** Each cup of yogurt needs a container; a glass jar holds a litre, a ceramic jar 2.5 L, and you eat from the jar itself.
 6. **Set it by the fire in winter.** A lit fire within 2 tiles indoors (the Stone Hearth, a fireplace, an antique stove) keeps the pot at 28 C: it sets in about 6 hours in any month. A porch fire or a campfire outside gives less in the cold months.
 7. **Mind the milk.** Raw milk sours in about a day and a half in a warm room; scald it or keep it cold (see Milk goes off).
 
@@ -47,7 +47,7 @@ Copy this folder to `~/Zomboid/mods/TraditionalPreservationDairy`, as a real cop
 | Milk | 5 L, cow's, sheep's or both |
 | Starter | 1 Yogurt, 1 portion of a Jar of Yogurt, or 1 Active Yogurt Starter |
 | Wood | about 1.5 hours of fire to steam 10 L (two pots), 2 hours for 20 L (four), 2.75 for 60 L (twelve) |
-| Yogurt | 5 L: 5 glass jars, 2 clay jars, or 20 cups (250 ml portions) |
+| Yogurt | 5 L: 5 glass jars, 2 ceramic jars, or 20 cups (250 ml portions) |
 | Cooking XP | 2 per litre collected |
 
 ## Stations
@@ -57,13 +57,13 @@ Copy this folder to `~/Zomboid/mods/TraditionalPreservationDairy`, as a real cop
 | **Stone Hearth** (TP Core) | Build menu, Masonry | Masonry 2 | 12 Stone Blocks, 12 Clay, a trowel (kept) |
 | **Forged Cauldron** (TP Core), fitted on the Stone Hearth | Forge Cauldron at a forge, then Fit Cauldron on the Stone Hearth's menu | Blacksmith 4 | 2 Steel Sheets, 3 Charcoal, 1 Wire; to fit, 2 Iron Pipes, 1 Heavy Chain, 1 Large Hook, pliers (kept) |
 | **Yogurt Incubator** | Build menu, Pottery; floor | Tailoring 1 | 1 Yogurt Pot, 2 Ripped Sheets, 1 Twine |
-| **Starter Culture Crock** | Build menu, Pottery; floor, counter or table | Cooking 4 | 1 Clay Jar, Glazed Clay Jar or Clay Pot, 1 Ripped Sheet, 1 Twine |
+| **Starter Culture Crock** | Build menu, Pottery; floor, counter or table | Cooking 4 | 1 Ceramic Jar, Glazed Ceramic Jar or Ceramic Pot, 1 Ripped Sheet, 1 Twine |
 
 The **Yogurt Pot** is thrown on the pottery wheel (Pottery 2, 6 Clay, a little water) and fired in a kiln. Wrapped in a Sheet and tied with Twine (crafting menu, Cooking) it becomes a **Wrapped Yogurt Pot**, which carries 5 L of hot milk and loses only about 15 C an hour. Unwrap it when empty to get the pot, sheet and twine back.
 
-Any **cooking pot, forged pot, jar, clay jar or bucket** wraps the same way (**Wrap**, crafting menu, Cooking, empty only) and keeps its own capacity: it shows as a "Wrapped Pot", "Wrapped Jar" or "Wrapped Bucket", catches no rain, and keeps milk hot as the Wrapped Yogurt Pot does, a small jar for less long (about 2.3 hours' time constant for 1 L against 4 for 5 L) and a full bucket longer (about 5). **Unwrap** gives the sheet and twine back. The mark is the item's own fluid-container name (saved by the game) plus `tpdWrapped` in its ModData.
+Any **cooking pot, forged pot, jar, ceramic jar or bucket** wraps the same way (**Wrap**, crafting menu, Cooking, empty only) and keeps its own capacity: it shows as a "Wrapped Pot", "Wrapped Jar" or "Wrapped Bucket", catches no rain, and keeps milk hot as the Wrapped Yogurt Pot does, a small jar for less long (about 2.3 hours' time constant for 1 L against 4 for 5 L) and a full bucket longer (about 5). **Unwrap** gives the sheet and twine back. The mark is the item's own fluid-container name (saved by the game) plus `tpdWrapped` in its ModData.
 
-A wrapped container **looks bundled in towels**: its icon is its own vanilla icon wrapped in a striped towel, gathered at a twine neck, with a bucket's bail or a pot's ears still showing (one per look: pot, forged pot, glass jar, clay jar, metal bucket, carved bucket; the two glass jars share vanilla's icon, as do the two metal buckets). On the ground every one lies as the same towel bundle, sized to the container inside it, from a small bundle for a jar to a big one for a clay jar. The Wrapped Yogurt Pot looks the same way. Both come from the item's ModData (`customInventoryIcon`, `worldStaticModel`, `M.WRAPPED_LOOKS`), set on wrapping and cleared on unwrapping. In the hand a wrapped vanilla container still shows its own model.
+A wrapped container **looks bundled in towels**: its icon is its own vanilla icon wrapped in a striped towel, gathered at a twine neck, with a bucket's bail or a pot's ears still showing (one per look: pot, forged pot, glass jar, ceramic jar, metal bucket, carved bucket; the two glass jars share vanilla's icon, as do the two metal buckets). On the ground every one lies as the same towel bundle, sized to the container inside it, from a small bundle for a jar to a big one for a ceramic jar. The Wrapped Yogurt Pot looks the same way. Both come from the item's ModData (`customInventoryIcon`, `worldStaticModel`, `M.WRAPPED_LOOKS`), set on wrapping and cleared on unwrapping. In the hand a wrapped vanilla container still shows its own model.
 
 **Keep the cloth off the heat.** A wrapped pot, jar or bucket (or a Wrapped Yogurt Pot) in a hot stove, oven, barbecue, fireplace, Stone Hearth or campfire burns its wrap within a game minute: the sheet and twine are gone. On a stove, oven or barbecue that sets the kitchen alight, as burnt food does; in an open fire it burns away in the flames. A Wrapped Yogurt Pot burns down to a bare Yogurt Pot, which holds no fluid, so its milk is lost.
 
@@ -101,7 +101,7 @@ If the milk falls under 40 C with no starter in, it is **Too cold** (the lid sli
 ### 4. Collecting
 
 When the status line reads **Ready**:
-- **Collect into a Jar**: each empty jar is filled to its size, 1 L in a glass jar, 2.5 L in a Clay Jar or Glazed Clay Jar; the last one takes what is left. A **Jar of Yogurt** holds a 250 ml portion per quarter litre (4 in glass, 10 in clay), keeps the yogurt's age, stays fresh 10 days and is rotten at 15.
+- **Collect into a Jar**: each empty jar is filled to its size, 1 L in a glass jar, 2.5 L in a Ceramic Jar or Glazed Ceramic Jar; the last one takes what is left. A **Jar of Yogurt** holds a 250 ml portion per quarter litre (4 in glass, 10 in clay), keeps the yogurt's age, stays fresh 10 days and is rotten at 15.
 - **Fill Empty Yogurt Containers**: 250 ml each, straight into a vanilla Yogurt the same age as the batch.
 
 Eat from the jar: **Eat a Portion** in its right-click menu eats 250 ml, a quarter litre of its milk's food: 153.75 kcal and -12.5 hunger from cow's milk, 205.75 kcal from sheep's, a mixed pot by its shares. A cup filled from the pot or the jar has the same, and vanilla Yogurt found from now on has the cow's figures (it had 30 kcal and -10 hunger); jars, cups and Yogurt from before keep theirs. The game's own Eat, Eat Half and Eat Quarter work too (they eat that share of a full jar). Or **Fill a Yogurt Cup** / **Fill All Cups** spoons portions into Empty Yogurt Containers. The jar gets lighter, its name shows the portions left (a part-portion after Eat Quarter makes a cup with that much food), and the last spoonful gives the empty jar back.
@@ -270,7 +270,7 @@ Under Traditional Preservation (Dairy):
 
 Volumes, temperatures, cooling times, the setting and culture curves, the crock's amounts and XP are at the top of `42/media/lua/shared/TraditionalPreservationDairy.lua`; carried milk's heat record is in `TraditionalPreservationDairyCarry.lua` beside it, wrapping in `TraditionalPreservationDairyWrap.lua`. The pottery and wrapping recipes are in `42/media/scripts/TraditionalPreservationDairy.txt`, the items in `..._items.txt`, the stations' build recipes in `42/media/scripts/entities/`. The Stone Hearth's cauldron and fire rules are TP Core's (`CauldronFluid.lua`, `Fire.lua`).
 
-`python3 tools/build_tileset.py` (needs Pillow) paints the incubator, the crock and their stage overlays and writes `42/media/traditionalpreservationdairy.tiles`, `42/media/texturepacks/traditionalpreservationdairy.pack`, the icons and the generated `42/media/lua/shared/TraditionalPreservationDairy/Tiles.lua` (don't edit it by hand). `luajit tests/test_tiles.lua` checks the entity scripts against it. The wrapped containers' icons are painted there too, from vanilla's own icons (`towel_wrap`). `python3 tools/build_model.py` (needs Pillow and numpy) writes the towel bundle, `42/media/Models_X/TowelBundle.glb`, a narrow copy for the tall clay jar (`TowelBundleTall.glb`) and its texture; each container's size is the scale of its `TowelBundle_*` model in the items script, worked out there from vanilla's meshes.
+`python3 tools/build_tileset.py` (needs Pillow) paints the incubator, the crock and their stage overlays and writes `42/media/traditionalpreservationdairy.tiles`, `42/media/texturepacks/traditionalpreservationdairy.pack`, the icons and the generated `42/media/lua/shared/TraditionalPreservationDairy/Tiles.lua` (don't edit it by hand). `luajit tests/test_tiles.lua` checks the entity scripts against it. The wrapped containers' icons are painted there too, from vanilla's own icons (`towel_wrap`). `python3 tools/build_model.py` (needs Pillow and numpy) writes the towel bundle, `42/media/Models_X/TowelBundle.glb`, a narrow copy for the tall ceramic jar (`TowelBundleTall.glb`) and its texture; each container's size is the scale of its `TowelBundle_*` model in the items script, worked out there from vanilla's meshes.
 
 `luajit tests/test_incubator.lua` checks the rules (cooling, setting, mixing, refusals, the crock, catching up), `tests/test_menu.lua` the right-click menus on stand-ins for the engine, `tests/test_jar.lua` the Jar of Yogurt (portions, food, weight, the empty jar back), `tests/test_baking.lua` the milks added to vanilla's recipes, `tests/test_console.lua` the debug console, and `luajit tools/season_report.lua` prints the season tables (golden-checked by `tp test Dairy`).
 
@@ -328,7 +328,7 @@ Still to check in the game:
 2. Cow's and sheep's milk mixing in the cauldron, a container and the pot; the Stone Hearth's menu and Stone Hearth Info naming both.
 3. Milk that would leave a started pot under 40 C refused, in red.
 4. A part-empty Jar of Yogurt keeps its weight and portions after a reload.
-5. Jars at their real size: a glass jar 4 portions, a clay jar 10; Eat a Portion, vanilla Eat Quarter, a cup from a part-portion, and the empty jar back.
+5. Jars at their real size: a glass jar 4 portions, a ceramic jar 10; Eat a Portion, vanilla Eat Quarter, a cup from a part-portion, and the empty jar back.
 6. A pot left for weeks catches up and reads right on return.
 7. The incubator's and crock's menus with a controller.
 8. The hold at the scald: steaming cauldron milk refused for 20 minutes with the minutes to go, then poured; a pot on a stove reads Scalded only after 20 minutes at the steam (TESTING_GUIDE step 111).

@@ -165,7 +165,7 @@ When the incubator reads **Ready**:
 | Container | Holds | Portions of 250 ml | Notes |
 |---|---|---|---|
 | Glass jar | 1 L | 4 | |
-| Clay Jar / Glazed Clay Jar | 2.5 L | 10 | |
+| Ceramic Jar / Glazed Ceramic Jar | 2.5 L | 10 | |
 | Empty Yogurt Container | 250 ml | 1 | becomes a vanilla Yogurt |
 
 A **Jar of Yogurt** keeps the batch's age, stays fresh 10 days and is rotten at 15. Eat from the jar:
@@ -270,7 +270,7 @@ Two old ways to make it last. Both need **Cooking 2**.
 
 With **Fish & Meat** on, Potted Meat seals under Clarified Butter as it does under Lard.
 
-> *Margin note:* fresh butter is still about a sixth water, with a little milk in it, and that is where it spoils first. Salt in the water holds the bacteria back, which is why Irish firkin butter, packed heavy with salt, crossed the Atlantic in casks. Boil the water off, pour the fat from the milk solids, and little is left to spoil: Indian *ghee* and Egyptian *samna* kept through a hot summer in a clay jar.
+> *Margin note:* fresh butter is still about a sixth water, with a little milk in it, and that is where it spoils first. Salt in the water holds the bacteria back, which is why Irish firkin butter, packed heavy with salt, crossed the Atlantic in casks. Boil the water off, pour the fat from the milk solids, and little is left to spoil: Indian *ghee* and Egyptian *samna* kept through a hot summer in a ceramic jar.
 
 > *Margin note:* in Russia soured raw milk is *prostokvasha*, "simply soured", and the Irish called it *bainne clábair*, "thick milk", which English made into bonny clabber. Every farm kitchen had a jug of it going, for pancakes and soda bread. The crock here takes a little game licence: a real clabber won't turn into yogurt by itself. Fed warm fresh milk, though, its acid and bacteria give the crock the head start the wheat would take a day to grow.
 
@@ -424,7 +424,7 @@ Kefir is a fluid, poured, drunk and carried as milk is. It is its milk less the 
 | Station | Build menu | Skill | Materials | XP |
 |---|---|---|---|---|
 | **Yogurt Incubator** | Pottery; floor | Tailoring 1 | 1 Yogurt Pot, 2 Ripped Sheets, 1 Twine | Tailoring 5 |
-| **Starter Culture Crock** | Pottery; floor, counter or table | Cooking 4 | 1 Clay Jar, Glazed Clay Jar or Clay Pot, 1 Ripped Sheet, 1 Twine | Cooking 10 |
+| **Starter Culture Crock** | Pottery; floor, counter or table | Cooking 4 | 1 Ceramic Jar, Glazed Ceramic Jar or Ceramic Pot, 1 Ripped Sheet, 1 Twine | Cooking 10 |
 
 The Stone Hearth and the Forged Cauldron are in the Quick Start and TP Core's guide.
 
@@ -432,7 +432,7 @@ The Stone Hearth and the Forged Cauldron are in the Quick Start and TP Core's gu
 |---|---|---|---|
 | **Yogurt Pot** | pottery wheel, 6 Clay + a little water, then the kiln | Pottery 2 | Pottery 20 |
 | **Wrapped Yogurt Pot** | crafting menu (Cooking): Yogurt Pot + Sheet + Twine | | |
-| **Wrapped Pot, Jar or Bucket** | crafting menu (Cooking), **Wrap**: an empty cooking pot, forged pot, jar, clay jar or bucket + Sheet + Twine. It keeps its own capacity, and looks bundled in towels: in your bag and on the floor | | |
+| **Wrapped Pot, Jar or Bucket** | crafting menu (Cooking), **Wrap**: an empty cooking pot, forged pot, jar, ceramic jar or bucket + Sheet + Twine. It keeps its own capacity, and looks bundled in towels: in your bag and on the floor | | |
 
 | Work | XP |
 |---|---|
@@ -553,7 +553,7 @@ A fire outside: under a roof 72 hours in January, about 40 in February and March
 |---|---|
 | One pot | 5 L of milk + 1 Yogurt or starter |
 | Makes | 5 L of yogurt |
-| Fills | 5 glass jars, 2 clay jars, or 20 cups |
+| Fills | 5 glass jars, 2 ceramic jars, or 20 cups |
 | Cooking XP | 10 a pot |
 
 > *Margin note:* one Yogurt starts a whole pot here. Real dairies use 3 to 5 spoonfuls in a hundred of milk, about a cup for 5 L. The game is kinder.
@@ -579,7 +579,7 @@ A fire outside: under a roof 72 hours in January, about 40 in February and March
 - **Set it by the fire in winter.** A lit Stone Hearth, fireplace or antique stove within 2 tiles indoors holds a pot at 28 C: about 8 and a half hours from pouring to Ready in any month. A porch fire still sets a January pot in about 10 hours; a campfire in the open doesn't.
 - **Keep one yogurt back. Always.** A portion of a jar will do. Otherwise it's a day and a half with the crock, or half a day if you have soured milk.
 - **Soured milk isn't waste.** Bake with it, or start the crock with it.
-- **Use the clay jars.** 2.5 L each, 10 portions, and you eat from the jar itself.
+- **Use the ceramic jars.** 2.5 L each, 10 portions, and you eat from the jar itself.
 - **Save every Empty Yogurt Container.** They can't be made, only emptied.
 - **Clarify the summer's butter.** A cow gives most in summer, when butter keeps worst. Clarified, it waits for winter in any cupboard.
 - **Grow two starters before you need them.** They're fresh 5 days: start the crock when you're down to your last yogurt, not after.

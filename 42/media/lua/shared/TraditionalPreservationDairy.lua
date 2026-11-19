@@ -144,9 +144,9 @@ M.YOGHURT = "Base.Yoghurt"    -- vanilla's cup of Yogurt
 -- A Jar of Yogurt gives one portion, as much as a Yogurt cup holds, and keeps the rest (M.isStarter).
 M.STARTERS = { [M.YOGHURT] = "Yogurt", [M.STARTER] = "Starter", ["TraditionalPreservationDairy.JarOfYoghurt"] = "Yogurt" }
 M.EMPTY_CUP = "TraditionalPreservationDairy.EmptyYoghurtContainer"
--- The jars yogurt is collected into, with the ml each holds (vanilla capacities). Clay Jars need Pottery 5 and
--- are rare loot; the glass canning jar is common.
-M.JAR_ML = { ["Base.EmptyJar"] = 1000, ["Base.ClayJar"] = 2500, ["Base.ClayJarGlazed"] = 2500 }
+-- The jars yogurt is collected into, with the ml each holds (vanilla capacities). Ceramic Jars need Pottery 5 and
+-- are rare loot; the glass canning jar is common, and Glassmaking makes it too (JarCrafted, also "Jar").
+M.JAR_ML = { ["Base.EmptyJar"] = 1000, ["Base.JarCrafted"] = 1000, ["Base.ClayJar"] = 2500, ["Base.ClayJarGlazed"] = 2500 }
 M.SPAWNED_JAR_ML = 1000       -- a Jar of Yogurt never filled at a pot holds a glass jar's worth
 M.YOGHURT_JAR = "TraditionalPreservationDairy.JarOfYoghurt"
 -- One item whatever the jar; a clay one changes only its icon, through modData `customInventoryIcon` (read by

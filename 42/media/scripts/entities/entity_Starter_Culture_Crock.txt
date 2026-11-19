@@ -28,7 +28,7 @@ module TraditionalPreservationDairy
                 }
             }
         }
-        /* A Clay Jar or a vanilla Clay Pot (no skill to throw), with a cloth cover tied on. */
+        /* A Ceramic Jar or a vanilla Ceramic Pot (no skill to throw), with a cloth cover tied on. */
         component CraftRecipe
         {
             timedAction = BuildLowNoTool,

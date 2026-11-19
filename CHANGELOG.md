@@ -1,6 +1,14 @@
 # Changelog: Traditional Preservation (Dairy)
 
 
+## 0.0.18
+- **Every vanilla jar** (series recipe audit, 2026-11-19): Wrap and Unwrap take the Glazed Ceramic Jar too (wrapped as
+  the Ceramic Jar), and Collect into a Jar takes the glassmaking Jar (`Base.JarCrafted`, also "Jar" in game), 1 L.
+- **Hand recipes work from the floor** (series recipe audit, 2026-11-19): every hand recipe but Packing has
+  `CanBeDoneFromFloor`, so its inputs aren't carried into the inventory first (vanilla moves them otherwise): Wrap and Unwrap, Wrap and Unwrap Yogurt Pot, Open Kefir Grains.
+- **The game's names**: Ceramic Jar, Glazed Ceramic Jar and Ceramic Pot (was "Clay Jar", "Clay Pot") in the README,
+  Workshop text, guide, DEVHELP, the Jars line of Incubator Info and the crock's tooltip.
+
 ## 0.0.17
 - **Info in the main menu too** (user, session 53): every station's Info row is also at the bottom of the main right-click menu, besides its submenu (TP Core's `UI.topInfo`). Incubator Info and Crock Info.
 
