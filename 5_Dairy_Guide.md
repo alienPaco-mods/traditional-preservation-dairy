@@ -89,7 +89,7 @@ The same incubator makes **kefir**: grains found on farm shelves, put in milk an
 3. **Make the Yogurt Pot** on the pottery wheel and fire it in a kiln.
 4. **Build the Yogurt Incubator** from the Build menu, within 2 tiles of the Stone Hearth.
 5. **Pour into the Cauldron** (right-click the Stone Hearth) from your milk buckets, then **Light** the fire.
-6. Check **Stone Hearth Info**. When it reads "Steaming: Yes", the milk is at 85 C. **Keep it steaming for 20 minutes**: then the cauldron's milk reads *Scalded* and will pour.
+6. Check **Stone Hearth Info**. When the Heat reads "steaming", the milk is at 85 C. **Keep it steaming for 20 minutes**: then the cauldron's milk reads *Scalded* and will pour.
 7. Right-click the incubator: **Pour from the Cauldron**, then **Add Starter** with a Yogurt or a Jar of Yogurt you kept back.
 8. Go to bed. The lid stays on while it cools, and at 45 C the cloth wraps itself on.
 9. In the morning the status reads **Ready**. **Collect into a Jar** or **Fill Empty Yogurt Containers**.
