@@ -1,6 +1,10 @@
 # Changelog: Traditional Preservation (Dairy)
 
 
+## 0.0.19
+- The window rows read the station's full name and Info (Yogurt Incubator Info, Starter Culture Crock Info), as vanilla's Fireplace Info and
+  Generator Info; the window's title is the bare name. The short "Vessel Info", "Tub Info" and the like are gone.
+
 ## 0.0.18
 - **Every vanilla jar** (series recipe audit, 2026-11-19): Wrap and Unwrap take the Glazed Ceramic Jar too (wrapped as
   the Ceramic Jar), and Collect into a Jar takes the glassmaking Jar (`Base.JarCrafted`, also "Jar" in game), 1 L.

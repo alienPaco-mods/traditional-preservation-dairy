@@ -1,4 +1,4 @@
-# Traditional Preservation (Dairy) — Build 42 prototype (v0.0.10)
+# Traditional Preservation (Dairy) — Build 42 prototype (v0.0.19)
 
 **Status: experimental.** The yogurt loop, from the Stone Hearth's cauldron to a cup of yogurt, and the starter crock have been played in the game with test timers. The latest changes (mixed milks, the cold-milk refusal, the jar weight after a reload) have only been checked offline so far (see the test plan). Back up your save before enabling.
 
@@ -79,7 +79,7 @@ The Stone Hearth is TP Core's station, documented in full in TP Core's `README.m
 - Poured milk mixes its temperature with what's already in the cauldron, by volume.
 - While the fire burns, the cauldron heats towards 95 C: 10 L go from 20 C to 85 C in about 1.5 hours, 20 L in about 2, a full 60 L in about 2.75, less milk faster. With the fire out it cools towards the room over a few hours, as the stone holds heat.
 - **Bank the Fire** burns a third of the wood, holds the cauldron at about 50 C and cooks a third as fast. **Stoke the Fire** brings it back.
-- At 85 C the cauldron steams, in its sprite and in Stone Hearth Info ("Steaming: Yes"). **Held at 85 C or more for 20 minutes** in all (`M.SCALD_HOLD_HOURS`; the cauldron counts it, `CauldronFluid.heldHours`), its milk reads Scalded. Pouring more milk in starts the 20 minutes over.
+- At 85 C the cauldron steams, in its sprite and in the Stone Hearth window ("Steaming: Yes"). **Held at 85 C or more for 20 minutes** in all (`M.SCALD_HOLD_HOURS`; the cauldron counts it, `CauldronFluid.heldHours`), its milk reads Scalded. Pouring more milk in starts the 20 minutes over.
 
 ### 2. Filling the incubator
 
@@ -167,7 +167,7 @@ Sheep's and the game's generic animal milk go the same way under their own names
 | Developing | Fed fresh milk | Milk with plenty of wheat in it |
 | Ready | Starters to collect | The thickened culture, a few grains left |
 
-**Incubator Info** and **Crock Info** (in the menu) open a small window with the stage, contents, temperature, place, progress, working speed and the time to the next change. With several stations under one click, the menu shows one entry for each, named with its status.
+**Yogurt Incubator Info** and **Starter Culture Crock Info** (in the menu) open a small window with the stage, contents, temperature, place, progress, working speed and the time to the next change. With several stations under one click, the menu shows one entry for each, named with its status.
 
 ## Temperature and places
 
@@ -178,7 +178,7 @@ Time counts by the game clock, at any Day Length, and keeps counting while the a
 | Setting (incubator) | below 18 C | 18–40 C | 40–45 C | above 45 C, stops at 55 C |
 | Culture (crock) | stops at 0 C | below 25 C | 25–35 C | above 35 C, 10% at 45 C |
 
-A frozen crock pauses (Crock Info says *Paused here (frozen)*) and goes on once it thaws; nothing is lost. The incubator's milk stalls long before it could freeze; on Forgiving, where cold only slows it, it still stops at 0 C and below.
+A frozen crock pauses (the Starter Culture Crock window says *Paused here (frozen)*) and goes on once it thaws; nothing is lost. The incubator's milk stalls long before it could freeze; on Forgiving, where cold only slows it, it still stops at 0 C and below.
 
 Seven kinds of place (TP Core's):
 
@@ -234,7 +234,7 @@ Vanilla butter keeps for ever. Here it goes rancid by place (TP Core's `PlaceKee
 
 - **Salt Butter**: a Butter and a salt (anything tagged salt) make a **Salted Butter**, starting as far into its days as the butter was.
 - **Clarify**: **Put Butter in a Pot** (a butter's right-click menu, a row per vessel, One or All; TP Core's `ItemFluid`): each Butter or Salted Butter goes into an empty Pot, Forged Pot, Saucepan or Copper Saucepan (or one holding melting butter) as a quarter litre of **Butter (Melting)**, 6 to a pot, 2 to a saucepan; no kettle. Kept steaming an hour on any stove or fire it is **Clarified Butter (Melted)**: **Strain Clarified Butter** through a cloth or a Strainer (Cheese Cloth, Dish Towel, Ripped Sheets, Sheet; kept), a quarter litre to a **Clarified Butter**. An hour more steaming burns it: the vessel becomes a burnt **Pot of Butter** / **Saucepan of Butter**, and **Scrape Out Burnt Butter** gives it back. Raw, it can't be poured into another container (Empty throws it away), and goes rancid when its oldest butter would have.
-- **Many at once in the cauldron** (the same route at a bigger size): on a Stone Hearth with TP Core's cauldron, **Put Butter in the Cauldron** (one butter, the oldest, or all you carry, a quarter litre each, up to 240). Kept steaming an hour over a lit fire it is **Clarified Butter (Melted)**: fill any container from the cauldron and **Strain Clarified Butter** through a cloth, a quarter litre to a Clarified Butter. Left raw it goes rancid when its oldest butter would have (Empty the Cauldron). Stone Hearth Info says how it is doing.
+- **Many at once in the cauldron** (the same route at a bigger size): on a Stone Hearth with TP Core's cauldron, **Put Butter in the Cauldron** (one butter, the oldest, or all you carry, a quarter litre each, up to 240). Kept steaming an hour over a lit fire it is **Clarified Butter (Melted)**: fill any container from the cauldron and **Strain Clarified Butter** through a cloth, a quarter litre to a Clarified Butter. Left raw it goes rancid when its oldest butter would have (Empty the Cauldron). The Stone Hearth window says how it is doing.
 - Every step but scraping a burnt pot takes **Cooking 2**. It never goes off, as Lard. The cauldron never burns. Salted butter clarifies too.
 - Clarified Butter is 0.25 weight with all of the butter's food (the water had none). With Fish & Meat on, Potted Meat seals under it as under Lard.
 - Each butter's clock is `tpdKeep` in its ModData, on the ledger `TraditionalPreservationDairyButter`; a pot's record is TP Core's `tpItemFluid`. The fluids `MeltingButter`, `MeltedClarifiedButter` and `RancidButter` keep their names once the mod is out.
@@ -320,12 +320,12 @@ In debug mode, `TPD.help()` in the Lua console lists commands for testing this m
 
 ## Test plan
 
-Already passed in the game: building the Stone Hearth, incubator and crock; the cauldron heating and cooling, Stone Hearth Info; pouring from the cauldron, the starter, cooling, wrapping, setting and collecting into jars and cups; Incubator Info and Crock Info; the crock's load, feed and starters; banked and lit fire.
+Already passed in the game: building the Stone Hearth, incubator and crock; the cauldron heating and cooling, the Stone Hearth window; pouring from the cauldron, the starter, cooling, wrapping, setting and collecting into jars and cups; the Yogurt Incubator window and the Starter Culture Crock window; the crock's load, feed and starters; banked and lit fire.
 
 Still to check in the game:
 
 1. The crock on a kitchen counter and a table: built, put down, saved and reloaded, refused on a fridge or stove (test C).
-2. Cow's and sheep's milk mixing in the cauldron, a container and the pot; the Stone Hearth's menu and Stone Hearth Info naming both.
+2. Cow's and sheep's milk mixing in the cauldron, a container and the pot; the Stone Hearth's menu and the Stone Hearth window naming both.
 3. Milk that would leave a started pot under 40 C refused, in red.
 4. A part-empty Jar of Yogurt keeps its weight and portions after a reload.
 5. Jars at their real size: a glass jar 4 portions, a ceramic jar 10; Eat a Portion, vanilla Eat Quarter, a cup from a part-portion, and the empty jar back.

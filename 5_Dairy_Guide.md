@@ -89,7 +89,7 @@ The same incubator makes **kefir**: grains found on farm shelves, put in milk an
 3. **Make the Yogurt Pot** on the pottery wheel and fire it in a kiln.
 4. **Build the Yogurt Incubator** from the Build menu, within 2 tiles of the Stone Hearth.
 5. **Pour into the Cauldron** (right-click the Stone Hearth) from your milk buckets, then **Light** the fire.
-6. Check **Stone Hearth Info**. When the Heat reads "steaming", the milk is at 85 C. **Keep it steaming for 20 minutes**: then the cauldron's milk reads *Scalded* and will pour.
+6. Check the **Stone Hearth Info** window. When the cauldron reads "steaming", the milk is at 85 C. **Keep it steaming for 20 minutes**: then the cauldron's milk reads *Scalded* and will pour.
 7. Right-click the incubator: **Pour from the Cauldron**, then **Add Starter** with a Yogurt or a Jar of Yogurt you kept back.
 8. Go to bed. The lid stays on while it cools, and at 45 C the cloth wraps itself on.
 9. In the morning the status reads **Ready**. **Collect into a Jar** or **Fill Empty Yogurt Containers**.
@@ -107,7 +107,7 @@ The Stone Hearth is TP Core's station: a vanilla fireplace (Add Fuel, Light, coo
 
 - **One fluid at a time.** Cow's and sheep's milk count as one: they mix freely, and a blend keeps its shares in the cauldron, in a container and in the pot. Any other mix is refused, shown in red with the reason.
 - **The fire heats the cauldron towards 95 C**, and milk is kept off the boil. Cold milk poured onto hot cools the lot.
-- **At 85 C the cauldron steams**, in its look and in Stone Hearth Info, and you hear it simmer. After **20 minutes at the steam** (in all) its milk reads **Scalded**. Pour more milk in and the 20 minutes start over.
+- **At 85 C the cauldron steams**, in its look and in the Stone Hearth window, and you hear it simmer. After **20 minutes at the steam** (in all) its milk reads **Scalded**. Pour more milk in and the 20 minutes start over.
 
 > *Margin note:* the old dairywoman's rule was to let the pot "stand at the steam" while she said her prayers, or about as long as it takes to scrub the churn. That quarter of an hour or more is what turns the whey proteins so the yogurt sets firm instead of runny. A thermometer only tells you when to start counting.
 
@@ -387,7 +387,7 @@ For keeping, dry them on a **Drying Cloth** (TP Core: a Sheet and 2 Stones, Buil
 | 5 C | 10 days |
 | frozen | paused |
 
-When **Cloth Info** says Dry, **Take Off the Finished Lots**: Dried Kefir Grains. Taken off early, they come back live. Dead grains aren't laid.
+When the **Drying Cloth Info** window says Dry, **Take Off the Finished Lots**: Dried Kefir Grains. Taken off early, they come back live. Dead grains aren't laid.
 
 ### Kefir
 
@@ -439,7 +439,7 @@ The Stone Hearth and the Forged Cauldron are in the Quick Start and TP Core's gu
 | Each litre of yogurt collected | Cooking 2 (a cup earns a quarter) |
 | Collecting the crock's starters | Cooking 2 |
 
-You can walk through the incubator and the crock. **Incubator Info** and **Crock Info** (in the menu) show the stage, contents, temperature, place, progress, working speed and the time to the next change. A kefir pot's also shows its grains, what they count for, and the speed they give this milk.
+You can walk through the incubator and the crock. **Yogurt Incubator Info** and **Starter Culture Crock Info** (in the menu) show the stage, contents, temperature, place, progress, working speed and the time to the next change. A kefir pot's also shows its grains, what they count for, and the speed they give this milk.
 
 ### What the stations show
 
@@ -512,7 +512,7 @@ The fire columns are a fire in a shut room. **A fire outside** warms the pot les
 | In a basement from December | weeks |
 | Indoors from November | weeks; in January about 77 days, most of them paused frozen |
 
-At 0 C and below the crock stops and waits: Crock Info says *Paused here (frozen)*. Nothing is lost, and it goes on once it thaws.
+At 0 C and below the crock stops and waits: the Starter Culture Crock window says *Paused here (frozen)*. Nothing is lost, and it goes on once it thaws.
 
 **Kefir:** 5 L of milk at 20 C with 125 live grains (the full ratio): hours to ready, and the live grains that come out. "Never" means it wasn't ready after 72 hours.
 
@@ -593,7 +593,7 @@ A fire outside: under a roof 72 hours in January, about 40 in February and March
 
 | Problem | Why |
 |---|---|
-| Pour from the Cauldron greyed out | The Stone Hearth must stand within 2 tiles of the pot, and its cauldron must have steamed (85 C) for 20 minutes. Keep the fire lit; Stone Hearth Info says when it will steam, the greyed option how many minutes are left |
+| Pour from the Cauldron greyed out | The Stone Hearth must stand within 2 tiles of the pot, and its cauldron must have steamed (85 C) for 20 minutes. Keep the fire lit; the Stone Hearth window says when it will steam, the greyed option how many minutes are left |
 | Pour Scalded Milk says "Not scalded" | The milk isn't scalded: hold it at 85 C for 20 minutes in the cauldron or on a stove or fire. Raw milk mixed in makes scalded milk plain again |
 | Pour refused as too cold | The starter is in, and the milk would bring the pot under 40 C. Use hotter milk |
 | Pour into the Cauldron refused, in red | The cauldron holds one fluid at a time. Only cow's and sheep's milk mix |

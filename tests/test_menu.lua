@@ -120,7 +120,7 @@ check("one pot: one menu, under its plain name, and its Info at the main menu's 
     and context.options[2].name == getText("ContextMenu_TraditionalPreservationDairy_PotInfo"))
 check("the first line is the pot's status, greyed, with a hover", sub.options[1].name == getText("IGUI_TraditionalPreservationDairy_Empty")
     and sub.options[1].isDisabled == true and sub.options[1].toolTip.description ~= nil)
-check("Incubator Info is on it", named(sub, "ContextMenu_TraditionalPreservationDairy_PotInfo") ~= nil)
+check("the incubator's window row is on it", named(sub, "ContextMenu_TraditionalPreservationDairy_PotInfo") ~= nil)
 local pour = named(sub, POUR)
 check("pouring from a Stone Hearth is greyed when none is near", pour.isDisabled == true
     and pour.toolTip.description == getText("IGUI_TraditionalPreservationDairy_NoCauldron"))
@@ -201,7 +201,7 @@ end
 check("each station under the click gets one menu, and one Info row", #entries == 2 and #context.options == 4)
 check("named with its status, so they can be told apart", entries[1].name:find("(", 1, true) ~= nil
     and entries[1].name:find("2.0", 1, true) ~= nil and entries[2].name:find("(", 1, true) ~= nil)
-check("the crock's menu opens with its status and Crock Info", subs[2].options[1].isDisabled == true and #subs[2].options >= 2)
+check("the crock's menu opens with its status and its window's row", subs[2].options[1].isDisabled == true and #subs[2].options >= 2)
 
 -- A Jar of Yogurt as a starter: a whole portion left, not gone off
 local function jarOf(name, portions, rotten)
