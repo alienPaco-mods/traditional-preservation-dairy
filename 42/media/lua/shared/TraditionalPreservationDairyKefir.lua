@@ -582,12 +582,13 @@ function M.ageKefir(batch, hours, placeC, now)
     finishGrains(batch, batch.kefirAge.age)
 end
 
--- Drying: grains spread on a cloth (the strain cloths) dry where they lie, on the place's temperature: about 2 days at
--- 25 C and up, 5 at 10 C, slower still in a fridge, frozen they wait. They dry by moving air, as everything that dries
--- by air in the series: in a shut room (STILL_AIR_PLACE) they wait for a window. Dry, they are Dried Kefir Grains again, to keep or
--- to bring back over 2 batches; the cloth comes back with them. Dead grains aren't spread. Save key on the cloth: never
--- rename it once the mod is out. Inside: count (grains), cloth (the cloth's full type), dry (a FluidAgeing age: hours at
--- full drying).
+-- Drying: live grains laid on TP Core's Drying Cloth dry by the air where it lies: about 2 days at 25 C and up, 5 at
+-- 10 C, frozen they wait, and in a shut room they wait for a window (the cloth's rule for everything that dries by
+-- air). Ten grains to a lot. Dry, they are Dried Kefir Grains again, to keep or to bring back over 2 batches; taken off
+-- before they are dry they come back as live grains. Dead grains aren't laid. A Kefir Grains on a Cloth from before
+-- the Drying Cloth (an old save) still dries where it lies and is collected as it always was: its save key on the
+-- cloth item, never renamed once the mod is out, holds count (grains), cloth (the cloth's full type), dry (a
+-- FluidAgeing age: hours at full drying).
 M.GRAIN_DRYING = "TraditionalPreservationDairy.KefirGrainsOnCloth"
 M.DRYING_KEY = "tpdDrying"
 M.DRY_CLOTHS = M.STRAIN_CLOTHS
@@ -639,3 +640,21 @@ function M.keepDrying(item, now, place, ledger)
     end
     return drying
 end
+
+M.GRAINS_PER_LOT = 10
+local DryingCloth = require "TraditionalPreservationCore/DryingCloth"
+local Tiles = require "TraditionalPreservationDairy/Tiles"
+
+M.GRAINS_ON_CLOTH = DryingCloth.register({
+    name = "kefirGrains", title = "IGUI_TraditionalPreservationDairy_GrainsTitle", types = { [M.GRAIN] = true },
+    perLot = M.GRAINS_PER_LOT, hours = M.GRAIN_DRY_HOURS, curve = DRY_CURVE,
+    sprite = function(lot, state)
+        return Tiles.PREFIX .. (Tiles.GRAINS + Tiles.GRAIN_STATES[state == "dry" and "dry" or "wet"] * DryingCloth.LOTS + lot)
+    end,
+    layable = function(item)
+        return M.keepGrain(item).grainState == M.GRAIN_DEAD and "IGUI_TraditionalPreservationDairy_GrainsDeadNoLay" or nil
+    end,
+    give = function(lot, inventory, state)
+        for _ = 1, lot.count do inventory:AddItem(state == "dry" and M.DRIED_GRAIN or M.GRAIN) end
+    end,
+})

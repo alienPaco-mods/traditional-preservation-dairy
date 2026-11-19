@@ -313,7 +313,7 @@ A **Packet of Kefir Grains** turns up on a farm's storage shelves and a Gigamart
 | Packet of Kefir Grains | 0.02 | A sachet, torn open for 10 Dried Kefir Grains |
 | Dried Kefir Grains | 0.001 | Asleep. They keep for ever, and 2 batches in milk bring them back |
 | Kefir Grains | 0.001 | One grain, a gram. Its state is in its name. Not food |
-| Kefir Grains on a Cloth | 0.1 and up | Grains spread to dry, with the cloth under them |
+| Kefir Grains on a Cloth | 0.1 and up | An older save's grains spread to dry; today's dry on the Drying Cloth |
 
 ### A batch
 
@@ -377,7 +377,7 @@ A place over **35 C** turns live grains Hungry, over **45 C** kills them. Grains
 
 ### Drying grains
 
-For keeping, dry them. Right-click a grain: **Spread Kefir Grains to Dry**, **One** or **All**, on a cloth you carry (a Cheesecloth, Dish Cloth, Ripped Sheet or Sheet). You get **Kefir Grains on a Cloth (Drying)**: put it down somewhere and leave it.
+For keeping, dry them on a **Drying Cloth** (TP Core: a Sheet and 2 Stones, Build menu, Furniture). Right-click it: **Lay Kefir Grains on the Cloth**, ten grains to a lot, five lots a cloth. Lay it where the air moves: in a shut room they wait for a window.
 
 | Place | Dry in |
 |---|---|
@@ -387,7 +387,7 @@ For keeping, dry them. Right-click a grain: **Spread Kefir Grains to Dry**, **On
 | 5 C | 10 days |
 | frozen | paused |
 
-When it reads **(Dry)**, **Collect Dried Kefir Grains** gives Dried Kefir Grains and the cloth back. Dead grains aren't spread.
+When **Cloth Info** says Dry, **Take Off the Finished Lots**: Dried Kefir Grains. Taken off early, they come back live. Dead grains aren't laid.
 
 ### Kefir
 
@@ -668,15 +668,15 @@ Each process laid out as the game's planting seasons: the months it works unheat
 | `TPD.age(hours)` | Moves every loaded incubator and crock on by this many hours (1 if left out): an incubator replays the recorded weather, a crock's stage takes them as hours at the best temperature. |
 | `TPD.fast(hours)` | Test timer for setting. `TPD.fast()` goes back to the sandbox time. |
 | `TPD.milk(litres, c, fluid)` | A cooking pot of milk (default 5 L of cow's), at c degrees if given; fluid `"SheepMilk"` or `"AnimalMilk"` for the others, `"CowKefir"` or `"SheepKefir"` for kefir. At 85 C or more it counts as having had its 20-minute hold. |
-| `TPD.give(name, n, option)` | Spawns `jar` (a full Jar of Yogurt; option `"clay"` or `"glazed"`), `starter`, `cup`, `butter`, `salted`, `clarified`, `packet` (of kefir grains), `dried`, `grains` (live) or `cloth` (10 grains drying); no name lists them. |
+| `TPD.give(name, n, option)` | Spawns `jar` (a full Jar of Yogurt; option `"clay"` or `"glazed"`), `starter`, `cup`, `butter`, `salted`, `clarified`, `packet` (of kefir grains), `dried`, `grains` (live) or `cloth` (an older save's 10 grains drying); no name lists them. |
 | `TPD.kit(kind)` | What a test needs: yogurt (default), `"crock"`, `"wrap"`, `"butter"` (nine Butter, a Salt, a pot, a saucepan, a Ripped Sheet, a burnt pot) or `"kefir"` (a packet, 25 live grains, 2 L of kefir, 1 L of milk, a Strainer, a Ripped Sheet); `"?"` lists them. |
 | `TPD.crocks()` | Every loaded crock: stage, progress, place. |
 | `TPD.ages()` | Each container of milk or kefir you carry: fluid, stage, age, hours to the next stage, place. |
 | `TPD.sour(hours)` | Ages the milk and kefir you carry by this many hours at 20 C (36 if left out: one souring). Kefir separates at 72, rots at 240. |
 | `TPD.butter()` | Each butter you carry: place, rate, age, days to stale and rotten there. |
 | `TPD.rancid(days)` | Ages the butter you carry by this many days (10 if left out) at its place. |
-| `TPD.grains()` | Your kefir grains and cloths of grains: state, hours starved or dried, place. |
-| `TPD.starve(hours)` | Those grains starve this many hours more (48 if left out), the cloths dry as long. |
+| `TPD.grains()` | Your kefir grains: state, hours starved, place. Grains on a Drying Cloth: `TPC.cloth()`. |
+| `TPD.starve(hours)` | Those grains starve this many hours more (48 if left out). `TPC.dryCloth(hours)` dries a Drying Cloth's lots. |
 | `TPD.tiles()` | Every station within 3 tiles: object class, sprite, solid flags. |
 
 **Typical check:** within 2 tiles of a Stone Hearth with the cauldron fitted (`TPC.kit()`, `TPC.fit()`), `TPC.cauldron(5)` and `TPC.hot()`, then `TPD.kit()`, Pour from the Cauldron and Add Starter. `TPD.age(3)` should show it wrapped and setting, `TPD.age(7)` Ready. **Kefir:** `TPD.kit("kefir")`, Add Kefir Grains (All), Pour Milk from the 1 L pot, `TPD.age(24)`, Strain Kefir: Kefir, and 27 grains back.

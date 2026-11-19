@@ -27,4 +27,9 @@ return {
             Ready = 14,
         },
     },
+    GRAINS = 24,
+    GRAIN_STATES = {
+        wet = 0,
+        dry = 1,
+    },
 }

@@ -1,5 +1,13 @@
 # Changelog: Traditional Preservation (Dairy)
 
+
+## 0.0.15
+- **Kefir grains dry on TP Core's Drying Cloth** (2026-11-19; needs TP Core 0.1.20): ten grains to a lot, by the
+  same curve as before (about 2 days at 25 C and up, 5 at 10 C, waiting in a shut room and when frozen). Dry, they
+  come off as Dried Kefir Grains; taken off early, as live grains. Dead grains aren't laid. **Spread Kefir Grains**
+  is gone; a Kefir Grains on a Cloth from an older save still dries where it lies and is collected as before. Grain
+  overlays for the cloth (tiles 24 to 33). `TPD.kit("kefir")` adds a Sheet and 2 Stones for the cloth.
+
 ## 0.0.14
 - **A Yogurt Incubator or Starter Culture Crock with anything in it can't be picked up** (2026-11-19): milk, a
   starter, kefir grains or a culture keep it where it is, and its time goes by its place; empty, it picks up as

@@ -25,7 +25,7 @@ function TPD.help()
     say("TPD.butter()         every butter you carry or within 4 tiles (a fridge, a freezer): place, rate, age, days to stale and rotten there")
     say("TPD.rancid(days)     age that butter by this many days at its place (default 10)")
     say("TPD.grains()         kefir grains and grains drying on a cloth, carried or within 4 tiles: state, hours starved, place, drying left")
-    say("TPD.starve(hours)    those grains starve this many hours at 20 C (default 48: Hungry; 168 dead), and the cloths dry this many hours at full speed")
+    say("TPD.starve(hours)    those grains starve this many hours at 20 C (default 48: Hungry; 168 dead), and old Kefir Grains on a Cloth dry this many hours at full speed; grains on a Drying Cloth: TPC.dryCloth(hours)")
     say("TPD.tiles()          every station within 3 tiles: object class, sprite and square solid flags")
     say("The Stone Hearth's commands (cauldronInfo, stone, cauldron, fuel, hot, its kit) are TP Core's: TPC.help()")
 end
@@ -174,7 +174,7 @@ local KITS = {
         end,
     },
     kefir = {
-        about = "a Packet of Kefir Grains, 25 live Kefir Grains, a pot of 2 L of cow's milk kefir, a pot of 1 L of cow's milk (25 grains are the full ratio for it: 24 h in the incubator at 18-25 C), a Strainer and a Ripped Sheet",
+        about = "a Packet of Kefir Grains, 25 live Kefir Grains, a pot of 2 L of cow's milk kefir, a pot of 1 L of cow's milk (25 grains are the full ratio for it: 24 h in the incubator at 18-25 C), a Strainer, a Ripped Sheet, and a Sheet and 2 Stones for a Drying Cloth (TP Core) to dry grains on",
         give = function(inventory)
             inventory:AddItem(M.GRAIN_PACKET)
             for _ = 1, M.grainsFor(1000) do GIVES.grains(inventory) end
@@ -185,6 +185,8 @@ local KITS = {
             end
             inventory:AddItem(M.STRAINER)
             inventory:AddItem("Base.RippedSheets")
+            inventory:AddItem("Base.Sheet")
+            for _ = 1, 2 do inventory:AddItem("Base.Stone2") end
         end,
     },
     wrap = {

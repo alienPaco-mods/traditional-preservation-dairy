@@ -25,6 +25,7 @@ from PIL import Image, ImageDraw, ImageFilter
 
 sys.path.insert(0, str(Path(os.environ.get("TPCORE", Path(__file__).resolve().parents[2] / "TraditionalPreservationCore")) / "tools"))
 import pzart  # noqa: E402
+import cloth_art  # noqa: E402
 from pzart import TILE_W, TILE_H, light_at, shrink  # noqa: E402
 from pzart import tint as shade  # noqa: E402
 
@@ -766,6 +767,39 @@ def write_geometry(path):
 
 # --- Output -----------------------------------------------------------------------------------------------------
 
+# Kefir grains on TP Core's Drying Cloth: a small heap of knobbly grains on each of its five lots, wet (glossy white) or
+# dry (smaller, yellowed). The same on either face of the cloth: its lots are a die's five.
+GRAINS = 24
+GRAIN_STATES = ["wet", "dry"]
+GRAIN_COLOURS = {
+    "wet": dict(body=(246, 244, 236), shade=(212, 208, 196), shine=(255, 255, 255)),
+    "dry": dict(body=(226, 210, 160), shade=(188, 168, 118), shine=(240, 228, 190)),
+}
+
+
+def grain_index(lot, state):
+    return GRAINS + GRAIN_STATES.index(state) * len(cloth_art.LOTS) + lot
+
+
+def paint_grains(lot, state):
+    rng = random.Random(lot * 7 + 1)
+    layer = pzart.new_layer(SS)
+    d = ImageDraw.Draw(layer)
+    colours = GRAIN_COLOURS[state]
+    lx, ly = cloth_art.lot_spot(lot)
+    size = 1.0 if state == "wet" else 0.8
+    blobs = sorted([(rng.uniform(-0.07, 0.07), rng.uniform(-0.07, 0.07), rng.uniform(1.6, 2.6)) for _ in range(12)],
+                   key=lambda b: b[0] + b[1])
+    for x, y, r in blobs:
+        cx, cy = (v * SS for v in pzart.project(lx + x * size, ly + y * size, 1.0 + r))
+        r = r * SS * size
+        d.ellipse([cx - r, cy - r * 0.8, cx + r, cy + r * 0.8], fill=colours["shade"] + (255,))
+        d.ellipse([cx - r * 0.85, cy - r * 0.85, cx + r * 0.7, cy + r * 0.55], fill=colours["body"] + (255,))
+        if state == "wet":
+            d.ellipse([cx - r * 0.5, cy - r * 0.6, cx - r * 0.1, cy - r * 0.25], fill=colours["shine"] + (255,))
+    return pzart.shrink(layer)
+
+
 def lua_tiles():
     prefix = TILESET + "_"
     return {
@@ -776,6 +810,8 @@ def lua_tiles():
         "INCUBATOR": INCUBATOR,
         "CROCK": CROCK,
         "OVERLAYS": OVERLAYS,
+        "GRAINS": GRAINS,
+        "GRAIN_STATES": {name: index for index, name in enumerate(GRAIN_STATES)},
     }
 
 
@@ -806,6 +842,9 @@ def main():
             tiles[index + face] = incubator_overlay(stage, face)
         for stage, index in OVERLAYS["crock"].items():
             tiles[index + face] = crock_overlay(stage, face)
+    for state in GRAIN_STATES:
+        for lot in range(len(cloth_art.LOTS)):
+            tiles[grain_index(lot, state)] = paint_grains(lot, state)
     pzart.write_pack(media / "texturepacks" / f"{NAME}.pack", tiles, NAME, TILESET, PAGE_SIZE)
     pzart.write_tiles(media / f"{NAME}.tiles", [(TILESET, COLUMNS, ROWS)], TILE_PROPS)
     write_geometry(media.parent.parent / "common" / "media" / "tileGeometry.txt")

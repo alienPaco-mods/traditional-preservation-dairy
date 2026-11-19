@@ -917,40 +917,11 @@ end
 
 Events.OnFillInventoryObjectContextMenu.Add(onFillInventoryMenu)
 
--- Kefir grains in hand: Spread Kefir Grains to Dry on a grain's menu (One, All), Collect Dried Kefir Grains on a cloth of
--- them once dry.
-local function onGrainsAction(playerObj, mode, item, items, cloth)
-    for _, carried in ipairs(items or { item }) do ISInventoryPaneContextMenu.transferIfNeeded(playerObj, carried) end
-    if cloth then ISInventoryPaneContextMenu.transferIfNeeded(playerObj, cloth) end
-    ISTimedActionQueue.add(TPKefirGrains:new(playerObj, mode, item, items, cloth))
-end
-
-local function dryingCloth(playerObj)
-    local inventory = playerObj:getInventory()
-    for _, cloth in ipairs(M.DRY_CLOTHS) do
-        local item = inventory:getFirstTypeRecurse(cloth)
-        if item then return item end
-    end
-end
-
-local function addSpreadMenu(context, playerObj)
-    local option = context:addOption(getText("ContextMenu_TraditionalPreservationDairy_SpreadGrains"))
-    option.iconTexture = getTexture(GRAINS_ICON)
-    local alive = findItems(playerObj, function(item)
-        return item:getFullType() == M.GRAIN and M.keepGrain(item, now()).grainState ~= M.GRAIN_DEAD
-    end)
-    if #alive == 0 then return disableWith(option, getText("IGUI_TraditionalPreservationDairy_NoLiveGrains")) end
-    local cloth = dryingCloth(playerObj)
-    if not cloth then return disableWith(option, getText("IGUI_TraditionalPreservationDairy_NoDryingCloth")) end
-    tooltipFor(option, getText("IGUI_TraditionalPreservationDairy_SpreadHelp"))
-    local sub = context:getNew(context)
-    context:addSubMenu(option, sub)
-    sub:addOption(getText("ContextMenu_TraditionalPreservationDairy_GrainsOne"), playerObj, onGrainsAction, "spread", nil,
-        { alive[1] }, cloth)
-    if #alive > 1 then
-        sub:addOption(say("ContextMenu_TraditionalPreservationDairy_All", tostring(#alive)), playerObj, onGrainsAction, "spread", nil,
-            alive, cloth)
-    end
+-- Kefir grains dry on TP Core's Drying Cloth (its own menu lays them). A Kefir Grains on a Cloth from an old save is
+-- still collected here once dry: Collect Dried Kefir Grains.
+local function onGrainsAction(playerObj, mode, item)
+    ISInventoryPaneContextMenu.transferIfNeeded(playerObj, item)
+    ISTimedActionQueue.add(TPKefirGrains:new(playerObj, mode, item))
 end
 
 local function addCollectMenu(context, playerObj, item)
@@ -971,7 +942,6 @@ local function onFillGrainsMenu(playerNum, context, items)
     local playerObj = getSpecificPlayer(playerNum)
     local onCloth = UI.firstSelected(items, function(item) return item:getFullType() == M.GRAIN_DRYING end)
     if onCloth then return addCollectMenu(context, playerObj, onCloth) end
-    if UI.firstSelected(items, function(item) return item:getFullType() == M.GRAIN end) then addSpreadMenu(context, playerObj) end
 end
 
 Events.OnFillInventoryObjectContextMenu.Add(onFillGrainsMenu)

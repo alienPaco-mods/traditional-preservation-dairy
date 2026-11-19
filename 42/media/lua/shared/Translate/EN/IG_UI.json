@@ -140,11 +140,10 @@
   "IGUI_TraditionalPreservationDairy_GrainDead": "Dead",
   "IGUI_TraditionalPreservationDairy_GrainsOnClothDrying": "Kefir Grains on a Cloth (Drying, %1)",
   "IGUI_TraditionalPreservationDairy_GrainsOnClothDry": "Kefir Grains on a Cloth (Dry, %1)",
-  "IGUI_TraditionalPreservationDairy_SpreadHelp": "Spread on a cloth, the grains dry where you leave them: about 2 days at 25 C, 5 at 10 C. Dried, they keep, and come back over 2 batches. The cloth comes back. Dead grains stay out.",
-  "IGUI_TraditionalPreservationDairy_NoDryingCloth": "Needs a cloth to spread them on: a Cheesecloth, a Dish Cloth, a Ripped Sheet or a Sheet.",
-  "IGUI_TraditionalPreservationDairy_NoLiveGrains": "Only dead grains carried: they won't dry back to life.",
   "IGUI_TraditionalPreservationDairy_DryingLeft": "Dry in %1 at this place's temperature.",
   "IGUI_TraditionalPreservationDairy_DryingFrozen": "It won't dry here: frozen.",
   "IGUI_TraditionalPreservationDairy_DryingShut": "It won't dry here: the room is shut. Open a window.",
-  "IGUI_TraditionalPreservationDairy_GrainsAllDead": "No grain left alive in the pot: it won't ferment."
+  "IGUI_TraditionalPreservationDairy_GrainsAllDead": "No grain left alive in the pot: it won't ferment.",
+  "IGUI_TraditionalPreservationDairy_GrainsTitle": "Kefir Grains",
+  "IGUI_TraditionalPreservationDairy_GrainsDeadNoLay": "Dead grains won't come back: there's no drying them."
 }
