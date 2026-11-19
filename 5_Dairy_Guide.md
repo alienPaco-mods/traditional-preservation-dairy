@@ -468,35 +468,34 @@ The milk's temperature follows where the station stands. There are seven kinds o
 
 | Place | Temperature |
 |---|---|
-| Open air | the day's weather |
-| Under an open roof (a porch, an open shed) | the last 10 days' outdoor average |
-| Indoors (a room) | the same, 2 C warmer in the cold months; 22 C while the power grid is on |
-| In a loft (the top storey: a room upstairs with no room over it) | the sun on the roof: about 24 C in a 21 C July, as a room from October to April (TP Core's guide, chapter 8) |
+| Open air, under an open roof (a porch, an open shed) | the weather, hour by hour |
+| Indoors (a shut room: every window to the outside shut or boarded) | the last 3 days' average, 2 C warmer in the cold months, up to 2 C warmer in summer (stuffy); 22 C while the power grid is on |
+| An aired room (a window to the outside open, smashed or empty) | the day's average, at most 1 C warmer in winter; 22 C on the grid (TP Core's guide, chapter 8) |
 | In a basement | follows the ground, a month behind the season: about 5 C from January to March, 13 C from July to September |
-| **By a fire** (any lit fire within 2 tiles: the Stone Hearth, a fireplace, an antique stove or a campfire, never an electric or gas stove) | 28 C indoors. Under an open roof, the 10-day average +15 C; in the open, the day's weather +10 C; never past 28 C (TP Core's guide, chapter 7) |
-| By banked embers (a banked Stone Hearth within 2 tiles) | 24 C indoors; outside, +10 C under a roof and +5 C in the open, up to 24 C |
+| **By a fire** (any lit fire within 2 tiles: the Stone Hearth, a fireplace, an antique stove or a campfire, never an electric or gas stove) | 28 C in a shut room. In an aired room or under an open roof, the air +15 C; in the open, +10 C; never past 28 C (TP Core's guide, chapter 7) |
+| By banked embers (a banked Stone Hearth within 2 tiles) | 24 C in a shut room; elsewhere +10 C (+5 C in the open), up to 24 C |
 
 Hours for 5 L poured at 85 C at 18:00 with the starter in, **cooling + setting**, the grid off. "Never" means it hadn't set after 72 hours.
 
-| Month | Open air | Indoors | Loft | Basement | By a fire | By banked embers |
+| Month | Open air | Indoors (shut room) | Aired room | Basement | By a fire | By banked embers |
 |---|---|---|---|---|---|---|
 | Jan | never | never | never | 1.4 + 13.6 | 2.4 + 6.1 | 2.1 + 6.2 |
 | Mar | never | never | never | never | 2.4 + 6.1 | 2.1 + 6.2 |
-| May | 1.6 + 11.3 | 1.6 + 8.4 | 1.6 + 8.4 | 1.5 + 10.5 | 2.4 + 6.1 | 2.1 + 6.2 |
-| Jul | 1.8 + 7.9 | 1.9 + 6.8 | 2.0 + 6.5 | 1.6 + 8.1 | 2.4 + 6.1 | 2.1 + 6.2 |
-| Sep | 1.6 + 10.1 | 1.8 + 7.1 | 1.8 + 6.8 | 1.6 + 7.9 | 2.4 + 6.1 | 2.1 + 6.2 |
-| Nov | never | 1.5 + 9.3 | 1.5 + 9.3 | 1.5 + 8.8 | 2.4 + 6.1 | 2.1 + 6.2 |
+| May | 1.6 + 11.3 | 1.6 + 7.9 | 1.6 + 8.4 | 1.5 + 10.5 | 2.4 + 6.1 | 2.1 + 6.2 |
+| Jul | 1.8 + 7.9 | 1.8 + 6.8 | 1.8 + 7.0 | 1.6 + 8.1 | 2.4 + 6.1 | 2.1 + 6.2 |
+| Sep | 1.6 + 10.1 | 1.7 + 7.3 | 1.6 + 7.9 | 1.6 + 7.9 | 2.4 + 6.1 | 2.1 + 6.2 |
+| Nov | never | 1.5 + 9.3 | 1.5 + 10.0 | 1.5 + 8.8 | 2.4 + 6.1 | 2.1 + 6.2 |
 
-The fire columns are a fire indoors. **A fire outside** warms the pot less in the cold months:
+The fire columns are a fire in a shut room. **A fire outside** warms the pot less in the cold months:
 
 | Month | By a fire, under a roof (a porch) | By a fire, in the open (a campfire) |
 |---|---|---|
-| Jan | 1.6 + 8.4 | never |
-| Mar | 1.6 + 8.1 | 1.6 + 11.8 |
-| May | 2.1 + 6.2 | 2.0 + 7.0 |
+| Jan | never | never |
+| Mar | 1.7 + 8.3 | 1.6 + 11.8 |
+| May | 2.3 + 6.4 | 2.0 + 7.0 |
 | Jul | 2.4 + 6.1 | 2.3 + 6.4 |
-| Sep | 2.4 + 6.1 | 2.0 + 6.8 |
-| Nov | 2.0 + 6.5 | 1.8 + 7.7 |
+| Sep | 2.3 + 6.4 | 2.0 + 6.8 |
+| Nov | 2.1 + 6.7 | 1.8 + 7.7 |
 
 > *Margin note:* a November pot indoors still sets, slowly: 9 hours under the cloth. December's doesn't. Give it a banked fire, or the basement.
 
@@ -511,22 +510,22 @@ The fire columns are a fire indoors. **A fire outside** warms the pot less in th
 | In a basement in November | about 9 days |
 | By a fire in January: under a roof, in the open | about 7 days, about 17 days |
 | In a basement from December | weeks |
-| Indoors from November | weeks; in January about 90 days, most of them paused frozen |
+| Indoors from November | weeks; in January about 77 days, most of them paused frozen |
 
 At 0 C and below the crock stops and waits: Crock Info says *Paused here (frozen)*. Nothing is lost, and it goes on once it thaws.
 
 **Kefir:** 5 L of milk at 20 C with 125 live grains (the full ratio): hours to ready, and the live grains that come out. "Never" means it wasn't ready after 72 hours.
 
-| Month | Open air | Indoors | Loft | Basement | By a fire | By banked embers |
+| Month | Open air | Indoors (shut room) | Aired room | Basement | By a fire | By banked embers |
 |---|---|---|---|---|---|---|
 | Jan | never | never | never | never | 18.5 (137) | 24 (137) |
 | Mar | never | never | never | never | 18.5 (137) | 24 (137) |
-| May | 70 (125) | 59 (125) | 59 (125) | never | 18.5 (137) | 24 (137) |
-| Jul | 34 (134) | 24 (137) | 24 (137) | 52 (125) | 18.5 (137) | 24 (137) |
-| Sep | 43 (131) | 30 (137) | 24 (137) | 47 (125) | 18.5 (137) | 24 (137) |
+| May | 70 (125) | 51 (125) | 64 (125) | never | 18.5 (137) | 24 (137) |
+| Jul | 34 (134) | 25 (137) | 30 (137) | 52 (125) | 18.5 (137) | 24 (137) |
+| Sep | 43 (131) | 40 (129) | 47 (125) | 47 (125) | 18.5 (137) | 24 (137) |
 | Nov | never | never | never | 64 (125) | 18.5 (137) | 24 (137) |
 
-A fire outside: under a roof 61 hours in January, 50 in March, 24 from April to November; a campfire in the open never in January or December, about 60 hours in February and March, 22 to 27 from April to October. A powered room: 24 hours (137) in any month. Grains grow only in the hours at 15 to 28 C, so a cold, slow batch gives back just what went in.
+A fire outside: under a roof 72 hours in January, about 40 in February and March, 20 to 27 from April to November, 45 in December; a campfire in the open never in January or December, about 60 hours in February and March, 22 to 27 from April to October. A powered room: 24 hours (137) in any month. Grains grow only in the hours at 15 to 28 C, so a cold, slow batch gives back just what went in.
 
 > *Margin note:* a cellar runs a month behind the weather. It still holds the autumn's warmth in December and January, so a full pot sets in the basement from April to January, indoors only from April to November.
 
@@ -639,9 +638,9 @@ Each process laid out as the game's planting seasons: the months it works unheat
 
 | Process | Season | Best months | Poor months | Out of season | Where, at its best | Takes, at its best |
 |---|---|---|---|---|---|---|
-| **Setting yogurt** | April to January (a basement), April to November (indoors) | June, July, August, September, October | April (indoors 1.4 + 11.6 hours, a basement 1.4 + 12.9), May (indoors 1.6 + 8.4, a basement 1.5 + 10.5), November (indoors 1.5 + 9.3, a basement 1.5 + 8.8), December and January (a basement, 1.5 + 10.2 and 1.4 + 13.6) | February and March: it never sets | A loft (the warm roof), or indoors | 2.0 + 6.5 hours in a July loft; indoors 1.9 + 6.8 |
-| **Starting the crock** | June to November | July, August, September | June, October (a basement 4 to 5 days), November (a basement about 9) | December to May: weeks (indoors in January about 90 days, most of them paused frozen) | Indoors | About 2 days |
-| **Fermenting kefir** | May to October (indoors), June to November (a basement) | June, July, August, September (indoors or a loft) | May (indoors 59 hours), October (indoors 43, a loft 40), November (a basement 64) | December to April: not in 3 days unheated | A loft, or indoors | 24 hours, 125 grains give back 137 |
+| **Setting yogurt** | April to January (a basement), April to November (indoors) | June, July, August, September, October | April (indoors 1.5 + 9.5 hours, a basement 1.4 + 12.9), May (indoors 1.6 + 7.9, a basement 1.5 + 10.5), November (indoors 1.5 + 9.3, a basement 1.5 + 8.8), December and January (a basement, 1.5 + 10.2 and 1.4 + 13.6) | February and March: it never sets | Indoors, windows shut (stuffy in summer) | 1.8 + 6.8 hours in July |
+| **Starting the crock** | June to November | July, August, September | June, October (a basement 4 to 5 days), November (a basement about 9) | December to May: weeks (indoors in January about 77 days, most of them paused frozen) | Indoors | About 2 days |
+| **Fermenting kefir** | May to October (indoors), June to November (a basement) | June, July, August (indoors) | May (indoors 51 hours), September and October (indoors 40 and 47), November (a basement 64) | December to April: not in 3 days unheated | Indoors, windows shut | 24 hours, 125 grains give back 137 |
 | **Keeping butter** | All year | November to March (a basement, about two months) | July, August (a room about 15 days) | None | A basement or a powered fridge | Fresh a month in a cellar, 75 days in a fridge. **Salted three times as long; clarified for ever** |
 | **Keeping raw milk** | All year | January, February, March | July, August, September (a basement 3½ days, a room 1½ to 2) | None | A basement | Sours in 6 to 7 days, rotten in about 2 weeks. **Scalded milk never sours** |
 

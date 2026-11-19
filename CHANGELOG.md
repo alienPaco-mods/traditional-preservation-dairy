@@ -1,5 +1,11 @@
 # Changelog: Traditional Preservation (Dairy)
 
+## 0.0.13
+- **Aired rooms** (2026-11-19, TP Core 0.1.15): kefir grains on a cloth dry by moving air: in a shut room they wait
+  (*It won't dry here: the room is shut. Open a window.*; `M.STILL_AIR_PLACE`). The yogurt history keeps the rooms'
+  new means with each reading. Everything else reads TP Core's new place temperatures (a shut room stuffier in
+  summer, harder in autumn). `tools/season_report.lua`: an aired room column (was loft). Needs TP Core 0.1.15.
+
 ## 0.0.12
 - **No shed column** (2026-11-19, TP Core 0.1.14): TP Core has no Enclosed place any more, so `tools/season_report.lua`
   drops *In a shed*. Nothing changes in game.

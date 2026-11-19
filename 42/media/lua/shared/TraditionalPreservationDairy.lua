@@ -291,19 +291,22 @@ FluidAgeing.register({
 })
 
 -- One ten-minute reading: the ledger for the crock, and the hour's slot in the history for the incubator.
--- An hour's slot keeps the last reading in it, with the season mean that goes with it.
+-- An hour's slot keeps the last reading in it, with the means that go with it (the season's, a shut room's, an aired
+-- room's and the ground's).
 function M.recordWeather(ledger, history, now, temperature)
     Weather.advance(ledger, now, temperature, PROCESSES)
     local hour = math.floor(now)
     history[hour % M.HISTORY_HOURS + 1] = { hour = hour, temperature = ledger.temperature, season = ledger.seasonTemperature,
-        ground = ledger.groundTemperature, grid = ledger.gridOn }
+        threeDay = ledger.threeDayTemperature, day = ledger.dayTemperature, ground = ledger.groundTemperature,
+        grid = ledger.gridOn }
 end
 
 -- The place's temperature in a past hour, or nil when the history has no reading for it.
 function M.pastTemperature(history, hour, place)
     local slot = history[hour % M.HISTORY_HOURS + 1]
     local reading = slot and slot.hour == hour and { temperature = slot.temperature, seasonTemperature = slot.season,
-        groundTemperature = slot.ground, gridOn = slot.grid } or nil
+        threeDayTemperature = slot.threeDay, dayTemperature = slot.day, groundTemperature = slot.ground,
+        gridOn = slot.grid } or nil
     -- A fire indoors needs no reading; one under a roof or in the open does.
     if Fire.isFirePlace(place) then return Fire.fireC(place, reading) end
     if not reading then return nil end

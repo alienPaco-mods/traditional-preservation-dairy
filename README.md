@@ -143,7 +143,7 @@ Sheep's and the game's generic animal milk go the same way under their own names
 | A powered fridge, 4 C | about 8 days | about 16 days |
 | A powered freezer | never | never |
 
-- Milk ages by the place it was last seen in (open air, under an open roof, indoors, a loft, a basement, by a fire, a fridge or freezer), also while you are away.
+- Milk ages by the place it was last seen in (open air, under an open roof, a shut room, an aired room, a basement, by a fire, a fridge or freezer), also while you are away.
 - Pouring never makes milk young: the older age wins, and raw milk mixed into scalded makes the whole lot raw again. Milking into a container emptied of its old milk starts afresh.
 - Sealed store milk (carton, bottle, personal size) doesn't age until it is poured out; then it counts as scalded.
 - Milk left in the cauldron ages there too. A cauldron that has steamed for 20 minutes scalds what is in it.
@@ -182,31 +182,31 @@ A frozen crock pauses (Crock Info says *Paused here (frozen)*) and goes on once 
 
 Seven kinds of place (TP Core's):
 
-- **Open air**: the day's weather.
-- **Under an open roof** (a porch, an open shed) or **indoors** (a room): the average outdoor temperature of the last 10 days or so. A room is 22 C while the power grid is on.
-- **In a loft** (the top storey: a room upstairs with no room over it): as indoors, plus three tenths of whatever the 10-day average is above 10 C: the sun on the roof (about 24 C in a 21 C July, no warmer than a room from October to April); 22 C while the power grid is on.
+- **Open air** and **under an open roof** (a porch, an open shed): the weather, hour by hour.
+- **Indoors** (a shut room: every window to the outside shut or boarded): the average of the last 3 days, 2 C warmer in the cold months and up to 2 C warmer in summer (stuffy). 22 C while the power grid is on.
+- **Aired room** (a room with a window to the outside open, smashed, without its glass or an empty frame): the day's average, at most 1 C warmer in winter; 22 C on the grid. Kefir grains spread on a cloth dry here, and wait in a shut room.
 - **In a basement**: the ground, a month behind the season, two fifths as far from 10 C: about 5 C from January to March, 13 C from July to September.
-- **By a fire**: any lit fire within 2 tiles (the Stone Hearth, a fireplace, an antique stove or a campfire; never an electric or gas stove) holds an indoor station at 28 C. While you're away it counts only until its fuel would have run out, then the room counts.
-- **By banked embers**: a banked Stone Hearth within 2 tiles, 24 C indoors.
+- **By a fire**: any lit fire within 2 tiles (the Stone Hearth, a fireplace, an antique stove or a campfire; never an electric or gas stove) holds a station in a shut room at 28 C. While you're away it counts only until its fuel would have run out, then the room counts.
+- **By banked embers**: a banked Stone Hearth within 2 tiles, 24 C in a shut room.
 
-Outside, the air carries the heat off: under an open roof a fire gives the 10-day average +15 C, in the open the day's weather +10 C, never past 28 C (banked embers +10 and +5, up to 24 C).
+With a window open or outside, the air carries the heat off: in an aired room or under an open roof a fire gives the air +15 C, in the open +10 C, never past 28 C (banked embers +10 and +5, up to 24 C).
 
-Hours for 5 L poured at 85 C at 18:00 with the starter in, cooling then setting, the grid off (`tools/season_report.lua`); "never" means it hadn't set after 72 hours. The fire columns are indoors, and under a roof or in the open outside:
+Hours for 5 L poured at 85 C at 18:00 with the starter in, cooling then setting, the grid off (`tools/season_report.lua`); "never" means it hadn't set after 72 hours. The fire columns are a shut room, and under a roof or in the open outside:
 
-| Month | Open air | Indoors | Loft | Basement | By a fire | By banked embers | By a fire, under a roof | By a fire, in the open |
+| Month | Open air | Indoors (shut room) | Aired room | Basement | By a fire | By banked embers | By a fire, under a roof | By a fire, in the open |
 |---|---|---|---|---|---|---|---|---|
-| Jan | never | never | never | 1.4 + 13.6 | 2.4 + 6.1 | 2.1 + 6.2 | 1.6 + 8.4 | never |
-| Mar | never | never | never | never | 2.4 + 6.1 | 2.1 + 6.2 | 1.6 + 8.1 | 1.6 + 11.8 |
-| May | 1.6 + 11.3 | 1.6 + 8.4 | 1.6 + 8.4 | 1.5 + 10.5 | 2.4 + 6.1 | 2.1 + 6.2 | 2.1 + 6.2 | 2.0 + 7.0 |
-| Jul | 1.8 + 7.9 | 1.9 + 6.8 | 2.0 + 6.5 | 1.6 + 8.1 | 2.4 + 6.1 | 2.1 + 6.2 | 2.4 + 6.1 | 2.3 + 6.4 |
-| Sep | 1.6 + 10.1 | 1.8 + 7.1 | 1.8 + 6.8 | 1.6 + 7.9 | 2.4 + 6.1 | 2.1 + 6.2 | 2.4 + 6.1 | 2.0 + 6.8 |
-| Nov | never | 1.5 + 9.3 | 1.5 + 9.3 | 1.5 + 8.8 | 2.4 + 6.1 | 2.1 + 6.2 | 2.0 + 6.5 | 1.8 + 7.7 |
+| Jan | never | never | never | 1.4 + 13.6 | 2.4 + 6.1 | 2.1 + 6.2 | never | never |
+| Mar | never | never | never | never | 2.4 + 6.1 | 2.1 + 6.2 | 1.7 + 8.3 | 1.6 + 11.8 |
+| May | 1.6 + 11.3 | 1.6 + 7.9 | 1.6 + 8.4 | 1.5 + 10.5 | 2.4 + 6.1 | 2.1 + 6.2 | 2.3 + 6.4 | 2.0 + 7.0 |
+| Jul | 1.8 + 7.9 | 1.8 + 6.8 | 1.8 + 7.0 | 1.6 + 8.1 | 2.4 + 6.1 | 2.1 + 6.2 | 2.4 + 6.1 | 2.3 + 6.4 |
+| Sep | 1.6 + 10.1 | 1.7 + 7.3 | 1.6 + 7.9 | 1.6 + 7.9 | 2.4 + 6.1 | 2.1 + 6.2 | 2.3 + 6.4 | 2.0 + 6.8 |
+| Nov | never | 1.5 + 9.3 | 1.5 + 10.0 | 1.5 + 8.8 | 2.4 + 6.1 | 2.1 + 6.2 | 2.1 + 6.7 | 1.8 + 7.7 |
 
-The wrap goes on the moment the milk crosses 45 C, not at the next ten-minute reading. In the full report (every month) a pot sets indoors from April to November, in a basement from April to January, by a campfire in the open from February to November.
+The wrap goes on the moment the milk crosses 45 C, not at the next ten-minute reading. In the full report (every month) a pot sets indoors from April to November, in a basement from April to January, by a porch fire from February to December, by a campfire in the open from February to November.
 
-While the grid is on a room or a loft is 22 C in every month: 2.0 + 6.5 hours.
+While the grid is on any room is 22 C in every month: 2.0 + 6.5 hours.
 
-The crock's first stage takes 24 hours by an indoor fire in any month, about 32 hours in a powered room, about 2 days indoors in summer, 4 to 5 in a basement from July to October (9 in November). A January crock takes about 7 days by a porch fire, 17 by a campfire, a month in a basement, and about 90 days in an unheated room, most of them paused below freezing.
+The crock's first stage takes 24 hours by an indoor fire in any month, about 32 hours in a powered room, about 2 days indoors in summer, 4 to 5 in a basement from July to October (9 in November). A January crock takes about 7 days by a porch fire, 17 by a campfire, a month in a basement, and about 77 days in an unheated room, most of them paused below freezing.
 
 ## Skills
 
@@ -288,7 +288,7 @@ Volumes, temperatures, cooling times, the setting and culture curves, the crock'
 - One yogurt or starter sets a whole pot, whatever its size (real practice is 3 to 5% of the milk).
 - The cauldron's heating and the pot's cooling are simple exponential curves. The hold at the scald is 20 minutes at 85 C or more in all (real practice: 20 to 30 minutes at 85 C, or a few at 90 to 95), counted whether or not the minutes run together.
 - Temperature during setting slows it but never spoils a batch.
-- A room or an open roof is the 10-day mean (22 C while the grid is on); a basement follows the ground (the 10-day mean's own 30-day mean) two fifths as far from 10 C; room heating isn't modelled beyond a fire within 2 tiles.
+- An open roof is the hour's air, a shut room the 3-day mean, an aired room the day's (both 22 C while the grid is on); a basement follows the ground (the 10-day mean's own 30-day mean) two fifths as far from 10 C; room heating isn't modelled beyond a fire within 2 tiles.
 - Milk goes off (TP Core's `FluidAgeing`): raw milk turns to its Soured twin at 36 hours' worth of 20 C and to its Rotten one at
   72; scalded milk (held 20 minutes at 85 C or more) skips souring and goes by its Scalded twin (`SCALDED_MILKS`, "Cow's Milk (Scalded, Fresh)") until raw milk
   is mixed in; it spoils to its milk's Rotten one. The curve (`MILK_CURVE`) and the hours are at the top of the main Lua file. Its age

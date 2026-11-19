@@ -946,9 +946,11 @@ local function addCollectMenu(context, playerObj, item)
         onGrainsAction, "collect", item)
     option.iconTexture = getTexture(GRAINS_ICON)
     if M.isDry(drying) then return end
-    local hours = M.dryingHoursLeft(drying, M.placeTemperature(M.getLedger(), drying.dry.place))
+    local place = drying.dry.place
+    local hours = M.dryingHoursLeft(drying, M.placeTemperature(M.getLedger(), place), place)
     disableWith(option, hours and say("IGUI_TraditionalPreservationDairy_DryingLeft", hoursText(hours))
-        or getText("IGUI_TraditionalPreservationDairy_DryingFrozen"))
+        or getText(place == M.STILL_AIR_PLACE and "IGUI_TraditionalPreservationDairy_DryingShut"
+            or "IGUI_TraditionalPreservationDairy_DryingFrozen"))
 end
 
 local function onFillGrainsMenu(playerNum, context, items)

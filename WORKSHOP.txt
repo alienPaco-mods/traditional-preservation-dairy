@@ -45,9 +45,9 @@ Load the crock with 20 wheat grains and half a litre of milk at 35 to 45 C. In a
 
 [h2]Temperature[/h2]
 [list]
-[*][b]By a fire[/b]: a lit fire within 2 tiles indoors (the Stone Hearth, a fireplace, an antique stove) holds 28 C. Yogurt sets in about 6 hours all year. A banked Stone Hearth's embers hold 24 C. Outside, the air takes the heat: a porch fire gives the 10-day average +15 C, a campfire in the open the day's weather +10 C, up to 28 C. A porch fire still sets a January pot, in about 10 hours.
-[*][b]Indoors[/b] or [b]under an open roof[/b]: the last 10 days' outdoor average, a room 2 C warmer in the cold months (22 C while the grid is on). Sets indoors from April to November.
-[*][b]In a loft[/b] (the top storey: a room upstairs with no room over it): as indoors, plus three tenths of whatever the 10-day average is above 10 C: the sun on the roof (about 24 C in a 21 C July, no warmer than a room from October to April); 22 C while the power grid is on.
+[*][b]By a fire[/b]: a lit fire within 2 tiles indoors (the Stone Hearth, a fireplace, an antique stove) holds 28 C. Yogurt sets in about 6 hours all year. A banked Stone Hearth's embers hold 24 C. With a window open or outside, the air takes the heat: a fire in an aired room or on a porch gives the air +15 C, a campfire in the open +10 C, up to 28 C. A porch fire sets a pot from February, in about 8 hours.
+[*][b]Indoors[/b] (a shut room): the last 3 days' average, 2 C warmer in the cold months, up to 2 C warmer in summer (22 C while the grid is on). Sets from April to November.
+[*][b]Aired room[/b] (a window open, smashed or empty) and [b]under an open roof[/b]: within a degree of the outside air (an aired room 22 C on the grid). Kefir grains on a cloth dry by moving air: in an aired room, never in a shut one.
 [*][b]In a basement[/b]: a month behind the season, about 5 C from January to March, 13 C from July to September. Sets from April to January.
 [*][b]Outdoors[/b]: only on warm summer nights.
 [/list]

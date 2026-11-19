@@ -17,8 +17,8 @@ end
 -- Engine stand-ins: the player carries ui.carried; tools are found by full type among them.
 local ui = H.installMenus()
 ISInventoryTransferAction = {}
-local playerSquare = { getX = function() return 5 end, getY = function() return 4 end, getZ = function() return 0 end,
-    isOutside = function() return false end, isInARoom = function() return true end }
+local playerSquare = H.shutRoom({ getX = function() return 5 end, getY = function() return 4 end, getZ = function() return 0 end,
+    isOutside = function() return false end, isInARoom = function() return true end })
 local given = {}
 local inventory = {
     getFirstTypeRecurse = function(_, fullType)
@@ -75,8 +75,8 @@ local function named(menu, key, ...)
 end
 
 local function tile(x, y, class, sprite, modData)
-    local square = { getX = function() return x end, getY = function() return y end, getZ = function() return 0 end,
-        isOutside = function() return false end, isInARoom = function() return true end }
+    local square = H.shutRoom({ getX = function() return x end, getY = function() return y end, getZ = function() return 0 end,
+        isOutside = function() return false end, isInARoom = function() return true end })
     local station = {
         class = class,
         getSprite = function() return { getName = function() return sprite end } end,

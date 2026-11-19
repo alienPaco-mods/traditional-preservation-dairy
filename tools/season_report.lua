@@ -24,7 +24,7 @@ for _, place in ipairs(M.PLACES) do
 end
 table.insert(PLACES, M.CAULDRON_PLAIN .. "Covered")
 table.insert(PLACES, M.CAULDRON_PLAIN .. "Open")
-local COLUMNS = "Indoors | Indoors, grid on | Loft | Basement | By a fire | By banked embers | By a fire, under a roof | By a fire, in the open |"
+local COLUMNS = "Indoors | Indoors, grid on | Aired room | Basement | By a fire | By banked embers | By a fire, under a roof | By a fire, in the open |"
 local RULE = "|---|---|---|---|---|---|---|---|---|"
 local STEPS_PER_HOUR = 6
 local START_HOUR = 18   -- the evening milking, set overnight as it traditionally was

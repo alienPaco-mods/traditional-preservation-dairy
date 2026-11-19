@@ -583,7 +583,8 @@ function M.ageKefir(batch, hours, placeC, now)
 end
 
 -- Drying: grains spread on a cloth (the strain cloths) dry where they lie, on the place's temperature: about 2 days at
--- 25 C and up, 5 at 10 C, slower still in a fridge, frozen they wait. Dry, they are Dried Kefir Grains again, to keep or
+-- 25 C and up, 5 at 10 C, slower still in a fridge, frozen they wait. They dry by moving air, as everything that dries
+-- by air in the series: in a shut room (STILL_AIR_PLACE) they wait for a window. Dry, they are Dried Kefir Grains again, to keep or
 -- to bring back over 2 batches; the cloth comes back with them. Dead grains aren't spread. Save key on the cloth: never
 -- rename it once the mod is out. Inside: count (grains), cloth (the cloth's full type), dry (a FluidAgeing age: hours at
 -- full drying).
@@ -591,6 +592,7 @@ M.GRAIN_DRYING = "TraditionalPreservationDairy.KefirGrainsOnCloth"
 M.DRYING_KEY = "tpdDrying"
 M.DRY_CLOTHS = M.STRAIN_CLOTHS
 M.GRAIN_DRY_HOURS = 48
+M.STILL_AIR_PLACE = "Sheltered"
 local DRY_CURVE = { { 0, 0 }, { 5, 0.2 }, { 10, 0.4 }, { 20, 0.8 }, { 25, 1 } }
 M.GRAIN_DRYING_KIND = { process = M.GRAIN_DRY, rate = function(celsius) return M.grainDryRate(celsius) end }
 
@@ -607,11 +609,11 @@ function M.isDry(drying)
     return drying.dry.age >= M.GRAIN_DRY_HOURS
 end
 
--- Hours until dry at placeC, or nil if it never is there (frozen).
-function M.dryingHoursLeft(drying, placeC)
+-- Hours until dry at placeC, or nil if it never is there (frozen, or a shut room's still air).
+function M.dryingHoursLeft(drying, placeC, place)
     local left = M.GRAIN_DRY_HOURS - drying.dry.age
     if left <= 0 then return 0 end
-    local rate = M.grainDryRate(placeC)
+    local rate = place == M.STILL_AIR_PLACE and 0 or M.grainDryRate(placeC)
     return rate > 0 and left / rate or nil
 end
 
@@ -624,7 +626,10 @@ function M.keepDrying(item, now, place, ledger)
     local fire, holder
     if not place then place, fire, holder = FluidAgeing.placeOfItem(item) end
     place = place or drying.dry.place or Weather.DEFAULT_PLACE
+    -- A stretch in a shut room's still air dries nothing.
+    local was, age = drying.dry.place, drying.dry.age
     FluidAgeing.advance(drying.dry, M.GRAIN_DRYING_KIND, ledger or M.getLedger(), now, place)
+    if was == M.STILL_AIR_PLACE then drying.dry.age = age end
     if holder then FluidAgeing.noteFire(drying.dry, fire, holder, now) end
     local name = getText(M.isDry(drying) and "IGUI_TraditionalPreservationDairy_GrainsOnClothDry"
         or "IGUI_TraditionalPreservationDairy_GrainsOnClothDrying", tostring(drying.count))

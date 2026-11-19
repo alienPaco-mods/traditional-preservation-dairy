@@ -151,5 +151,13 @@ run(2, 20)
 check("61 h: dry, and named so", M.isDry(M.keepDrying(cloth, H.hours, "Open", ledger))
     and cloth:getName() == getText("IGUI_TraditionalPreservationDairy_GrainsOnClothDry", "12"))
 check("keepGrain keeps a cloth too", M.keepGrain(cloth, H.hours, "Open", ledger) == cloth:getModData()[M.DRYING_KEY])
+local shut = item(M.GRAIN_DRYING)
+shut:getModData()[M.DRYING_KEY] = M.newDrying(6, "Base.RippedSheets", ledger, H.hours, "Sheltered")
+run(30, 20)
+local shutDrying = M.keepDrying(shut, H.hours, "AiredRoom", ledger)
+check("a shut room's still air dries nothing; it never would there", shutDrying.dry.age == 0
+    and M.dryingHoursLeft(shutDrying, 20, "Sheltered") == nil and M.dryingHoursLeft(shutDrying, 20, "AiredRoom") ~= nil)
+run(30, 20)
+check("a window opened: the aired room dries it", M.keepDrying(shut, H.hours, "AiredRoom", ledger).dry.age > 0)
 
 H.done()

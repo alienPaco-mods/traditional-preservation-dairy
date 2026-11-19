@@ -333,7 +333,7 @@ function TPD.grains()
         else
             local drying = M.keepDrying(item, now)
             if drying then
-                local left = M.dryingHoursLeft(drying, M.placeTemperature(ledger, drying.dry.place))
+                local left = M.dryingHoursLeft(drying, M.placeTemperature(ledger, drying.dry.place), drying.dry.place)
                 say(string.format("%s: %d grains, dried %.1f of %d h, %s h left in %s", item:getDisplayName(), drying.count,
                     drying.dry.age, M.GRAIN_DRY_HOURS, left and string.format("%.1f", left) or "never", tostring(drying.dry.place)))
             end
