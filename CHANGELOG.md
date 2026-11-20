@@ -1,6 +1,9 @@
 # Changelog: Traditional Preservation (Dairy)
 
 
+## 0.0.20
+- Temperatures in the game's text read with the degree sign ("12°C", was "12 C"), as TP Core 0.1.37's.
+
 ## 0.0.19
 - The window rows read the station's full name and Info (Yogurt Incubator Info, Starter Culture Crock Info), as vanilla's Fireplace Info and
   Generator Info; the window's title is the bare name. The short "Vessel Info", "Tub Info" and the like are gone.
