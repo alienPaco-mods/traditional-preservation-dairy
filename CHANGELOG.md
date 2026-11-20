@@ -1,6 +1,10 @@
 # Changelog: Traditional Preservation (Dairy)
 
 
+## 0.0.22
+- Kefir grains take a fiftieth of the Drying Cloth's room each (`M.GRAIN_ROOM` 1 of 50, was ten to a lot; TP Core
+  0.1.44's room): fifty a cloth as before, one lay of any count is one lot, and a single grain no longer takes a fifth.
+
 ## 0.0.21
 - Kefir grains on the Drying Cloth show as lumpy grains in Cloth Info's cells (TP Core 0.1.39's patterns); `TPCell_KefirGrains`.
 

@@ -641,15 +641,15 @@ function M.keepDrying(item, now, place, ledger)
     return drying
 end
 
-M.GRAINS_PER_LOT = 10
+M.GRAIN_ROOM = 1   -- a grain takes a fiftieth of the cloth's room
 local DryingCloth = require "TraditionalPreservationCore/DryingCloth"
 local Tiles = require "TraditionalPreservationDairy/Tiles"
 
 M.GRAINS_ON_CLOTH = DryingCloth.register({
     name = "kefirGrains", title = "IGUI_TraditionalPreservationDairy_GrainsTitle", types = { [M.GRAIN] = true },
-    perLot = M.GRAINS_PER_LOT, hours = M.GRAIN_DRY_HOURS, curve = DRY_CURVE, pattern = "media/textures/TPCell_KefirGrains.png",
-    sprite = function(lot, state)
-        return Tiles.PREFIX .. (Tiles.GRAINS + Tiles.GRAIN_STATES[state == "dry" and "dry" or "wet"] * DryingCloth.LOTS + lot)
+    room = M.GRAIN_ROOM, hours = M.GRAIN_DRY_HOURS, curve = DRY_CURVE, pattern = "media/textures/TPCell_KefirGrains.png",
+    sprite = function(spot, state)
+        return Tiles.PREFIX .. (Tiles.GRAINS + Tiles.GRAIN_STATES[state == "dry" and "dry" or "wet"] * DryingCloth.SPOTS + spot)
     end,
     layable = function(item)
         return M.keepGrain(item).grainState == M.GRAIN_DEAD and "IGUI_TraditionalPreservationDairy_GrainsDeadNoLay" or nil

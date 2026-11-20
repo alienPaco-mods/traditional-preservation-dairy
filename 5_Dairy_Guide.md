@@ -377,7 +377,7 @@ A place over **35 C** turns live grains Hungry, over **45 C** kills them. Grains
 
 ### Drying grains
 
-For keeping, dry them on a **Drying Cloth** (TP Core: a Sheet and 2 Stones, Build menu, Furniture). Right-click it: **Lay Kefir Grains on the Cloth**, ten grains to a lot, five lots a cloth. Lay it where the air moves: in a shut room they wait for a window.
+For keeping, dry them on a **Drying Cloth** (TP Core: a Sheet and 2 Stones, Build menu, Furniture). Right-click it: **Lay Kefir Grains on the Cloth**: a cloth takes fifty grains, or fewer beside yeast cakes. Lay it where the air moves: in a shut room they wait for a window.
 
 | Place | Dry in |
 |---|---|
