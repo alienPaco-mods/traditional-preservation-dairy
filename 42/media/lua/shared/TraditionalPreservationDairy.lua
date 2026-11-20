@@ -26,7 +26,7 @@ M.MOD_DATA_KEY = "TraditionalPreservationDairy"
 -- Each station keeps its state as one table under one key, so nothing else on the object can clash with it.
 -- Inside the incubator's: ml, tempC, starter, incubating, wrapHour, done, last, readyHour, fluid, parts, place, at,
 -- fireUntil, under; for kefir (TraditionalPreservationDairyKefir.lua) culture, grains, progress, growProgress, kefirMarks,
--- kefirAge, partGrain, grainClock, grainLots, grainsDone. Inside the crock's: stage, done, marks, fireUntil, under. The Stone Hearth and its cauldron are TP
+-- kefirAge, partGrain, grainClock, grainLots, grainsDone. Inside the crock's: stage, workHours, marks, clabber, fireUntil, under. The Stone Hearth and its cauldron are TP
 -- Core's (TraditionalPreservationCore/Fire).
 M.INCUBATOR_KEY = "tpdIncubator"
 M.CROCK_KEY = "tpdCrock"
@@ -36,7 +36,7 @@ local BATCH_FIELDS = { "ml", "tempC", "starter", "incubating", "wrapHour", "work
 -- What an emptied kefir pot forgets: all but the part-grain it keeps for the next batch.
 M.KEFIR_FIELDS = { "ml", "tempC", "lastHour", "readyHour", "fluid", "parts", "culture", "grains", "progress", "growProgress",
     "kefirMarks", "kefirAge", "grainClock", "grainLots", "grainsDone" }
-local CROCK_FIELDS = { "stage", "workHours", "marks" }
+local CROCK_FIELDS = { "stage", "workHours", "marks", "clabber" }
 
 local function clear(stationModData, fields)
     for _, key in ipairs(fields) do stationModData[key] = nil end
@@ -649,14 +649,19 @@ function M.crockStage(crock)
     return crock.stage or "Empty"
 end
 
+-- Judged at the whole degree the player is shown (UI.degrees): milk reading 45°C loads, though it is 45.3.
+local function shownC(celsius)
+    return math.floor(celsius + 0.5)
+end
+
 function M.isWarm(celsius)
-    return celsius >= M.CROCK_WARM_C and celsius <= M.CROCK_HOT_C
+    return shownC(celsius) >= M.CROCK_WARM_C and shownC(celsius) <= M.CROCK_HOT_C
 end
 
 -- Why milk at celsius can't load the crock, or nil if it can.
 function M.crockMilkRefusal(celsius)
-    if celsius < M.CROCK_WARM_C then return "TooCool" end
-    if celsius > M.CROCK_HOT_C then return "TooHot" end
+    if shownC(celsius) < M.CROCK_WARM_C then return "TooCool" end
+    if shownC(celsius) > M.CROCK_HOT_C then return "TooHot" end
 end
 
 -- Why ml of milk at celsius, from the cauldron or a container, can't load the crock, or nil if it can.
@@ -689,11 +694,13 @@ function M.clabberRefusal(container)
     if M.mlIn(container) < M.CLABBER_ML - 0.5 then return "TooLittle" end
 end
 
--- Soured milk goes into an empty crock only, and it waits for fresh milk straight away.
+-- Soured milk goes into an empty crock only, and it waits for fresh milk straight away. clabber marks the crock
+-- started without wheat (Crock Info's wheat slot says so).
 function M.clabberCrock(crock)
     if M.crockStage(crock) ~= "Empty" then return false end
     crock.stage = "Waiting"
     crock.workHours = 0
+    crock.clabber = true
     return true
 end
 

@@ -319,6 +319,9 @@ check("a new crock is empty", M.crockStage(crock) == "Empty" and M.collectStarte
 check("it loads once", M.loadCrock(crock, ledger) and crock.stage == "Cultivating" and not M.loadCrock(crock, ledger))
 check("loading milk must be warm, not hot", M.isWarm(40) and not M.isWarm(M.HOT_C) and not M.isWarm(CauldronFluid.ROOM_C)
     and M.crockMilkRefusal(30) == "TooCool" and M.crockMilkRefusal(50) == "TooHot" and M.crockMilkRefusal(45) == nil)
+check("judged at the degree shown: 45.3 reads 45 and loads, 45.6 reads 46 and doesn't, 34.6 reads 35 and loads",
+    M.crockMilkRefusal(45.3) == nil and M.crockMilkRefusal(45.6) == "TooHot" and M.crockMilkRefusal(34.6) == nil
+    and M.crockMilkRefusal(34.4) == "TooCool")
 check("a load needs half a litre in the window", M.crockLoadRefusal(400, 40) == "TooLittle" and M.crockLoadRefusal(500, 40) == nil
     and M.crockLoadRefusal(2000, 90) == "TooHot" and M.crockLoadRefusal(2000, 20) == "TooCool")
 for hour = 31, 31 + 24 do
@@ -358,6 +361,9 @@ check("a clabber skips Cultivating: the crock waits for fresh milk at once", M.c
     and clabber.stage == "Waiting" and not M.clabberCrock(clabber) and M.feedCrock(clabber, ledger)
     and clabber.stage == "Developing")
 check("a crock already started takes no clabber", not M.clabberCrock({ stage = "Cultivating" }))
+clabber.stage = "Ready"
+check("a clabbered crock remembers it until it is emptied (Crock Info's wheat slot)", clabber.clabber == true
+    and M.collectStarters(clabber) == M.CROCK_STARTERS and clabber.clabber == nil)
 
 local hearthCrock = {}
 M.startCrock(hearthCrock, ledger)

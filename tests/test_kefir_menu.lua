@@ -299,6 +299,33 @@ held = holdingsOf({ ml = 4000, tempC = 21, fluid = "CowMilk", culture = M.KEFIR_
 check("kefir ready: the grains to take, bright and clickable", held[3].look == "ready" and tonumber(held[3].count) == 110
     and held[3].click ~= nil and held[2].arrowColour ~= nil)
 
+
+-- Starter Culture Crock Info's holdings (user, session 71, art/crock_info_mock.png): the wheat's slot, the crock's milk
+-- with the place's heat, and the two starters it gives.
+local CrockWindow = TraditionalPreservationDairyUI.CrockWindow
+local function crockHoldings(crock, hoursLeft)
+    local window = setmetatable({ playerObj = {}, station = {}, crockView = { crock = crock, stage = M.crockStage(crock), placeC = 21,
+        wheat = {}, status = { progress = 0.5, rate = 1, hoursLeft = hoursLeft } } }, { __index = CrockWindow })
+    return window:holdings()
+end
+local SLOT = "IGUI_TraditionalPreservationDairy_Slot"
+held = crockHoldings({})
+check("an empty crock: wheat to add, an empty tank at the place's heat, the starters greyed", #held == 3 and held[1].look == "empty"
+    and held[1].click ~= nil and held[2].share == 0 and held[2].heat.celsius == 21
+    and held[3].look == "empty" and held[3].click == nil)
+held = crockHoldings({ stage = "Cultivating", workHours = 12 }, 12)
+check("cultivating: 20 wheat in, half a litre at work, the starters pending", held[1].look == "in"
+    and held[1].count == tostring(M.CROCK_WHEAT) and held[2].share == 0.5 and held[2].working ~= nil and held[3].look == "pending")
+held = crockHoldings({ stage = "Cultivating", workHours = 12 })
+check("too cold: the state line paused in amber, no bubbles", held[2].stateColour ~= nil and held[2].working.speed == 0)
+held = crockHoldings({ stage = "Waiting", workHours = 0 })
+check("cultured from wheat: the slot used", held[1].name == getText(SLOT .. "Used") and held[2].working == nil)
+held = crockHoldings({ stage = "Waiting", workHours = 0, clabber = true })
+check("cultured from soured milk: the slot says clabber", held[1].name == getText(SLOT .. "Clabber"))
+held = crockHoldings({ stage = "Ready", workHours = 12 })
+check("ready: a litre, the starters bright and clickable", held[2].share == 1 and held[3].look == "ready"
+    and held[3].count == tostring(M.CROCK_STARTERS) and held[3].click ~= nil and held[2].arrowColour ~= nil)
+
 check("no text would make the game's formatter warn" .. (H.textWarnings[1] and " (" .. table.concat(H.textWarnings, "; ") .. ")" or ""),
     #H.textWarnings == 0)
 

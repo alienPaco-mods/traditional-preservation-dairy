@@ -1069,10 +1069,21 @@ CauldronUI.addNotes(function(fireView, notes)
     end
 end)
 
-local BAR_COLOURS = { culture = { 0.7, 0.62, 0.35 } }
+-- Starter Culture Crock Info on the pot's path (art/crock_info_mock.png; user, session 71): a band with the crock's
+-- stage, the Station block, then the wheat's slot, an arrow into the crock's milk (the place's heat as a bar beside it,
+-- the crock has none of its own) and an arrow out to the two starters it gives; lore beside them; the main actions as
+-- buttons, the notes under. Wheat dragged onto the slot loads with the warm milk at hand; milk onto the tank loads,
+-- clabbers or feeds the crock by what it is; a click on the slot opens the load menus, the starters' slot collects.
+local CROCK_STATION_ICON = "media/textures/TPStation_StarterCultureCrock.png"
+local CULTURE_COLOUR = { 0.91, 0.89, 0.77 }
+-- The culture's best, 25 to 35 C (CULTURE_CURVE).
+local CULTURE_MARKS = { { 35, "35" }, { 25, "25" } }
+-- What the crock holds by stage: the load's half litre, a litre once fed.
+local CROCK_ML = { Empty = 0, Cultivating = M.CROCK_LOAD_ML, Waiting = M.CROCK_LOAD_ML, Developing = M.CROCK_CAPACITY_ML,
+    Ready = M.CROCK_CAPACITY_ML }
 
--- Crock Info: the stage, the place and its heat, and how far the culture has got, laid out like Pot Info.
 CrockWindow = PotWindow:derive("TraditionalPreservationDairyCrockWindow")
+TraditionalPreservationDairyUI.CrockWindow = CrockWindow
 
 function CrockWindow:new(playerObj, crock)
     local o = InfoWindow.new(self, playerObj, crock)
@@ -1085,40 +1096,274 @@ function CrockWindow.open(playerObj, crock)
 end
 
 function CrockWindow:refresh()
-    local station = self.station
+    local station, playerObj, window = self.station, self.playerObj, self
     local crock = TraditionalPreservationDairyWorld.updateCrock(station)
     local place = crock.place or M.placeOf(station)
-    self.crockView = { crock = crock, stage = M.crockStage(crock), status = M.crockStatus(crock, M.getLedger(), place) }
+    local status = M.crockStatus(crock, M.getLedger(), place)
+    self.crockView = { crock = crock, stage = M.crockStage(crock), place = place, placeC = status.temperature, status = status,
+        wheat = findItems(playerObj, function(item) return item:getFullType() == M.WHEAT end) }
+    self.wheatDrop = self.wheatDrop or { judge = function(items) return window:judgeWheat(items) end,
+        drop = function(take) window:dropWheat(take) end }
+    self.crockMilkDrop = self.crockMilkDrop or { judge = function(items) return window:judgeCrockMilk(items) end,
+        drop = function(take) window:dropCrockMilk(take) end }
+    self.load = self:cauldronLoad()
+end
+
+-- Load from the Cauldron as a button: the nearest Stone Hearth's cauldron within 2 tiles, while the crock is empty.
+-- Returns { fire, cauldron, reason } (reason nil when it loads), or nil with no cauldron near.
+function CrockWindow:cauldronLoad()
+    if self.crockView.stage ~= "Empty" then return nil end
+    local fire, cauldron = cauldronFor(self.station, TPStarterCrock.cauldronReady)
+    if not cauldron then return nil end
+    local reason
+    if not fire then
+        if M.MILKS[cauldron.fluid] then
+            local refusal = M.crockLoadRefusal(cauldron.ml or 0, cauldron.tempC or 0)
+            reason = refusal and say(LOAD_REFUSALS[refusal], degrees(cauldron.tempC or 0))
+        else
+            reason = getText(KEY .. "CauldronNoMilk")
+        end
+    elseif #self.crockView.wheat < M.CROCK_WHEAT then
+        reason = say(KEY .. "NeedWheat", tostring(M.CROCK_WHEAT), tostring(#self.crockView.wheat))
+    end
+    return { fire = fire, cauldron = cauldron, reason = reason }
+end
+
+-- The warm milk a load would take: the cauldron's when it is ready, else the first carried container that is.
+-- Returns fire, item (one of them), or nil.
+function CrockWindow:warmMilk()
+    if self.load and self.load.fire then return self.load.fire, nil end
+    for _, item in ipairs(findItems(self.playerObj, function(item) return M.milkIn(item:getFluidContainer()) ~= nil end)) do
+        local ml = M.mlIn(item:getFluidContainer())
+        if not M.crockLoadRefusal(ml, M.carriedC(item, now(), self.playerObj)) then return nil, item end
+    end
+end
+
+-- Wheat dragged onto the slot: twenty grains of it, with warm milk at hand, load the empty crock.
+function CrockWindow:judgeWheat(items)
+    local wheat = {}
+    for _, item in ipairs(items) do
+        if item:getFullType() == M.WHEAT then table.insert(wheat, item) end
+    end
+    local refused = #wheat < #items and getText(KEY .. "CrockWheatTakes") or nil
+    if self.crockView.stage ~= "Empty" then return { take = {}, lines = { getText(KEY .. "CrockLoaded") } } end
+    if #wheat == 0 then return { take = {}, lines = { getText(KEY .. "CrockWheatTakes") } } end
+    if #wheat < M.CROCK_WHEAT then
+        return { take = {}, lines = { say(KEY .. "NeedWheat", tostring(M.CROCK_WHEAT), tostring(#wheat)) } }
+    end
+    local fire, item = self:warmMilk()
+    if not fire and not item then return { take = {}, lines = { getText(KEY .. "CrockNoWarmMilk") } } end
+    local celsius = fire and self.load.cauldron.tempC or M.carriedC(item, now(), self.playerObj)
+    return { take = firstOf(wheat, M.CROCK_WHEAT), lines = { say(KEY .. "CrockSlotLoad", tostring(M.CROCK_WHEAT),
+        litresText(M.CROCK_LOAD_ML), degrees(celsius)) }, refused = refused, fire = fire, item = item }
+end
+
+function CrockWindow:dropWheat(take)
+    if #take < M.CROCK_WHEAT then return end
+    local fire, item = self:warmMilk()
+    if fire or item then onCrockAction(self.playerObj, self.station, "load", item, take, fire) end
+end
+
+-- What one container dragged onto the tank does: loads an empty crock (warm milk, with the wheat carried), clabbers it
+-- (soured milk), or feeds a cultured one (fresh milk). Returns mode, nil or nil, the reason.
+function CrockWindow:milkMode(item)
+    local container = item.getFluidContainer and item:getFluidContainer()
+    if not container then return nil, getText(KEY .. "CrockTankTakes") end
+    local stage = self.crockView.stage
+    if stage == "Waiting" then
+        if M.hasMilk(item, M.CROCK_FEED_ML) then return "feed" end
+        if M.milkIn(container) then return nil, getText(KEY .. "CrockNoMilk") end
+        return nil, getText(KEY .. "CrockTankTakes")
+    end
+    if stage ~= "Empty" then return nil, getText(KEY .. "CrockTankNotNow") end
+    if M.clabberIn(container) then
+        local refusal = M.clabberRefusal(container)
+        if refusal then return nil, getText(CLABBER_REFUSALS[refusal]) end
+        return "clabber"
+    end
+    if not M.milkIn(container) then return nil, getText(KEY .. "CrockTankTakes") end
+    local heat = M.carriedC(item, now(), self.playerObj)
+    local refusal = M.crockLoadRefusal(M.mlIn(container), heat)
+    if refusal then return nil, say(LOAD_REFUSALS[refusal], degrees(heat)) end
+    if #self.crockView.wheat < M.CROCK_WHEAT then
+        return nil, say(KEY .. "NeedWheat", tostring(M.CROCK_WHEAT), tostring(#self.crockView.wheat))
+    end
+    return "load"
+end
+
+local TANK_LINES = { load = "CrockTankLoad", clabber = "CrockTankClabber", feed = "CrockTankFeed" }
+local TANK_ML = { load = M.CROCK_LOAD_ML, clabber = M.CLABBER_ML, feed = M.CROCK_FEED_ML }
+
+-- Milk dragged onto the tank: the first container that goes in (one at a time, half a litre).
+function CrockWindow:judgeCrockMilk(items)
+    local why
+    for _, item in ipairs(items) do
+        local mode, reason = self:milkMode(item)
+        if mode then
+            return { take = { item }, lines = { say(KEY .. TANK_LINES[mode], litresText(TANK_ML[mode])) },
+                refused = #items > 1 and getText(KEY .. "CrockOneMilk") or nil, adds = TANK_ML[mode] / M.CROCK_CAPACITY_ML }
+        end
+        why = why or reason
+    end
+    return { take = {}, lines = { why or getText(KEY .. "CrockTankTakes") } }
+end
+
+function CrockWindow:dropCrockMilk(take)
+    local item = take[1]
+    if not item then return end
+    local mode = self:milkMode(item)
+    if mode == "load" then
+        onCrockAction(self.playerObj, self.station, mode, item, firstOf(self.crockView.wheat, M.CROCK_WHEAT))
+    elseif mode then
+        onCrockAction(self.playerObj, self.station, mode, item)
+    end
+end
+
+-- The wheat slot's menu: the load menus while the crock is empty.
+function CrockWindow:wheatMenu(context)
+    if self.crockView.stage ~= "Empty" then return end
+    addLoadMenu(context, self.playerObj, self.station)
+    addClabberMenu(context, self.playerObj, self.station)
+end
+
+-- The band: the crock's stage at a glance, the time to its next change.
+local function crockBand(crockView)
+    local stage, status = crockView.stage, crockView.status
+    local B = InfoWindow
+    if stage == "Empty" then return "CrockBandEmpty", getText(KEY .. "CrockBandEmptyText"), B.BAND_IDLE end
+    if stage == "Waiting" then return "CrockBandWaiting", getText(KEY .. "CrockBandWaitingText"), B.BAND_WAITING end
+    if stage == "Ready" then return "CrockBandReady", say(KEY .. "CrockBandReadyText", tostring(M.CROCK_STARTERS)), B.BAND_WORKING end
+    if not status.hoursLeft then return "CrockBand" .. stage, getText(KEY .. "CrockBandStalledText"), B.BAND_WAITING end
+    return "CrockBand" .. stage, say(KEY .. "CrockBand" .. stage .. "Text", UI.shortDuration(status.hoursLeft)), B.BAND_WORKING
+end
+
+-- The wheat's slot: what goes in, twenty grains while they culture, then used, or "clabber" for a crock started on
+-- soured milk.
+function CrockWindow:wheatSlot()
+    local crockView, window = self.crockView, self
+    local stage = crockView.stage
+    local slot = { kind = "slot", arrow = "", icons = { WHEAT_ICON } }
+    if stage == "Empty" then
+        slot.look, slot.name, slot.nameColour, slot.arrowColour = "empty", getText(KEY .. "SlotAddWheat"), DIM, DIM
+        slot.drop = self.wheatDrop
+        slot.click = function() window:menuAt(function(c) window:wheatMenu(c) end) end
+        slot.menu = function(context) window:wheatMenu(context) end
+    elseif stage == "Cultivating" then
+        slot.look, slot.count, slot.name = "in", tostring(M.CROCK_WHEAT), getText(KEY .. "SlotWheat")
+    else
+        slot.look, slot.nameColour, slot.arrowColour = "empty", InfoWindow.NOTE_COLOUR, DIM
+        slot.name = getText(crockView.crock.clabber and KEY .. "SlotClabber" or KEY .. "SlotUsed")
+    end
+    return slot
+end
+
+local TANK_NAMES = { Empty = "TankEmpty", Cultivating = "TankWheatMilk", Waiting = "TankCulture", Developing = "TankDeveloping",
+    Ready = "TankStarter" }
+
+-- The crock's milk, named by its stage, the place's heat beside it, at work while it cultures or develops.
+function CrockWindow:crockTank()
+    local crockView = self.crockView
+    local stage, status = crockView.stage, crockView.status
+    local ml = CROCK_ML[stage]
+    local tank = { kind = "tank", share = ml / M.CROCK_CAPACITY_ML, drop = self.crockMilkDrop, name = getText(KEY .. TANK_NAMES[stage]),
+        amount = say(KEY .. "TankAmount", litresText(ml), litresText(M.CROCK_CAPACITY_ML)),
+        colour = (stage == "Empty" or stage == "Cultivating") and MILK_COLOUR or CULTURE_COLOUR,
+        heat = { celsius = crockView.placeC, marks = CULTURE_MARKS }, arrow = "", arrowColour = stage == "Ready" and READY_GREEN or DIM }
+    if stage == "Cultivating" or stage == "Developing" then
+        local left = status.hoursLeft and UI.shortDuration(status.hoursLeft) or getText("IGUI_TraditionalPreservationCore_Paused")
+        tank.state = say(KEY .. "TankWorkState", UI.percent(status.progress), left)
+        tank.working = { speed = status.hoursLeft and status.rate or 0, foam = 0 }
+        if not status.hoursLeft then tank.stateColour = NOTE_AMBER end
+    elseif stage == "Waiting" then
+        tank.state = say(KEY .. "TankFeed", litresText(M.CROCK_FEED_ML))
+    elseif stage == "Ready" then
+        tank.state = getText(KEY .. "TankReady")
+    end
+    return tank
+end
+
+-- The two starters the crock gives: greyed until ready, then green, a click collects them.
+function CrockWindow:startersSlot()
+    local stage, window = self.crockView.stage, self
+    local slot = { kind = "slot", icons = { STARTER_TEXTURE } }
+    if stage == "Empty" then
+        slot.look, slot.name, slot.nameColour = "empty", getText(KEY .. "SlotStarters"), DIM
+    elseif stage == "Ready" then
+        slot.look, slot.count, slot.name, slot.nameColour = "ready", tostring(M.CROCK_STARTERS), getText(KEY .. "SlotCollect"), READY_GREEN
+        slot.click = function() onCrockAction(window.playerObj, window.station, "collect") end
+        slot.menu = function(context)
+            local collect = context:addOption(say("ContextMenu_TraditionalPreservationDairy_CollectStarters", tostring(M.CROCK_STARTERS)),
+                window.playerObj, onCrockAction, window.station, "collect")
+            collect.iconTexture = getTexture(STARTER_ICON)
+        end
+    else
+        slot.look, slot.count, slot.name, slot.nameColour = "pending", tostring(M.CROCK_STARTERS), getText(KEY .. "SlotAtReady"),
+            InfoWindow.NOTE_COLOUR
+    end
+    return slot
+end
+
+function CrockWindow:holdings()
+    return { self:wheatSlot(), self:crockTank(), self:startersSlot() }
+end
+
+-- The main actions by state: Load from the Cauldron while empty, Feed Fresh Milk while it waits, Collect Starters once
+-- ready.
+function CrockWindow:crockButtons(y)
+    local stage, window = self.crockView.stage, self
+    local playerObj, station = self.playerObj, self.station
+    local buttons = {}
+    local load = self.load
+    if load then
+        local cauldron = load.cauldron
+        table.insert(buttons, { title = getText("ContextMenu_TraditionalPreservationDairy_LoadCrockFromCauldron"), icon = CAULDRON_ICON,
+            enabled = load.reason == nil,
+            tooltip = load.reason or say(KEY .. "ButtonLoadCauldron", litresText(cauldron.ml or 0), degrees(cauldron.tempC or 0)),
+            onClick = function()
+                if load.reason then return end
+                onCrockAction(playerObj, station, "load", nil, firstOf(window.crockView.wheat, M.CROCK_WHEAT), load.fire)
+            end })
+    end
+    if stage == "Waiting" then
+        table.insert(buttons, { title = getText("ContextMenu_TraditionalPreservationDairy_FeedCrock"), icon = BUCKET_ICON, enabled = true,
+            onClick = function(button)
+                window:menuAt(function(c) addFeedMenu(c, playerObj, station) end, window:getAbsoluteX() + button.x,
+                    window:getAbsoluteY() + button.y + button.height)
+            end })
+    elseif stage == "Ready" then
+        table.insert(buttons, { title = say(KEY .. "ButtonCollectStarters", tostring(M.CROCK_STARTERS)), icon = STARTER_ICON, enabled = true,
+            onClick = function() onCrockAction(playerObj, station, "collect") end })
+    end
+    return self:buttonRow(y, buttons)
+end
+
+-- The notes: what the crock waits on, else that the times assume the place's temperature holds.
+local function crockNotes(crockView)
+    local stage, status = crockView.stage, crockView.status
+    if stage == "Empty" then return { getText(KEY .. "CrockNoteEmpty") } end
+    if stage == "Waiting" then return { getText(KEY .. "CrockNoteWaiting") } end
+    if stage == "Ready" then return { getText(KEY .. "CrockHelpReady") } end
+    return { getText(status.hoursLeft and KEY .. "InfoAssumes" or KEY .. "CrockStalled") }
+end
+
+-- The Station block's own row: the culture's speed while it works.
+local function crockRows(crockView)
+    local stage = crockView.stage
+    if stage == "Cultivating" or stage == "Developing" then return { { KEY .. "InfoCultureSpeed", UI.percent(crockView.status.rate) } } end
+    return {}
 end
 
 function CrockWindow:render()
     ISCollapsableWindow.render(self)
     if self.isCollapsed or not self.crockView then return end
     local crockView = self.crockView
-    local stage, status = crockView.stage, crockView.status
-    local working = stage == "Cultivating" or stage == "Developing"
-    local y = self:top()
-
-    y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoStage", getText("IGUI_TraditionalPreservationDairy_Crock" .. stage))
-    y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoPlace", UI.placeText(status.place, status.temperature))
-    y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoCultureHeat", getText("IGUI_TraditionalPreservationDairy_InfoCultureHeatValue"))
-    if working then
-        y = self:bar(y, "IGUI_TraditionalPreservationDairy_InfoProgress", status.progress, BAR_COLOURS.culture, UI.percent(status.progress))
-        y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoCultureSpeed", UI.percent(status.rate))
-        y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoNext", crockNext(stage, status, "IGUI_TraditionalPreservationDairy_InfoStopped"))
-    elseif stage == "Ready" then
-        y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoStarters", tostring(M.CROCK_STARTERS))
-    end
-
-    local notes = {}
-    if not working then
-        table.insert(notes, getText("IGUI_TraditionalPreservationDairy_CrockHelp" .. stage))
-    elseif not status.hoursLeft then
-        table.insert(notes, getText("IGUI_TraditionalPreservationDairy_CrockStalled"))
-    else
-        table.insert(notes, getText("IGUI_TraditionalPreservationDairy_InfoAssumes"))
-    end
-    self:drawNotes(y, notes)
+    local word, text, look = crockBand(crockView)
+    local y = self:band(getText(KEY .. word), text, look[1], look[2])
+    y = self:stationBlock(y, CROCK_STATION_ICON, crockView.place, crockView.placeC, crockRows(crockView))
+    y = self:section(y, "IGUI_TraditionalPreservationCore_SectionHolds")
+    y = self:holds(y, self:holdings(), getText(KEY .. "CrockLore"))
+    y = self:crockButtons(y)
+    self:drawNotes(y, crockNotes(crockView))
 end
 
 -- Clicking a pot opens Incubator Info, and clicking a crock Crock Info, as clicking a door opens it (a Stone Hearth's click

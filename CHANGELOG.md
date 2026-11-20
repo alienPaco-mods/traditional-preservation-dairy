@@ -1,5 +1,24 @@
 # Changelog: Traditional Preservation (Dairy)
 
+## 0.0.25
+- **Starter Culture Crock Info on the pot's path** (user, session 71, `WIP/TPCore/art/crock_info_mock.png`): a band
+  with the crock's stage and time to its next change (grey empty, green cultivating, developing and ready, amber
+  cultured and waiting for milk or stopped by the cold), the Station block (`TPStation_StarterCultureCrock.png`) with
+  the culture's speed while it works, and the holdings: the wheat's slot (greyed "Add Wheat" while empty, 20 while it
+  cultures, then "used", or "clabber" for a crock started on soured milk), an arrow into the crock's milk (half a
+  litre loaded, a litre once fed; the place's heat as a bar beside it with the culture's best, 25 and 35°C; bubbles
+  and its state line "62%, 9h" while it works) and an arrow out to the two starters (greyed "at ready", then green
+  "Collect", a click collects). Wheat dragged onto the slot loads with the warm milk at hand (the cauldron's first);
+  milk dragged onto the tank loads it (warm, the wheat carried), clabbers it (soured) or feeds it (fresh, once
+  cultured), one container at a time. Load from the Cauldron (empty, a cauldron within 2 tiles), Feed Fresh Milk
+  (cultured) and Collect Starters (2) (ready) as buttons. A lore line beside the holdings (bonny clabber). Replaces
+  the old rows and Progress bar; their strings are gone.
+- The crock judges loading milk at the whole degree it shows: milk reading 45°C (45.3) no longer reads "Too hot for
+  the grain at 45", nor 35°C (34.6) too cool. The crock's Too hot / Too cool reasons have their °C.
+- The crock remembers a clabber start (`clabber` in its modData, cleared when emptied).
+- Lore lines checked: the Culturing Pot's yogurt line says woollen blankets (sheepskins dropped, unsourced), the
+  kefir line opens "By tradition" (the bag by the door is told, not documented).
+
 ## 0.0.24
 - **Culturing Pot Info on the settled look** (user, session 69; TP Core 0.1.47's starter slot): a band with the pot's
   state and time to its next change, the Station block (`TPStation_CulturingPot.png`), and the holdings: the starter's
