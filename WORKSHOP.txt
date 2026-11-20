@@ -8,8 +8,8 @@ Traditional Preservation (Dairy) requires [b]Traditional Preservation (Core)[/b]
 
 [h2]Features[/h2]
 [list]
-[*]A Yogurt Incubator thrown on the pottery wheel and wrapped in cloth, with its own art for every stage
-[*]Milk scalded in TP Core's 60 L Forged Cauldron on a Stone Hearth and poured straight in, or scalded in a pot on any lit stove or fire and carried over, hot for hours in a Wrapped Yogurt Pot, or any pot, jar or bucket you wrap in a sheet (keep the cloth off the heat: it burns)
+[*]A Culturing Pot thrown on the pottery wheel and wrapped in cloth, with its own art for every stage
+[*]Milk scalded in TP Core's 60 L Forged Cauldron on a Stone Hearth and poured straight in, or scalded in a pot on any lit stove or fire and carried over, hot for hours in a Wrapped Clay Pot, or any pot, jar or bucket you wrap in a sheet (keep the cloth off the heat: it burns)
 [*]Milk goes off: raw milk sours and then rots, scalded milk never sours, a fridge slows both, and soured milk still bakes
 [*]Real temperatures: the milk cools, the wrap goes on at 45 C, and it sets in about 6 hours when kept warm
 [*]Cow's and sheep's milk, alone or mixed, as a mixed herd's always was
@@ -25,9 +25,9 @@ Traditional Preservation (Dairy) requires [b]Traditional Preservation (Core)[/b]
 [olist]
 [*][b]Pour into the Cauldron[/b] (the Stone Hearth's right-click menu): up to 60 L of milk from any container.
 [*][b]Light the fire[/b]: 10 L steams (85 C) in about 1.5 hours, 20 L in about 2, a full 60 L in about 2.75. The Stone Hearth window shows when. Keep it steaming 20 minutes: then the milk is scalded.
-[*][b]Pour from the Cauldron[/b] into a Yogurt Incubator within 2 tiles, up to 5 L. No cauldron yet? Scald a pot of milk on any lit stove or fire and use [b]Pour Scalded Milk[/b] while it's hot.
+[*][b]Pour from the Cauldron[/b] into a Culturing Pot within 2 tiles, up to 5 L. No cauldron yet? Scald a pot of milk on any lit stove or fire and use [b]Pour Scalded Milk[/b] while it's hot.
 [*][b]Add Starter[/b]: one vanilla Yogurt, one portion of a Jar of Yogurt, or one Active Yogurt Starter.
-[*][b]Wait[/b]: the milk cools to 45 C in about 2 hours, the incubator wraps itself, and the milk sets in about 6 hours at 40 to 45 C.
+[*][b]Wait[/b]: the milk cools to 45 C in about 2 hours, the Culturing Pot wraps itself, and the milk sets in about 6 hours at 40 to 45 C.
 [*][b]Collect[/b] into empty jars, glass 1 L or clay 2.5 L, or straight into Empty Yogurt Containers.
 [*][b]Eat a Portion[/b] from a Jar of Yogurt: 250 ml, with a quarter litre of its milk's food (154 kcal from cow's milk, 206 from sheep's); 4 in a glass jar, 10 in a clay one.
 [*][b]Fill a Yogurt Cup[/b] from a Jar of Yogurt: a portion into a cup, a vanilla Yogurt with the jar's food.
@@ -35,7 +35,7 @@ Traditional Preservation (Dairy) requires [b]Traditional Preservation (Core)[/b]
 
 [h2]The stations[/h2]
 [list]
-[*][b]Yogurt Incubator[/b], Tailoring 1: a Yogurt Pot, 2 Ripped Sheets and Twine. Throw the pot on the wheel (Pottery 2, 6 Clay) and fire it in a kiln.
+[*][b]Culturing Pot[/b], Tailoring 1: a Lidded Clay Pot, 2 Ripped Sheets and Twine. Throw the pot on the wheel (Pottery 2, 6 Clay) and fire it in a kiln.
 [*][b]Starter Culture Crock[/b], Cooking 4: a Ceramic Jar, Glazed Ceramic Jar or Ceramic Pot, a Ripped Sheet and Twine.
 [*][b]Stone Hearth[/b] (TP Core), Masonry 2: 12 Stone Blocks, 12 Clay and a trowel. A working fireplace; fit TP Core's [b]Forged Cauldron[/b] on it (forged from 2 Steel Sheets at a forge, Blacksmith 4; hung with 2 Iron Pipes, a Heavy Chain and a Large Hook) for a 60 L kettle over the fire.
 [/list]
@@ -55,7 +55,7 @@ If the milk falls under 40 C before a starter is in, it is too cold: pour it out
 
 [h2]Good to know[/h2]
 [list]
-[*]Only scalded milk goes into an incubator: milk held at 85 C for 20 minutes in the cauldron or on a stove or fire, or store milk poured out of its carton. A Wrapped Yogurt Pot carries 5 L and keeps it hot for hours; an open pot cools in minutes.
+[*]Only scalded milk goes into a Culturing Pot: milk held at 85 C for 20 minutes in the cauldron or on a stove or fire, or store milk poured out of its carton. A Wrapped Clay Pot carries 5 L and keeps it hot for hours; an open pot cools in minutes.
 [*]Raw milk sours in about a day and a half at 20 C (3 days in a basement, 8 in a powered fridge, never frozen) and is rotten as long again after. Scalded milk never sours and rots at the same age. Sealed store milk keeps until it is poured out.
 [*]Soured milk still bakes: vanilla cake batter, muffins and cereal now take cow's, sheep's or animal milk, fresh, scalded or soured.
 [*]A Jar of Yogurt stays fresh 10 days; the cups keep its age.

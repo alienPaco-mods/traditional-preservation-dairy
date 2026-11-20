@@ -1,5 +1,5 @@
 -- Traditional Preservation (Dairy): wrapping. A vanilla pot, jar or bucket wrapped in a Sheet and Twine keeps milk hot
--- as the Wrapped Yogurt Pot does; this file renames, marks and dresses it, and burns the wrap in a hot cooking
+-- as the Wrapped Clay Pot does; this file renames, marks and dresses it, and burns the wrap in a hot cooking
 -- container. Required by TraditionalPreservationDairy.lua, whose M it adds to.
 local Action = require "TraditionalPreservationCore/Action"
 TraditionalPreservationDairy = TraditionalPreservationDairy or {}
@@ -8,7 +8,7 @@ local M = TraditionalPreservationDairy
 M.WRAPPED_POT = "TraditionalPreservationDairy.WrappedYoghurtPot"
 
 -- Wrapping: a vanilla pot, jar or bucket, empty, wrapped in a Sheet tied with Twine, keeps milk hot as the Wrapped
--- Yogurt Pot does, and keeps its own capacity. The mark is the fluid container's own name, which the game saves and
+-- Lidded Clay Pot does, and keeps its own capacity. The mark is the fluid container's own name, which the game saves and
 -- the inventory shows ("Pot" becomes "TPDWrappedPot", "Wrapped Pot"); the old name and rain factor are kept in
 -- modData WRAP_KEY. A wrapped item seen in a hot cooking container burns its wrap (World).
 M.WRAP_KEY = "tpdWrapped"     -- { name, rain }
@@ -138,7 +138,7 @@ function M.onUnwrapped(craftRecipeData)
 end
 
 -- Burnt in a hot cooking container: the Sheet and the Twine are gone. A wrapped pot, jar or bucket is itself again;
--- the Wrapped Yogurt Pot is a bare Yogurt Pot, which holds no fluid (its milk is lost). Returns the item now there.
+-- the Wrapped Clay Pot is a bare Lidded Clay Pot, which holds no fluid (its milk is lost). Returns the item now there.
 M.BURN_HEAT = 1.3             -- a container this hot burns a wrap (vanilla: 1.0 cold; the lowest stove setting about 1.5)
 
 function M.burnWrap(item)

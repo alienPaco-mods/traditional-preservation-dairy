@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Builds the towel bundle (42/media/Models_X/TowelBundle.glb) and its texture: what a wrapped pot, jar or bucket
-looks like on the ground, and the Wrapped Yogurt Pot too.
+looks like on the ground, and the Wrapped Clay Pot too.
 
 One mesh for every container: a squat bundle of towels round the pot, gathered at the top under a twine tie, with
 the ends puffed out above it. It is a lathe (PROFILE swept around Y) with folds pressed into it, deepest towards the

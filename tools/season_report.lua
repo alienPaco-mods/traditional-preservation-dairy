@@ -184,7 +184,7 @@ local function get(month, place, kind, field)
     return r and r[field]
 end
 
-print(string.format("Yogurt Incubator: 5 L poured at %d C at %02d:00 on the first of the month, starter in.", POUR_C, START_HOUR))
+print(string.format("Culturing Pot: 5 L poured at %d C at %02d:00 on the first of the month, starter in.", POUR_C, START_HOUR))
 print(string.format("Hours to cool to %d C (wrap on), then hours to set (%g h at the best temperature), and the", M.SET_C, M.INCUBATE_HOURS))
 print(string.format("milk's temperature when it set. '-' means it hadn't set after %d hours.", GIVE_UP_HOURS))
 print("")

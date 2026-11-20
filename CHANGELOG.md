@@ -1,5 +1,28 @@
 # Changelog: Traditional Preservation (Dairy)
 
+## 0.0.24
+- **Culturing Pot Info on the settled look** (user, session 69; TP Core 0.1.47's starter slot): a band with the pot's
+  state and time to its next change, the Station block (`TPStation_CulturingPot.png`), and the holdings: the starter's
+  slot (dashed and greyed while it waits, the yogurt starter and the grains split on the diagonal when either fits,
+  one when only one does; bright when in; cleared to "used" at the wrap), an arrow into the milk's tank (its heat as a
+  bar in every state, bubbles while it sets or ferments, its state line "50%, 3h"), and for kefir an arrow out to the
+  grains that come back ("110 at ready", green and clickable to strain once ready). A starter or grains dragged onto
+  the slot go in, milk dragged onto the tank pours in; a click or right click on a slot opens what it takes. Fill Jars
+  and Fill Cups (set), Pour Out (cooling, too cold) and Strain Kefir (ready) as buttons, and **Pour from the Cauldron**
+  whenever a Stone Hearth's cauldron is within 2 tiles and the pot has room (scalded milk for yogurt, any milk the
+  grains survive for kefir; greyed with the reason, its hover the cauldron's litres and heat). Lore beside the holdings,
+  yogurt's or kefir's. The old rows and bars are gone.
+
+
+## 0.0.23
+- The Yogurt Incubator is the **Culturing Pot** (it makes kefir too), the Yogurt Pot the **Lidded Clay Pot** (Unfired as
+  well), the Wrapped Yogurt Pot the **Wrapped Clay Pot**; recipes, tooltips, help, guide, README and Workshop text
+  follow. Display names only: item and entity ids, modData and ledger keys keep their names, so placed pots load as
+  before. The pot's build tooltip names kefir.
+- **Milk with no starter goes either way** (user, session 69: the starter decides the process): Add Kefir Grains takes a
+  pot of milk with no yogurt starter yet once it is 45°C or cooler (35 to 45°C weakens live grains, as before), and it
+  becomes a kefir pot; over 45°C it is greyed with the milk's heat, at 35 to 45°C its hover warns the live grains come out Hungry and says to wait below 35°C. Was: grains only into an empty pot. A set or
+  setting pot still refuses grains. The too-cold help names kefir as the way out; README and guide 5 follow.
 
 ## 0.0.22
 - Kefir grains take a fiftieth of the Drying Cloth's room each (`M.GRAIN_ROOM` 1 of 50, was ten to a lot; TP Core

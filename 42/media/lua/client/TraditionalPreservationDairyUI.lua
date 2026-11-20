@@ -1,4 +1,4 @@
--- Traditional Preservation (Dairy) B42: the Yogurt Incubator and the Starter Culture Crock are worked from their
+-- Traditional Preservation (Dairy) B42: the Culturing Pot and the Starter Culture Crock are worked from their
 -- right-click menus. The pot: pour milk steaming from a Stone Hearth's cauldron in, add a starter, pour the milk back out, and
 -- collect the set yogurt into jars. The crock: load wheat and warm milk from the cauldron, or soured milk alone, feed it
 -- fresh milk, collect the starters. The status line at the top says what the station is doing, and its hover says more. Both also have
@@ -43,7 +43,6 @@ local REFUSALS = {
     ColdForStarter = "IGUI_TraditionalPreservationDairy_ColdForStarter",
     KefirPot = "IGUI_TraditionalPreservationDairy_KefirPot",
     KefirReady = "IGUI_TraditionalPreservationDairy_KefirReadyRefusal",
-    YoghurtMilk = "IGUI_TraditionalPreservationDairy_YoghurtMilk",
     TooHot = "IGUI_TraditionalPreservationDairy_TooHotForGrains",
 }
 
@@ -63,7 +62,7 @@ local function firstOf(list, n)
 end
 
 -- A wrapped pot, jar or bucket by its own name in every menu ("Wrapped Cooking Pot"): vanilla's display name doesn't
--- see the wrap, only the inventory's fluid name does. The Wrapped Yogurt Pot is named so already.
+-- see the wrap, only the inventory's fluid name does. The Wrapped Clay Pot is named so already.
 UI.nameHook(function(item)
     if item:getFullType() ~= M.WRAPPED_POT and M.isWrapped(item) then
         return say("IGUI_TraditionalPreservationDairy_WrappedName", item:getDisplayName())
@@ -212,7 +211,7 @@ end
 
 -- Every container of plain milk, wherever it was carried from. Milk that isn't scalded (never at 85 C: cauldron, stove
 -- or fire), or is too cold for the starter already in the pot, shows in red with the reason. An open pot loses its
--- heat in minutes, a Wrapped Yogurt Pot in hours.
+-- heat in minutes, a Wrapped Clay Pot in hours.
 local function addCarriedPourMenu(menu, playerObj, station, batch)
     local option = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_PourScalded"))
     local items = findItems(playerObj, function(item) return M.milkIn(item:getFluidContainer()) ~= nil end)
@@ -356,6 +355,7 @@ local function addGrainsMenu(menu, playerObj, station, batch)
     local option = menu:addOption(getText("ContextMenu_TraditionalPreservationDairy_AddKefirGrains"))
     option.iconTexture = getTexture(GRAINS_ICON)
     local reason = M.grainRefusal(batch)
+    if reason == "TooHot" then return disableWith(option, say(REFUSALS.TooHot, degrees(batch.tempC))) end
     if reason then return disableWith(option, getText(REFUSALS[reason])) end
     local groups, found = {}, findItems(playerObj, function(item)
         local fullType = item:getFullType()
@@ -367,7 +367,11 @@ local function addGrainsMenu(menu, playerObj, station, batch)
         table.insert(groups[group], item)
     end
     if #found == 0 then return disableWith(option, getText("IGUI_TraditionalPreservationDairy_NoGrainItem")) end
-    tooltipFor(option, getText("IGUI_TraditionalPreservationDairy_GrainsHelp"))
+    if (batch.ml or 0) > 0 and M.grainHeat(batch.tempC or 0) == M.GRAIN_HUNGRY then
+        tooltipFor(option, say("IGUI_TraditionalPreservationDairy_WarmForGrainsWait", degrees(batch.tempC)))
+    else
+        tooltipFor(option, getText("IGUI_TraditionalPreservationDairy_GrainsHelp"))
+    end
     local sub = menu:getNew(menu)
     menu:addSubMenu(option, sub)
     for _, group in ipairs(GRAIN_GROUPS) do
@@ -498,7 +502,7 @@ local function addIncubatorMenu(context, playerObj, station, summary)
     addCarriedPourMenu(menu, playerObj, station, batch)
     if stage ~= "Incubating" then addStarterMenu(menu, playerObj, station, batch) end
     if stage == "Cooling" or stage == "TooCold" then addPourOutMenu(menu, playerObj, station, batch) end
-    -- Kefir grains go into an empty pot; with yogurt milk or a starter in, the entry says why not.
+    -- Kefir grains go into an empty pot, or milk with no starter cool enough for them; else the entry says why not.
     if stage ~= "Incubating" then addGrainsMenu(menu, playerObj, station, batch) end
 end
 
@@ -655,11 +659,27 @@ local function addCrockMenu(context, playerObj, station, summary)
     end
 end
 
--- Pot Info: the status line and its hover laid out as a table, kept up to date while open.
-local BAR_COLOURS = { contents = { 0.6, 0.57, 0.46 }, set = { 0.55, 0.6, 0.25 }, culture = { 0.7, 0.62, 0.35 } }
-local STARTER_TEXT = { Yogurt = "IGUI_TraditionalPreservationDairy_InfoStarterYoghurt", Starter = "IGUI_TraditionalPreservationDairy_InfoStarterCulture" }
+-- Culturing Pot Info on the settled look (art/incubator_mock.png, art/starter_path_mock.png; user, session 69): a band
+-- with the pot's state, the Station block, then the starter's slot, an arrow into the milk's tank (its heat as a bar
+-- beside it in every state) and, for kefir, an arrow out to the grains that come back; lore beside them; the main
+-- actions as buttons, the notes under. A starter or grains dragged onto the slot go in, milk onto the tank pours in;
+-- a click on the slot opens its menu, as does a right click; the grains' out slot strains the kefir when it is ready.
+local KEY = "IGUI_TraditionalPreservationDairy_"
+local POT_STATION_ICON = "media/textures/TPStation_CulturingPot.png"
+local STARTER_TEXTURE = "media/textures/Item_ActiveYoghurtStarter.png"
+local GRAINS_TEXTURE = "media/textures/Item_KefirGrains.png"
+local MILK_COLOUR, YOGHURT_COLOUR, KEFIR_COLOUR = { 0.92, 0.91, 0.86 }, { 0.94, 0.93, 0.82 }, { 0.91, 0.89, 0.8 }
+local DIM, NOTE_AMBER, NOTE_RED = { 0.47, 0.47, 0.47 }, InfoWindow.BAND_WAITING[1], { 0.86, 0.35, 0.27 }
+local READY_GREEN = { 0.59, 0.82, 0.51 }
+-- The heat bar's marks: yogurt's wrap and starter, kefir's limits for the grains; an empty pot shows both cultures'.
+local YOGHURT_MARKS = { { M.SET_C, tostring(M.SET_C) }, { M.STARTER_MIN_C, tostring(M.STARTER_MIN_C) } }
+local KEFIR_MARKS = { { M.GRAIN_DEAD_C, tostring(M.GRAIN_DEAD_C) }, { M.GRAIN_HUNGRY_C, tostring(M.GRAIN_HUNGRY_C) } }
+local BOTH_MARKS = { YOGHURT_MARKS[1], YOGHURT_MARKS[2], KEFIR_MARKS[2] }
 
 PotWindow = InfoWindow:derive("TraditionalPreservationDairyPotWindow")
+-- The window's class for the tests (as TraditionalPreservationVinegarUI): its holdings and band read a view alone.
+TraditionalPreservationDairyUI = TraditionalPreservationDairyUI or {}
+TraditionalPreservationDairyUI.PotWindow = PotWindow
 
 function PotWindow:new(playerObj, station)
     local o = InfoWindow.new(self, playerObj, station)
@@ -671,101 +691,372 @@ function PotWindow.open(playerObj, station)
     InfoWindow.open(PotWindow, playerObj, station)
 end
 
--- The forecast runs the pot ahead step by step, so it is worked out twice a second, not every frame.
-function PotWindow:refresh()
-    local station = self.station
-    local batch = TraditionalPreservationDairyWorld.updateIncubator(station, now())
-    local place = batch.place or M.placeOf(station)
-    local placeC = M.placeTemperature(M.getLedger(), place)
-    local hours, nextStage = M.forecast(batch, placeC)
-    if batch.culture then hours = M.kefirHoursLeft(batch, placeC) end
-    self.potView = { batch = batch, stage = M.stage(batch), place = place, placeC = placeC, hours = hours, nextStage = nextStage }
-end
-
 -- Days since it set, and how long it stays fresh: the jar's own shelf life, which the age carries into.
 local function ageText(batch)
     local days = M.ageDays(batch, now())
     local script = ScriptManager.instance:getItem(M.YOGHURT_JAR)
     local fresh = script and script:getDaysFresh() or 0
-    local age = days < 1 and getText("IGUI_TraditionalPreservationDairy_InfoToday") or say("IGUI_TraditionalPreservationDairy_InfoDays", tostring(math.floor(days)))
-    if days >= fresh then return say("IGUI_TraditionalPreservationDairy_InfoStale", age) end
-    return say("IGUI_TraditionalPreservationDairy_InfoAge", age, tostring(math.ceil(fresh - days)))
+    local age = days < 1 and getText(KEY .. "InfoToday") or say(KEY .. "InfoDays", tostring(math.floor(days)))
+    if days >= fresh then return say(KEY .. "InfoStale", age) end
+    return say(KEY .. "InfoAge", age, tostring(math.ceil(fresh - days)))
 end
 
--- A kefir pot's Info: its stage, milk, place, grains and their speed, how far it has fermented and when it will be ready.
-local function renderKefir(window, potView)
+-- What the starter slot takes now: yogurt's starter, grains, or both (the slot then shows them split).
+local function startersThatFit(batch)
+    if batch.culture then return { grains = M.grainRefusal(batch) == nil } end
+    return { yoghurt = (M.canAddStarter(batch)), grains = M.grainRefusal(batch) == nil }
+end
+
+-- The grains the pot gives back at ready, as if it finished now with the growth it has had so far.
+local function grainsAtReady(batch)
+    local out = M.grainsAfter({ readyHour = 1, grains = batch.grains, progress = batch.progress, growProgress = batch.growProgress,
+        partGrain = batch.partGrain })
+    local count = 0
+    for _, n in pairs(out) do count = count + n end
+    return count
+end
+
+-- The forecast runs the pot ahead step by step, so it is worked out twice a second, not every frame.
+function PotWindow:refresh()
+    local station, playerObj, window = self.station, self.playerObj, self
+    local batch = TraditionalPreservationDairyWorld.updateIncubator(station, now())
+    local place = batch.place or M.placeOf(station)
+    local placeC = M.placeTemperature(M.getLedger(), place)
+    local hours, nextStage = M.forecast(batch, placeC)
+    if batch.culture then hours = M.kefirHoursLeft(batch, placeC) end
+    self.potView = { batch = batch, stage = M.stage(batch), place = place, placeC = placeC, hours = hours, nextStage = nextStage,
+        fits = startersThatFit(batch) }
+    self.starterDrop = self.starterDrop or { judge = function(items) return window:judgeStarter(items) end,
+        drop = function(take) window:dropStarter(take) end }
+    self.milkDrop = self.milkDrop or { judge = function(items) return window:judgeMilk(items) end,
+        drop = function(take) window:dropMilk(take) end }
+    self.cups = #findItems(playerObj, function(item) return item:getFullType() == M.EMPTY_CUP end)
+    self.pour = self:cauldronPour()
+end
+
+-- Pour from the Cauldron as a button (user, session 69): the nearest Stone Hearth's cauldron within 2 tiles, while the
+-- pot has room and takes milk (not wrapped, set or ready). A yogurt pot takes it scalded, a kefir pot any milk the
+-- grains survive. Returns { fire, cauldron, reason } (reason nil when it pours), or nil with no cauldron near.
+function PotWindow:cauldronPour()
+    local batch, stage = self.potView.batch, self.potView.stage
+    if stage == "Incubating" or stage == "Ready" or stage == "KefirReady" then return nil end
+    if M.milkRoom(batch, 1) <= 0 then return nil end
+    if batch.culture then
+        local fire, cauldron = cauldronFor(self.station, function(c) return M.MILKS[c.fluid] ~= nil end)
+        if not cauldron then return nil end
+        if not fire then return { cauldron = cauldron, reason = getText(KEY .. "CauldronNoMilk") } end
+        local refusal = M.kefirMilkRefusal(batch, cauldron.ml or 0, cauldron.tempC or 0)
+        return { fire = fire, cauldron = cauldron, reason = refusal and say(REFUSALS[refusal], degrees(cauldron.tempC or 0)) or nil }
+    end
+    local fire, cauldron = cauldronFor(self.station, M.cauldronScalded)
+    if not cauldron then return nil end
+    if not fire then return { cauldron = cauldron, reason = cauldronRefusal(cauldron, KEY .. "CauldronNotHot") } end
+    return { fire = fire, cauldron = cauldron }
+end
+
+-- A starter dragged onto the slot: the first yogurt starter that would take, else every grain item.
+function PotWindow:judgeStarter(items)
+    local batch, fits = self.potView.batch, self.potView.fits
+    local starter, grains = nil, {}
+    for _, item in ipairs(items) do
+        local fullType = item:getFullType()
+        if not starter and M.isStarter(item) then starter = item end
+        if fullType == M.GRAIN or fullType == M.DRIED_GRAIN then table.insert(grains, item) end
+    end
+    if starter and fits.yoghurt then
+        return { take = { starter }, lines = { say(KEY .. "SlotAddStarter", UI.itemName(starter)) },
+            refused = #items > 1 and getText(KEY .. "SlotOneStarter") or nil }
+    end
+    if #grains > 0 and fits.grains then
+        return { take = grains, lines = { say(KEY .. "SlotAddGrains", tostring(#grains)) },
+            refused = #grains < #items and getText(KEY .. "SlotOnlyGrains") or nil }
+    end
+    local reason
+    if starter then
+        local _, why = M.canAddStarter(batch)
+        reason = why and getText(REFUSALS[why] or KEY .. "SlotTakes")
+    elseif #grains > 0 then
+        local why = M.grainRefusal(batch)
+        reason = why == "TooHot" and say(REFUSALS.TooHot, degrees(batch.tempC)) or getText(REFUSALS[why] or KEY .. "SlotTakes")
+    end
+    return { take = {}, lines = { reason or getText(KEY .. "SlotTakes") } }
+end
+
+function PotWindow:dropStarter(take)
+    local first = take[1]
+    if not first then return end
+    if M.isStarter(first) then return onAction(self.playerObj, self.station, { first }, "starter") end
+    onKefirAction(self.playerObj, self.station, "grains", take)
+end
+
+-- Milk dragged onto the tank: a kefir pot's by the grains' heat, a yogurt pot's scalded and warm enough for a starter
+-- in it; as much as there is room for.
+function PotWindow:judgeMilk(items)
+    local batch, playerObj = self.potView.batch, self.playerObj
+    local room = M.milkRoom(batch, M.CAPACITY_ML)
+    local take, poured, refused = {}, 0, nil
+    for _, item in ipairs(items) do
+        local container = item.getFluidContainer and item:getFluidContainer()
+        local fluid, parts = nil, nil
+        if container then fluid, parts = M.milkIn(container) end
+        local why
+        if not fluid then
+            why = getText(KEY .. "TankTakes")
+        elseif poured >= room then
+            local _, reason = M.milkRoom(batch, 1)
+            why = getText(REFUSALS[reason or "Full"] or REFUSALS.Full)
+        else
+            local ml = M.mlIn(container)
+            local heat = M.carriedC(item, now(), playerObj)
+            local reason
+            if batch.culture then
+                reason = M.kefirMilkRefusal(batch, ml, heat)
+            else
+                reason = M.carriedRefusal(M.carryOf(item), ml, parts) or M.coldRefusal(batch, ml, heat)
+            end
+            if reason then
+                why = say(REFUSALS[reason], degrees(heat))
+            else
+                poured = poured + math.min(ml, room - poured)
+                table.insert(take, item)
+            end
+        end
+        if why then refused = refused or why end
+    end
+    local lines = { #take > 0 and say(KEY .. "TankPour", litresText(poured), tostring(#take)) or refused or getText(KEY .. "TankTakes") }
+    return { take = take, lines = lines, refused = #take < #items and refused or nil, adds = poured / M.CAPACITY_ML }
+end
+
+function PotWindow:dropMilk(take)
+    if self.potView.batch.culture then
+        for _, item in ipairs(take) do onKefirAction(self.playerObj, self.station, "milk", item) end
+        return
+    end
+    onAction(self.playerObj, self.station, take, "carried")
+end
+
+-- A menu at the mouse filled by fill(context): the slot's click and right click, the buttons' lists.
+function PotWindow:menuAt(fill, x, y)
+    local context = ISContextMenu.get(self.playerObj:getPlayerNum(), x or getMouseX(), y or getMouseY())
+    fill(context)
+    if #context.options == 0 then context:setVisible(false) end
+end
+
+-- The slot's menu: what the pot takes now, as the right-click menu offers it, and taking grains back out.
+function PotWindow:starterMenu(context)
+    local playerObj, station, batch, stage = self.playerObj, self.station, self.potView.batch, self.potView.stage
+    if not batch.culture and stage ~= "Incubating" and stage ~= "Ready" then addStarterMenu(context, playerObj, station, batch) end
+    if stage ~= "Incubating" and stage ~= "Ready" and stage ~= "KefirReady" then addGrainsMenu(context, playerObj, station, batch) end
+    if stage == "KefirGrains" then
+        local take = context:addOption(getText("ContextMenu_TraditionalPreservationDairy_TakeGrains"), playerObj, onKefirAction, station,
+            "takeGrains")
+        take.iconTexture = getTexture(GRAINS_ICON)
+    end
+end
+
+-- The band: the pot's state at a glance, the time to its next change.
+local function potBand(potView)
+    local batch, stage, hours = potView.batch, potView.stage, potView.hours
+    local ml = litresText(batch.ml or 0)
+    local B = InfoWindow
+    if stage == "Empty" then return "PotBandEmpty", getText(KEY .. "PotBandEmptyText"), B.BAND_IDLE end
+    if stage == "KefirGrains" then return "PotBandGrains", getText(KEY .. "PotBandGrainsText"), B.BAND_WAITING end
+    if stage == "Fermenting" then
+        if not hours then return "PotBandFermenting", getText(KEY .. "PotBandStalledText"), B.BAND_WAITING end
+        return "PotBandFermenting", say(KEY .. "PotBandFermentingText", UI.shortDuration(hours)), B.BAND_WORKING
+    end
+    if stage == "KefirReady" then return "PotBandKefirReady", say(KEY .. "PotBandKefirReadyText", ml), B.BAND_WAITING end
+    if stage == "Ready" then return "PotBandSet", say(KEY .. "PotBandSetText", ml, tostring(glassJars(batch.ml))), B.BAND_WORKING end
+    if stage == "TooCold" then return "PotBandTooCold", getText(KEY .. "PotBandTooColdText"), B.BAND_AT_RISK end
+    if stage == "Incubating" then
+        if not hours then return "PotBandSetting", getText(KEY .. "PotBandNeverText"), B.BAND_WAITING end
+        return "PotBandSetting", say(KEY .. "PotBandSettingText", UI.shortDuration(hours)), B.BAND_WORKING
+    end
+    if not batch.starter then return "PotBandCooling", getText(KEY .. "PotBandNoStarterText"), B.BAND_WAITING end
+    if not hours then return "PotBandCooling", getText(KEY .. "PotBandHoldsText"), B.BAND_WAITING end
+    return "PotBandCooling", say(KEY .. "PotBandCoolingText", UI.shortDuration(hours)), B.BAND_WORKING
+end
+
+-- The Station block's own rows: the working rate while it works, a set pot's age.
+local function potRows(potView)
     local batch, stage = potView.batch, potView.stage
+    if stage == "Incubating" then return { { KEY .. "InfoRate", UI.percent(M.setRate(batch.tempC)) } } end
+    if stage == "Fermenting" then return { { KEY .. "InfoRate", UI.percent(M.kefirRate(potView.placeC) * M.kefirRatio(batch)) } } end
+    if stage == "Ready" then return { { KEY .. "InfoAgeLabel", ageText(batch) } } end
+    return {}
+end
+
+-- The starter's slot: what goes in, greyed while it waits for one, "used" once yogurt's has gone into the set.
+function PotWindow:starterSlot()
+    local potView, window = self.potView, self
+    local batch, stage, fits = potView.batch, potView.stage, potView.fits
+    local slot = { kind = "slot", arrow = "", drop = self.starterDrop, click = function() window:menuAt(function(c) window:starterMenu(c) end) end,
+        menu = function(context) window:starterMenu(context) end }
+    local grains = M.grainCount(batch)
+    if grains > 0 then
+        slot.look, slot.icons, slot.count = "in", { GRAINS_TEXTURE }, tostring(grains)
+        slot.name = getText(KEY .. "SlotGrains")
+        if (batch.ml or 0) > 0 then slot.amount = say(KEY .. "SlotGrainsFor", tostring(M.grainsFor(batch.ml))) end
+        return slot
+    end
+    slot.look = "empty"
+    -- Yogurt's starter is used once the wrap goes on: the slot clears (user).
+    if stage == "Incubating" or stage == "Ready" then
+        slot.icons, slot.name, slot.nameColour, slot.arrowColour = { STARTER_TEXTURE }, getText(KEY .. "SlotUsed"), InfoWindow.NOTE_COLOUR, DIM
+        return slot
+    end
+    if batch.starter then
+        slot.look, slot.icons, slot.name = "in", { STARTER_TEXTURE }, getText(KEY .. "SlotStarter")
+        return slot
+    end
+    slot.icons = {}
+    if fits.yoghurt then table.insert(slot.icons, STARTER_TEXTURE) end
+    if fits.grains then table.insert(slot.icons, GRAINS_TEXTURE) end
+    slot.name, slot.nameColour, slot.arrowColour = getText(KEY .. "SlotAdd"), DIM, DIM
+    return slot
+end
+
+-- The pot's milk: named by what it is, its heat beside it, at work while it sets or ferments.
+function PotWindow:milkTank()
+    local potView = self.potView
+    local batch, stage, hours = potView.batch, potView.stage, potView.hours
     local ml = batch.ml or 0
-    local y = window:top()
-    y = window:row(y, "IGUI_TraditionalPreservationDairy_InfoStage", getText("IGUI_TraditionalPreservationDairy_InfoStage" .. stage))
-    y = window:bar(y, "IGUI_TraditionalPreservationDairy_InfoContents", ml / M.CAPACITY_ML, BAR_COLOURS.contents,
-        say("IGUI_TraditionalPreservationDairy_InfoLitres", litresText(ml), litresText(M.CAPACITY_ML)))
-    y = window:row(y, "IGUI_TraditionalPreservationDairy_InfoPlace", UI.placeText(potView.place, potView.placeC))
-    local count = M.grainCount(batch)
-    y = window:row(y, "IGUI_TraditionalPreservationDairy_InfoGrains", count > 0 and say("IGUI_TraditionalPreservationDairy_InfoGrainsValue",
-        tostring(count), tostring(M.grainsFor(ml))) or "-")
-    if stage == "Fermenting" then
-        y = window:bar(y, "IGUI_TraditionalPreservationDairy_InfoFermented", batch.progress or 0, BAR_COLOURS.set, UI.percent(batch.progress or 0))
-        y = window:row(y, "IGUI_TraditionalPreservationDairy_InfoSpeed", UI.percent(M.kefirRate(potView.placeC) * M.kefirRatio(batch)))
-        y = window:row(y, "IGUI_TraditionalPreservationDairy_InfoNext", potView.hours
-            and say("IGUI_TraditionalPreservationDairy_NextKefirReady", hoursText(potView.hours)) or getText("IGUI_TraditionalPreservationDairy_InfoKefirNever"))
+    local tank = { kind = "tank", share = ml / M.CAPACITY_ML, drop = self.milkDrop,
+        amount = say(KEY .. "TankAmount", litresText(ml), litresText(M.CAPACITY_ML)) }
+    local marks = batch.culture and KEFIR_MARKS or (stage == "Empty" and BOTH_MARKS or YOGHURT_MARKS)
+    tank.heat = { celsius = ml > 0 and batch.tempC or nil, marks = marks }
+    local left = hours and UI.shortDuration(hours) or getText("IGUI_TraditionalPreservationCore_Paused")
+    if stage == "Empty" or stage == "KefirGrains" then
+        tank.name, tank.colour = getText(KEY .. "TankEmpty"), MILK_COLOUR
+    elseif stage == "Fermenting" then
+        tank.name, tank.colour = getText(KEY .. "TankFermenting"), KEFIR_COLOUR
+        tank.state = say(KEY .. "TankWorkState", UI.percent(batch.progress or 0), left)
+        tank.working = { speed = hours and 1 or 0, foam = 0 }
+        if not hours then tank.stateColour = NOTE_AMBER end
+    elseif stage == "KefirReady" then
+        tank.name, tank.colour, tank.state = getText(KEY .. "TankKefir"), KEFIR_COLOUR, getText(KEY .. "TankKefirReady")
+    elseif stage == "Ready" then
+        tank.name, tank.colour, tank.state = getText(KEY .. "TankYoghurt"), YOGHURT_COLOUR, getText(KEY .. "TankSet")
+    elseif stage == "Incubating" then
+        local share = math.min((batch.workHours or 0) / M.INCUBATE_HOURS, 1)
+        tank.name, tank.colour = getText(KEY .. "TankSetting"), YOGHURT_COLOUR
+        tank.state = say(KEY .. "TankWorkState", UI.percent(share), left)
+        tank.working = { speed = hours and M.setRate(batch.tempC) or 0, foam = 0 }
+        if not hours then tank.stateColour = NOTE_AMBER end
+    else
+        tank.name, tank.colour = getText(KEY .. "TankMilk"), MILK_COLOUR
+        if stage == "TooCold" then
+            tank.state, tank.stateColour = getText(KEY .. "TankTooCold"), NOTE_RED
+        elseif batch.starter and hours then
+            tank.state = say(KEY .. "TankToWrap", UI.shortDuration(hours))
+        else
+            tank.state = getText(KEY .. "TankLidOn")
+        end
     end
+    return tank
+end
+
+-- What the pot holds: the starter's slot, the milk, and for kefir the grains that come back.
+function PotWindow:holdings()
+    local potView, window = self.potView, self
+    local batch, stage = potView.batch, potView.stage
+    local holdings = { self:starterSlot(), self:milkTank() }
+    if batch.culture and M.grainCount(batch) > 0 then
+        local ready = stage == "KefirReady"
+        holdings[2].arrow = ""
+        holdings[2].arrowColour = ready and READY_GREEN or DIM
+        local back = { kind = "slot", icons = { GRAINS_TEXTURE }, look = ready and "ready" or "pending" }
+        if stage == "KefirGrains" then
+            back.count, back.name = tostring(M.grainCount(batch)), getText(KEY .. "SlotBack")
+        else
+            back.count = tostring(grainsAtReady(batch))
+            back.name = getText(ready and KEY .. "SlotStrain" or KEY .. "SlotAtReady")
+            if ready then
+                back.nameColour = READY_GREEN
+                back.click = function() window:menuAt(function(c) addStrainMenu(c, window.playerObj, window.station) end) end
+                back.menu = function(context) addStrainMenu(context, window.playerObj, window.station) end
+            end
+        end
+        if not ready then back.nameColour = InfoWindow.NOTE_COLOUR end
+        table.insert(holdings, back)
+    end
+    return holdings
+end
+
+-- The main actions by state: Fill Jars and Fill Cups once set, Pour Out while it cools, Strain Kefir once ready. Each
+-- opens its list under the button, as the right-click's submenu.
+function PotWindow:potButtons(y)
+    local potView, window = self.potView, self
+    local batch, stage = potView.batch, potView.stage
+    local playerObj, station = self.playerObj, self.station
+    local function under(fill)
+        return function(button)
+            window:menuAt(fill, window:getAbsoluteX() + button.x, window:getAbsoluteY() + button.y + button.height)
+        end
+    end
+    local buttons = {}
+    local pour = self.pour
+    if pour then
+        local cauldron = pour.cauldron
+        table.insert(buttons, { title = getText("ContextMenu_TraditionalPreservationDairy_PourFromCauldron"), icon = CAULDRON_ICON,
+            enabled = pour.reason == nil,
+            tooltip = pour.reason or (M.MILKS[cauldron.fluid] and say(KEY .. "ButtonPourCauldron", litresText(cauldron.ml or 0),
+                degrees(cauldron.tempC or 0))) or nil,
+            onClick = function()
+                if pour.reason then return end
+                if batch.culture then return onKefirAction(playerObj, station, "fire", pour.fire) end
+                onCauldronPour(playerObj, station, pour.fire)
+            end })
+    end
+    if stage == "Ready" then
+        table.insert(buttons, { title = say(KEY .. "ButtonFillJars", tostring(glassJars(batch.ml))), icon = JAR_ICON, enabled = true,
+            onClick = under(function(c) addCollectMenu(c, playerObj, station, batch) end) })
+        table.insert(buttons, { title = say(KEY .. "ButtonFillCups", tostring(M.cupsInPot(batch))), icon = YOGHURT_ICON,
+            enabled = self.cups > 0, tooltip = self.cups == 0 and getText(KEY .. "NoEmptyCup") or nil,
+            onClick = under(function(c) addCupMenu(c, playerObj, station, batch) end) })
+    elseif stage == "Cooling" or stage == "TooCold" then
+        table.insert(buttons, { title = getText("ContextMenu_TraditionalPreservationDairy_PourOut"), icon = BUCKET_ICON, enabled = true,
+            onClick = under(function(c) addPourOutMenu(c, playerObj, station, batch) end) })
+    elseif stage == "KefirReady" then
+        table.insert(buttons, { title = getText("ContextMenu_TraditionalPreservationDairy_StrainKefir"), icon = STRAINER_ICON, enabled = true,
+            onClick = under(function(c) addStrainMenu(c, playerObj, station) end) })
+    end
+    return self:buttonRow(y, buttons)
+end
+
+-- The notes: what the pot waits on, else that the times assume the place's temperature holds.
+local function potNotes(potView)
+    local batch, stage = potView.batch, potView.stage
     local notes = {}
-    if stage == "KefirGrains" then table.insert(notes, getText("IGUI_TraditionalPreservationDairy_HelpKefirGrains")) end
-    if stage == "KefirReady" then table.insert(notes, getText("IGUI_TraditionalPreservationDairy_HelpKefirReady")) end
-    if stage == "Fermenting" then
-        table.insert(notes, getText(potView.hours and "IGUI_TraditionalPreservationDairy_InfoAssumes" or stalledKey(batch)))
+    if stage == "KefirGrains" then table.insert(notes, getText(KEY .. "HelpKefirGrains")) end
+    if stage == "KefirReady" then table.insert(notes, getText(KEY .. "HelpKefirReady")) end
+    if stage == "Fermenting" then table.insert(notes, getText(potView.hours and KEY .. "InfoAssumes" or stalledKey(batch))) end
+    if WAITING_NOTES[stage] then
+        table.insert(notes, getText(WAITING_NOTES[stage]))
+    elseif stage == "Cooling" and not batch.starter then
+        table.insert(notes, getText(KEY .. "NoStarter"))
+    elseif stage == "Incubating" and not potView.hours then
+        table.insert(notes, getText(KEY .. "NeverSets"))
+    elseif (stage == "Cooling" or stage == "Incubating") and potView.hours then
+        table.insert(notes, getText(KEY .. "InfoAssumes"))
+    elseif stage == "Ready" then
+        table.insert(notes, say(KEY .. "Jars", tostring(glassJars(batch.ml)), tostring(clayJars(batch.ml)), tostring(M.cupsInPot(batch))))
     end
-    window:drawNotes(y, notes)
+    if stage ~= "Incubating" and stage ~= "Ready" and stage ~= "KefirReady" then table.insert(notes, getText(KEY .. "PotNoteDrag")) end
+    return notes
 end
 
 function PotWindow:render()
     ISCollapsableWindow.render(self)
     if self.isCollapsed or not self.potView then return end
     local potView = self.potView
-    if potView.batch.culture then return renderKefir(self, potView) end
-    local batch, stage = potView.batch, potView.stage
-    local ml = batch.ml or 0
-    local y = self:top()
-
-    y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoStage", getText("IGUI_TraditionalPreservationDairy_InfoStage" .. stage))
-    y = self:bar(y, "IGUI_TraditionalPreservationDairy_InfoContents", ml / M.CAPACITY_ML, BAR_COLOURS.contents,
-        say("IGUI_TraditionalPreservationDairy_InfoLitres", litresText(ml), litresText(M.CAPACITY_ML)))
-    local milkC = (ml > 0 and stage ~= "Ready") and say("IGUI_TraditionalPreservationDairy_InfoDegrees", degrees(batch.tempC)) or "-"
-    y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoMilk", milkC)
-    y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoSetting",
-        say("IGUI_TraditionalPreservationDairy_InfoSettingValue", degrees(M.SET_C), degrees(M.STARTER_MIN_C)))
-    y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoPlace", UI.placeText(potView.place, potView.placeC))
-    y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoStarter", getText(STARTER_TEXT[batch.starter] or "IGUI_TraditionalPreservationDairy_InfoStarterNone"))
-    if stage == "Incubating" or stage == "Ready" then
-        local share = math.min((batch.workHours or 0) / M.INCUBATE_HOURS, 1)
-        y = self:bar(y, "IGUI_TraditionalPreservationDairy_InfoSet", share, BAR_COLOURS.set, UI.percent(share))
-    end
-    if stage == "Incubating" then
-        y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoSpeed", UI.percent(M.setRate(batch.tempC)))
-    end
-    if stage == "Cooling" or stage == "Incubating" then
-        local nextText = potView.hours and say("IGUI_TraditionalPreservationDairy_Next" .. potView.nextStage, hoursText(potView.hours))
-            or getText(stage == "Incubating" and "IGUI_TraditionalPreservationDairy_InfoNever" or "IGUI_TraditionalPreservationDairy_InfoHolds")
-        y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoNext", nextText)
-    end
-    if stage == "Ready" then
-        y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoAgeLabel", ageText(batch))
-        y = self:row(y, "IGUI_TraditionalPreservationDairy_InfoJars", say("IGUI_TraditionalPreservationDairy_InfoJarsCount", tostring(glassJars(ml)), tostring(clayJars(ml))))
-    end
-
-    local notes = {}
-    if WAITING_NOTES[stage] then
-        table.insert(notes, getText(WAITING_NOTES[stage]))
-    elseif stage == "Cooling" and not batch.starter then
-        table.insert(notes, getText("IGUI_TraditionalPreservationDairy_NoStarter"))
-    elseif stage == "Incubating" and not potView.hours then
-        table.insert(notes, getText("IGUI_TraditionalPreservationDairy_NeverSets"))
-    end
-    if (stage == "Cooling" or stage == "Incubating") and potView.hours then
-        table.insert(notes, getText("IGUI_TraditionalPreservationDairy_InfoAssumes"))
-    end
-    self:drawNotes(y, notes)
+    local word, text, look = potBand(potView)
+    local y = self:band(getText(KEY .. word), text, look[1], look[2])
+    y = self:stationBlock(y, POT_STATION_ICON, potView.place, potView.placeC, potRows(potView))
+    y = self:section(y, "IGUI_TraditionalPreservationCore_SectionHolds")
+    y = self:holds(y, self:holdings(), getText(potView.batch.culture and KEY .. "KefirLore" or KEY .. "YoghurtLore"))
+    y = self:potButtons(y)
+    self:drawNotes(y, potNotes(potView))
 end
 
 -- Stone Hearth Info (TP Core's) says what the cauldron's milk is for.
@@ -777,6 +1068,8 @@ CauldronUI.addNotes(function(fireView, notes)
         table.insert(notes, getText("IGUI_TraditionalPreservationDairy_CauldronHelpWater"))
     end
 end)
+
+local BAR_COLOURS = { culture = { 0.7, 0.62, 0.35 } }
 
 -- Crock Info: the stage, the place and its heat, and how far the culture has got, laid out like Pot Info.
 CrockWindow = PotWindow:derive("TraditionalPreservationDairyCrockWindow")
@@ -835,7 +1128,7 @@ local crockFaces = {}
 for face = 0, M.FACE_COUNT - 1 do crockFaces[M.spriteName(M.CROCK_SPRITE + face)] = true end
 UI.offAppliances(crockFaces)
 -- A pot or crock with anything in it stays where it is: milk, a starter, kefir grains or a culture, its time goes by
--- its place (user, 2026-11-19: no station is moved mid-process; hot milk travels in a Wrapped Yogurt Pot, an item).
+-- its place (user, 2026-11-19: no station is moved mid-process; hot milk travels in a Wrapped Clay Pot, an item).
 -- Empty, it picks up as any moveable.
 UI.keepInPlace(function(isoObject)
     local kind = M.stationKind(isoObject)
@@ -852,7 +1145,7 @@ end)
 UI.keepDoorsFree(Tiles.STATIONS)
 
 -- Every pot and crock the click took in gets its own menu. With more than one, each is named with its status
--- ("Yogurt Incubator (Cooling: 2.0 L at 60 C)"), so the player picks the right one.
+-- ("Culturing Pot (Cooling: 2.0 L at 60 C)"), so the player picks the right one.
 local function onFillContextMenu(playerNum, context, worldobjects, test)
     local stations, seen = {}, {}
     for _, isoObject in ipairs(worldobjects) do

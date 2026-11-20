@@ -1,4 +1,4 @@
--- Traditional Preservation (Dairy): the hand jobs at a Yogurt Incubator making kefir. "grains" puts kefir grains in
+-- Traditional Preservation (Dairy): the hand jobs at a Culturing Pot making kefir. "grains" puts kefir grains in
 -- (items, one action for them all), "fire" pours milk from a Stone Hearth's cauldron (within 2 tiles), "milk" pours
 -- milk in from a container, "strain" strains ready kefir into an empty container through a Strainer or a cloth
 -- (twice as long; the grains come out with the first strain), "takeGrains" takes the grains back out of a pot with no milk.

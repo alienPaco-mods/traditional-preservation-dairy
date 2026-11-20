@@ -1,4 +1,4 @@
--- Traditional Preservation (Dairy) B42: the rules for the Yogurt Incubator and the Starter Culture Crock.
+-- Traditional Preservation (Dairy) B42: the rules for the Culturing Pot and the Starter Culture Crock.
 -- The incubator is a lidded clay pot: milk brought to the boil in the hearth's cauldron cools in it by Newton's law towards the temperature where
 -- it stands, and once it is down to setting heat with a starter in, the pot is wrapped in cloth and the milk
 -- sets at a speed that follows its own temperature. Cooling depends on what the milk was, not only on the

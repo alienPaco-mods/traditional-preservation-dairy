@@ -13,8 +13,8 @@ local function say(text) print("[TPD] " .. text) end
 function TPD.help()
     say("TPD.weather()        the temperature by place, and how fast milk sets there")
     say("TPD.here()           which place you're standing in (open air, an open roof, indoors, a basement or by a fire)")
-    say("TPD.pots()           every loaded incubator: stage, litres, milk temperature, what's next")
-    say("TPD.age(hours)       move every loaded incubator and crock on by this many hours (default 1; a crock's at the best temperature)")
+    say("TPD.pots()           every loaded Culturing Pot: stage, litres, milk temperature, what's next")
+    say("TPD.age(hours)       move every loaded Culturing Pot and crock on by this many hours (default 1; a crock's at the best temperature)")
     say("TPD.fast(hours)      setting takes this many hours at the best temperature. TPD.fast() goes back to the sandbox")
     say("TPD.milk(litres, c, fluid) a cooking pot of milk (default 5 L of CowMilk), at c degrees if given; fluid SheepMilk or AnimalMilk for the others, or a kefir (CowKefir, SheepKefir: both read Kefir (Fresh))")
     say("TPD.give(name, n, option) spawn n of: jar (a full Jar of Yogurt; option \"clay\" or \"glazed\"), starter, cup (an Empty Yogurt Container), butter, salted, clarified, packet (of kefir grains), dried, grains (live kefir grains), cloth (10 grains drying on a Ripped Sheet). TPD.give() lists them")
@@ -51,7 +51,7 @@ end
 function TPD.pots()
     local now = getGameTime():getWorldAgeHours()
     local stations = pots()
-    if #stations == 0 then return say("No incubator loaded and tracked. Right-click one to start tracking it.") end
+    if #stations == 0 then return say("No Culturing Pot loaded and tracked. Right-click one to start tracking it.") end
     for _, station in ipairs(stations) do
         local batch = TraditionalPreservationDairyWorld.updateIncubator(station, now)
         local placeC = M.placeTemperature(M.getLedger(), batch.place)
@@ -86,7 +86,7 @@ local function agePots(hours)
         if batch.lastHour then batch.lastHour = batch.lastHour - hours end
         TraditionalPreservationDairyWorld.refresh(station)
     end
-    say(string.format("Moved %d incubator(s) on by %.1f hours.", #pots(), hours))
+    say(string.format("Moved %d Culturing Pot(s) on by %.1f hours.", #pots(), hours))
 end
 
 function TPD.fast(hours)
@@ -174,7 +174,7 @@ local KITS = {
         end,
     },
     kefir = {
-        about = "a Packet of Kefir Grains, 25 live Kefir Grains, a pot of 2 L of cow's milk kefir, a pot of 1 L of cow's milk (25 grains are the full ratio for it: 24 h in the incubator at 18-25 C), a Strainer, a Ripped Sheet, and a Sheet and 2 Stones for a Drying Cloth (TP Core) to dry grains on",
+        about = "a Packet of Kefir Grains, 25 live Kefir Grains, a pot of 2 L of cow's milk kefir, a pot of 1 L of cow's milk (25 grains are the full ratio for it: 24 h in the Culturing Pot at 18-25 C), a Strainer, a Ripped Sheet, and a Sheet and 2 Stones for a Drying Cloth (TP Core) to dry grains on",
         give = function(inventory)
             inventory:AddItem(M.GRAIN_PACKET)
             for _ = 1, M.grainsFor(1000) do GIVES.grains(inventory) end
@@ -190,7 +190,7 @@ local KITS = {
         end,
     },
     wrap = {
-        about = "a Yogurt Pot, a Sheet and Twine, to make a Wrapped Yogurt Pot",
+        about = "a Lidded Clay Pot, a Sheet and Twine, to make a Wrapped Clay Pot",
         give = function(inventory)
             inventory:AddItem("TraditionalPreservationDairy.YoghurtPot")
             inventory:AddItem("Base.Sheet")

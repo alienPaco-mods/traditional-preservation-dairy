@@ -1,4 +1,4 @@
--- Checks kefir in the Yogurt Incubator (TraditionalPreservationDairyKefir.lua, the pot): grains first, then any milk,
+-- Checks kefir in the Culturing Pot (TraditionalPreservationDairyKefir.lua, the pot): grains first, then any milk,
 -- the speed by the place and the grains' share, hot milk against the grains, growth, the kefir's age in the pot and
 -- straining. Run from the mod folder: luajit tests/test_kefir_pot.lua
 local H = dofile((os.getenv("TPCORE") or "../TraditionalPreservationCore") .. "/tests/harness.lua")
@@ -45,7 +45,17 @@ check("a kefir pot takes no yogurt starter", select(2, M.canAddStarter(pot)) == 
 check("dead grains are refused", select(2, M.addGrains({}, grains(3, M.GRAIN_DEAD), ledger)) == "Dead")
 local yoghurt = {}
 M.addMilk(yoghurt, 2000, 85, 0)
-check("a pot of yogurt milk takes no grains: one culture at a time", select(2, M.addGrains(yoghurt, grains(5), ledger)) == "YoghurtMilk")
+check("milk too hot for grains refuses them", select(2, M.addGrains(yoghurt, grains(5), ledger)) == "TooHot")
+local cooled = {}
+M.addMilk(cooled, 2000, 40, 0)
+check("milk with no starter, cool enough, takes grains and becomes a kefir pot", M.addGrains(cooled, grains(5), ledger) == 5
+    and cooled.culture == M.KEFIR_CULTURE and M.stage(cooled) == "Fermenting")
+check("its live grains turn Hungry at 40 C", cooled.grains[M.GRAIN_HUNGRY] == 5)
+local warm = {}
+M.addMilk(warm, 2000, 30, 0)
+M.addGrains(warm, grains(5), ledger)
+check("and stay live at 30 C", warm.grains[M.GRAIN_LIVE] == 5)
+check("set yogurt takes no grains", select(2, M.addGrains({ ml = 2000, tempC = 30, readyHour = 1, incubating = true }, grains(5), ledger)) == "Ready")
 check("nor one with a starter waiting", select(2, M.addGrains({ starter = "Yogurt" }, grains(5), ledger)) == "HasStarter")
 
 -- Any milk, at a heat the grains survive

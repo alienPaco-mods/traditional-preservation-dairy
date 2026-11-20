@@ -80,7 +80,7 @@ module TraditionalPreservationDairy
         Tooltip = Tooltip_TraditionalPreservationDairy_YoghurtPot,
     }
 
-    /* The Yogurt Pot wrapped in a sheet: it carries scalded milk from the Stone Hearth and holds its heat (about 15 C lost
+    /* The Lidded Clay Pot wrapped in a sheet: it carries scalded milk from the Stone Hearth and holds its heat (about 15 C lost
        in an hour). Its milk's heat and scalded mark are in ModData tpdCarry, not in vanilla's item heat. */
     item WrappedYoghurtPot
     {

@@ -11,7 +11,7 @@
 3. The Full Loop
 4. Walkthrough
 5. The Forged Cauldron
-6. The Yogurt Incubator
+6. The Culturing Pot
 7. Jars and Cups
 8. When Milk and Butter Go Off
 9. The Starter Culture Crock
@@ -34,7 +34,7 @@ In vanilla, yogurt comes only from fridges, and once the town is picked clean it
 
 This mod lets you **set your own yogurt the old way**: milk brought to the steam in a Stone Hearth's cauldron, cooled in a lidded clay pot, then wrapped in cloth to set overnight. The result is ordinary vanilla **Yogurt**, so it works in every recipe that uses it. Every Yogurt eaten leaves its cup behind to fill again, and when the last spoonful of starter is gone, a crock of wheat and warm milk grows a new one.
 
-The same incubator makes **kefir**: grains found on farm shelves, put in milk and left a day, no fire needed. Kefir is a drink that eases food sickness, and the grains grow with every batch (chapter 10).
+The same Culturing Pot makes **kefir**: grains found on farm shelves, put in milk and left a day, no fire needed. Kefir is a drink that eases food sickness, and the grains grow with every batch (chapter 10).
 
 ---
 
@@ -46,8 +46,8 @@ The same incubator makes **kefir**: grains found on farm shelves, put in milk an
 |---|---|---|
 | Build a **Stone Hearth** | 12 Stone Blocks, 12 Clay, a trowel (kept). Masonry 2 | A fireplace that cooks and warms |
 | **Forge Cauldron**, then **Fit Cauldron** on the Stone Hearth | 2 Steel Sheets, 3 Charcoal, 1 Wire at a forge (Blacksmith 4); 2 Iron Pipes, 1 Heavy Chain, 1 Large Hook, pliers (kept) | A 60 L **Forged Cauldron** over the fire |
-| Throw a **Yogurt Pot** and fire it | 6 Clay, a little water. Pottery 2, wheel and kiln | The pot |
-| Build a **Yogurt Incubator** within 2 tiles of the Stone Hearth | 1 Yogurt Pot, 2 Ripped Sheets, 1 Twine. Tailoring 1 | The incubator |
+| Throw a **Lidded Clay Pot** and fire it | 6 Clay, a little water. Pottery 2, wheel and kiln | The pot |
+| Build a **Culturing Pot** within 2 tiles of the Stone Hearth | 1 Lidded Clay Pot, 2 Ripped Sheets, 1 Twine. Tailoring 1 | The Culturing Pot |
 | **Pour into the Cauldron** and light the fire | Up to 60 L of cow's or sheep's milk, firewood | Steaming milk in **about 1.5 hours** for 10 L, 2¾ for 60 L |
 | **Pour from the Cauldron**, then **Add Starter** | 1 vanilla Yogurt, a portion of a Jar of Yogurt, or 1 Active Yogurt Starter | 5 L cooling in the pot |
 | Wait **about 8 hours** (2 cooling, 6 setting, in a 20 C room) | | 5 L of yogurt |
@@ -58,7 +58,7 @@ The same incubator makes **kefir**: grains found on farm shelves, put in milk an
 ## 3. The Full Loop
 
 ```
- cow / sheep ──milk──► FORGED CAULDRON ──85 C──► YOGURT INCUBATOR ──► jars & cups
+ cow / sheep ──milk──► FORGED CAULDRON ──85 C──► CULTURING POT ──► jars & cups
                         (60 L, lit fire)          (5 L pot)                │
                                                      ▲                     │
                                 1 Yogurt ───────────┘                     │
@@ -71,11 +71,11 @@ The same incubator makes **kefir**: grains found on farm shelves, put in milk an
 |---|---|---|---|---|---|
 | 1 | Pour into the Cauldron | Stone Hearth's right-click menu | milk, from any container | up to 60 L in the cauldron | a moment |
 | 2 | Bring to the steam, and hold it | Lit Stone Hearth | | milk at 85 C, **Scalded** after 20 minutes there | about 1.5 hours for 10 L, 2¾ for 60 L, then 20 minutes |
-| 3 | Pour from the Cauldron | Incubator's menu | scalded, steaming milk | up to 5 L in the pot | a moment |
-| 4 | Add Starter | Incubator's menu | 1 Yogurt, a jar's portion, or an Active Yogurt Starter | | a moment |
-| 5 | Cool | Incubator, lid on | | milk at 45 C, the wrap goes on | about 2 hours* |
-| 6 | Set | Incubator, wrapped | | 5 L of yogurt | 6 hours at 40 to 45 C* |
-| 7 | Collect | Incubator's menu | empty jars or Empty Yogurt Containers | Jars of Yogurt or Yogurts | a moment |
+| 3 | Pour from the Cauldron | Culturing Pot's menu | scalded, steaming milk | up to 5 L in the pot | a moment |
+| 4 | Add Starter | Culturing Pot's menu | 1 Yogurt, a jar's portion, or an Active Yogurt Starter | | a moment |
+| 5 | Cool | Culturing Pot, lid on | | milk at 45 C, the wrap goes on | about 2 hours* |
+| 6 | Set | Culturing Pot, wrapped | | 5 L of yogurt | 6 hours at 40 to 45 C* |
+| 7 | Collect | Culturing Pot's menu | empty jars or Empty Yogurt Containers | Jars of Yogurt or Yogurts | a moment |
 | 8 | Eat a Portion / Fill a Cup | Jar's menu | Jar of Yogurt | 250 ml at a time | as eating |
 
 \* In a 20 C room, or by a fire. Colder places take longer: see the Almanac.
@@ -86,18 +86,18 @@ The same incubator makes **kefir**: grains found on farm shelves, put in milk an
 
 1. **Keep a cow or sheep in milk.** Cow's and sheep's milk both work, and mix.
 2. **Build a Stone Hearth** from the Build menu, forge a **Forged Cauldron** and **Fit Cauldron** on it (TP Core's guide, chapter 4), and stack firewood by it.
-3. **Make the Yogurt Pot** on the pottery wheel and fire it in a kiln.
-4. **Build the Yogurt Incubator** from the Build menu, within 2 tiles of the Stone Hearth.
+3. **Make the Lidded Clay Pot** on the pottery wheel and fire it in a kiln.
+4. **Build the Culturing Pot** from the Build menu, within 2 tiles of the Stone Hearth.
 5. **Pour into the Cauldron** (right-click the Stone Hearth) from your milk buckets, then **Light** the fire.
 6. Check the **Stone Hearth Info** window. When the cauldron reads "steaming", the milk is at 85 C. **Keep it steaming for 20 minutes**: then the cauldron's milk reads *Scalded* and will pour.
-7. Right-click the incubator: **Pour from the Cauldron**, then **Add Starter** with a Yogurt or a Jar of Yogurt you kept back.
+7. Right-click the Culturing Pot: **Pour from the Cauldron**, then **Add Starter** with a Yogurt or a Jar of Yogurt you kept back.
 8. Go to bed. The lid stays on while it cools, and at 45 C the cloth wraps itself on.
 9. In the morning the status reads **Ready**. **Collect into a Jar** or **Fill Empty Yogurt Containers**.
 10. Keep one Yogurt back for the next batch.
 
 That's it. A full cauldron is twelve pots, 60 L of yogurt from one firing.
 
-**No cauldron yet?** Any pot of milk on a lit stove, fireplace, barbecue or campfire scalds once it has had 20 minutes at 85 C, as vanilla boils tainted water clean. Take it off and pour it straight into the incubator (**Pour Scalded Milk**) while it's hot: an open pot loses its heat in minutes. Pour it into a **Wrapped Yogurt Pot**, or any pot, jar or bucket you've wrapped in a sheet, first if the walk is long. The cauldron's gifts are its size, pouring straight into a pot or crock within 2 tiles, and a banked fire's steady low heat.
+**No cauldron yet?** Any pot of milk on a lit stove, fireplace, barbecue or campfire scalds once it has had 20 minutes at 85 C, as vanilla boils tainted water clean. Take it off and pour it straight into the Culturing Pot (**Pour Scalded Milk**) while it's hot: an open pot loses its heat in minutes. Pour it into a **Wrapped Clay Pot**, or any pot, jar or bucket you've wrapped in a sheet, first if the walk is long. The cauldron's gifts are its size, pouring straight into a pot or crock within 2 tiles, and a banked fire's steady low heat.
 
 ---
 
@@ -123,12 +123,12 @@ The Stone Hearth and its cauldron have their own guide, **Traditional Preservati
 
 ---
 
-## 6. The Yogurt Incubator
+## 6. The Culturing Pot
 
 A lidded clay pot holding 5 L, wrapped in a striped cloth when it's setting. Right-click it:
 
 - **Pour from the Cauldron** draws steaming, scalded milk from a Stone Hearth within 2 tiles, up to the pot's 5 L. Before its 20 minutes are up the option is greyed and says how many minutes are left.
-- **Pour Scalded Milk** takes **scalded** milk from any container: milk that has been held at 85 C or more for 20 minutes, in the cauldron or in a pot on a stove or a fire, or store milk poured out of its carton (it was pasteurised). It goes in at the heat it has *now*: off the heat, an open pot or bucket cools in minutes (85 to 45 C in about a quarter hour), a **Wrapped Yogurt Pot** in hours. Pouring between containers carries the heat over, so a pot just off the stove poured into a Wrapped Pot stays hot.
+- **Pour Scalded Milk** takes **scalded** milk from any container: milk that has been held at 85 C or more for 20 minutes, in the cauldron or in a pot on a stove or a fire, or store milk poured out of its carton (it was pasteurised). It goes in at the heat it has *now*: off the heat, an open pot or bucket cools in minutes (85 to 45 C in about a quarter hour), a **Wrapped Clay Pot** in hours. Pouring between containers carries the heat over, so a pot just off the stove poured into a Wrapped Pot stays hot.
 - **Add Starter** takes one vanilla Yogurt, one portion from a Jar of Yogurt (250 ml, a cup's worth: the rest stays in the jar, and the empty jar comes back with the last), or one Active Yogurt Starter, before or after the milk. None of them gone off. One per batch, whatever the size.
 - **Pour Out Milk** empties the pot into a container.
 
@@ -157,7 +157,7 @@ Once the starter **is** in, milk that would bring the pot under 40 C is refused,
 
 ## 7. Jars and Cups
 
-When the incubator reads **Ready**:
+When the Culturing Pot reads **Ready**:
 
 - **Collect into a Jar**: each empty jar is filled to its size, and the last takes what's left.
 - **Fill Empty Yogurt Containers**: 250 ml each, straight into a vanilla Yogurt the same age as the batch.
@@ -199,7 +199,7 @@ Vanilla milk keeps for ever. With this mod it doesn't, and what you do with a bu
 | The milk reads | When | Good for |
 |---|---|---|
 | **Cow's Milk (Fresh)** | Raw and young | Everything |
-| **Cow's Milk (Scalded, Fresh)** | It has been held at 85 C or more for 20 minutes (the cauldron, or a pot on a lit stove or fire), or it came out of the incubator or a store carton | Everything. It never sours |
+| **Cow's Milk (Scalded, Fresh)** | It has been held at 85 C or more for 20 minutes (the cauldron, or a pot on a lit stove or fire), or it came out of the Culturing Pot or a store carton | Everything. It never sours |
 | **Cow's Milk (Soured)** | Raw milk, a day and a half old in a warm room | Drinking (the same food, a little unhappiness), baking (cake batter, muffins, cereal) and starting the crock without wheat (chapter 9). Not yogurt, butter or mildew cure |
 | **Cow's Milk (Rotten)** | Any milk, twice that old | Nothing. It poisons you: pour it away |
 
@@ -289,7 +289,7 @@ No yogurt left to start from? Grow one.
 | 4 | Developing | | 12 hours |
 | 5 | **Collect 2 Starters** | | 2 Active Yogurt Starters |
 
-- **The warm milk is the hard part.** It must be 35 to 45 C: from a Stone Hearth within 2 tiles (a cauldron cooling with the fire out), or carried in any container at that heat (a Wrapped Yogurt Pot holds it there longest). Hotter milk kills the grain's culture, and the menu says why it refuses.
+- **The warm milk is the hard part.** It must be 35 to 45 C: from a Stone Hearth within 2 tiles (a cauldron cooling with the fire out), or carried in any container at that heat (a Wrapped Clay Pot holds it there longest). Hotter milk kills the grain's culture, and the menu says why it refuses.
 - **Soured milk is the short way.** Half a litre of it, warm or cold, starts the crock with no wheat and goes straight to Feed Fresh Milk. Rotten milk is refused. See *Clabber or yogurt?* in chapter 8.
 - **An Active Yogurt Starter** is fresh 5 days and rotten at 10. Each sets one batch.
 - **The crock stands on the floor, a kitchen counter or a table**, never on a stove, a fridge or a freezer.
@@ -300,7 +300,7 @@ No yogurt left to start from? Grow one.
 
 ## 10. Kefir
 
-Kefir is milk turned by **grains**: little white lumps, like boiled cauliflower, of bacteria and yeasts living together. Put them in milk, leave it a day in a room, strain them out and put them in the next milk. No fire, no wrap, no thermometer. It is made in the same **Yogurt Incubator**, one culture at a time: a pot holds yogurt or kefir, never both.
+Kefir is milk turned by **grains**: little white lumps, like boiled cauliflower, of bacteria and yeasts living together. Put them in milk, leave it a day in a room, strain them out and put them in the next milk. No fire, no wrap, no thermometer. It is made in the same **Culturing Pot**, one culture at a time: a pot holds yogurt or kefir, never both. The starter decides: milk in the pot with no yogurt starter yet takes grains instead once it is 45 C or cooler (too cold for a yogurt starter, below 40 C, it can only go to kefir).
 
 The grains are what you keep. They grow with every good batch, starve out of milk, and can't be made by any recipe: lose them all and you are back to searching the shelves.
 
@@ -319,10 +319,10 @@ A **Packet of Kefir Grains** turns up on a farm's storage shelves and a Gigamart
 
 | # | Step | Where | In | Out | Time |
 |---|---|---|---|---|---|
-| 1 | **Add Kefir Grains** | An empty incubator | Grains of one state, **One** or **All** | A kefir pot | a moment |
+| 1 | **Add Kefir Grains** | An empty Culturing Pot, or its milk with no yogurt starter at 45 C or cooler | Grains of one state, **One** or **All** | A kefir pot | a moment |
 | 2 | **Pour Milk** | Kefir pot | Any milk, raw or scalded, cow's or sheep's, from a container or a Stone Hearth's cauldron within 2 tiles, up to 5 L, under 45 C | Fermenting, under a linen cap | a moment |
-| 3 | Ferment | Incubator | | 5 L of Kefir (Fresh) | **24 hours** at 18 to 25 C with a live grain to every 40 ml* |
-| 4 | **Strain Kefir** | Incubator, ready | Empty containers; a Strainer, or a cloth (Cheesecloth, Dish Cloth, Ripped Sheet, Sheet) at twice the time, kept | Kefir, and all the grains on the first strain | as pouring |
+| 3 | Ferment | Culturing Pot | | 5 L of Kefir (Fresh) | **24 hours** at 18 to 25 C with a live grain to every 40 ml* |
+| 4 | **Strain Kefir** | Culturing Pot, ready | Empty containers; a Strainer, or a cloth (Cheesecloth, Dish Cloth, Ripped Sheet, Sheet) at twice the time, kept | Kefir, and all the grains on the first strain | as pouring |
 
 \* 125 live grains for a full 5 L pot. A packet's 10 dried grains count half while they come back: 200 ml in a day, then 400 ml once live.
 
@@ -423,15 +423,15 @@ Kefir is a fluid, poured, drunk and carried as milk is. It is its milk less the 
 
 | Station | Build menu | Skill | Materials | XP |
 |---|---|---|---|---|
-| **Yogurt Incubator** | Pottery; floor | Tailoring 1 | 1 Yogurt Pot, 2 Ripped Sheets, 1 Twine | Tailoring 5 |
+| **Culturing Pot** | Pottery; floor | Tailoring 1 | 1 Lidded Clay Pot, 2 Ripped Sheets, 1 Twine | Tailoring 5 |
 | **Starter Culture Crock** | Pottery; floor, counter or table | Cooking 4 | 1 Ceramic Jar, Glazed Ceramic Jar or Ceramic Pot, 1 Ripped Sheet, 1 Twine | Cooking 10 |
 
 The Stone Hearth and the Forged Cauldron are in the Quick Start and TP Core's guide.
 
 | Item | Made | Skill | XP |
 |---|---|---|---|
-| **Yogurt Pot** | pottery wheel, 6 Clay + a little water, then the kiln | Pottery 2 | Pottery 20 |
-| **Wrapped Yogurt Pot** | crafting menu (Cooking): Yogurt Pot + Sheet + Twine | | |
+| **Lidded Clay Pot** | pottery wheel, 6 Clay + a little water, then the kiln | Pottery 2 | Pottery 20 |
+| **Wrapped Clay Pot** | crafting menu (Cooking): Lidded Clay Pot + Sheet + Twine | | |
 | **Wrapped Pot, Jar or Bucket** | crafting menu (Cooking), **Wrap**: an empty cooking pot, forged pot, jar, ceramic jar or bucket + Sheet + Twine. It keeps its own capacity, and looks bundled in towels: in your bag and on the floor | | |
 
 | Work | XP |
@@ -439,11 +439,11 @@ The Stone Hearth and the Forged Cauldron are in the Quick Start and TP Core's gu
 | Each litre of yogurt collected | Cooking 2 (a cup earns a quarter) |
 | Collecting the crock's starters | Cooking 2 |
 
-You can walk through the incubator and the crock. **Yogurt Incubator Info** and **Starter Culture Crock Info** (in the menu) show the stage, contents, temperature, place, progress, working speed and the time to the next change. A kefir pot's also shows its grains, what they count for, and the speed they give this milk.
+You can walk through the Culturing Pot and the crock. **Culturing Pot Info** and **Starter Culture Crock Info** (in the menu) show the stage, contents, temperature, place, progress, working speed and the time to the next change. A kefir pot's also shows its grains, what they count for, and the speed they give this milk.
 
 ### What the stations show
 
-| Incubator | What you see |
+| Culturing Pot | What you see |
 |---|---|
 | Empty | The open pot, its lid leaning against it |
 | Cooling | The lid on the pot |
@@ -536,7 +536,7 @@ A fire outside: under a roof 72 hours in January, about 40 in February and March
 ## 13. Secrets & Hidden Features
 
 - **It works while you're away**, even in unloaded areas. A pot left for a week reads right when you come back.
-- **The Wrapped Yogurt Pot carries 5 L of hot milk** and loses only about 15 C an hour. Unwrap it when empty for the pot, sheet and twine back.
+- **The Wrapped Clay Pot carries 5 L of hot milk** and loses only about 15 C an hour. Unwrap it when empty for the pot, sheet and twine back.
 - **Any pot, jar or bucket can be wrapped** the same way and keeps its own size: a wrapped bucket carries 10 L and holds its heat longest, a wrapped jar only a litre and cools sooner.
 - **Never put a wrapped pot on the heat.** The sheet and twine catch within a minute. On a stove, in an oven or on a barbecue the kitchen goes up with them; in a fireplace, a campfire or the Stone Hearth they just burn away.
 - **Part portions are kept.** Eat Quarter on a jar, and the next cup you fill has exactly what was left.
@@ -664,8 +664,8 @@ Each process laid out as the game's planting seasons: the months it works unheat
 |---|---|
 | `TPD.weather()` | Temperature by place, and how fast milk sets at each. |
 | `TPD.here()` | Which kind of place you're standing in. |
-| `TPD.pots()` | Every loaded incubator: stage, litres, milk temperature, what's next; a kefir pot's grains, speed and hours to ready. |
-| `TPD.age(hours)` | Moves every loaded incubator and crock on by this many hours (1 if left out): an incubator replays the recorded weather, a crock's stage takes them as hours at the best temperature. |
+| `TPD.pots()` | Every loaded Culturing Pot: stage, litres, milk temperature, what's next; a kefir pot's grains, speed and hours to ready. |
+| `TPD.age(hours)` | Moves every loaded Culturing Pot and crock on by this many hours (1 if left out): a Culturing Pot replays the recorded weather, a crock's stage takes them as hours at the best temperature. |
 | `TPD.fast(hours)` | Test timer for setting. `TPD.fast()` goes back to the sandbox time. |
 | `TPD.milk(litres, c, fluid)` | A cooking pot of milk (default 5 L of cow's), at c degrees if given; fluid `"SheepMilk"` or `"AnimalMilk"` for the others, `"CowKefir"` or `"SheepKefir"` for kefir. At 85 C or more it counts as having had its 20-minute hold. |
 | `TPD.give(name, n, option)` | Spawns `jar` (a full Jar of Yogurt; option `"clay"` or `"glazed"`), `starter`, `cup`, `butter`, `salted`, `clarified`, `packet` (of kefir grains), `dried`, `grains` (live) or `cloth` (an older save's 10 grains drying); no name lists them. |

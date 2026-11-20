@@ -7,7 +7,7 @@ local FluidAgeing = require "TraditionalPreservationCore/FluidAgeing"
 
 -- Carried milk: a container filled from the cauldron, taken hot off a stove or a fire, or poured into from one of those
 -- keeps its heat as a carry in its item modData (vanilla's item heat drops to the room within seconds of leaving
--- the heat). An open pot or bucket cools in minutes; the Wrapped Yogurt Pot (a clay pot in its cloth) in hours.
+-- the heat). An open pot or bucket cools in minutes; the Wrapped Clay Pot (a clay pot in its cloth) in hours.
 M.CARRY_KEY = "tpdCarry"      -- { ml, c, hour, scalded }
 M.WRAPPED_POT_TAU = 4.0       -- hours, for 5 L: 85 to 70 C in about an hour at 20 C
 M.OPEN_TAU = 0.25             -- hours, for 5 L: 85 to 45 C in about 15 minutes at 20 C, to 35 C in about 8 more

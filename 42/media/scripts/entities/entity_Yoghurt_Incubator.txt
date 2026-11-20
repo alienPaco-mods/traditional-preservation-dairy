@@ -28,7 +28,7 @@ module TraditionalPreservationDairy
                 }
             }
         }
-        /* The fired Yogurt Pot (the pot carried its Pottery gate), with cloth to wrap it in and twine to tie
+        /* The fired Lidded Clay Pot (the pot carried its Pottery gate), with cloth to wrap it in and twine to tie
            the wrap. */
         component CraftRecipe
         {

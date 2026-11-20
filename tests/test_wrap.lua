@@ -145,9 +145,9 @@ check("burnt, the wrap is gone and the milk stays", not M.isWrapped(burnt) and s
     and burnt.fluid.fluids.ScaldedCowMilk == 1.0)
 local old = bag:AddItem(M.WRAPPED_POT)
 local bare = M.burnWrap(old)
-check("a Wrapped Yogurt Pot burns down to a bare Yogurt Pot", bare.fullType == "TraditionalPreservationDairy.YoghurtPot"
+check("a Wrapped Clay Pot burns down to a bare Lidded Clay Pot", bare.fullType == "TraditionalPreservationDairy.YoghurtPot"
     and not bag:contains(old) and bag:contains(bare))
-check("the Wrapped Yogurt Pot still counts as wrapped", M.isWrapped(item(M.WRAPPED_POT)))
+check("the Wrapped Clay Pot still counts as wrapped", M.isWrapped(item(M.WRAPPED_POT)))
 check("a cold stove doesn't burn a wrap, the lowest setting does", M.BURN_HEAT > 1.0 and M.BURN_HEAT < 1.5)
 
 -- Every wrapped look has its icon and its ground model
@@ -166,7 +166,7 @@ check("every wrappable container has a look", (function()
     end
     return true
 end)())
-check("the Wrapped Yogurt Pot lies as the bundle too", script:find("WorldStaticModel = TraditionalPreservationDairy.TowelBundle_ClayJar", 1, true) ~= nil)
+check("the Wrapped Clay Pot lies as the bundle too", script:find("WorldStaticModel = TraditionalPreservationDairy.TowelBundle_ClayJar", 1, true) ~= nil)
 io.open("42/media/Models_X/TowelBundle.glb"):close()
 io.open("42/media/Models_X/TowelBundleTall.glb"):close()
 

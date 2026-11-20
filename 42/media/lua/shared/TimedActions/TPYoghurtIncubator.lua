@@ -1,4 +1,4 @@
--- Traditional Preservation (Dairy): the hand jobs at a Yogurt Incubator. "fire" pours milk steaming from a
+-- Traditional Preservation (Dairy): the hand jobs at a Culturing Pot. "fire" pours milk steaming from a
 -- Stone Hearth's cauldron (within 2 tiles) in, "carried" pours scalded milk in from a container, "starter" stirs in a yogurt or an Active Yogurt Starter, "pourOut" takes the milk back out into an empty
 -- container (still scalded) to reheat it, "collect" fills an empty jar (glass 1 L, clay 2.5 L) with set yogurt,
 -- and "cup" fills an Empty Yogurt Container with a quarter litre.

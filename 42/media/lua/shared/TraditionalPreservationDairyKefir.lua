@@ -1,4 +1,4 @@
--- Traditional Preservation (Dairy): kefir. Milk fermented by kefir grains in the Yogurt Incubator (the culture comes
+-- Traditional Preservation (Dairy): kefir. Milk fermented by kefir grains in the Culturing Pot (the culture comes
 -- in K2): no scald, no wrap, at the place's temperature. Kefir is a fluid, its milk's food less the lactose the grains
 -- ate. A fluid's food is its type's, so cow's and sheep's milk each make a kefir of their own, mixed by share as the
 -- milks were; both are called Kefir, as the engine shows two fluids of one name as one (three or more read Mixed
@@ -173,7 +173,7 @@ function M.grainShare(grain)
     return work.share, work.grows
 end
 
--- The pot: kefir in the Yogurt Incubator (K2)
+-- The pot: kefir in the Culturing Pot (K2)
 -- Grains go into an empty pot first: that makes it a kefir pot (culture), one culture at a time. Then any milk, raw or
 -- scalded, from a container or the cauldron. No scald, no wrap: a linen cap. The milk ferments at the speed of the
 -- place's temperature (kefirRate), times the grains' share of the milk: a live grain to every 40 ml is full speed, more
@@ -362,13 +362,14 @@ local function markKefir(batch, ledger)
     batch.kefirMarks = { ferment = Weather.mark({}, ledger, M.KEFIR_FERMENT), grow = Weather.mark({}, ledger, M.KEFIR_GROW) }
 end
 
--- Why grains can't go into the pot ("HasStarter", "YoghurtMilk", "KefirReady", "TooHot"), or nil.
+-- Why grains can't go into the pot ("HasStarter", "Incubating", "Ready", "KefirReady", "TooHot"), or nil. Milk with no
+-- starter yet goes either way (user, session 69): grains make it a kefir pot if it is cool enough for them.
 function M.grainRefusal(batch)
     local stage = M.stage(batch)
     if stage == "KefirReady" then return "KefirReady" end
     if not batch.culture then
         if batch.starter then return "HasStarter" end
-        if stage ~= "Empty" then return "YoghurtMilk" end
+        if stage == "Incubating" or stage == "Ready" then return stage end
     end
     if (batch.ml or 0) > 0 and M.grainHeat(batch.tempC or 0) == "TooHot" then return "TooHot" end
 end

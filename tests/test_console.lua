@@ -33,10 +33,10 @@ check("weather names every place", (function()
 end)())
 check("here says where the player stands", run("here"):find("Basement", 1, true) ~= nil)
 
-check("pots says so when none is tracked", run("pots"):find("No incubator", 1, true) ~= nil)
+check("pots says so when none is tracked", run("pots"):find("No Culturing Pot", 1, true) ~= nil)
 check("crocks too", run("crocks"):find("No crock", 1, true) ~= nil)
 local aged = run("age", 2)
-check("age moves pots and crocks, here none", aged:find("Moved 0 incubator", 1, true) ~= nil and aged:find("Moved 0 crock", 1, true) ~= nil)
+check("age moves pots and crocks, here none", aged:find("Moved 0 Culturing Pot", 1, true) ~= nil and aged:find("Moved 0 crock", 1, true) ~= nil)
 check("tiles finds no station on unloaded ground", run("tiles") == "")
 
 run("fast", 1)

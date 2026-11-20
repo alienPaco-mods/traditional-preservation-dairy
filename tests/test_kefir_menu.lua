@@ -1,4 +1,4 @@
--- Checks the Yogurt Incubator's kefir menu and its jobs (TPKefirIncubator) with stand-ins for the engine: grains by
+-- Checks the Culturing Pot's kefir menu and its jobs (TPKefirIncubator) with stand-ins for the engine: grains by
 -- group, any milk at a heat the grains survive, straining with a Strainer or a cloth, grains back out. Run from the mod
 -- folder: luajit tests/test_kefir_menu.lua
 local H = dofile((os.getenv("TPCORE") or "../TraditionalPreservationCore") .. "/tests/harness.lua")
@@ -251,11 +251,53 @@ check("and the 12 grains come out live, with their records", #given == 12 and gi
     and given[1]:getModData()[M.GRAIN_KEY].grainState == M.GRAIN_LIVE)
 check("the pot is empty again, no culture", M.stage(M.batchOf(pot)) == "Empty" and M.batchOf(pot).culture == nil)
 
--- A yogurt pot refuses grains
+-- Milk with no starter takes grains when cool enough
 carry(grainItems(3, M.GRAIN_LIVE))
 add = named(open(incubator({ ml = 2000, fluid = "CowMilk", tempC = 60 })), ADD)
-check("a pot of yogurt milk greys Add Kefir Grains with the reason", add.isDisabled == true
-    and add.toolTip.description == getText("IGUI_TraditionalPreservationDairy_YoghurtMilk"))
+check("milk too hot for grains greys Add Kefir Grains with the reason", add.isDisabled == true
+    and add.toolTip.description:find("Too hot for the grains (60", 1, true) ~= nil)
+carry(grainItems(3, M.GRAIN_LIVE))
+add = named(open(incubator({ ml = 2000, fluid = "CowMilk", tempC = 30 })), ADD)
+check("cool milk with no starter offers Add Kefir Grains", add ~= nil and not add.isDisabled)
+carry(grainItems(3, M.GRAIN_LIVE))
+add = named(open(incubator({ ml = 2000, fluid = "CowMilk", tempC = 42 })), ADD)
+check("warm milk (35 to 45 C) offers them with a warning to wait", add ~= nil and not add.isDisabled
+    and add.toolTip.description:find("Let it cool below 35", 1, true) ~= nil)
+
+
+-- Culturing Pot Info's holdings (user, session 69, art/starter_path_mock.png): the starter's slot, the milk, and for
+-- kefir the grains that come back; a pot's view alone, no window drawn.
+local PotWindow = TraditionalPreservationDairyUI.PotWindow
+local function holdingsOf(batch)
+    local window = setmetatable({ playerObj = {}, station = {}, potView = { batch = batch, stage = M.stage(batch),
+        hours = 3, fits = { yoghurt = (M.canAddStarter(batch)), grains = M.grainRefusal(batch) == nil } } }, { __index = PotWindow })
+    if batch.culture then window.potView.fits = { grains = M.grainRefusal(batch) == nil } end
+    return window:holdings()
+end
+local held = holdingsOf({})
+check("an empty pot: a neutral slot, both starters split, and the tank", #held == 2 and held[1].kind == "slot"
+    and held[1].look == "empty" and #held[1].icons == 2 and held[2].kind == "tank" and held[2].heat.celsius == nil)
+held = holdingsOf({ ml = 4000, tempC = 62, fluid = "CowMilk" })
+check("hot milk, no starter: only yogurt's starter fits", #held[1].icons == 1 and held[1].icons[1]:find("ActiveYoghurtStarter")
+    and held[2].heat.celsius == 62)
+held = holdingsOf({ ml = 4000, tempC = 42, fluid = "CowMilk" })
+check("at 42 C either fits", #held[1].icons == 2)
+held = holdingsOf({ ml = 4000, tempC = 30, fluid = "CowMilk" })
+held = holdingsOf({ ml = 4000, tempC = 60, fluid = "CowMilk", starter = "Yogurt" })
+check("starter in while it cools: bright, no other", held[1].look == "in" and held[1].icons[1]:find("ActiveYoghurtStarter"))
+held = holdingsOf({ ml = 4000, tempC = 30, fluid = "CowMilk" })
+check("too cold for a starter: only grains fit", #held[1].icons == 1 and held[1].icons[1]:find("KefirGrains"))
+held = holdingsOf({ ml = 4000, tempC = 43, fluid = "CowMilk", starter = "Yogurt", incubating = true, workHours = 3 })
+check("setting: the slot cleared, used, the tank at work", held[1].look == "empty" and held[1].name == getText("IGUI_TraditionalPreservationDairy_SlotUsed")
+    and held[2].working ~= nil and held[2].state == "50%, " .. require("TraditionalPreservationCore/UI").shortDuration(3))
+held = holdingsOf({ ml = 4000, tempC = 21, fluid = "CowMilk", culture = M.KEFIR_CULTURE, grains = { Live = 100 }, progress = 0.5,
+    growProgress = 0.5 })
+check("kefir fermenting: grains in, an arrow out to what comes back, greyed", #held == 3 and held[1].count == "100"
+    and held[3].look == "pending" and tonumber(held[3].count) == 110 and held[3].click == nil)
+held = holdingsOf({ ml = 4000, tempC = 21, fluid = "CowMilk", culture = M.KEFIR_CULTURE, grains = { Live = 100 }, progress = 1,
+    growProgress = 1, readyHour = 1 })
+check("kefir ready: the grains to take, bright and clickable", held[3].look == "ready" and tonumber(held[3].count) == 110
+    and held[3].click ~= nil and held[2].arrowColour ~= nil)
 
 check("no text would make the game's formatter warn" .. (H.textWarnings[1] and " (" .. table.concat(H.textWarnings, "; ") .. ")" or ""),
     #H.textWarnings == 0)
