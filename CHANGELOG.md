@@ -1,5 +1,21 @@
 # Changelog: Traditional Preservation (Dairy)
 
+## 0.0.26
+Needs TP Core 0.1.52.
+- **Frost** (ROADMAP NEXT 1; user, session 76): everything here freezes at 0 C, on TP Core's frost ledger by place
+  (`M.FROST`, `Frost.point(0)`). Six hours frozen in all (`Frost.THROUGH_HOURS`) freeze a thing through, once: live
+  Kefir Grains go Hungry (loose, wet on a Drying Cloth, or in a kefir pot, in milk or out; one milk change brings them
+  back), kefir separates (in a container or ready in the pot; strained, it takes the pot's frost hours along), a Yogurt
+  or a Jar of Yogurt is Thawed (unhappiness +10, named "(Thawed)"; a cup spooned from a thawed jar is too). An Active
+  Yogurt Starter loses 1/48 of the way to rotten each frozen hour (`Frost.STARTER_RUIN_HOURS`). No calories lost.
+  Dried grains, milk and butter are safe; what sets or cultures in the Culturing Pot or the crock only pauses, as
+  before. Cooked or burnt food never freezes. A basement never freezes, nor a place by a lit fire or banked embers.
+- Sandbox **Frost harms** (on). Off, frost does no harm; the records still run.
+- Save keys: item ModData `tpdFrost`, `tpdKefirFrost`, `tpdThawed`; a kefir pot's `grainFrost` and `kefirFrost`;
+  a Drying Cloth lot's `frost` and `hungry`. Kefir grains on a cloth now keep data with their lot.
+- Console: `TPD.frost(hours)` freezes the grains, kefir, yogurts and starters near you (default 6: through);
+  `TPD.grains()`, `TPD.ages()` and `TPD.pots()` show frozen hours. Tests: `tests/test_frost.lua`.
+
 ## 0.0.25
 - **Starter Culture Crock Info on the pot's path** (user, session 71, `WIP/TPCore/art/crock_info_mock.png`): a band
   with the crock's stage and time to its next change (grey empty, green cultivating, developing and ready, amber

@@ -26,7 +26,7 @@ M.MOD_DATA_KEY = "TraditionalPreservationDairy"
 -- Each station keeps its state as one table under one key, so nothing else on the object can clash with it.
 -- Inside the incubator's: ml, tempC, starter, incubating, wrapHour, done, last, readyHour, fluid, parts, place, at,
 -- fireUntil, under; for kefir (TraditionalPreservationDairyKefir.lua) culture, grains, progress, growProgress, kefirMarks,
--- kefirAge, partGrain, grainClock, grainLots, grainsDone. Inside the crock's: stage, workHours, marks, clabber, fireUntil, under. The Stone Hearth and its cauldron are TP
+-- kefirAge, partGrain, grainClock, grainLots, grainsDone, grainFrost and kefirFrost (TP Core's Frost records). Inside the crock's: stage, workHours, marks, clabber, fireUntil, under. The Stone Hearth and its cauldron are TP
 -- Core's (TraditionalPreservationCore/Fire).
 M.INCUBATOR_KEY = "tpdIncubator"
 M.CROCK_KEY = "tpdCrock"
@@ -35,7 +35,7 @@ local MILK_FIELDS = { "ml", "tempC", "lastHour", "fluid", "parts" }
 local BATCH_FIELDS = { "ml", "tempC", "starter", "incubating", "wrapHour", "workHours", "lastHour", "readyHour", "fluid", "parts" }
 -- What an emptied kefir pot forgets: all but the part-grain it keeps for the next batch.
 M.KEFIR_FIELDS = { "ml", "tempC", "lastHour", "readyHour", "fluid", "parts", "culture", "grains", "progress", "growProgress",
-    "kefirMarks", "kefirAge", "grainClock", "grainLots", "grainsDone" }
+    "kefirMarks", "kefirAge", "grainClock", "grainLots", "grainsDone", "grainFrost", "kefirFrost" }
 local CROCK_FIELDS = { "stage", "workHours", "marks", "clabber" }
 
 local function clear(stationModData, fields)
@@ -289,6 +289,34 @@ FluidAgeing.register({
     -- Vanilla's Food Spoilage setting, then Dairy's own.
     speed = function() return M.MILK_SPEED * FluidAgeing.foodRotSpeed() end,
 })
+
+-- Frost (TP Core's Frost, by place): everything here freezes at 0 C, where setting and the crock already pause. Six
+-- hours frozen in all freeze a thing through (Frost.THROUGH_HOURS), and that changes it once: wet kefir grains go
+-- Hungry, kefir separates, a yogurt is Thawed (unhappiness +10). An Active Yogurt Starter instead loses 1/48 of the
+-- way to rotten each frozen hour (Frost.STARTER_RUIN_HOURS). Milk, butter and what sets or cultures in a station only
+-- pause, as before; dried grains are safe. Cooked or burnt food keeps vanilla's timers and never freezes. A basement
+-- never freezes, nor a place by a lit fire or banked embers; a powered freezer keeps vanilla's rules. Calories are
+-- never lost. The rules for each thing are with it (Kefir, Yoghurt).
+local Frost = require "TraditionalPreservationCore/Frost"
+M.FREEZE_C = 0
+M.FROST = Frost.point(M.FREEZE_C)
+-- Save key on an item: its frost record (TP Core's Frost), kept. A container of kefir keeps its own under
+-- KEFIR_FROST_KEY, forgotten once it holds no kefir. Never rename them once the mod is out.
+M.FROST_KEY = "tpdFrost"
+M.KEFIR_FROST_KEY = "tpdKefirFrost"
+
+-- The sandbox's "Frost harms"; off, frost does no harm (the records still run).
+function M.frostDamage()
+    local options = SandboxVars and SandboxVars.TraditionalPreservationDairy
+    return not options or options.FrostDamage ~= false
+end
+
+-- Brings a frost record under modData[key] up to now (Frost.see; seen: an age just brought up to now, its fire noted)
+-- and says whether this look froze it through, with frost harming. The first look starts the record.
+function M.frozenThrough(modData, key, now, seen)
+    local hours, record = Frost.see(modData, key, M.FROST, now, seen)
+    return Frost.frozenThrough(record, hours) and M.frostDamage()
+end
 
 -- One ten-minute reading: the ledger for the crock, and the hour's slot in the history for the incubator.
 -- An hour's slot keeps the last reading in it, with the means that go with it (the season's, a shut room's, an aired

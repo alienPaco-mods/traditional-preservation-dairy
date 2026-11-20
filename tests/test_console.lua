@@ -115,5 +115,6 @@ check("butter says so when you carry none", run("butter"):find("No Butter", 1, t
 check("rancid ages none", run("rancid", 5):find("Kept 0 butter for 5 days", 1, true) ~= nil)
 check("grains says so when there are none", run("grains"):find("No Kefir Grains", 1, true) ~= nil)
 check("starve starves none", run("starve"):find("0 item(s) by 48.0 hours", 1, true) ~= nil)
+check("frost freezes none here, 6 h by default", run("frost"):find("Froze 0 item(s), 0 Culturing Pot(s) and 0 Drying Cloth(s) for 6 hours", 1, true) ~= nil)
 
 H.done()

@@ -49,3 +49,10 @@ option TraditionalPreservationDairy.ButterByPlace {
     page = TraditionalPreservationDairy,
     translation = TraditionalPreservationDairy_ButterByPlace,
 }
+
+option TraditionalPreservationDairy.FrostDamage {
+    type = boolean,
+    default = true,
+    page = TraditionalPreservationDairy,
+    translation = TraditionalPreservationDairy_FrostDamage,
+}

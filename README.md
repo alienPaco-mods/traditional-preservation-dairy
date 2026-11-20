@@ -1,4 +1,4 @@
-# Traditional Preservation (Dairy) — Build 42 prototype (v0.0.25)
+# Traditional Preservation (Dairy) — Build 42 prototype (v0.0.26)
 
 **Status: experimental.** The yogurt loop, from the Stone Hearth's cauldron to a cup of yogurt, and the starter crock have been played in the game with test timers. The latest changes (mixed milks, the cold-milk refusal, the jar weight after a reload) have only been checked offline so far (see the test plan). Back up your save before enabling.
 
@@ -249,9 +249,28 @@ Caucasus milk kefir, from grains found as loot (a **Packet of Kefir Grains**: a 
 - **Strain Kefir** into empty containers through a Strainer, or a cloth at twice the time; the grains come out with the first strain. **Take Out Kefir Grains** works before the milk goes in.
 - **Kefir** is a fluid: its milk's food less the lactose (cow's about 590 kcal a litre), cow's and sheep's mixed by share, both called Kefir (Fresh). It ages as milk does, from the moment it is ready: **Kefir (Separated)** at about 3 days at 20 C (a little unhappiness), **Kefir (Rotten)** at about 10.
 - **Fresh kefir eases food sickness**, 10 a litre drunk, only while sick, then not again for 3 game hours.
-- **Grains starve out of milk**: on their own, in a pot with no milk, or left in a finished batch (from the moment it is ready), each grain on its own clock. They go **Hungry** at about 2 days and die at about 7 at 20 C, on milk's curve: a fridge about 5 times as long, frozen they wait. A place over 35 C turns live grains Hungry, over 45 C kills them. The name says the state: *Kefir Grains (Live)*, *(Hungry)*, *(Reviving)*, *(Dead)*. Grains coming back from dried don't go Hungry, but die at 7 days.
+- **Grains starve out of milk**: on their own, in a pot with no milk, or left in a finished batch (from the moment it is ready), each grain on its own clock. They go **Hungry** at about 2 days and die at about 7 at 20 C, on milk's curve: a fridge about 5 times as long, frozen they don't starve (but frost turns them Hungry: see Frost). A place over 35 C turns live grains Hungry, over 45 C kills them. The name says the state: *Kefir Grains (Live)*, *(Hungry)*, *(Reviving)*, *(Dead)*. Grains coming back from dried don't go Hungry, but die at 7 days.
 - **Dry them on TP Core's Drying Cloth** (a Sheet and 2 Stones, Build menu, Furniture; TP Core's README, "The Drying Cloth"): right-click it, *Lay Kefir Grains on the Cloth* (One or All, as many as there is room for): a cloth takes fifty grains, or any mix with yeast cakes (a batch takes the room of ten grains); each lay is a lot with its own clock. They dry by the air where the cloth lies, about 2 days at 25 C, 2.5 at 20, 5 at 10, paused frozen, and wait in a shut room for a window. *Take Off the Finished Lots* gives Dried Kefir Grains, to keep or to bring back over 2 batches; taken off early they come back as live grains. Dead grains aren't laid. A Kefir Grains on a Cloth from an older save still dries where it lies, and **Collect Dried Kefir Grains** takes it up as before. The kind is registered in `TraditionalPreservationDairyKefir.lua` (`M.GRAINS_ON_CLOTH`, `M.GRAIN_ROOM` 1 of the cloth's 50), the grains' overlays are tiles 24 to 33.
 - **Separated kefir bakes** as soured milk does: cake batter, muffins and cereal take it in place of milk.
+
+### 9. Frost
+
+Everything here freezes at 0 C, on TP Core's frost ledger by place (`Frost`; sandbox **Frost harms**, on by default). Six hours at or below it in all freeze a thing through (`Frost.THROUGH_HOURS`), and that changes it once:
+
+| Thing | Frozen through (6 h in all) |
+|---|---|
+| Kefir Grains, loose, or wet on a Drying Cloth | Live ones go *Kefir Grains (Hungry)*, as overheated grains do; one milk change brings them back. Taken off a cloth wet, they come back Hungry |
+| Grains in a kefir pot, in milk or out | The live ones go Hungry; a finished batch brings them back, and their frost starts over |
+| Kefir, in a container or ready in the pot | Separates, as if 3 days at 20 C had passed: **Kefir (Separated)**, a little unhappiness. Strained, it takes the pot's frost hours with it |
+| Yogurt and Jar of Yogurt | **Thawed**, once: unhappiness +10 (for a jar, the whole jar's, shared by its portions), named *Yogurt (Thawed)*, *Jar of Yogurt (Thawed) (4 portions)*. A cup spooned from a thawed jar is Thawed too |
+| Active Yogurt Starter | No one-time change: each frozen hour takes it 1/48 of the way to rotten (`Frost.STARTER_RUIN_HOURS`), so two days of frost in all spend it |
+
+- Nothing loses calories. Dried Kefir Grains, milk (fresh, scalded or soured), Butter, Salted Butter and Clarified Butter come to no harm: milk and butter only pause, as before.
+- In the stations only a kefir pot's grains and kefir change. Milk setting in the Culturing Pot and the crock's culture pause, as before.
+- Cooked or burnt food keeps vanilla's timers and never freezes.
+- A basement never freezes, nor a place by a lit fire or banked embers. A powered fridge never freezes; a powered freezer keeps vanilla's own frozen food rules (no frost hours counted).
+- A thing left alone catches up when next seen: a yogurt, a starter or loose grains when a container showing it opens, as they are moved and every hour you carry them; kefir in a container likewise, every ten minutes carried; a pot or a cloth whenever it is looked at.
+- Off, frost does no harm; the records still run.
 
 ## Sandbox options
 
@@ -265,6 +284,7 @@ Under Traditional Preservation (Dairy):
 | Milk goes off | On | Raw milk sours, then spoils; scalded milk spoils without souring |
 | Milk spoiling speed | 1 | 2 goes off twice as fast, 0.5 keeps twice as long; multiplies vanilla's Food Spoilage (`FluidAgeing.foodRotSpeed`) |
 | Butter keeps by place | On | Butter and Salted Butter go rancid by place; off, they never spoil, as vanilla's. Clarified Butter never does |
+| Frost harms | On | Six hours at 0 C or below turn wet kefir grains Hungry, separate kefir and thaw yogurt; each frozen hour wears an Active Yogurt Starter down (see Frost). Off, the cold does no harm |
 
 ## Tuning
 
@@ -272,7 +292,7 @@ Volumes, temperatures, cooling times, the setting and culture curves, the crock'
 
 `python3 tools/build_tileset.py` (needs Pillow) paints the Culturing Pot, the crock and their stage overlays and writes `42/media/traditionalpreservationdairy.tiles`, `42/media/texturepacks/traditionalpreservationdairy.pack`, the icons and the generated `42/media/lua/shared/TraditionalPreservationDairy/Tiles.lua` (don't edit it by hand). `luajit tests/test_tiles.lua` checks the entity scripts against it. The wrapped containers' icons are painted there too, from vanilla's own icons (`towel_wrap`). `python3 tools/build_model.py` (needs Pillow and numpy) writes the towel bundle, `42/media/Models_X/TowelBundle.glb`, a narrow copy for the tall ceramic jar (`TowelBundleTall.glb`) and its texture; each container's size is the scale of its `TowelBundle_*` model in the items script, worked out there from vanilla's meshes.
 
-`luajit tests/test_incubator.lua` checks the rules (cooling, setting, mixing, refusals, the crock, catching up), `tests/test_menu.lua` the right-click menus on stand-ins for the engine, `tests/test_jar.lua` the Jar of Yogurt (portions, food, weight, the empty jar back), `tests/test_baking.lua` the milks added to vanilla's recipes, `tests/test_console.lua` the debug console, and `luajit tools/season_report.lua` prints the season tables (golden-checked by `tp test Dairy`).
+`luajit tests/test_incubator.lua` checks the rules (cooling, setting, mixing, refusals, the crock, catching up), `tests/test_menu.lua` the right-click menus on stand-ins for the engine, `tests/test_jar.lua` the Jar of Yogurt (portions, food, weight, the empty jar back), `tests/test_baking.lua` the milks added to vanilla's recipes, `tests/test_console.lua` the debug console, `tests/test_frost.lua` frost, and `luajit tools/season_report.lua` prints the season tables (golden-checked by `tp test Dairy`).
 
 ## Realism notes for review
 
@@ -304,6 +324,7 @@ Volumes, temperatures, cooling times, the setting and culture curves, the crock'
 - Weather is TP Core's shared ledger; a pot catches up hour by hour over the two weeks of kept weather, and the hours before that as one spell.
 - A Jar of Yogurt keeps its jar type in its ModData (`tpdJar`); its portions are its own food values (hunger, calories and so on, which the engine saves), and `tpdFood` marks a jar that has them. `tpdPortion` holds one portion's food, a quarter litre of the batch's milk by its shares (C23). Vanilla Yogurt's script food is set to a cow's milk portion at load, beside its `ReplaceOnUse`. A jar never filled at a pot (a debug spawn) gets a glass jar's four portions of vanilla Yogurt's food (30 kcal each) the first time it is touched. Its weight is a custom weight the engine saves. Vanilla's eat action is wrapped (`complete`, `serverStop`) to relabel the jar and give the empty jar back.
 - Every vanilla Yogurt gets `ReplaceOnUse` = Empty Yogurt Container at load, so eating or oatmeal leaves the cup.
+- Frost (`M.FROST`, TP Core's `Frost.point(0)`, process `frostAt0` on the ledger `TraditionalPreservationCoreFrost`): a grain, a yogurt or a starter keeps its frost record in its ModData (`tpdFrost`), a container of kefir in `tpdKefirFrost` (forgotten once it holds no kefir), a thawed yogurt `tpdThawed`; a kefir pot keeps `grainFrost` and `kefirFrost` in `tpdIncubator`, a lot of grains on a Drying Cloth `frost` and `hungry` in its data. Yogurts and starters are looked at through TP Core's `PlaceKeepingUI.watch`, kefir containers as TP Core looks at fluids (`M.keepKefirFrost`).
 - The shared core (Weather, Station, UI, Stone Hearth) is the required TP Core mod (`TraditionalPreservationCore`), loaded as `require "TraditionalPreservationCore/Weather"`. Edit it there. Dairy names cow's and sheep's milk as a blend with `CauldronFluid.blend`.
 
 ## Debug commands
@@ -334,4 +355,5 @@ Still to check in the game:
 8. The hold at the scald: steaming cauldron milk refused for 20 minutes with the minutes to go, then poured; a pot on a stove reads Scalded only after 20 minutes at the steam (TESTING_GUIDE step 111).
 9. Butter: going rancid by place, Salt Butter, clarifying one and two, the burnt pot (TESTING_GUIDE, butter).
 10. Kefir: the fluids, the cure, the packet and loot; grains in the Culturing Pot, the speed by grains and place, hot milk, growth, straining (TESTING_GUIDE, kefir).
-11. `console.txt` shows no repeating Lua errors after an hour of play, with the other Traditional Preservation mods on.
+11. Frost: grains, kefir and yogurt left out on a frosty night, the same in a basement and by a fire; a starter left out; `TPD.frost()`.
+12. `console.txt` shows no repeating Lua errors after an hour of play, with the other Traditional Preservation mods on.

@@ -1494,6 +1494,20 @@ end)
 -- their starving clocks, and grains drying on a cloth.
 PlaceKeepingUI.watch(M.BUTTER_KEEPER, M.BUTTER_DAYS)
 PlaceKeepingUI.watch({ keep = M.keepGrain }, { [M.GRAIN] = true, [M.GRAIN_DRYING] = true })
+-- Frost reaches yogurts and starters the same way (their frost record; their keeping stays vanilla's).
+PlaceKeepingUI.watch({ keep = M.keepFrost }, M.FROST_FOODS)
+
+-- Kefir in a container catches up on its frost when a loot window shows it, or as it is moved (what a player carries:
+-- the World, every ten minutes), as TP Core looks at fluids.
+Events.OnRefreshInventoryWindowContainers.Add(function(page, reason)
+    if reason ~= "end" or page.onCharacter then return end
+    local now = getGameTime():getWorldAgeHours()
+    for _, button in ipairs(page.backpacks or {}) do M.keepKefirFrostIn(button.inventory, now) end
+end)
+
+Transfer.before(function(_, item)
+    if item:getFluidContainer() then M.keepKefirFrost(item, getGameTime():getWorldAgeHours()) end
+end)
 
 -- Every step of clarifying takes Cooking 2.
 local function butterRefusal(playerObj)

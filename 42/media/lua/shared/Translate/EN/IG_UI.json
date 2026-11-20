@@ -122,6 +122,7 @@
   "IGUI_TraditionalPreservationDairy_GrainHungry": "Hungry",
   "IGUI_TraditionalPreservationDairy_GrainReactivating": "Reviving",
   "IGUI_TraditionalPreservationDairy_GrainDead": "Dead",
+  "IGUI_TraditionalPreservationDairy_Thawed": "%1 (Thawed)",
   "IGUI_TraditionalPreservationDairy_GrainsOnClothDrying": "Kefir Grains on a Cloth (Drying, %1)",
   "IGUI_TraditionalPreservationDairy_GrainsOnClothDry": "Kefir Grains on a Cloth (Dry, %1)",
   "IGUI_TraditionalPreservationDairy_DryingLeft": "Dry in %1 at this place's temperature.",

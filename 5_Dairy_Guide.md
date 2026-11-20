@@ -274,6 +274,23 @@ With **Fish & Meat** on, Potted Meat seals under Clarified Butter as it does und
 
 > *Margin note:* in Russia soured raw milk is *prostokvasha*, "simply soured", and the Irish called it *bainne clábair*, "thick milk", which English made into bonny clabber. Every farm kitchen had a jug of it going, for pancakes and soda bread. The crock here takes a little game licence: a real clabber won't turn into yogurt by itself. Fed warm fresh milk, though, its acid and bacteria give the crock the head start the wheat would take a day to grow.
 
+### Frost
+
+Everything in this mod freezes at **0 C**. A short frost does nothing; **six hours frozen in all** freeze a thing through, and it changes once:
+
+| Left out in the frost | After 6 hours frozen in all |
+|---|---|
+| **Kefir Grains**, loose, wet on a Drying Cloth, or in a kefir pot | Live ones go **Kefir Grains (Hungry)**. One milk change brings them back |
+| **Kefir**, in a jug or ready in the pot | **Kefir (Separated)**, as if three days old |
+| **Yogurt**, **Jar of Yogurt** | **Yogurt (Thawed)**: +10 unhappiness, once. The food is all still there |
+| **Active Yogurt Starter** | Each frozen hour wears it down: two days of frost in all and it is spent |
+
+- **Safe:** Dried Kefir Grains, milk of every kind, Butter, Salted Butter and Clarified Butter. Milk setting in the Culturing Pot and the crock's culture only wait for the thaw.
+- **Never freezes:** a basement, a place by a lit fire or banked embers, a powered fridge. A powered freezer is the game's own business. Cooked food never freezes.
+- Sandbox **Frost harms** turns it off.
+
+> *Margin note:* ice crystals tear the curd, so thawed yogurt weeps whey and turns grainy, though it is as nourishing as before. Kefir grains and yogurt bacteria mostly live through a freezing, only slowed; dried, the grains don't mind it at all.
+
 ---
 
 ## 9. The Starter Culture Crock
@@ -371,7 +388,7 @@ Grains starve without milk: carried, in a crate, in a pot with no milk, or left 
 | **20 C, a room** | **2 days** | **7 days** |
 | A basement in summer, about 13 C | about 4½ days | about 16 days |
 | A powered fridge | about 10 days | about 5 weeks |
-| Frozen | they wait | they wait |
+| Frozen | they don't starve, but 6 hours frozen turn live ones Hungry | they wait |
 
 A place over **35 C** turns live grains Hungry, over **45 C** kills them. Grains coming back from dried don't go Hungry, but die at 7 days just the same.
 
@@ -611,7 +628,8 @@ A fire outside: under a roof 72 hours in January, about 40 in February and March
 | Add Kefir Grains refused | The pot holds yogurt milk or a starter: grains go into an empty pot first. Dead grains are refused |
 | Pour Milk refused on the grains | The milk is over 45 C: let it cool. At 35 to 45 C it goes in, but the live grains come out Hungry |
 | Kefir takes days | Too few grains for the milk (one live grain to every 40 ml), or a cold place: under 10 C it takes three days and more |
-| My grains read Hungry or Dead | Out of milk they go Hungry in 2 days and die in 7 in a room. Keep them in milk, in a fridge, or dry them |
+| My grains read Hungry or Dead | Out of milk they go Hungry in 2 days and die in 7 in a room. Six hours of frost turn them Hungry too. Keep them in milk, in a fridge, or dry them |
+| My yogurt reads (Thawed) | It froze for six hours. It is still good food, just less pleasant. Keep yogurt in a basement or a fridge in winter |
 | Kefir didn't ease my stomach | Only fresh kefir, only while you have food sickness, and not again within 3 game hours |
 | Stations or recipes missing | TP Core must be enabled. Then check `~/Zomboid/console.txt`: the tile number 5172 must be unique among your mods |
 
@@ -629,6 +647,7 @@ Under **Traditional Preservation (Dairy)**:
 | Milk goes off | On | Raw milk sours, then rots; scalded milk rots without souring. Off, milk keeps for ever as in vanilla |
 | Milk spoiling speed | 1 | 2 goes off twice as fast, 0.5 keeps twice as long (0.1 to 10); on top of the game's Food Spoilage |
 | Butter keeps by place | On | Butter and Salted Butter go rancid by place. Off, they keep for ever as in vanilla. Clarified Butter never goes off either way |
+| Frost harms | On | Six hours at 0 C or below turn live kefir grains Hungry, separate kefir and thaw yogurt; each frozen hour wears an Active Yogurt Starter down (chapter 8, Frost). Off, the cold does no harm |
 
 ---
 
@@ -677,6 +696,7 @@ Each process laid out as the game's planting seasons: the months it works unheat
 | `TPD.rancid(days)` | Ages the butter you carry by this many days (10 if left out) at its place. |
 | `TPD.grains()` | Your kefir grains: state, hours starved, place. Grains on a Drying Cloth: `TPC.cloth()`. |
 | `TPD.starve(hours)` | Those grains starve this many hours more (48 if left out). `TPC.dryCloth(hours)` dries a Drying Cloth's lots. |
+| `TPD.frost(hours)` | Freezes the grains, kefir, yogurts and starters near you for this many hours (6 if left out: frozen through). |
 | `TPD.tiles()` | Every station within 3 tiles: object class, sprite, solid flags. |
 
 **Typical check:** within 2 tiles of a Stone Hearth with the cauldron fitted (`TPC.kit()`, `TPC.fit()`), `TPC.cauldron(5)` and `TPC.hot()`, then `TPD.kit()`, Pour from the Cauldron and Add Starter. `TPD.age(3)` should show it wrapped and setting, `TPD.age(7)` Ready. **Kefir:** `TPD.kit("kefir")`, Add Kefir Grains (All), Pour Milk from the 1 L pot, `TPD.age(24)`, Strain Kefir: Kefir, and 27 grains back.

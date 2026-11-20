@@ -5,8 +5,14 @@
 -- Yogurt's for a jar never filled at a pot), so vanilla's own Eat, Eat Half and
 -- Eat Quarter work on it too; the eat action is hooked only to relabel the jar and give the empty one back (TP
 -- Core's Portions, which Fish & Meat's crock uses too).
+-- Frost (TP Core's Frost, at Dairy's 0 C): a Yogurt or a Jar of Yogurt frozen through is Thawed, once: unhappiness +10
+-- and named so; an Active Yogurt Starter loses 1/48 of the way to rotten a frozen hour. Cooked or burnt, they keep
+-- vanilla's timers and never freeze.
 require "TraditionalPreservationDairy"
 local Portions = require "TraditionalPreservationCore/Portions"
+local Frost = require "TraditionalPreservationCore/Frost"
+local FluidAgeing = require "TraditionalPreservationCore/FluidAgeing"
+local Weather = require "TraditionalPreservationCore/Weather"
 local M = TraditionalPreservationDairy
 
 -- Shop yogurt is cow's milk yogurt too (C23): new Yoghurts get a cow's milk portion's food, as script units
@@ -53,10 +59,16 @@ function M.jarFull(jar)
     return M.portionsIn(jar:getBaseHunger(), M.jarPortion(jar))
 end
 
+-- A yogurt's name: its own, with (Thawed) once frost got through it.
+function M.yoghurtName(item)
+    local name = getItemNameFromFullType(item:getFullType())
+    if not item:getModData()[M.THAWED_KEY] then return name end
+    return getText("IGUI_TraditionalPreservationDairy_Thawed", name)
+end
+
 -- A Jar of Yogurt says how many portions are left and weighs the empty jar plus what's still in it.
 function M.labelJar(jar)
-    Portions.label(jar, getItemNameFromFullType(M.YOGHURT_JAR), M.jarPortions(jar), jar:getModData().tpdJar or "Base.ClayJar",
-        M.CUP_KG)
+    Portions.label(jar, M.yoghurtName(jar), M.jarPortions(jar), jar:getModData().tpdJar or "Base.ClayJar", M.CUP_KG)
 end
 
 -- A freshly collected jar: ml of yogurt in an empty jar of jarType, aged in days, portion being one portion's food.
@@ -98,3 +110,69 @@ end
 -- Eaten through vanilla's eat action (TP Core's Portions, the one wrap of it): the jar's portions are read first,
 -- as a spawned jar gets its food values then, and afterwards it is relabelled or gives its empty jar back.
 Portions.onEat(M.YOGHURT_JAR, function(jar) M.jarPortions(jar) end, function(jar, container) M.afterJarUse(jar, container) end)
+
+-- Frost
+-- Save key on a yogurt: true once it is Thawed. Never rename it once the mod is out.
+M.THAWED_KEY = "tpdThawed"
+M.THAWED_UNHAPPINESS = 10
+-- What frost reaches out of a station, by what it does: "thaw" (once, frozen through) or "bite" (each frozen hour).
+M.FROST_FOODS = { [M.YOGHURT] = "thaw", [M.YOGHURT_JAR] = "thaw", [M.STARTER] = "bite" }
+
+-- A yogurt frozen through: unhappiness +10 and named (Thawed), once. Its calories stay. Returns true if it changed.
+function M.thawYoghurt(item)
+    local itemModData = item:getModData()
+    if itemModData[M.THAWED_KEY] then return false end
+    itemModData[M.THAWED_KEY] = true
+    item:setUnhappyChange(item:getUnhappyChangeUnmodified() + M.THAWED_UNHAPPINESS)
+    if item:getFullType() == M.YOGHURT_JAR then
+        M.labelJar(item)
+    else
+        item:setName(M.yoghurtName(item))
+        item:setCustomName(true)
+    end
+    return true
+end
+
+-- What hours of frost do to a food of M.FROST_FOODS, its record just brought on by them: a starter moves that much
+-- nearer rotten (it keeps vanilla's clock, so no PlaceKeeping clock moves with it), a yogurt frozen through thaws.
+function M.frostFood(item, record, hours)
+    if M.FROST_FOODS[item:getFullType()] == "bite" then
+        Frost.bite(item, hours, Frost.STARTER_RUIN_HOURS, nil)
+    elseif Frost.frozenThrough(record, hours) then
+        M.thawYoghurt(item)
+    end
+end
+
+-- True for a food frost never reaches: not one of M.FROST_FOODS, or cooked or burnt (vanilla's timers).
+local function frostProof(item)
+    return not M.FROST_FOODS[item:getFullType()] or item:isCooked() or item:isBurnt()
+end
+
+-- Brings a yogurt's or a starter's frost up to now at the place it was seen in last, and counts from where it is now
+-- (place, or where the item is). Its keeping stays vanilla's. Returns its frost record, or nil when frost never
+-- reaches it.
+function M.keepFrost(item, now, place)
+    if frostProof(item) then return nil end
+    now = now or getGameTime():getWorldAgeHours()
+    local fire, holder
+    if not place then place, fire, holder = FluidAgeing.placeOfItem(item) end
+    local itemModData = item:getModData()
+    local record = itemModData[M.FROST_KEY]
+    place = place or (record and record.place) or Weather.DEFAULT_PLACE
+    if not record then
+        record = Frost.newRecord(M.FROST, now, place)
+        itemModData[M.FROST_KEY] = record
+    else
+        local hours = Frost.catchUp(record, M.FROST, now, place, record)
+        if hours > 0 and M.frostDamage() then M.frostFood(item, record, hours) end
+    end
+    if holder then FluidAgeing.noteFire(record, fire, holder, now) end
+    return record
+end
+
+-- A cup spooned from a jar is the jar's yogurt: it goes on from the jar's frost, and is Thawed if the jar was.
+function M.carryFrost(jar, cup)
+    local record = jar:getModData()[M.FROST_KEY]
+    if record then cup:getModData()[M.FROST_KEY] = FluidAgeing.copy(record) end
+    if jar:getModData()[M.THAWED_KEY] then M.thawYoghurt(cup) end
+end

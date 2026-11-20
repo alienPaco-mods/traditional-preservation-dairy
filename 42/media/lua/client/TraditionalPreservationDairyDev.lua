@@ -6,6 +6,8 @@ local M = TraditionalPreservationDairy
 local FluidAgeing = require "TraditionalPreservationCore/FluidAgeing"
 local Station = require "TraditionalPreservationCore/Station"
 local PlaceKeepingUI = require "TraditionalPreservationCore/PlaceKeepingUI"
+local Frost = require "TraditionalPreservationCore/Frost"
+local DryingCloth = require "TraditionalPreservationCore/DryingCloth"
 TPD = {}
 
 local function say(text) print("[TPD] " .. text) end
@@ -26,6 +28,7 @@ function TPD.help()
     say("TPD.rancid(days)     age that butter by this many days at its place (default 10)")
     say("TPD.grains()         kefir grains and grains drying on a cloth, carried or within 4 tiles: state, hours starved, place, drying left")
     say("TPD.starve(hours)    those grains starve this many hours at 20 C (default 48: Hungry; 168 dead), and old Kefir Grains on a Cloth dry this many hours at full speed; grains on a Drying Cloth: TPC.dryCloth(hours)")
+    say("TPD.frost(hours)     freeze the frost-sensitive things near you for hours (default 6: frozen through): grains go Hungry, kefir separates, yogurts thaw, a starter loses 1/48 of its life an hour")
     say("TPD.tiles()          every station within 3 tiles: object class, sprite and square solid flags")
     say("The Stone Hearth's commands (cauldronInfo, stone, cauldron, fuel, hot, its kit) are TP Core's: TPC.help()")
 end
@@ -48,6 +51,12 @@ local function pots()
     return TraditionalPreservationDairyWorld.stations()
 end
 
+-- A frost record as text: frozen hours in all, and whether it is frozen through.
+local function frostText(record)
+    if not record then return "no frost yet" end
+    return string.format("frozen %.1f h in all%s", record.age, record.age >= Frost.THROUGH_HOURS and " (through)" or "")
+end
+
 function TPD.pots()
     local now = getGameTime():getWorldAgeHours()
     local stations = pots()
@@ -58,9 +67,10 @@ function TPD.pots()
         if batch.culture then
             local left = M.kefirHoursLeft(batch, placeC)
             local count, work = M.grainCount(batch)
-            say(string.format("%d,%d,%d %s: %.1f L at %.1f C, %d grains (%.1f at work, %.0f%% speed), fermented %.0f%%, %s at %.1f C; ready in %s h",
+            say(string.format("%d,%d,%d %s: %.1f L at %.1f C, %d grains (%.1f at work, %.0f%% speed), fermented %.0f%%, %s at %.1f C; ready in %s h; grains %s, kefir %s",
                 station:getX(), station:getY(), station:getZ(), M.stage(batch), (batch.ml or 0) / 1000, batch.tempC or 0, count, work,
-                M.kefirRatio(batch) * 100, (batch.progress or 0) * 100, tostring(batch.place), placeC, left and string.format("%.1f", left) or "never"))
+                M.kefirRatio(batch) * 100, (batch.progress or 0) * 100, tostring(batch.place), placeC, left and string.format("%.1f", left) or "never",
+                frostText(batch.grainFrost), frostText(batch.kefirFrost)))
         else
             local hours, nextStage = M.forecast(batch, placeC)
             say(string.format("%d,%d,%d %s: %.1f L at %.1f C, starter %s, set %.1f/%.0f h, %s at %.1f C; next %s in %s h",
@@ -273,9 +283,10 @@ function TPD.ages()
                 fluid and fluid:getFluidTypeString() or "?"))
         else
             local left = FluidAgeing.hoursLeft(fluidAge, fluidKind)
-            say(string.format("%s: %s, %s%s, age %.1f h at 20 C, next stage in %s h at 20 C, %s", item:getDisplayName(),
+            local frost = fluidKind == M.KEFIR_KIND and ", " .. frostText(M.keepKefirFrost(item)) or ""
+            say(string.format("%s: %s, %s%s, age %.1f h at 20 C, next stage in %s h at 20 C, %s%s", item:getDisplayName(),
                 fluid and fluid:getFluidTypeString() or "?", FluidAgeing.stage(fluidAge, fluidKind), FluidAgeing.inState(fluidAge, M.SCALDED_STATE) and " (scalded)" or "",
-                fluidAge.age, left and string.format("%.1f", left) or "never", tostring(fluidAge.place)))
+                fluidAge.age, left and string.format("%.1f", left) or "never", tostring(fluidAge.place), frost))
         end
     end
 end
@@ -329,9 +340,9 @@ function TPD.grains()
         if item:getFullType() == M.GRAIN then
             local grain = M.keepGrain(item, now)
             local clock = grain.clock
-            say(string.format("%s: %s, starved %.1f h at 20 C (Hungry at %d, dead at %d), in %s", item:getDisplayName(),
+            say(string.format("%s: %s, starved %.1f h at 20 C (Hungry at %d, dead at %d), in %s, %s", item:getDisplayName(),
                 grain.grainState, clock and clock.starve.age or 0, M.GRAIN_HUNGRY_HOURS, M.GRAIN_DEAD_HOURS,
-                tostring(clock and clock.starve.place)))
+                tostring(clock and clock.starve.place), frostText(item:getModData()[M.FROST_KEY])))
         else
             local drying = M.keepDrying(item, now)
             if drying then
@@ -362,6 +373,60 @@ function TPD.starve(hours)
         end
     end
     say(string.format("Starved or dried %d item(s) by %.1f hours. TPD.grains() to see them.", #found, hours))
+end
+
+-- Frost
+-- Hours of frost added to a record by hand, as if it had frozen that long: true if that froze it through.
+local function addFrost(record, hours)
+    if not record then return false end
+    record.age = record.age + hours
+    return Frost.frozenThrough(record, hours)
+end
+
+-- Freezes for hours, the sandbox's Frost harms aside: live kefir grains (loose, wet on a Drying Cloth, in a kefir pot),
+-- the kefir you carry and in kefir pots, and the yogurts and starters on you and within PlaceKeepingUI.REACH tiles.
+-- Each counts the hours on its own frost record, so 6 freezes anything through.
+function TPD.frost(hours)
+    hours = hours or Frost.THROUGH_HOURS
+    local now, count = getGameTime():getWorldAgeHours(), 0
+    for _, item in ipairs(PlaceKeepingUI.near({ [M.GRAIN] = true })) do
+        local grain = M.keepGrain(item, now)
+        if addFrost(item:getModData()[M.FROST_KEY], hours) then
+            M.frostGrain(grain, now)
+            M.nameGrain(item, grain)
+        end
+        count = count + 1
+    end
+    for _, item in ipairs(PlaceKeepingUI.near(M.FROST_FOODS)) do
+        local record = M.keepFrost(item, now)
+        if record then
+            addFrost(record, hours)
+            M.frostFood(item, record, hours)
+            count = count + 1
+        end
+    end
+    for _, milk in ipairs(carriedMilk()) do
+        if milk.fluidKind == M.KEFIR_KIND and addFrost(M.keepKefirFrost(milk.item, now), hours) then
+            M.frostKefir(milk.item, milk.fluidAge, milk.fluidKind)
+        end
+        if milk.fluidKind == M.KEFIR_KIND then count = count + 1 end
+    end
+    for _, station in ipairs(pots()) do
+        local batch = TraditionalPreservationDairyWorld.updateIncubator(station, now)
+        if addFrost(batch.grainFrost, hours) then M.frostPotGrains(batch) end
+        if addFrost(batch.kefirFrost, hours) and batch.kefirAge then M.separateKefir(batch.kefirAge) end
+        TraditionalPreservationDairyWorld.refresh(station)
+    end
+    local cloths = Station.near(getPlayer():getSquare(), PlaceKeepingUI.REACH, DryingCloth.isCloth)
+    for _, cloth in ipairs(cloths) do
+        for _, lot in ipairs((DryingCloth.update(cloth, now)).lots) do
+            if lot.kind == M.GRAINS_ON_CLOTH.name and DryingCloth.state(lot) == "wet" and lot.data then
+                if addFrost(lot.data.frost, hours) then lot.data.hungry = true end
+            end
+        end
+    end
+    say(string.format("Froze %d item(s), %d Culturing Pot(s) and %d Drying Cloth(s) for %s hours. TPD.grains(), TPD.ages(), TPD.pots() to see them.",
+        count, #pots(), #cloths, tostring(hours)))
 end
 
 function TPD.tiles()

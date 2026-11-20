@@ -114,14 +114,16 @@ function COMPLETE.milk(self, batch, hour)
     end
 end
 
--- The kefir keeps the age it had in the pot (TP Core's FluidAgeing), and is renamed for it: separated if it was.
+-- The kefir keeps the age it had in the pot (TP Core's FluidAgeing), and is renamed for it: separated if it was. Its
+-- frost goes on from the pot's too.
 function COMPLETE.strain(self, batch, hour)
     local container = self.item:getFluidContainer()
-    local ml, kefir, age, _, lots = M.strainKefir(batch, math.floor(container:getCapacity() * 1000))
+    local ml, kefir, age, _, lots, frost = M.strainKefir(batch, math.floor(container:getCapacity() * 1000))
     if ml <= 0 then return end
     FluidAgeing.clearIfEmpty(self.item)
     for name, part in pairs(kefir) do container:addFluid(name, part / 1000) end
     if age then self.item:getModData()[FluidAgeing.KEY] = age end
+    self.item:getModData()[M.KEFIR_FROST_KEY] = frost
     FluidAgeing.look(self.item, hour)
     giveGrains(self, lots, hour)
 end

@@ -165,6 +165,8 @@ end)
 Weather.onReading(function(now, climate)
     M.recordWeather(M.getLedger(), M.getHistory(), now, climate:getTemperature())
     M.BUTTER_KEEPER.recordWeather(now, climate:getTemperature())
+    -- Kefir a player carries catches up on its frost (TP Core records the frost ledger itself).
+    Station.eachPlayer(function(player) M.keepKefirFrostIn(player:getInventory(), now) end)
 end)
 
 -- A vanilla pour carries the heat: what goes in mixes, by volume, with what was there, so a pot just off the stove

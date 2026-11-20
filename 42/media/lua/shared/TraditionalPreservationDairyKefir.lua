@@ -9,11 +9,13 @@
 -- Grains come only from loot, as a packet of dried ones; each grain is an item of a gram. Live grains keep their grainState
 -- in modData (and the hour it was last set), and their own starving clock, so the grains from one batch can be split any
 -- way. Out of milk they go Hungry, then die, on milk's curve; a place too hot weakens or kills them. Spread on a cloth
--- they dry where they lie, and keep. Required by TraditionalPreservationDairy.lua, whose M it adds to.
+-- they dry where they lie, and keep. Frozen through (6 h at 0 C or below, in all: TP Core's Frost) wet grains go
+-- Hungry, loose, on a cloth or in a pot, and kefir separates, in a container or in the pot. Required by TraditionalPreservationDairy.lua, whose M it adds to.
 TraditionalPreservationDairy = TraditionalPreservationDairy or {}
 local M = TraditionalPreservationDairy
 local FluidAgeing = require "TraditionalPreservationCore/FluidAgeing"
 local Drink = require "TraditionalPreservationCore/Drink"
+local Frost = require "TraditionalPreservationCore/Frost"
 
 -- Kefir fluids: each milk (scalded too) to the kefir it makes; each kefir to its separated and rotten ones.
 M.KEFIRS = { CowMilk = "CowKefir", SheepMilk = "SheepKefir", AnimalMilk = "CowKefir",
@@ -28,7 +30,7 @@ M.KEFIR_FOOD_SICKNESS = 10
 M.FOOD_SICKNESS_COOLDOWN = "foodSickness"
 M.KEFIR_COOLDOWN_HOURS = 3
 
-FluidAgeing.register({
+M.KEFIR_KIND = FluidAgeing.register({
     process = M.KEFIR_PROCESS,
     rate = M.milkRate,
     turnHours = M.KEFIR_SEPARATE_HOURS,
@@ -151,9 +153,18 @@ function M.keepGrain(item, now, place, ledger)
             end
         end
         if holder and grain.clock then FluidAgeing.noteFire(grain.clock.starve, fire, holder, now) end
+        -- Frost, by the clock's place and fire: frozen through, a live grain goes Hungry.
+        if grain.clock and M.frozenThrough(item:getModData(), M.FROST_KEY, now, grain.clock.starve) then
+            M.frostGrain(grain, now)
+        end
     end
     M.nameGrain(item, grain)
     return grain
+end
+
+-- Frozen through, a live grain goes Hungry, as an overheated one does; one milk change brings it back.
+function M.frostGrain(grain, now)
+    if grain.grainState == M.GRAIN_LIVE then grain.grainState, grain.hour = M.GRAIN_HUNGRY, now end
 end
 
 -- A grain item's record for a grain of key, starved so many hours already, its clock counting from place.
@@ -287,15 +298,40 @@ function M.grainFates(batch, starved, hot, killed)
     batch.grains = grains
 end
 
--- Brings the pot's grains up to now at place: unfed they starve; in milk only the place's heat reaches them.
+-- Brings one of the pot's frost records (batch[key]) up to now at place, by the pot's noted fire, as its clocks are.
+-- Returns true if this look froze it through, with frost harming. The first look starts it.
+local function potFrozenThrough(batch, key, now, place)
+    local record = batch[key]
+    if not record then
+        batch[key] = Frost.newRecord(M.FROST, now, place)
+        return false
+    end
+    local hours = Frost.catchUp(record, M.FROST, now, place, batch)
+    return Frost.frozenThrough(record, hours) and M.frostDamage()
+end
+
+-- Frozen through, the pot's live grains go Hungry, in milk or out, as an overheated pot's do.
+function M.frostPotGrains(batch)
+    M.grainFates(batch, 0, 1, 0)
+end
+
+-- Brings the pot's grains up to now at place: unfed they starve; in milk only the place's heat and frost reach them.
 function M.keepPotGrains(batch, now, place, ledger)
     if not batch.grains then return end
+    local frozen = potFrozenThrough(batch, "grainFrost", now, place)
     if not batch.grainClock then
         batch.grainClock = M.newGrainClock(ledger, now, place)
         return
     end
     local starved, hot, killed = M.advanceGrainClock(batch.grainClock, ledger, now, place, batch)
     M.grainFates(batch, starved, hot, killed)
+    if frozen then M.frostPotGrains(batch) end
+end
+
+-- Frozen through, kefir separates into curds and whey: its age goes to the Separated stage (FluidAgeing's Turned),
+-- the way it would have gone by time. Never younger.
+function M.separateKefir(kefirAge)
+    kefirAge.age = math.max(kefirAge.age, M.KEFIR_SEPARATE_HOURS)
 end
 
 -- A batch done: the grains come out of it as grainsAfter says (grown, hungry ones live again, dried ones a stage on),
@@ -434,7 +470,10 @@ function M.fermentKefir(batch, now, place, ledger)
     M.keepPotGrains(batch, now, place, ledger)
     local stage = M.kefirStage(batch)
     if stage == "KefirReady" then
-        if batch.kefirAge then FluidAgeing.advance(batch.kefirAge, FluidAgeing.fluidKind(M.KEFIR_PROCESS), ledger, now, place, batch) end
+        if batch.kefirAge then
+            FluidAgeing.advance(batch.kefirAge, FluidAgeing.fluidKind(M.KEFIR_PROCESS), ledger, now, place, batch)
+            if potFrozenThrough(batch, "kefirFrost", now, place) then M.separateKefir(batch.kefirAge) end
+        end
         return
     end
     if stage ~= "Fermenting" then return end
@@ -458,6 +497,9 @@ function M.fermentKefir(batch, now, place, ledger)
     batch.kefirAge = FluidAgeing.newFluidAge(kefirKind, ledger, now, place)
     batch.kefirAge.age = math.max(now - batch.readyHour, 0) * M.milkRate(M.placeTemperature(ledger, place))
     finishGrains(batch, batch.kefirAge.age)
+    -- Fed, the grains' frost starts over; the kefir's starts now.
+    batch.grainFrost = Frost.newRecord(M.FROST, now, place)
+    batch.kefirFrost = Frost.newRecord(M.FROST, now, place)
 end
 
 -- The grains after a finished batch, as counts by key, and the part-grain the pot keeps: live ones grew by their share
@@ -499,13 +541,14 @@ function M.takeGrains(batch)
         for key, n in pairs(out) do addLot(lots, key, n, 0) end
     end
     batch.grains, batch.partGrain, batch.grainLots, batch.grainClock, batch.grainsDone = nil, part, nil, nil, nil
+    batch.grainFrost = nil
     if (batch.ml or 0) <= 0 then M.clearFields(batch, M.KEFIR_FIELDS) end
     return out, lots
 end
 
 -- Strains up to maxMl of ready kefir out: the ml, its kefir by fluid ({ CowKefir = ml, ... }), its age (a copy of the
--- pot's kefirAge), and the grains (counts by key, then their lots) the first time. An emptied pot starts over, keeping
--- its part-grain.
+-- pot's kefirAge), and the grains (counts by key, then their lots) the first time, then a copy of the kefir's frost
+-- record. An emptied pot starts over, keeping its part-grain.
 function M.strainKefir(batch, maxMl)
     if M.stage(batch) ~= "KefirReady" then return 0 end
     local ml = math.min(batch.ml, maxMl or batch.ml)
@@ -515,11 +558,46 @@ function M.strainKefir(batch, maxMl)
         kefir[name] = (kefir[name] or 0) + part
     end
     local age = batch.kefirAge and FluidAgeing.copy(batch.kefirAge)
+    local frost = batch.kefirFrost and FluidAgeing.copy(batch.kefirFrost)
     local grains, lots
     if batch.grains then grains, lots = M.takeGrains(batch) end
     batch.ml = batch.ml - ml
     if batch.ml <= 0.5 then M.clearFields(batch, M.KEFIR_FIELDS) end
-    return ml, kefir, age, grains, lots
+    return ml, kefir, age, grains, lots, frost
+end
+
+-- Kefir in a container: brings its fluid up to now (TP Core's FluidAgeing.look) and its frost with it, by the fluid's
+-- place and fire; frozen through, it separates and is renamed so. A container with no kefir forgets its record, so
+-- fresh kefir in it starts over. Returns the record, or nil. Looked at as Core looks at fluids: what a player carries
+-- every ten minutes, the containers a loot window shows, an item as it is moved.
+function M.keepKefirFrost(item, now)
+    local itemModData = item:getModData()
+    local container = item:getFluidContainer()
+    if FluidAgeing.fluidKindIn(container) ~= M.KEFIR_KIND then
+        itemModData[M.KEFIR_FROST_KEY] = nil
+        return nil
+    end
+    now = now or getGameTime():getWorldAgeHours()
+    local fluidAge, fluidKind = FluidAgeing.look(item, now)
+    if not fluidAge then return nil end
+    if M.frozenThrough(itemModData, M.KEFIR_FROST_KEY, now, fluidAge) then M.frostKefir(item, fluidAge, fluidKind) end
+    return itemModData[M.KEFIR_FROST_KEY]
+end
+
+-- Separates the kefir in a container, its age already looked at, and renames it.
+function M.frostKefir(item, fluidAge, fluidKind)
+    M.separateKefir(fluidAge)
+    FluidAgeing.apply(item:getFluidContainer(), fluidAge, fluidKind)
+end
+
+local function hasFluid(item)
+    return item:getFluidContainer() ~= nil
+end
+
+-- Every container of kefir in an item container (and the bags inside it), brought up to now.
+function M.keepKefirFrostIn(container, now)
+    local items = container and container:getAllEvalRecurse(hasFluid)
+    for i = 0, items and items:size() - 1 or -1 do M.keepKefirFrost(items:get(i), now) end
 end
 
 -- Hours until the kefir is ready if the place's temperature holds, or nil if it never is.
@@ -649,6 +727,14 @@ local Tiles = require "TraditionalPreservationDairy/Tiles"
 M.GRAINS_ON_CLOTH = DryingCloth.register({
     name = "kefirGrains", title = "IGUI_TraditionalPreservationDairy_GrainsTitle", types = { [M.GRAIN] = true },
     room = M.GRAIN_ROOM, hours = M.GRAIN_DRY_HOURS, curve = DRY_CURVE, pattern = "media/textures/TPCell_KefirGrains.png",
+    -- A lot keeps its frost record (frost) from the lay, and hungry once frozen through while wet.
+    lay = function(_, now, place) return { frost = Frost.newRecord(M.FROST, now, place) } end,
+    -- Never goes off: only brings the lot's frost up to now, by its drying age's place and fire, while it is wet.
+    goesOff = function(lot, now)
+        lot.data = lot.data or {}
+        if M.frozenThrough(lot.data, "frost", now, lot.dry) then lot.data.hungry = true end
+        return nil
+    end,
     sprite = function(spot, state)
         return Tiles.PREFIX .. (Tiles.GRAINS + Tiles.GRAIN_STATES[state == "dry" and "dry" or "wet"] * DryingCloth.SPOTS + spot)
     end,
@@ -656,6 +742,14 @@ M.GRAINS_ON_CLOTH = DryingCloth.register({
         return M.keepGrain(item).grainState == M.GRAIN_DEAD and "IGUI_TraditionalPreservationDairy_GrainsDeadNoLay" or nil
     end,
     give = function(lot, inventory, state)
-        for _ = 1, lot.count do inventory:AddItem(state == "dry" and M.DRIED_GRAIN or M.GRAIN) end
+        local hungry = state == "wet" and lot.data and lot.data.hungry
+        for _ = 1, lot.count do
+            local item = inventory:AddItem(state == "dry" and M.DRIED_GRAIN or M.GRAIN)
+            if item and hungry then
+                local grain = M.newGrain(M.GRAIN_HUNGRY, getGameTime():getWorldAgeHours())
+                item:getModData()[M.GRAIN_KEY] = grain
+                M.nameGrain(item, grain)
+            end
+        end
     end,
 })
