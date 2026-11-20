@@ -1,6 +1,9 @@
 # Changelog: Traditional Preservation (Dairy)
 
 
+## 0.0.21
+- Kefir grains on the Drying Cloth show as lumpy grains in Cloth Info's cells (TP Core 0.1.39's patterns); `TPCell_KefirGrains`.
+
 ## 0.0.20
 - Temperatures in the game's text read with the degree sign ("12°C", was "12 C"), as TP Core 0.1.37's.
 

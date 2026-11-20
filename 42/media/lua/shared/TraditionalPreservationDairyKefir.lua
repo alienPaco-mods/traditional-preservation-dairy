@@ -647,7 +647,7 @@ local Tiles = require "TraditionalPreservationDairy/Tiles"
 
 M.GRAINS_ON_CLOTH = DryingCloth.register({
     name = "kefirGrains", title = "IGUI_TraditionalPreservationDairy_GrainsTitle", types = { [M.GRAIN] = true },
-    perLot = M.GRAINS_PER_LOT, hours = M.GRAIN_DRY_HOURS, curve = DRY_CURVE,
+    perLot = M.GRAINS_PER_LOT, hours = M.GRAIN_DRY_HOURS, curve = DRY_CURVE, pattern = "media/textures/TPCell_KefirGrains.png",
     sprite = function(lot, state)
         return Tiles.PREFIX .. (Tiles.GRAINS + Tiles.GRAIN_STATES[state == "dry" and "dry" or "wet"] * DryingCloth.LOTS + lot)
     end,
