@@ -17,9 +17,11 @@ local MONTHS = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", 
 -- gets no column of its own. Grid is a room while the power grid is on (22 C, Weather.GRID_ROOM_C): it runs on a
 -- ledger and history of its own with the grid on. Last, a lit fire under an open roof and in the open, which follow
 -- the air (Fire.FIRE_LIFT).
+-- The clamps (FV's) take only roots: no column.
+local SKIPPED = { Covered = true, StrawClamp = true, EarthedClamp = true }
 local PLACES = {}
 for _, place in ipairs(M.PLACES) do
-    if place ~= "Covered" then table.insert(PLACES, place) end
+    if not SKIPPED[place] then table.insert(PLACES, place) end
     if place == "Sheltered" then table.insert(PLACES, "Grid") end
 end
 table.insert(PLACES, M.CAULDRON_PLAIN .. "Covered")
