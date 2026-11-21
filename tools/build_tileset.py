@@ -848,6 +848,10 @@ def main():
     pzart.write_pack(media / "texturepacks" / f"{NAME}.pack", tiles, NAME, TILESET, PAGE_SIZE)
     pzart.write_tiles(media / f"{NAME}.tiles", [(TILESET, COLUMNS, ROWS)], TILE_PROPS)
     write_geometry(media.parent.parent / "common" / "media" / "tileGeometry.txt")
+    # The grains lie on TP Core's Drying Cloth: its rug depth, so a character standing there is drawn over them too.
+    pzart.write_depth_assignments(media.parent.parent / "common" / "media" / "tileDepthTextureAssignments.txt",
+                                  {f"{TILESET}_{grain_index(lot, state)}": pzart.RUG_DEPTH
+                                   for state in GRAIN_STATES for lot in range(len(cloth_art.LOTS))})
     empty = tiles[INCUBATOR].copy()
     empty.alpha_composite(tiles[OVERLAYS["incubator"]["Empty"]])
     pzart.write_build_icon(empty, media / "textures" / "Item_YoghurtIncubator.png")

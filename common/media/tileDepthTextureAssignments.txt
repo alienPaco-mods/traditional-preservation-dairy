@@ -1,0 +1,14 @@
+tileDepthTextureAssignments
+{
+    VERSION = 1,
+    traditionalpreservationdairy_01_24 = floors_rugs_01_0,
+    traditionalpreservationdairy_01_25 = floors_rugs_01_0,
+    traditionalpreservationdairy_01_26 = floors_rugs_01_0,
+    traditionalpreservationdairy_01_27 = floors_rugs_01_0,
+    traditionalpreservationdairy_01_28 = floors_rugs_01_0,
+    traditionalpreservationdairy_01_29 = floors_rugs_01_0,
+    traditionalpreservationdairy_01_30 = floors_rugs_01_0,
+    traditionalpreservationdairy_01_31 = floors_rugs_01_0,
+    traditionalpreservationdairy_01_32 = floors_rugs_01_0,
+    traditionalpreservationdairy_01_33 = floors_rugs_01_0,
+}

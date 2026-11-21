@@ -1,5 +1,10 @@
 # Changelog: Traditional Preservation (Dairy)
 
+## 0.0.27
+- **Standing on the Drying Cloth** (user, session 77): kefir grains lying on TP Core's cloth take vanilla's rug depth
+  (`common/media/tileDepthTextureAssignments.txt`, written by `tools/build_tileset.py`), as the cloth does, so a
+  character standing there is drawn over them too.
+
 ## 0.0.26
 Needs TP Core 0.1.52.
 - **Frost** (ROADMAP NEXT 1; user, session 76): everything here freezes at 0 C, on TP Core's frost ledger by place
