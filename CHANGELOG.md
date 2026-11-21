@@ -1,5 +1,9 @@
 # Changelog: Traditional Preservation (Dairy)
 
+## 0.0.28
+- **In TP Core's station report** (written on each save, for the long-save log): the Incubator and Crock windows take part
+  (`StationReport.add`). Needs TP Core 0.1.56.
+
 ## 0.0.27
 - **Standing on the Drying Cloth** (user, session 77): kefir grains lying on TP Core's cloth take vanilla's rug depth
   (`common/media/tileDepthTextureAssignments.txt`, written by `tools/build_tileset.py`), as the cloth does, so a

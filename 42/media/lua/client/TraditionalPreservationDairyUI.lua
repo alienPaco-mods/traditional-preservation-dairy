@@ -12,6 +12,7 @@ require "TimedActions/TPKefirGrains"
 local UI = require "TraditionalPreservationCore/UI"
 local Cauldron = require "TraditionalPreservationCore/Cauldron"
 local InfoWindow = require "TraditionalPreservationCore/InfoWindow"
+local StationReport = require "TraditionalPreservationCore/StationReport"
 local CauldronUI = require "TraditionalPreservationCore/CauldronUI"
 local CauldronFluid = require "TraditionalPreservationCore/CauldronFluid"
 local Transfer = require "TraditionalPreservationCore/Transfer"
@@ -690,6 +691,7 @@ end
 function PotWindow.open(playerObj, station)
     InfoWindow.open(PotWindow, playerObj, station)
 end
+StationReport.add(PotWindow, function(isoObject) return M.stationKind(isoObject) and not M.isCrock(isoObject) and isoObject or nil end)
 
 -- Days since it set, and how long it stays fresh: the jar's own shelf life, which the age carries into.
 local function ageText(batch)
@@ -1094,6 +1096,7 @@ end
 function CrockWindow.open(playerObj, crock)
     InfoWindow.open(CrockWindow, playerObj, crock)
 end
+StationReport.add(CrockWindow, function(isoObject) return M.isCrock(isoObject) and isoObject or nil end)
 
 function CrockWindow:refresh()
     local station, playerObj, window = self.station, self.playerObj, self
